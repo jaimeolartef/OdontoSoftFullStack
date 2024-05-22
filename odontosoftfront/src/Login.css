@@ -1,0 +1,129 @@
+.parent {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #fbfbfb;
+}
+/* Chrome, Opera, Safari, Edge */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px #fbfbfb inset !important;
+}
+
+/* Resto del codigo CSS... */
+.container {
+    position: relative;
+    width: 256px;
+    height: 256px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.container span {
+    position: absolute;
+    left: 0;
+    width: 32px;
+    height: 6px;
+    background: #2c4766;
+    border-radius: 8px;
+    transform-origin: 128px;
+    transform: scale(2.2) rotate(calc(var(--i) * (360deg / 50)));
+    animation: animateBlink 3s linear infinite;
+    animation-delay: calc(var(--i) * (3s / 50));
+}
+.login-box {
+    position: absolute;
+    width: 400px;
+}
+.login-box form {
+    width: 100%;
+    padding: 0 50px;
+}
+h2 {
+    font-size: 2em;
+    color: #3e3e3e;
+    text-align: center;
+}
+.input-box {
+    position: relative;
+    margin: 25px 0;
+}
+.input-box input {
+    width: 100%;
+    height: 50px;
+    background: transparent;
+    border: 2px solid #3e3e3e;
+    outline: none;
+    border-radius: 40px;
+    font-size: 1em;
+    color: #34AAF3FF;
+    padding: 0 20px;
+    transition: .5s ease;
+    position: relative;
+    z-index: 2;
+}
+.input-box input:focus,
+.input-box input:valid {
+    border-color: #34AAF3FF;
+}
+.input-box label {
+    position: absolute;
+    z-index: 1;
+    top: 50%;
+    left: 20px;
+    transform: translateY(-50%);
+    font-size: 1em;
+    color: #3e3e3e;
+    pointer-events: none;
+    transition: .5s ease;
+}
+.input-box input:focus~label,
+.input-box input:valid~label {
+    top: 1px;
+    font-size: .8em;
+    background: #34AAF3FF;
+    padding: 0 6px;
+    color: #ffffff;
+    border-radius: 5px;
+    z-index: 3;
+}
+.forgot-pass {
+    margin: -15px 0 10px;
+    text-align: center;
+}
+.forgot-pass a {
+    font-size: .85em;
+    color: #fff;
+    text-decoration: none;
+}
+.forgot-pass a:hover {
+    text-decoration: underline;
+}
+.btn {
+    width: 100%;
+    height: 45px;
+    background-image: linear-gradient(to bottom right, #34aaf3, #3e3e3e);
+    border: none;
+    outline: none;
+    border-radius: 40px;
+    cursor: pointer;
+    font-size: 1em;
+    color: #fbfbfb;
+    font-weight: 600;
+}
+.signup-link {
+    margin: 20px 0 10px;
+    text-align: center;
+}
+.signup-link a {
+    font-size: 1em;
+    color: #303030;
+    text-decoration: none;
+    font-weight: 600;
+}
+.signup-link a:hover {
+    text-decoration: underline;
+}
