@@ -7,8 +7,6 @@ import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDate;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -87,11 +85,5 @@ public class Paciente {
   @Size(max = 20)
   @Column(name = "telefonoacompanante", length = 20)
   private String telefonoacompanante;
-
-  @OneToMany(mappedBy = "idpaciente")
-  private Set<Cita> citas = new LinkedHashSet<>();
-
-  @OneToMany(mappedBy = "idpaciente")
-  private Set<Historiaclinica> historiaclinicas = new LinkedHashSet<>();
 
 }

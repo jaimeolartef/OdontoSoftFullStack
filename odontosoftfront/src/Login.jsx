@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import './Login.css'; // Asegúrate de tener un archivo CSS para estilos
+import axios from "axios";
 
 const Login = () => {
   const [loginObj, setLoginObj] = useState({
-    EmailId: '',
-    Password: '',
+    usuario: '',
+    clave: '',
   });
 
   const handleInputChange = (event) => {
@@ -15,25 +16,30 @@ const Login = () => {
     }));
   };
 
-  const handleLogin = () => {
-    // Aquí puedes manejar la lógica de inicio de sesión
-    console.log('Email:', loginObj.EmailId);
-    console.log('Password:', loginObj.Password);
+  const handleLogin = async (event) => {
+    try {
+      const response = await axios.post('http://localhost:8080/user/login', loginObj);
+      if (response.status === 200) {
+        alert('El registro ha sido exitoso' + response.data.token);
+      }
+    } catch (error) {
+      alert('Error al iniciar sesión');
+    }
   };
 
   return (
     <div className="parent">
       <div className="container">
-        <div className="login-box">
-          <h2>Login</h2>
+        <div>
+          <h2>Inicio de sesión</h2>
           <form>
             <div className="input-box">
-              <input type="email" name="EmailId" value={loginObj.EmailId} onChange={handleInputChange} required />
-              <label>Email</label>
+              <input type="usuario" name="usuario" value={loginObj.usuario} onChange={handleInputChange} required />
+              <label>Usuario</label>
             </div>
             <div className="input-box">
-              <input type="password" name="Password" value={loginObj.Password} onChange={handleInputChange} required />
-              <label>Password</label>
+              <input type="password" name="clave" value={loginObj.clave} onChange={handleInputChange} required />
+              <label>Clave</label>
             </div>
             <button type="button" className="btn" onClick={handleLogin}>
               Login

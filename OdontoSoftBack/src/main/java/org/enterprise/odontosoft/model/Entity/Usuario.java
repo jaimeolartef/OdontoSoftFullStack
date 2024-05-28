@@ -9,10 +9,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
-@NoArgsConstructor
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
 @Table(name = "usuario")
 public class Usuario {
   @Id
@@ -44,7 +44,6 @@ public class Usuario {
   @Column(name = "codigo", length = 20)
   private String codigo;
 
-
   @Builder
   public Usuario(Integer id, String nombre, String clave, Rol idRol, Boolean habilitado, String codigo) {
     this.id = id;
@@ -54,4 +53,5 @@ public class Usuario {
     this.habilitado = habilitado;
     this.codigo = codigo;
   }
+
 }

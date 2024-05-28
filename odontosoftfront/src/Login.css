@@ -16,7 +16,7 @@ input:-webkit-autofill:active {
 /* Resto del codigo CSS... */
 .container {
     position: relative;
-    width: 256px;
+    width: 310px;
     height: 256px;
     display: flex;
     justify-content: center;
@@ -36,14 +36,14 @@ input:-webkit-autofill:active {
 }
 .login-box {
     position: absolute;
-    width: 400px;
+    width: 500px;
 }
 .login-box form {
     width: 100%;
     padding: 0 50px;
 }
 h2 {
-    font-size: 2em;
+    font-size: 1.5em;
     color: #3e3e3e;
     text-align: center;
 }
@@ -127,3 +127,10 @@ h2 {
 .signup-link a:hover {
     text-decoration: underline;
 }
+/* Responsive design */
+
+@media screen and (max-width: 768px) {
+    .login-form {
+      width: 90%;
+    }
+  }

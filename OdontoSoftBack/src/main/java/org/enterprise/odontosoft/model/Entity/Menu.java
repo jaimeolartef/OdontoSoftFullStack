@@ -23,6 +23,13 @@ public class Menu {
   @Column(name = "descripcion", nullable = false, length = 50)
   private String descripcion;
 
+  @Column(name = "id_menu_padre")
+  private Integer idMenuPadre;
+
+  @Size(max = 100)
+  @Column(name = "url", length = 100)
+  private String url;
+
   @NotNull
   @ColumnDefault("false")
   @Column(name = "habilitado", nullable = false)

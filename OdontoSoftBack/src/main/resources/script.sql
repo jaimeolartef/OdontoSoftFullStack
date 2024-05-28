@@ -1,6 +1,5 @@
 create database odontosoft;
 
-
 create table tipoDocumento
 (
     id     serial,
@@ -13,7 +12,9 @@ create table tipoDocumento
 CREATE TABLE menu
 (
     id          serial            NOT NULL,
-    descripcion varchar(50)        NOT NULL,
+    descripcion varchar(50) NOT NULL,
+    id_menu_padre int NULL,
+    url varchar(100) NULL,
     habilitado  bool DEFAULT false NOT NULL,
     CONSTRAINT menu_pkey PRIMARY KEY (id)
 );
@@ -34,17 +35,6 @@ CREATE TABLE permiso_menu
     CONSTRAINT permiso_menu_pkey PRIMARY KEY (id),
     CONSTRAINT permiso_menu_id_menu FOREIGN KEY (id_menu) REFERENCES menu (id),
     CONSTRAINT permiso_menu_id_rol FOREIGN KEY (id_rol) REFERENCES menu (id)
-);
-
-
-CREATE TABLE sub_menu
-(
-    id          serial            NOT NULL,
-    descripcion varchar(50)        NOT NULL,
-    id_menu     int               NOT NULL,
-    habilitado  bool DEFAULT false NOT NULL,
-    CONSTRAINT sub_menu_pkey PRIMARY KEY (id),
-    CONSTRAINT sub_menu_id_menu FOREIGN KEY (id_menu) REFERENCES menu (id)
 );
 
 CREATE TABLE usuario
@@ -110,8 +100,29 @@ create table historiaClinica
 
 
 INSERT INTO public.rol (id, descripcion, habilitado) VALUES (DEFAULT, 'Administrador'::varchar(200), true::boolean);
+INSERT INTO public.rol (id, descripcion, habilitado) VALUES (DEFAULT, 'Paciente'::varchar(200), true::boolean);
 
+INSERT INTO public.usuario (id, nombre, clave, id_rol, habilitado, codigo) VALUES (DEFAULT, 'jaime.olarte'::varchar(50), '1234'::text, 1::integer, true::boolean, 'jaime.olarte'::varchar(20));
 
-INSERT INTO public.usuario (id, nombre, clave, id_rol, habilitado, codigo) VALUES (DEFAULT, 'Jaime.olarte'::varchar(50), '1234'::text, 1::integer, true::boolean, 'jaime.olarte'::varchar(20));
+INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES (DEFAULT, 'Pacientes'::varchar(50),null, null, true::boolean);
+INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES (DEFAULT, 'Agenda'::varchar(50), null, null, true::boolean);
+INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES (DEFAULT, 'Configuración'::varchar(50), null, null, true::boolean);
+
+INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES (DEFAULT, 'Registrar'::varchar(50), 1::integer, null,  true::boolean);
+INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES (DEFAULT, 'Asignación de citas'::varchar(50), 2::integer, null,true::boolean);
+INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES (DEFAULT, 'Mi calendario'::varchar(50), 2::integer, null,true::boolean);
+INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES (DEFAULT, 'Roles'::varchar(50), 3::integer, null, true::boolean);
+INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES (DEFAULT, 'Usuarios'::varchar(50), 3::integer, null, true::boolean);
+
+INSERT INTO public.permiso_menu (id, id_rol, id_menu) VALUES (DEFAULT, 1::integer, 1::integer);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu) VALUES (DEFAULT, 1::integer, 2::integer);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu) VALUES (DEFAULT, 1::integer, 3::integer);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu) VALUES (DEFAULT, 1::integer, 4::integer);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu) VALUES (DEFAULT, 1::integer, 5::integer);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu) VALUES (DEFAULT, 1::integer, 6::integer);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu) VALUES (DEFAULT, 1::integer, 7::integer);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu) VALUES (DEFAULT, 1::integer, 8::integer);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu) VALUES (DEFAULT, 2::integer, 2::integer);
+
 
 

@@ -2,13 +2,11 @@ package org.enterprise.odontosoft.view;
 
 import org.enterprise.odontosoft.controller.UsuarioController;
 import org.enterprise.odontosoft.view.dto.CredencialDto;
+import org.enterprise.odontosoft.view.dto.PermisosDto;
 import org.enterprise.odontosoft.view.dto.UsuarioDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -31,5 +29,9 @@ public class UsuarioView {
   @GetMapping("user/prueba")
   public String prueba() {
     return "prueba";
+  }
+
+  public ResponseEntity<PermisosDto> validateRole(@Valid @RequestBody UsuarioDto usuarioDto) {
+    return null; //usuarioController.validateRole(permisosDto);
   }
 }
