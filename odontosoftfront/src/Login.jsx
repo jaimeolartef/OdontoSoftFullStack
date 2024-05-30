@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import './Login.css'; // Asegúrate de tener un archivo CSS para estilos
 import axios from "axios";
+import bcrypt from "bcryptjs";
+import { BCryptPasswordEncoder } from "@nestjs/security";
 
 const Login = () => {
   const [loginObj, setLoginObj] = useState({
@@ -18,6 +20,9 @@ const Login = () => {
 
   const handleLogin = async (event) => {
     try {
+      const passwordEncoder = new BCryptPasswordEncoder(10);
+      const claveEncriptada = passwordEncoder.encode(loginObj.clave);
+      loginObj.clave = claveEncriptada;
       const response = await axios.post('http://localhost:8080/user/login', loginObj);
       if (response.status === 200) {
         alert('El registro ha sido exitoso' + response.data.token);
