@@ -19,12 +19,12 @@ public class PermisoMenu {
 
   @NotNull
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(name = "id_rol", nullable = false)
+  @JoinColumn(name = "id_rol", referencedColumnName = "id", nullable = false)
   private Rol idRol;
 
   @NotNull
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(name = "id_menu", nullable = false)
+  @JoinColumn(name = "id_menu", referencedColumnName = "id", nullable = false)
   private Menu idMenu;
 
 }

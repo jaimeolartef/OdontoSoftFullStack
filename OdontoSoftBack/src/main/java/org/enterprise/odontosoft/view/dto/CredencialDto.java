@@ -16,7 +16,6 @@ public class CredencialDto {
   private String usuario;
 
   @NotBlank(message = "Clave no puede ser vacía")
-  @Size(min = 3, max = 20, message = "Clave debe tener entre 6 y 20 caracteres")
   private String clave;
 
   private String token;

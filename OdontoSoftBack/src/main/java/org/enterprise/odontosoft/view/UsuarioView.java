@@ -13,11 +13,14 @@ import javax.validation.Valid;
 @RestController
 public class UsuarioView {
 
-  @Autowired
-  private UsuarioController usuarioController;
+  private final UsuarioController usuarioController;
+
+  public UsuarioView(UsuarioController usuarioController) {
+    this.usuarioController = usuarioController;
+  }
 
   @PostMapping("user/login")
-  public CredencialDto login(@Valid @RequestBody CredencialDto credencial) {
+  public ResponseEntity<CredencialDto> login(@Valid @RequestBody CredencialDto credencial) {
     return usuarioController.login(credencial);
   }
 
@@ -31,7 +34,8 @@ public class UsuarioView {
     return "prueba";
   }
 
+  @PostMapping("user/validateRole")
   public ResponseEntity<PermisosDto> validateRole(@Valid @RequestBody UsuarioDto usuarioDto) {
-    return null; //usuarioController.validateRole(permisosDto);
+    return usuarioController.validateRole(usuarioDto);
   }
 }

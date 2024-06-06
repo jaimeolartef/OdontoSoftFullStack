@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface UsuarioDao extends CrudRepository<Usuario, Long> {
 
   @Query(value = "select u from Usuario u where u.codigo = ?1 and u.habilitado = true")
-  public Usuario findByCodigo(String Codigo);
+  public Usuario findByCodigo(String codigo);
 }
 
