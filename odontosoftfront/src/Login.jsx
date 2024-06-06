@@ -10,6 +10,10 @@ const Login = () => {
     clave: '',
   });
 
+  const [usuarioDto, setUsuarioDto] = useState({
+    codigo : ''
+  });
+
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setLoginObj((prevLoginObj) => ({
@@ -21,11 +25,15 @@ const Login = () => {
   const handleLogin = async (event) => {
     try {
       const hash = sha256(loginObj.clave).toString();
-      console.log(hash);
       loginObj.clave = hash;
-      const response = await axios.post('http://localhost:8080/user/login', loginObj);
-      if (response.status === 200) {
-        alert('El registro ha sido exitoso' + response.data.token);
+      const responseToken = await axios.post('http://localhost:8080/user/login', loginObj);
+      if (responseToken.status === 200) {
+        axios.defaults.headers.common['Authorization'] = `Bearer ${responseToken.data.token}`;
+        usuarioDto.codigo = responseToken.data.usuario;
+        const responseMenu = await axios.post('http://localhost:8080/user/validateRole', usuarioDto);
+
+        console.log(responseMenu.data)
+
       }
     } catch (error) {
       alert('Error de autenticación, por favor validar sus credenciales');

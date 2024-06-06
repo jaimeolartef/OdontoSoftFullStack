@@ -10,6 +10,6 @@ import java.util.List;
 @Repository
 public interface MenuDao extends CrudRepository<Menu, Integer> {
 
-  @Query("SELECT m FROM Menu m JOIN PermisoMenu pm JOIN pm.idRol r JOIN r.usuarios u WHERE r.habilitado = true AND u.habilitado = true AND u.codigo = :codigo ORDER BY m.idMenuPadre ASC")
+  @Query("SELECT pm.idMenu FROM PermisoMenu pm JOIN pm.idRol.usuarios u WHERE pm.idMenu.habilitado = true AND u.habilitado = true AND pm.idMenu.habilitado = true AND pm.idRol.habilitado = true AND u.codigo = :codigo ORDER BY pm.idMenu.idMenuPadre ASC")
   List<Menu> findByCodigoUsuario(String codigo);
 }

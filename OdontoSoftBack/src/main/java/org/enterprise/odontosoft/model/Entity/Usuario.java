@@ -3,15 +3,17 @@ package org.enterprise.odontosoft.model.Entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Getter
 @Setter
 @Entity
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "usuario")
 public class Usuario {
@@ -44,14 +46,10 @@ public class Usuario {
   @Column(name = "codigo", length = 20)
   private String codigo;
 
-  @Builder
-  public Usuario(Integer id, String nombre, String clave, Rol idRol, Boolean habilitado, String codigo) {
-    this.id = id;
-    this.nombre = nombre;
-    this.clave = clave;
-    this.idRol = idRol;
-    this.habilitado = habilitado;
-    this.codigo = codigo;
-  }
+  @OneToMany(mappedBy = "idusuariocreacion")
+  private Set<Historiaclinica> historiaClinicasUsuario = new LinkedHashSet<>();
+
+  @OneToMany(mappedBy = "idusuariomodificacion")
+  private Set<Historiaclinica> historiaClinicasUsuarioMod = new LinkedHashSet<>();
 
 }

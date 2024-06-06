@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 @Getter
 @Setter
 @Entity
@@ -24,5 +27,8 @@ public class Tipodocumento {
   @Size(max = 20)
   @Column(name = "nombre", length = 20)
   private String nombre;
+
+  @OneToMany(mappedBy = "idtipodocumento")
+  private Set<Paciente> pacientes = new LinkedHashSet<>();
 
 }

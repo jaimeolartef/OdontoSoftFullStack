@@ -34,4 +34,7 @@ public class Rol {
   @OneToMany(mappedBy = "idRol")
   private Set<Usuario> usuarios = new LinkedHashSet<>();
 
+  @OneToMany(mappedBy = "idRol")
+  private Set<PermisoMenu> permisoMenusRol = new LinkedHashSet<>();
+
 }

@@ -7,7 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -36,5 +37,8 @@ public class Menu {
   @ColumnDefault("false")
   @Column(name = "habilitado", nullable = false)
   private Boolean habilitado = false;
+
+  @OneToMany(mappedBy = "idMenu")
+  private Set<PermisoMenu> permisoMenusMenu = new LinkedHashSet<>();
 
 }

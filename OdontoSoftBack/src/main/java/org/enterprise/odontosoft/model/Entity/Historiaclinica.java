@@ -24,14 +24,14 @@ public class Historiaclinica {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "idusuariocreacion")
-  private Tipodocumento idusuariocreacion;
+  private Usuario idusuariocreacion;
 
   @Column(name = "fechacreacion")
   private LocalDate fechacreacion;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "idusuariomodificacion")
-  private Tipodocumento idusuariomodificacion;
+  private Usuario idusuariomodificacion;
 
   @Column(name = "fechamodificacion")
   private LocalDate fechamodificacion;

@@ -1,8 +1,6 @@
 package org.enterprise.odontosoft.controller;
 
 import jakarta.validation.Valid;
-import org.apache.catalina.util.StringUtil;
-import org.apache.tomcat.util.buf.StringUtils;
 import org.enterprise.odontosoft.model.Dao.MenuDao;
 import org.enterprise.odontosoft.model.Dao.UsuarioDao;
 import org.enterprise.odontosoft.model.Entity.Menu;
@@ -16,13 +14,13 @@ import org.enterprise.odontosoft.view.security.UtilSecurity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 @Controller
@@ -80,15 +78,16 @@ public class UsuarioControllerImpl implements UsuarioController {
   public ResponseEntity<PermisosDto> validateRole(UsuarioDto usuarioDto) {
     ResponseEntity<PermisosDto> responseEntity;
     PermisosDto permisosDto = new PermisosDto();
+    permisosDto.setMenus(new ArrayList<>());
     MenuDto menuDto = new MenuDto();
 
     List<Menu> menus = menuDao.findByCodigoUsuario(usuarioDto.getCodigo());
-    if (menus.isEmpty()) {
+    if (!menus.isEmpty()) {
       menus.stream().forEach(menu -> {
         permisosDto.getMenus().add(MenuDto.builder()
           .nombreMenu(menu.getDescripcion())
           .url(menu.getUrl())
-          .nombreMenuPadre(menuDao.findById(menu.getIdMenuPadre()).map(Menu::getDescripcion).orElse(null))
+          .nombreMenuPadre(Objects.isNull(menu.getIdMenuPadre()) ? null : menuDao.findById(menu.getIdMenuPadre()).map(Menu::getDescripcion).orElse(null))
           .build());
       });
 
