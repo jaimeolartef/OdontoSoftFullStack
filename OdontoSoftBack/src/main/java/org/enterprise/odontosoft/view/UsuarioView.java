@@ -4,6 +4,7 @@ import org.enterprise.odontosoft.controller.UsuarioController;
 import org.enterprise.odontosoft.view.dto.CredencialDto;
 import org.enterprise.odontosoft.view.dto.PermisosDto;
 import org.enterprise.odontosoft.view.dto.UsuarioDto;
+import org.enterprise.odontosoft.view.dto.UsuarioValidarDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +28,11 @@ public class UsuarioView {
   @PostMapping("user/signup")
   public ResponseEntity<Void> signup(@Valid @RequestBody UsuarioDto usuarioDto) {
     return usuarioController.signup(usuarioDto);
+  }
+
+  @GetMapping("user/validatetoken")
+  public ResponseEntity<Void> validateToken(@Valid @RequestBody UsuarioValidarDto usuarioValidarDto) {
+    return usuarioController.validateToken(usuarioValidarDto);
   }
 
   @GetMapping("user/prueba")

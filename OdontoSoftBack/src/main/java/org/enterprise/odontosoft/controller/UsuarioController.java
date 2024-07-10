@@ -3,6 +3,7 @@ package org.enterprise.odontosoft.controller;
 import org.enterprise.odontosoft.view.dto.CredencialDto;
 import org.enterprise.odontosoft.view.dto.PermisosDto;
 import org.enterprise.odontosoft.view.dto.UsuarioDto;
+import org.enterprise.odontosoft.view.dto.UsuarioValidarDto;
 import org.springframework.http.ResponseEntity;
 
 public interface UsuarioController {
@@ -11,4 +12,6 @@ public interface UsuarioController {
   ResponseEntity<Void> signup(UsuarioDto usuarioDto);
 
   ResponseEntity<PermisosDto> validateRole(UsuarioDto usuarioDto);
+
+  ResponseEntity<Void> validateToken(UsuarioValidarDto usuarioValidarDto);
 }

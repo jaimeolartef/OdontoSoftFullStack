@@ -6,17 +6,17 @@ import org.enterprise.odontosoft.model.Dao.UsuarioDao;
 import org.enterprise.odontosoft.model.Entity.Menu;
 import org.enterprise.odontosoft.model.Entity.Rol;
 import org.enterprise.odontosoft.model.Entity.Usuario;
-import org.enterprise.odontosoft.view.dto.CredencialDto;
-import org.enterprise.odontosoft.view.dto.MenuDto;
-import org.enterprise.odontosoft.view.dto.PermisosDto;
-import org.enterprise.odontosoft.view.dto.UsuarioDto;
+import org.enterprise.odontosoft.view.dto.*;
 import org.enterprise.odontosoft.view.security.UtilSecurity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.nio.file.AccessDeniedException;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
@@ -96,6 +96,23 @@ public class UsuarioControllerImpl implements UsuarioController {
     }
 
     return null; //usuarioController.validateRole(permisosDto);
+  }
+
+  @Override
+  public ResponseEntity<Void> validateToken(UsuarioValidarDto usuarioValidarDto) {
+    ResponseEntity<Void> responseEntity = null;
+    try {
+      boolean validado = UtilSecurity.validateToken(usuarioValidarDto.getToken(), usuarioValidarDto.getUsuario());
+
+      if (validado) {
+        responseEntity = ResponseEntity.status(HttpStatus.OK).build();
+      } else {
+        responseEntity = ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+      }
+    } catch (AccessDeniedException e) {
+      responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+    return responseEntity;
   }
 
 }

@@ -1,6 +1,7 @@
 package org.enterprise.odontosoft.view.security;
 
 import org.apache.tomcat.util.codec.binary.Base64;
+import org.enterprise.odontosoft.view.dto.UsuarioValidarDto;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import io.jsonwebtoken.Claims;
@@ -43,9 +44,9 @@ public class UtilSecurity {
     return getTokenBody(token).getSubject();
   }
 
-  public static Boolean validateToken(String token, UserDetails userDetails) throws AccessDeniedException {
+  public static Boolean validateToken(String token, String nombreUsuario) throws AccessDeniedException {
     final String username = extractUsername(token);
-    return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+    return username.equals(nombreUsuario) && !isTokenExpired(token);
   }
 
   private static Claims getTokenBody(String token) throws AccessDeniedException {
