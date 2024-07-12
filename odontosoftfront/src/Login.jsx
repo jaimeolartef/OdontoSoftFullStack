@@ -4,7 +4,6 @@ import axios from "axios";
 import sha256 from 'crypto-js/sha256';
 import {connect} from "react-redux";
 import { useNavigate } from 'react-router-dom';
-import Contacto from "./view/Contacto";
 
 
 
@@ -40,8 +39,8 @@ const Login = (props) => {
             axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
             localStorage.setItem('jsonwebtoken', response.data.token);
             usuarioDto.codigo = response.data.usuario;
-            //const responseMenu = axios.post('http://localhost:8080/user/validateRole', usuarioDto);
-            navigate(Contacto);
+            const responseMenu = axios.post('http://localhost:8080/user/validateRole', usuarioDto);
+            navigate('/contacto');
             localStorage.setItem('username', usuarioDto.codigo);
             props.onLoggedIn();
           }  else {

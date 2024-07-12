@@ -3,10 +3,10 @@ import React from "react";
 import {connect} from "react-redux";
 
 function Menu(props) {
+  console.log('Imprimir 1:' + props.isLoggedIn);
   return (
     <nav className="navigation">
-      {props.isLoggedIn ? <Link to="/contacto">Contacto</Link> : null}
-      {props.isLoggedIn ? null : <Link to="/login">Login</Link>}
+      {props.isLoggedIn != null && props.isLoggedIn ? <Link to="/contacto">Contacto</Link> : null}
     </nav>
   );
 }
