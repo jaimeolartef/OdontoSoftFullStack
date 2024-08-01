@@ -39,8 +39,14 @@ const Login = (props) => {
             axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
             localStorage.setItem('jsonwebtoken', response.data.token);
             usuarioDto.codigo = response.data.usuario;
-            const responseMenu = axios.post('http://localhost:8080/user/validateRole', usuarioDto);
-            navigate('/contacto');
+            axios.post('http://localhost:8080/user/validateRole', usuarioDto)
+              .then(responseMenu => {
+                const menuUserString = JSON.stringify(responseMenu.data);
+                localStorage.setItem('menuUser', menuUserString);
+              }).catch(error => {
+              alert('Error al validar el rol del usuario');
+            })
+            navigate('/inicio');
             localStorage.setItem('username', usuarioDto.codigo);
             props.onLoggedIn();
           }  else {

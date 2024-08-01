@@ -4,7 +4,8 @@ import './index.css';
 import { createStore } from 'redux'
 import reportWebVitals from './reportWebVitals';
 import Login from "./Login";
-import Contacto from "./view/Contacto";
+import Inicio from "./view/Inicio";
+import RegistroPac from "./view/Paciente/registroPaciente";
 import {setAuthenticationHeader} from "./util/authenticate";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import {Provider} from "react-redux";
@@ -32,7 +33,8 @@ root.render(
           <Routes>
             <Route exact path = "/" Component={Login} />
             <Route exact path = "/login" Component={Login} />
-            <Route exact path = "/contacto" Component = {requireAuth(Contacto)} />
+            <Route exact path = "/inicio" Component = {requireAuth(Inicio)} />
+            <Route exact path = "/registroPac" Component = {requireAuth(RegistroPac)} />
           </Routes>
         </NavBar>
       </Provider>

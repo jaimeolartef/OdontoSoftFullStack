@@ -2,10 +2,6 @@ import React from "react";
 
 const Menu = () => {
 
-  const loadPage = (event) => {
-    console.log('Cargo el menu')
-  }
-
   return(
     <div className="parent">
       <div className="container">

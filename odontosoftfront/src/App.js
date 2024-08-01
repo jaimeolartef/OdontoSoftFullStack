@@ -3,7 +3,7 @@ import './Login.css'; // Asegúrate de tener un archivo CSS para estilos
 import axios from "axios";
 import sha256 from 'crypto-js/sha256';
 import { useNavigate } from 'react-router-dom';
-import Contacto from "./view/Contacto";
+import Inicio from "./view/Inicio";
 
 function App() {
 
@@ -38,8 +38,14 @@ function App() {
               axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
               localStorage.setItem('jsonwebtoken', response.data.token);
               usuarioDto.codigo = response.data.usuario;
-              //const responseMenu = axios.post('http://localhost:8080/user/validateRole', usuarioDto);
-              navigate(Contacto);
+              axios.post('http://localhost:8080/user/validateRole', usuarioDto)
+                .then(responseMenu => {
+                  const menuUserString = JSON.stringify(responseMenu.data);
+                  localStorage.setItem('menuUser', menuUserString);
+                }).catch(error => {
+                alert('Error al validar el rol del usuario');
+              })
+              navigate('/inicio');
               localStorage.setItem('username', usuarioDto.codigo);
             }  else {
               alert('Error de autenticación, por favor validar sus credenciales');
