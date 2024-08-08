@@ -1,0 +1,49 @@
+.medical-form {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+}
+
+.medical-form h1, .medical-form h2, .medical-form h3 {
+  text-align: center;
+  color: #333;
+}
+
+.medical-form label {
+  display: block;
+  margin-bottom: 10px;
+  color: #555;
+}
+
+.medical-form input[type="text"],
+.medical-form input[type="email"],
+.medical-form select {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.medical-form input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+.medical-form button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.medical-form button:hover {
+  background-color: #45a049;
+}

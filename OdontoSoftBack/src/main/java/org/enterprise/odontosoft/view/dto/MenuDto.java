@@ -1,6 +1,7 @@
 package org.enterprise.odontosoft.view.dto;
 
 import lombok.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -8,8 +9,8 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class MenuDto {
-  private String nombreMenuPadre;
-    private String nombreMenu;
+  private String nombreMenu;
+    private List<MenuDto> menuHijo;
     private String url;
 
 }

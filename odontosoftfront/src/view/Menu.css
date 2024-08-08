@@ -1,8 +1,16 @@
 .menu {
-    backgroundColor: '#f8f9fa';
-    padding: 10px;
-    borderRadius: 5px;
-    color: #333;
-    textDecoration: none;
-    margin: 10px;
+  display: flex;
+  justify-content: space-around;
+  padding: 1em;
+  background-color: #f8f9fa;
+}
+
+.menu-item {
+  color: #343a40;
+  text-decoration: none;
+  font-size: 1.2em;
+}
+
+.menu-item:hover {
+  color: #007bff;
 }

@@ -41,11 +41,12 @@ const Login = (props) => {
             usuarioDto.codigo = response.data.usuario;
             axios.post('http://localhost:8080/user/validateRole', usuarioDto)
               .then(responseMenu => {
-                const menuUserString = JSON.stringify(responseMenu.data);
-                localStorage.setItem('menuUser', menuUserString);
+                  const responseValidateRole = JSON.stringify(responseMenu.data.menus);
+                  localStorage.setItem('menuUser', responseValidateRole);
               }).catch(error => {
               alert('Error al validar el rol del usuario');
             })
+            console.log('Por el login');
             navigate('/inicio');
             localStorage.setItem('username', usuarioDto.codigo);
             props.onLoggedIn();

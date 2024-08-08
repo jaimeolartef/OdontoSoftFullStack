@@ -11,8 +11,6 @@ import org.enterprise.odontosoft.view.security.UtilSecurity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -30,6 +28,7 @@ public class UsuarioControllerImpl implements UsuarioController {
   private final MenuDao menuDao;
   private final AuthenticationManager authenticationManager;
   private MessageDigest passwordEncoder;
+  private MenuDto menuPadreDto;
 
   public UsuarioControllerImpl(UsuarioDao usuarioDao, MenuDao menuDao, AuthenticationManager authenticationManager) {
     this.usuarioDao = usuarioDao;
@@ -79,23 +78,34 @@ public class UsuarioControllerImpl implements UsuarioController {
     ResponseEntity<PermisosDto> responseEntity;
     PermisosDto permisosDto = new PermisosDto();
     permisosDto.setMenus(new ArrayList<>());
-    MenuDto menuDto = new MenuDto();
 
     List<Menu> menus = menuDao.findByCodigoUsuario(usuarioDto.getCodigo());
     if (!menus.isEmpty()) {
       menus.stream().forEach(menu -> {
-        permisosDto.getMenus().add(MenuDto.builder()
-          .nombreMenu(menu.getDescripcion())
-          .url(menu.getUrl())
-          .nombreMenuPadre(Objects.isNull(menu.getIdMenuPadre()) ? null : menuDao.findById(menu.getIdMenuPadre()).map(Menu::getDescripcion).orElse(null))
-          .build());
+        if (Objects.isNull(menu.getIdMenuPadre())) {
+          menuPadreDto = MenuDto.builder().nombreMenu(menu.getDescripcion())
+              .menuHijo(new ArrayList<>())
+              .url(menu.getUrl())
+              .build();
+          menus.stream().forEach(menuDto -> {
+            if (menu.getId().equals(menuDto.getIdMenuPadre())) {
+              menuPadreDto.getMenuHijo().add(MenuDto.builder()
+                .nombreMenu(menuDto.getDescripcion())
+                .url(menuDto.getUrl())
+                .build());
+            }
+          });
+          if (!permisosDto.getMenus().contains(menuPadreDto)) {
+            permisosDto.getMenus().add(menuPadreDto);
+          }
+        }
       });
 
       responseEntity = ResponseEntity.status(HttpStatus.OK).body(permisosDto);
       return responseEntity;
     }
 
-    return null; //usuarioController.validateRole(permisosDto);
+    return null;
   }
 
   @Override

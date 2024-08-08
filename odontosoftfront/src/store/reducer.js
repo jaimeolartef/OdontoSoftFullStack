@@ -1,7 +1,7 @@
 
 const initialState = {
-  username: '',
-  isLoggedIn: false
+  isLoggedIn: false,
+  username: ''
 }
 
 const reducer = (state = initialState, action ) => {
@@ -9,11 +9,11 @@ const reducer = (state = initialState, action ) => {
     case 'ON_LOGGED_IN':
       return {
         ...state,
-        username: action.payload,
-        isLoggedIn: true
+        isLoggedIn: true,
+        username: action.payload
       }
   }
   return state;
 }
 
-export default reducer
+export default reducer;
