@@ -2,18 +2,20 @@ package org.enterprise.odontosoft.model.Entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-@Getter
-@Setter
+@Builder
+@NoArgsConstructor
 @Entity
 @Table(name = "paciente")
+@AllArgsConstructor
+@Setter
+@Getter
 public class Paciente {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

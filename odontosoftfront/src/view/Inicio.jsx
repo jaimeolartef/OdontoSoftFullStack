@@ -1,5 +1,5 @@
 import React from "react";
-import logo from '../resource/LogoNegro.png';
+import Logo from '../resource/LogoNegro.png';
 
 const Inicio = () => {
 
@@ -9,7 +9,7 @@ const Inicio = () => {
     <div className="parent" style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'}}>
       <div className="container">
         <form>
-          <img src={logo} alt="Logo" />
+          <img src={Logo} alt="Logo" />
         </form>
       </div>
     </div>

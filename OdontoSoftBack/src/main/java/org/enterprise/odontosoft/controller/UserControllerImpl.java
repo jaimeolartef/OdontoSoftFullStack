@@ -22,18 +22,16 @@ import java.util.Objects;
 
 
 @Controller
-public class UsuarioControllerImpl implements UsuarioController {
+public class UserControllerImpl implements UserController {
 
   private final UsuarioDao usuarioDao;
   private final MenuDao menuDao;
-  private final AuthenticationManager authenticationManager;
   private MessageDigest passwordEncoder;
   private MenuDto menuPadreDto;
 
-  public UsuarioControllerImpl(UsuarioDao usuarioDao, MenuDao menuDao, AuthenticationManager authenticationManager) {
+  public UserControllerImpl(UsuarioDao usuarioDao, MenuDao menuDao, AuthenticationManager authenticationManager) {
     this.usuarioDao = usuarioDao;
     this.menuDao = menuDao;
-    this.authenticationManager = authenticationManager;
   }
 
   @Override
@@ -81,13 +79,13 @@ public class UsuarioControllerImpl implements UsuarioController {
 
     List<Menu> menus = menuDao.findByCodigoUsuario(usuarioDto.getCodigo());
     if (!menus.isEmpty()) {
-      menus.stream().forEach(menu -> {
+      menus.forEach(menu -> {
         if (Objects.isNull(menu.getIdMenuPadre())) {
           menuPadreDto = MenuDto.builder().nombreMenu(menu.getDescripcion())
               .menuHijo(new ArrayList<>())
               .url(menu.getUrl())
               .build();
-          menus.stream().forEach(menuDto -> {
+          menus.forEach(menuDto -> {
             if (menu.getId().equals(menuDto.getIdMenuPadre())) {
               menuPadreDto.getMenuHijo().add(MenuDto.builder()
                 .nombreMenu(menuDto.getDescripcion())

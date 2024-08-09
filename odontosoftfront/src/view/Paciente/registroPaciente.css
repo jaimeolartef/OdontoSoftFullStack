@@ -1,5 +1,5 @@
-.medical-form {
-  max-width: 600px;
+.medical-form-container {
+  max-width: 80%;
   margin: 0 auto;
   padding: 20px;
   border: 1px solid #ccc;
@@ -7,43 +7,79 @@
   background-color: #f9f9f9;
 }
 
-.medical-form h1, .medical-form h2, .medical-form h3 {
+header {
   text-align: center;
-  color: #333;
+  margin-bottom: 20px;
 }
 
-.medical-form label {
+header img {
+  max-width: 140px;
+}
+
+header h1 {
+  color: #2c3e50;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  font-size: 1.1em;
+}
+
+section {
+  margin-bottom: 20px;
+}
+
+section h3 {
+  color: #2c3e50;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+}
+
+label {
   display: block;
   margin-bottom: 10px;
   color: #555;
 }
 
-.medical-form input[type="text"],
-.medical-form input[type="email"],
-.medical-form select {
+input[type="text"],
+input[type="email"],
+input[type="date"],
+select {
   width: 100%;
   padding: 8px;
   margin-top: 5px;
   margin-bottom: 15px;
   border: 1px solid #ccc;
   border-radius: 5px;
+  box-sizing: border-box; /* Asegura que el padding y el borde estén incluidos en el ancho total */
 }
 
-.medical-form input[type="checkbox"] {
+input[type="checkbox"] {
   margin-right: 10px;
 }
 
-.medical-form button {
-  display: block;
-  width: 100%;
-  padding: 10px;
+button {
+  padding: 14px;
+  font-size: 1.3em;
+  width: 80%; /* Ajusta el ancho del botón */
+  max-width: 330px; /* Ajusta el ancho máximo del botón */
   background-color: #4CAF50;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  margin-left: auto; /* Centra el botón horizontalmente */
+  margin-right: auto; /* Centra el botón horizontalmente */
 }
 
-.medical-form button:hover {
+button:hover {
   background-color: #45a049;
+}
+
+footer {
+  text-align: center;
+  margin-top: 20px;
+  color: #777;
 }

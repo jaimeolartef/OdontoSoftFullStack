@@ -6,7 +6,7 @@ import org.enterprise.odontosoft.view.dto.UsuarioDto;
 import org.enterprise.odontosoft.view.dto.UsuarioValidarDto;
 import org.springframework.http.ResponseEntity;
 
-public interface UsuarioController {
+public interface UserController {
   ResponseEntity<CredencialDto> login(CredencialDto credencial);
 
   ResponseEntity<Void> signup(UsuarioDto usuarioDto);
