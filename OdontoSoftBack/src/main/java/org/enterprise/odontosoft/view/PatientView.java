@@ -15,9 +15,9 @@ public class PatientView {
         this.patientController = patientController;
     }
 
-    @PostMapping
+    @PostMapping("/Crear")
     public ResponseEntity<PacienteDto> createPatient(@RequestBody PacienteDto paciente) {
-        return null;
+        return patientController.createPatient(paciente);
     }
 
     @GetMapping("/{id}")

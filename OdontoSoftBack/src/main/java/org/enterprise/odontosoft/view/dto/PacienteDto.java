@@ -18,13 +18,13 @@ import java.time.LocalDate;
 public class PacienteDto {
 
     private Integer id;
-    private Tipodocumento idtipodocumento;
+    private String idtipodocumento;
     private String documento;
     private String primernombre;
     private String segundonombre;
     private String primerapellido;
     private String segundoapellido;
-    private LocalDate fechanacimiento;
+    private String fechanacimiento;
     private String ciudadnacimiento;
     private String genero;
     private String estadocivil;

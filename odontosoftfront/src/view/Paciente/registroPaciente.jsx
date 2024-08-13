@@ -13,10 +13,10 @@ const RegistroPaciente = () => {
     phoneNumber: '',
     maritalStatus: '',
     email: '',
+    isRequiredCompanion: false,
     emergencyContactName: '',
     emergencyHomeNumber: '',
-    emergencyRelationship: '',
-    isRequiredCompanion: false
+    emergencyRelationship: ''
   });
 
   const handleChange = (e) => {

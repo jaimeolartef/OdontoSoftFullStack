@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 public interface PatientController {
 
-    ResponseEntity<Void> createPatient(PacienteDto pacienteDto);
+    ResponseEntity<PacienteDto> createPatient(PacienteDto pacienteDto);
 
     ResponseEntity<PacienteDto> getPatient(Integer id);
 

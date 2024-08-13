@@ -1,0 +1,57 @@
+package org.enterprise.odontosoft.controller.mapper;
+
+import org.enterprise.odontosoft.controller.Enum.TipoDocumentoEnum;
+import org.enterprise.odontosoft.model.Entity.Paciente;
+import org.enterprise.odontosoft.model.Entity.Tipodocumento;
+import org.enterprise.odontosoft.util.UtilDate;
+import org.enterprise.odontosoft.view.dto.PacienteDto;
+
+
+public class PatientMapper {
+
+    public static Paciente toEntity(PacienteDto pacienteDto) throws Exception {
+        return Paciente.builder()
+            .id(pacienteDto.getId())
+            .idtipodocumento(Tipodocumento.builder()
+                .id(TipoDocumentoEnum.getBySigla(pacienteDto.getIdtipodocumento()).getId())
+                .build())
+            .primernombre(pacienteDto.getPrimernombre())
+            .segundonombre(pacienteDto.getSegundonombre())
+            .primerapellido(pacienteDto.getPrimerapellido())
+            .segundoapellido(pacienteDto.getSegundoapellido())
+            .fechanacimiento(UtilDate.convertToLocalDate(pacienteDto.getFechanacimiento()))
+            .ciudadnacimiento(pacienteDto.getCiudadnacimiento())
+            .genero(pacienteDto.getGenero())
+            .estadocivil(pacienteDto.getEstadocivil())
+            .direccionresidencia(pacienteDto.getDireccionresidencia())
+            .ciudadresidencia(pacienteDto.getCiudadresidencia())
+            .telefono(pacienteDto.getTelefono())
+            .correo(pacienteDto.getCorreo())
+            .nombreacompanante(pacienteDto.getNombreacompanante())
+            .parentescoacompanante(pacienteDto.getParentescoacompanante())
+            .telefonoacompanante(pacienteDto.getTelefonoacompanante())
+            .build();
+    }
+
+    public static PacienteDto toDto(Paciente paciente) {
+        return PacienteDto.builder()
+            .id(paciente.getId())
+            .idtipodocumento(paciente.getIdtipodocumento().getCodigo())
+            .primernombre(paciente.getPrimernombre())
+            .segundonombre(paciente.getSegundonombre())
+            .primerapellido(paciente.getPrimerapellido())
+            .segundoapellido(paciente.getSegundoapellido())
+            .fechanacimiento(String.valueOf(paciente.getFechanacimiento()))
+            .ciudadnacimiento(paciente.getCiudadnacimiento())
+            .genero(paciente.getGenero())
+            .estadocivil(paciente.getEstadocivil())
+            .direccionresidencia(paciente.getDireccionresidencia())
+            .ciudadresidencia(paciente.getCiudadresidencia())
+            .telefono(paciente.getTelefono())
+            .correo(paciente.getCorreo())
+            .nombreacompanante(paciente.getNombreacompanante())
+            .parentescoacompanante(paciente.getParentescoacompanante())
+            .telefonoacompanante(paciente.getTelefonoacompanante())
+            .build();
+    }
+}

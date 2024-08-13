@@ -124,5 +124,11 @@ INSERT INTO public.permiso_menu (id, id_rol, id_menu) VALUES (DEFAULT, 1::intege
 INSERT INTO public.permiso_menu (id, id_rol, id_menu) VALUES (DEFAULT, 1::integer, 8::integer);
 INSERT INTO public.permiso_menu (id, id_rol, id_menu) VALUES (DEFAULT, 2::integer, 2::integer);
 
+INSERT INTO public.tipodocumento(id, codigo, nombre) VALUES(1, 'C.C.', 'Cédula de Ciudadanía');
+INSERT INTO public.tipodocumento(id, codigo, nombre) VALUES(2, 'C.E.', 'Cédula de Extranjerí');
+INSERT INTO public.tipodocumento (id, codigo, nombre) VALUES(3, 'T.I.', 'Tarjeta de Identidad');
+INSERT INTO public.tipodocumento (id, codigo, nombre) VALUES(4, 'R.C.', 'Registro Civil');
+INSERT INTO public.tipodocumento (id, codigo, nombre) VALUES(5, 'P.S', 'Pasaporte');
+
 
 
