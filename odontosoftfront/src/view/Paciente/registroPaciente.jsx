@@ -1,15 +1,22 @@
 import React, { useState } from 'react';
 import './registroPaciente.css';
 import Logo from '../../resource/LogoNegro.png';
+import sha256 from "crypto-js/sha256";
+import axios from "axios";
 
 const RegistroPaciente = () => {
   const [formData, setFormData] = useState({
-    documentType: '',
+    idtipodocumento: '',
     documentNumber: '',
-    fullName: '',
+    firstName: '',
+    secondName: '',
+    firstLastName: '',
+    secondLastName: '',
     dateOfBirth: '',
+    cityOfBirth: '',
     gender: '',
-    address: '',
+    residenceAddress: '',
+    cityOfResidence: '',
     phoneNumber: '',
     maritalStatus: '',
     email: '',
@@ -30,6 +37,23 @@ const RegistroPaciente = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Form Data Submitted:', formData);
+    let token = localStorage.getItem('jsonwebtoken');
+    console.log('Token: ', token);
+    try {
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      axios.post('http://localhost:8080/pacientes/crear', formData)
+        .then(response => {
+          if (response.data) {
+            console.log('Paciente registrado con éxito. ' + response.data);
+          }  else {
+            alert('Error al registrar el paciente. Contacte al administrador del sistema');
+          }
+        }).catch(error => {
+        alert('Error al registrar el paciente. Contacte al administrador del sistema');
+      })
+    } catch (error) {
+      alert('Error ' + error);
+    }
   };
 
   return (
@@ -43,11 +67,10 @@ const RegistroPaciente = () => {
           <h3>Información Personal</h3>
           <label>
             Tipo de documento:
-            <select name="documentType" value={formData.documentType} onChange={handleChange}>
+            <select name="idtipodocumento" value={formData.idtipodocumento} onChange={handleChange}>
               <option value="">Seleccionar...</option>
-              <option value="id">Cédula de ciudadanía</option>
-              <option value="passport">Pasaporte</option>
-              <option value="other">Otro</option>
+              <option value="C.C.">Cédula de ciudadanía</option>
+              <option value="P.S.">Pasaporte</option>
             </select>
           </label>
           <label>
@@ -55,24 +78,52 @@ const RegistroPaciente = () => {
             <input type="text" name="documentNumber" value={formData.documentNumber} onChange={handleChange} required/>
           </label>
           <label>
-            Nombre completo:
-            <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} required/>
+            Primer nombre:
+            <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} required/>
+          </label>
+          <label>
+            Segundo nombre:
+            <input type="text" name="secondName" value={formData.secondName} onChange={handleChange}/>
+          </label>
+          <label>
+            Primer apellido:
+            <input type="text" name="firstLastName" value={formData.firstLastName} onChange={handleChange} required/>
+          </label>
+          <label>
+            Segundo apellido:
+            <input type="text" name="secondLastName" value={formData.secondLastName} onChange={handleChange}/>
           </label>
           <label>
             Fecha de nacimiento:
             <input type="date" name="dateOfBirth" value={formData.dateOfBirth} onChange={handleChange} required/>
           </label>
           <label>
-            Genero:
-            <select name="gender" value={formData.gender} onChange={handleChange}>
+            Ciudad de nacimiento:
+            <select name="cityOfBirth" value={formData.cityOfBirth} onChange={handleChange}>
               <option value="">Seleccionar...</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
+              <option value="Bucaramanga">Bucaramanga</option>
+              <option value="Floridablanca">Floridablanca</option>
             </select>
           </label>
           <label>
-            Dirección:
-            <input type="text" name="address" value={formData.address} onChange={handleChange} required/>
+            Genero:
+            <select name="gender" value={formData.gender} onChange={handleChange}>
+              <option value="">Seleccionar...</option>
+              <option value="M">Masculino</option>
+              <option value="F">Femenino</option>
+            </select>
+          </label>
+          <label>
+            Dirección de residencia:
+            <input type="text" name="residenceAddress" value={formData.residenceAddress} onChange={handleChange} required/>
+          </label>
+          <label>
+            Ciudad de residencia:
+            <select name="cityOfResidence" value={formData.cityOfResidence} onChange={handleChange}>
+              <option value="">Seleccionar...</option>
+              <option value="Bucaramanga">Bucaramanga</option>
+              <option value="Floridablanca">Floridablanca</option>
+            </select>
           </label>
           <label>
             Número de teléfono:
@@ -95,7 +146,8 @@ const RegistroPaciente = () => {
           </label>
           <label>
             ¿Requiere Acompañante?
-            <input type="checkbox" name="isRequiredCompanion" checked={formData.isRequiredCompanion} onChange={handleChange}/>
+            <input type="checkbox" name="isRequiredCompanion" checked={formData.isRequiredCompanion}
+                   onChange={handleChange}/>
           </label>
         </section>
         <section className="emergency-contact-details">
@@ -104,7 +156,8 @@ const RegistroPaciente = () => {
               <h3>Datos del acompañante</h3>
               <label>
                 Nombre completo del acompañante:
-                <input type="text" name="emergencyContactName" value={formData.emergencyContactName} onChange={handleChange} />
+                <input type="text" name="emergencyContactName" value={formData.emergencyContactName}
+                       onChange={handleChange} />
               </label>
               <label>
                 Número de teléfono del acompañante:
