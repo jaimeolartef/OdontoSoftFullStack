@@ -1,16 +1,14 @@
 package org.enterprise.odontosoft.controller;
 
-import org.enterprise.odontosoft.model.Dao.PatientDao;
+import org.enterprise.odontosoft.view.dto.ConsultarPacienteDto;
 import org.enterprise.odontosoft.view.dto.PacienteDto;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
 public interface PatientController {
 
     ResponseEntity<PacienteDto> createPatient(PacienteDto pacienteDto);
 
-    ResponseEntity<PacienteDto> getPatient(Integer id);
+    ResponseEntity<PacienteDto> getPatient(ConsultarPacienteDto consultarPacienteDto);
 
     ResponseEntity<Void> updatePatient(PacienteDto paciente);
 

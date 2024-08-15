@@ -1,30 +1,50 @@
 import React, { useState } from 'react';
 import './registroPaciente.css';
 import Logo from '../../resource/LogoNegro.png';
-import sha256 from "crypto-js/sha256";
 import axios from "axios";
 
 const RegistroPaciente = () => {
   const [formData, setFormData] = useState({
     idtipodocumento: '',
-    documentNumber: '',
-    firstName: '',
-    secondName: '',
-    firstLastName: '',
-    secondLastName: '',
-    dateOfBirth: '',
-    cityOfBirth: '',
-    gender: '',
-    residenceAddress: '',
-    cityOfResidence: '',
-    phoneNumber: '',
-    maritalStatus: '',
-    email: '',
+    documento: '',
+    primernombre: '',
+    segundonombre: '',
+    primerapellido: '',
+    segundoapellido: '',
+    fechanacimiento: '',
+    ciudadnacimiento: '',
+    genero: '',
+    direccionresidencia: '',
+    ciudadresidencia: '',
+    telefono: '',
+    estadocivil: '',
+    correo: '',
     isRequiredCompanion: false,
-    emergencyContactName: '',
-    emergencyHomeNumber: '',
-    emergencyRelationship: ''
+    nombreacompanante: '',
+    telefonoacompanante: '',
+    parentescoacompanante: ''
   });
+
+  const initialFormData = {
+    idtipodocumento: '',
+    documento: '',
+    primernombre: '',
+    segundonombre: '',
+    primerapellido: '',
+    segundoapellido: '',
+    fechanacimiento: '',
+    ciudadnacimiento: '',
+    genero: '',
+    direccionresidencia: '',
+    ciudadresidencia: '',
+    telefono: '',
+    estadocivil: '',
+    correo: '',
+    isRequiredCompanion: false,
+    nombreacompanante: '',
+    telefonoacompanante: '',
+    parentescoacompanante: ''
+  }
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -32,6 +52,10 @@ const RegistroPaciente = () => {
       ...formData,
       [name]: type === 'checkbox' ? checked : value,
     });
+  };
+
+  const resetForm = () => {
+    setFormData(initialFormData);
   };
 
   const handleSubmit = (e) => {
@@ -44,7 +68,8 @@ const RegistroPaciente = () => {
       axios.post('http://localhost:8080/pacientes/crear', formData)
         .then(response => {
           if (response.data) {
-            console.log('Paciente registrado con éxito. ' + response.data);
+            alert('Paciente registrado con éxito');
+            resetForm();
           }  else {
             alert('Error al registrar el paciente. Contacte al administrador del sistema');
           }
@@ -70,44 +95,48 @@ const RegistroPaciente = () => {
             <select name="idtipodocumento" value={formData.idtipodocumento} onChange={handleChange}>
               <option value="">Seleccionar...</option>
               <option value="C.C.">Cédula de ciudadanía</option>
+              <option value="C.E.">Cédula de Extranjería</option>
+              <option value="T.I.">Tarjeta de Identidad</option>
+              <option value="R.C.">Registro Civil</option>
               <option value="P.S.">Pasaporte</option>
             </select>
           </label>
           <label>
-            Número de documento de identidad:
-            <input type="text" name="documentNumber" value={formData.documentNumber} onChange={handleChange} required/>
+          Número de documento de identidad:
+            <input type="text" name="documento" value={formData.documento} onChange={handleChange} required/>
           </label>
           <label>
             Primer nombre:
-            <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} required/>
+            <input type="text" name="primernombre" value={formData.primernombre} onChange={handleChange} required/>
           </label>
           <label>
             Segundo nombre:
-            <input type="text" name="secondName" value={formData.secondName} onChange={handleChange}/>
+            <input type="text" name="segundonombre" value={formData.segundonombre} onChange={handleChange}/>
           </label>
           <label>
             Primer apellido:
-            <input type="text" name="firstLastName" value={formData.firstLastName} onChange={handleChange} required/>
+            <input type="text" name="primerapellido" value={formData.primerapellido} onChange={handleChange} required/>
           </label>
           <label>
             Segundo apellido:
-            <input type="text" name="secondLastName" value={formData.secondLastName} onChange={handleChange}/>
+            <input type="text" name="segundoapellido" value={formData.segundoapellido} onChange={handleChange}/>
           </label>
           <label>
             Fecha de nacimiento:
-            <input type="date" name="dateOfBirth" value={formData.dateOfBirth} onChange={handleChange} required/>
+            <input type="date" name="fechanacimiento" value={formData.fechanacimiento} onChange={handleChange} required/>
           </label>
           <label>
             Ciudad de nacimiento:
-            <select name="cityOfBirth" value={formData.cityOfBirth} onChange={handleChange}>
+            <select name="ciudadnacimiento" value={formData.ciudadnacimiento} onChange={handleChange}>
               <option value="">Seleccionar...</option>
               <option value="Bucaramanga">Bucaramanga</option>
               <option value="Floridablanca">Floridablanca</option>
+              <option value="Girón">Girón</option>
             </select>
           </label>
           <label>
             Genero:
-            <select name="gender" value={formData.gender} onChange={handleChange}>
+            <select name="genero" value={formData.genero} onChange={handleChange}>
               <option value="">Seleccionar...</option>
               <option value="M">Masculino</option>
               <option value="F">Femenino</option>
@@ -115,11 +144,11 @@ const RegistroPaciente = () => {
           </label>
           <label>
             Dirección de residencia:
-            <input type="text" name="residenceAddress" value={formData.residenceAddress} onChange={handleChange} required/>
+            <input type="text" name="direccionresidencia" value={formData.direccionresidencia} onChange={handleChange} required/>
           </label>
           <label>
             Ciudad de residencia:
-            <select name="cityOfResidence" value={formData.cityOfResidence} onChange={handleChange}>
+            <select name="ciudadresidencia" value={formData.ciudadresidencia} onChange={handleChange} required>
               <option value="">Seleccionar...</option>
               <option value="Bucaramanga">Bucaramanga</option>
               <option value="Floridablanca">Floridablanca</option>
@@ -127,22 +156,22 @@ const RegistroPaciente = () => {
           </label>
           <label>
             Número de teléfono:
-            <input type="text" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} required/>
+            <input type="text" name="telefono" value={formData.telefono} onChange={handleChange} required/>
           </label>
           <label>
             Estado civil:
-            <select name="maritalStatus" value={formData.maritalStatus} onChange={handleChange}>
+            <select name="estadocivil" value={formData.estadocivil} onChange={handleChange}>
               <option value="">Seleccionar...</option>
-              <option value="single">Soltero</option>
-              <option value="married">Casado</option>
-              <option value="divorced">Divorciado</option>
-              <option value="divorced">Unión Libre</option>
-              <option value="other">Otro</option>
+              <option value="Soltero">Soltero</option>
+              <option value="Casado">Casado</option>
+              <option value="Divorciado">Divorciado</option>
+              <option value="Unión Libre">Unión Libre</option>
+              <option value="Otro">Otro</option>
             </select>
           </label>
           <label>
             Correo electrónico:
-            <input type="email" name="email" value={formData.email} onChange={handleChange} required/>
+            <input type="email" name="correo" value={formData.correo} onChange={handleChange} required/>
           </label>
           <label>
             ¿Requiere Acompañante?
@@ -156,16 +185,16 @@ const RegistroPaciente = () => {
               <h3>Datos del acompañante</h3>
               <label>
                 Nombre completo del acompañante:
-                <input type="text" name="emergencyContactName" value={formData.emergencyContactName}
-                       onChange={handleChange} />
+                <input type="text" name="nombreacompanante" value={formData.nombreacompanante}
+                       onChange={handleChange} required={formData.isRequiredCompanion}/>
               </label>
               <label>
                 Número de teléfono del acompañante:
-                <input type="text" name="emergencyHomeNumber" value={formData.emergencyHomeNumber} onChange={handleChange} />
+                <input type="text" name="telefonoacompanante" value={formData.telefonoacompanante} onChange={handleChange} required={formData.isRequiredCompanion}/>
               </label>
               <label>
                 Parentesco del acompañante:
-                <input type="text" name="emergencyRelationship" value={formData.emergencyRelationship} onChange={handleChange} />
+                <input type="text" name="parentescoacompanante" value={formData.parentescoacompanante} onChange={handleChange} required={formData.isRequiredCompanion}/>
               </label>
             </>
           )}

@@ -1,8 +1,10 @@
 package org.enterprise.odontosoft.controller;
 
+import org.enterprise.odontosoft.controller.Enum.TipoDocumentoEnum;
 import org.enterprise.odontosoft.controller.mapper.PatientMapper;
 import org.enterprise.odontosoft.model.Dao.PatientDao;
 import org.enterprise.odontosoft.model.Entity.Paciente;
+import org.enterprise.odontosoft.view.dto.ConsultarPacienteDto;
 import org.enterprise.odontosoft.view.dto.PacienteDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,8 +39,18 @@ public class PatientControllerImpl implements PatientController {
     }
 
     @Override
-    public ResponseEntity<PacienteDto> getPatient(Integer id) {
-        return null;
+    public ResponseEntity<PacienteDto> getPatient(ConsultarPacienteDto consultarPacienteDto) {
+        ResponseEntity<PacienteDto> responseEntity;
+        try {
+            Paciente paciente = patientDao.findByDocumentAndTypeDocument(consultarPacienteDto.getDocumento(), TipoDocumentoEnum.getBySigla(consultarPacienteDto.getIdtipodocumento()).getId());
+
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(PatientMapper.toDto(paciente));
+        } catch (Exception e) {
+            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            logger.error("Error creating patient", e);
+        }
+
+        return responseEntity;
     }
 
     @Override

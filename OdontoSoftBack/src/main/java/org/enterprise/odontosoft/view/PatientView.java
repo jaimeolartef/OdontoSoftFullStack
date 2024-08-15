@@ -1,6 +1,7 @@
 package org.enterprise.odontosoft.view;
 
 import org.enterprise.odontosoft.controller.PatientController;
+import org.enterprise.odontosoft.view.dto.ConsultarPacienteDto;
 import org.enterprise.odontosoft.view.dto.PacienteDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,9 +21,9 @@ public class PatientView {
         return patientController.createPatient(paciente);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<PacienteDto> getPatient(@PathVariable Integer id) {
-        return null;
+    @GetMapping("/consultar")
+    public ResponseEntity<PacienteDto> getPatient(@RequestBody ConsultarPacienteDto paciente) {
+        return patientController.getPatient(paciente);
     }
 
     @PutMapping("/{id}")

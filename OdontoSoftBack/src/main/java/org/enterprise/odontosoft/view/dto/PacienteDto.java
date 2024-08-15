@@ -1,14 +1,6 @@
 package org.enterprise.odontosoft.view.dto;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.enterprise.odontosoft.model.Entity.Tipodocumento;
-
-import java.time.LocalDate;
 
 @NoArgsConstructor
 @AllArgsConstructor
