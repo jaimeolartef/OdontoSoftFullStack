@@ -1,5 +1,8 @@
 package org.enterprise.odontosoft.controller;
 
+import java.util.List;
+import java.util.Objects;
+
 import org.enterprise.odontosoft.controller.Enum.TipoDocumentoEnum;
 import org.enterprise.odontosoft.controller.mapper.PatientMapper;
 import org.enterprise.odontosoft.model.Dao.PatientDao;
@@ -39,12 +42,23 @@ public class PatientControllerImpl implements PatientController {
     }
 
     @Override
-    public ResponseEntity<PacienteDto> getPatient(ConsultarPacienteDto consultarPacienteDto) {
-        ResponseEntity<PacienteDto> responseEntity;
+    public ResponseEntity<List<PacienteDto>> getPatient(ConsultarPacienteDto consultarPacienteDto) {
+        ResponseEntity<List<PacienteDto>> responseEntity;
         try {
-            Paciente paciente = patientDao.findByDocumentAndTypeDocument(consultarPacienteDto.getDocumento(), TipoDocumentoEnum.getBySigla(consultarPacienteDto.getIdtipodocumento()).getId());
+            List<Paciente> pacientes;
+            List<PacienteDto> pacientesDto;
+            if (Objects.nonNull(consultarPacienteDto.getDocumento())) {
+                pacientes = patientDao.findByDocument(consultarPacienteDto.getDocumento());
+            } else if (Objects.nonNull(consultarPacienteDto.getNombre())) {
+                pacientes = patientDao.findByName(consultarPacienteDto.getNombre());
+            } else {
+                responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+                return responseEntity;
+            }
 
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(PatientMapper.toDto(paciente));
+            pacientesDto = PatientMapper.toDto(pacientes);
+
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(pacientesDto);
         } catch (Exception e) {
             responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             logger.error("Error creating patient", e);

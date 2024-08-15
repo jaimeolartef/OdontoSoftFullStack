@@ -1,5 +1,7 @@
 package org.enterprise.odontosoft.view;
 
+import java.util.List;
+
 import org.enterprise.odontosoft.controller.PatientController;
 import org.enterprise.odontosoft.view.dto.ConsultarPacienteDto;
 import org.enterprise.odontosoft.view.dto.PacienteDto;
@@ -22,7 +24,7 @@ public class PatientView {
     }
 
     @GetMapping("/consultar")
-    public ResponseEntity<PacienteDto> getPatient(@RequestBody ConsultarPacienteDto paciente) {
+    public ResponseEntity<List<PacienteDto>> getPatient(@RequestBody ConsultarPacienteDto paciente) {
         return patientController.getPatient(paciente);
     }
 

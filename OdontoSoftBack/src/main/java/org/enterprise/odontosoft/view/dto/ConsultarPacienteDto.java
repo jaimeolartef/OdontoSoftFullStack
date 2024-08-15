@@ -7,7 +7,7 @@ import lombok.*;
 @Builder
 @Setter
 @Getter
-public class ConsultarPacienteDto {
-    private String idtipodocumento;
+public class ConsultarPacienteDto {    
     private String documento;
+    private String nombre;
 }

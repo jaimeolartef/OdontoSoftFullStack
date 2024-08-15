@@ -1,5 +1,8 @@
 package org.enterprise.odontosoft.controller.mapper;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.enterprise.odontosoft.controller.Enum.TipoDocumentoEnum;
 import org.enterprise.odontosoft.model.Entity.Paciente;
 import org.enterprise.odontosoft.model.Entity.Tipodocumento;
@@ -55,5 +58,9 @@ public class PatientMapper {
             .parentescoacompanante(paciente.getParentescoacompanante())
             .telefonoacompanante(paciente.getTelefonoacompanante())
             .build();
+    }
+
+    public static List<PacienteDto> toDto(List<Paciente> pacientes) {
+        return pacientes.stream().map(PatientMapper::toDto).collect(Collectors.toList());
     }
 }
