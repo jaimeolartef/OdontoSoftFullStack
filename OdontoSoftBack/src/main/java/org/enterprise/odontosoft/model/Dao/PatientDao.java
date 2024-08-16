@@ -8,7 +8,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PatientDao  extends CrudRepository<Paciente, Long>  {
+public interface PatientDao  extends CrudRepository<Paciente, Integer>  {
 
     @Query("SELECT p FROM Paciente p WHERE p.documento = :document")
     List<Paciente> findByDocument(String document);

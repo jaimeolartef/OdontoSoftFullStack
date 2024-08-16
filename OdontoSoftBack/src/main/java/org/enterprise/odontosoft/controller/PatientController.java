@@ -12,7 +12,9 @@ public interface PatientController {
 
     ResponseEntity<List<PacienteDto>> getPatient(ConsultarPacienteDto consultarPacienteDto);
 
-    ResponseEntity<Void> updatePatient(PacienteDto paciente);
+    ResponseEntity<?> getPatientById(Integer id);
+
+    ResponseEntity<PacienteDto> updatePatient(PacienteDto pacienteDto);
 
     ResponseEntity<Void> deletePatient(Integer id);
 }

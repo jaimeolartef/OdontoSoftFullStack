@@ -40,7 +40,7 @@ public class PatientMapper {
     public static PacienteDto toDto(Paciente paciente) {
         return PacienteDto.builder()
             .id(paciente.getId())
-            .idtipodocumento(paciente.getIdtipodocumento().getCodigo())
+            .idtipodocumento(TipoDocumentoEnum.getById(paciente.getIdtipodocumento().getId()).getSigla())
             .documento(paciente.getDocumento())
             .primernombre(paciente.getPrimernombre())
             .segundonombre(paciente.getSegundonombre())

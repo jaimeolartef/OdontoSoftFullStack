@@ -30,4 +30,13 @@ public enum TipoDocumentoEnum {
         }
         throw new IllegalArgumentException("No TipoDocumentoEnum found with id: ");
     }
+
+public static TipoDocumentoEnum getById(Integer id) {
+        for (TipoDocumentoEnum tipo : values()) {
+            if (tipo.id.equals(id)) {
+                return tipo;
+            }
+        }
+        throw new IllegalArgumentException("No TipoDocumentoEnum found with id: ");
+    }
 }
