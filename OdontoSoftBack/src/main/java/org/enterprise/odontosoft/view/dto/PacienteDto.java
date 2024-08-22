@@ -1,13 +1,18 @@
 package org.enterprise.odontosoft.view.dto;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @Setter
 @Getter
-public class PacienteDto {
+public class PacienteDto extends MensajeValidation {
+
+    public PacienteDto(String codigo, String mensaje) {
+        super(codigo, mensaje);
+    }
 
     private Integer id;
     private String idtipodocumento;

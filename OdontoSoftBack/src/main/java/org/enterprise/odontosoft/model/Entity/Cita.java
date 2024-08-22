@@ -32,4 +32,7 @@ public class Cita {
   @JoinColumn(name = "idpaciente")
   private Paciente idpaciente;
 
+  @Column(name = "habilitado")
+  private Boolean habilitado;
+
 }

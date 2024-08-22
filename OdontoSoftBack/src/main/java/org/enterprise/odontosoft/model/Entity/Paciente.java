@@ -90,6 +90,9 @@ public class Paciente {
   @Column(name = "telefonoacompanante", length = 20)
   private String telefonoacompanante;
 
+  @Column(name = "habilitado")
+    private Boolean habilitado;
+
   @OneToMany(mappedBy = "idpaciente")
   private Set<Cita> citas = new LinkedHashSet<>();
 

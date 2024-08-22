@@ -1,14 +1,17 @@
 package org.enterprise.odontosoft.util;
 
+import lombok.experimental.UtilityClass;
+
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
+@UtilityClass
 public class UtilDate {
 
     public static LocalDate convertToLocalDate(String dateToConvert) {
-        String dateTimeString = "2024-08-13T01:47:26.503Z";
-        Instant instant = Instant.parse(dateTimeString);
-        return instant.atZone(ZoneId.systemDefault()).toLocalDate();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return LocalDate.parse(dateToConvert, formatter);
     }
 }

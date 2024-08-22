@@ -17,9 +17,9 @@ public class PatientView {
     public PatientView(PatientController patientController) {
         this.patientController = patientController;
     }
-    // TODO falta implementar el manejo de errores
+
     @PostMapping("/crear")
-    public ResponseEntity<?> createPatient(@RequestBody PacienteDto paciente) {
+    public ResponseEntity<PacienteDto> createPatient(@RequestBody PacienteDto paciente) {
         return patientController.createPatient(paciente);
     }
 
@@ -29,18 +29,17 @@ public class PatientView {
     }
 
     @GetMapping("/consultar/{id}")
-    public ResponseEntity<?> getPatientById(@PathVariable Integer id) {
+    public ResponseEntity<PacienteDto> getPatientById(@PathVariable Integer id) {
         return patientController.getPatientById(id);
     }
 
     @PutMapping("/modificar")
-    public ResponseEntity<?> updatePatient(@RequestBody PacienteDto paciente) {
+    public ResponseEntity<PacienteDto> updatePatient(@RequestBody PacienteDto paciente) {
         return patientController.updatePatient(paciente);
     }
 
-    //TODO: Cambiar a DELETE por inhabilitar paciente
     @DeleteMapping("/eliminar/{id}")
-    public ResponseEntity<?> deletePatient(@PathVariable Integer id) {
+    public ResponseEntity<PacienteDto> deletePatient(@PathVariable Integer id) {
         return patientController.deletePatient(id);
     }
 }

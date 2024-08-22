@@ -1,23 +1,6 @@
 import React from "react";
 import Menu from "../Menu";
 
-//const links = localStorage.getItem("menu");
-
-/*const links = [
-  {
-    name: "Login",
-    href: "./Menu"
-  },
-  {
-    name: "Menu",
-    href: "./Menu"
-  },
-  {
-    name: "Contact",
-    href: "Contact"
-  }
-];*/
-
   const NavBar = (props) => {
     return (
       <div>

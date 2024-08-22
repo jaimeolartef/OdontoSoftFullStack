@@ -6,6 +6,9 @@ import axios from "axios";
 
 const ConsultarPaciente = () => {
 
+  const handleSubmit = (e) => {
+
+  };
 
   return (
     <div className="medical-form-container">
@@ -23,3 +26,5 @@ const ConsultarPaciente = () => {
     </div>
   );
 }
+
+export default ConsultarPaciente

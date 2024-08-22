@@ -36,4 +36,7 @@ public class Historiaclinica {
   @Column(name = "fechamodificacion")
   private LocalDate fechamodificacion;
 
+  @Column(name = "habilitado")
+  private Boolean habilitado;
+
 }

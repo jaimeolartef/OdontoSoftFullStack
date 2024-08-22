@@ -32,6 +32,7 @@ CREATE TABLE permiso_menu
     id      serial NOT NULL,
     id_rol  int    NOT NULL,
     id_menu int    NOT NULL,
+    habilitado  bool DEFAULT false NOT NULL,
     CONSTRAINT permiso_menu_pkey PRIMARY KEY (id),
     CONSTRAINT permiso_menu_id_menu FOREIGN KEY (id_menu) REFERENCES menu (id),
     CONSTRAINT permiso_menu_id_rol FOREIGN KEY (id_rol) REFERENCES menu (id)
@@ -69,6 +70,7 @@ create table paciente
     nombreAcompanante     VARCHAR(50),
     parentescoAcompanante VARCHAR(20),
     telefonoAcompanante   VARCHAR(20),
+    habilitado  bool DEFAULT false NOT NULL,
     primary key (id),
     foreign key (idTipoDocumento) references tipoDocumento(id)
 );
@@ -81,7 +83,8 @@ create table cita
     horaFin    TIME,
     idPaciente INT,
     primary key (id),
-    foreign key (idPaciente) references paciente (id)
+    foreign key (idPaciente) references paciente (id),
+    habilitado  bool DEFAULT false NOT NULL
 );
 
 create table historiaClinica
@@ -92,6 +95,7 @@ create table historiaClinica
     fechaCreacion date,
     idUsuarioModificacion    int,
     fechaModificacion date,
+    habilitado  bool DEFAULT false NOT NULL,
     primary key (id),
     foreign key (idPaciente) references paciente (id),
     foreign key (idUsuarioCreacion) references usuario (id),
@@ -108,27 +112,29 @@ INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES
 INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES (DEFAULT, 'Agenda'::varchar(50), null, null, true::boolean);
 INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES (DEFAULT, 'Configuración'::varchar(50), null, null, true::boolean);
 
-INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES (DEFAULT, 'Registrar'::varchar(50), 1::integer, null,  true::boolean);
-INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES (DEFAULT, 'Asignación de citas'::varchar(50), 2::integer, null,true::boolean);
-INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES (DEFAULT, 'Mi calendario'::varchar(50), 2::integer, null,true::boolean);
-INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES (DEFAULT, 'Roles'::varchar(50), 3::integer, null, true::boolean);
-INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES (DEFAULT, 'Usuarios'::varchar(50), 3::integer, null, true::boolean);
+INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES (DEFAULT, 'Registrar'::varchar(50), 1::integer, '/registroPac',  true::boolean);
+INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES (DEFAULT, 'Asignación de citas'::varchar(50), 2::integer, '/asigCita',true::boolean);
+INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES (DEFAULT, 'Mi calendario'::varchar(50), 2::integer, '/calendario',true::boolean);
+INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES (DEFAULT, 'Roles'::varchar(50), 3::integer, '/role', true::boolean);
+INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES (DEFAULT, 'Usuarios'::varchar(50), 3::integer, '/usuario', true::boolean);
+INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES (DEFAULT, 'Consultar'::varchar(50), 1::integer, '/consultarPac',  true::boolean);
 
-INSERT INTO public.permiso_menu (id, id_rol, id_menu) VALUES (DEFAULT, 1::integer, 1::integer);
-INSERT INTO public.permiso_menu (id, id_rol, id_menu) VALUES (DEFAULT, 1::integer, 2::integer);
-INSERT INTO public.permiso_menu (id, id_rol, id_menu) VALUES (DEFAULT, 1::integer, 3::integer);
-INSERT INTO public.permiso_menu (id, id_rol, id_menu) VALUES (DEFAULT, 1::integer, 4::integer);
-INSERT INTO public.permiso_menu (id, id_rol, id_menu) VALUES (DEFAULT, 1::integer, 5::integer);
-INSERT INTO public.permiso_menu (id, id_rol, id_menu) VALUES (DEFAULT, 1::integer, 6::integer);
-INSERT INTO public.permiso_menu (id, id_rol, id_menu) VALUES (DEFAULT, 1::integer, 7::integer);
-INSERT INTO public.permiso_menu (id, id_rol, id_menu) VALUES (DEFAULT, 1::integer, 8::integer);
-INSERT INTO public.permiso_menu (id, id_rol, id_menu) VALUES (DEFAULT, 2::integer, 2::integer);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado) VALUES (DEFAULT, 1::integer, 1::integer, true);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado) VALUES (DEFAULT, 1::integer, 2::integer, true);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado) VALUES (DEFAULT, 1::integer, 3::integer, true);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado) VALUES (DEFAULT, 1::integer, 4::integer, true);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado) VALUES (DEFAULT, 1::integer, 5::integer, true);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado) VALUES (DEFAULT, 1::integer, 6::integer, true);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado) VALUES (DEFAULT, 1::integer, 7::integer, true);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado) VALUES (DEFAULT, 1::integer, 8::integer, true);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado) VALUES (DEFAULT, 2::integer, 2::integer, true);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado) VALUES (DEFAULT, 1::integer, 9::integer, true);
 
-INSERT INTO public.tipodocumento(id, codigo, nombre) VALUES(1, 'C.C.', 'Cédula de Ciudadanía');
-INSERT INTO public.tipodocumento(id, codigo, nombre) VALUES(2, 'C.E.', 'Cédula de Extranjerí');
-INSERT INTO public.tipodocumento (id, codigo, nombre) VALUES(3, 'T.I.', 'Tarjeta de Identidad');
-INSERT INTO public.tipodocumento (id, codigo, nombre) VALUES(4, 'R.C.', 'Registro Civil');
-INSERT INTO public.tipodocumento (id, codigo, nombre) VALUES(5, 'P.S', 'Pasaporte');
+INSERT INTO public.tipodocumento(id, codigo, nombre, habilitado) VALUES(1, 'C.C.', 'Cédula de Ciudadanía', true);
+INSERT INTO public.tipodocumento(id, codigo, nombre, habilitado) VALUES(2, 'C.E.', 'Cédula de Extranjerí', true);
+INSERT INTO public.tipodocumento (id, codigo, nombre, habilitado) VALUES(3, 'T.I.', 'Tarjeta de Identidad', true);
+INSERT INTO public.tipodocumento (id, codigo, nombre, habilitado) VALUES(4, 'R.C.', 'Registro Civil', true);
+INSERT INTO public.tipodocumento (id, codigo, nombre, habilitado) VALUES(5, 'P.S', 'Pasaporte', true);
 
 
 

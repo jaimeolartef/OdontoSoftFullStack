@@ -2,12 +2,13 @@ package org.enterprise.odontosoft.controller;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
+import org.enterprise.odontosoft.controller.Enum.TipoDocumentoEnum;
 import org.enterprise.odontosoft.controller.mapper.PatientMapper;
 import org.enterprise.odontosoft.model.Dao.PatientDao;
 import org.enterprise.odontosoft.model.Entity.Paciente;
 import org.enterprise.odontosoft.view.dto.ConsultarPacienteDto;
-import org.enterprise.odontosoft.view.dto.MensajeError;
 import org.enterprise.odontosoft.view.dto.PacienteDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,12 +32,16 @@ public class PatientControllerImpl implements PatientController {
     public ResponseEntity<PacienteDto> createPatient(PacienteDto pacienteDto) {
         ResponseEntity<PacienteDto> responseEntity;
         try {
+            List<Paciente> pacientes = patientDao.findByDocumentAndAndIdtipodocumento(pacienteDto.getDocumento(), TipoDocumentoEnum.getBySigla(pacienteDto.getIdtipodocumento()).getId());
+            if (!pacientes.isEmpty()) {
+                responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new PacienteDto(String.valueOf(HttpStatus.BAD_REQUEST.value()), "Ya existe un paciente con el número y tipo de documento proporcionado"));
+                return responseEntity;
+            }
             Paciente paciente = patientDao.save(PatientMapper.toEntity(pacienteDto));
-
             responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(PatientMapper.toDto(paciente));
         } catch (Exception e) {
             responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-            logger.error("Error creating patient", e);
+            logger.error("Error creating patient.", e);
         }
 
         return responseEntity;
@@ -62,31 +67,25 @@ public class PatientControllerImpl implements PatientController {
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(pacientesDto);
         } catch (Exception e) {
             responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-            logger.error("Error creating patient", e);
+            logger.error("Error getting patient.", e);
         }
 
         return responseEntity;
     }
 
     @Override
-    public ResponseEntity<?> getPatientById(Integer id) {
-        ResponseEntity<?> responseEntity;
+    public ResponseEntity<PacienteDto> getPatientById(Integer id) {
+        ResponseEntity<PacienteDto> responseEntity;
         try {
             Paciente paciente = patientDao.findById(id).orElse(null);
             if (Objects.isNull(paciente)) {
-                responseEntity = ResponseEntity.status(HttpStatus.NOT_FOUND).body(MensajeError.builder()
-                        .codigo(String.valueOf(HttpStatus.NOT_FOUND.value()))
-                        .mensaje("Paciente no encontrado")
-                        .build());
+                responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new PacienteDto(String.valueOf(HttpStatus.BAD_REQUEST.value()), "No existe un paciente con el id proporcionado"));
             } else {
                 responseEntity = ResponseEntity.status(HttpStatus.OK).body(PatientMapper.toDto(paciente));
             }
         } catch (Exception e) {
-            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(MensajeError.builder()
-                    .codigo(String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()))
-                    .mensaje("Ocurrió un error al consultar el paciente")
-                    .build());
-            logger.error("Error creating patient", e);
+            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            logger.error("Error find patient", e);
         }
         return responseEntity;
     }
@@ -99,21 +98,30 @@ public class PatientControllerImpl implements PatientController {
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(PatientMapper.toDto(paciente));
         } catch (Exception e) {
             responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-            logger.error("Error creating patient", e);
+            logger.error("Error updating patient", e);
         }
 
         return responseEntity;
     }
 
     @Override
-    public ResponseEntity<Void> deletePatient(Integer id) {
-        ResponseEntity<Void> responseEntity;
+    public ResponseEntity<PacienteDto> deletePatient(Integer id) {
+        ResponseEntity<PacienteDto> responseEntity;
+        PacienteDto pacienteDto;
         try {
-            patientDao.deleteById(id);
-            responseEntity = ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            Optional<Paciente> paciente = patientDao.findById(id);
+            if (paciente.isPresent()) {
+                paciente.get().setHabilitado(false);
+                patientDao.save(paciente.get());
+                pacienteDto = PatientMapper.toDto(paciente.get());
+                responseEntity = ResponseEntity.status(HttpStatus.OK).body(pacienteDto);
+            } else {
+                responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new PacienteDto(String.valueOf(HttpStatus.BAD_REQUEST.value()), "No existe un paciente con el id proporcionado"));
+                return responseEntity;
+            }
         } catch (Exception e) {
             responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-            logger.error("Error creating patient", e);
+            logger.error("Error deleting patient", e);
         }
 
         return responseEntity;

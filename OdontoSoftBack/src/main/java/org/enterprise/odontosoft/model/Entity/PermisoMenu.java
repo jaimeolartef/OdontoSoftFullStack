@@ -27,4 +27,7 @@ public class PermisoMenu {
   @JoinColumn(name = "id_menu", referencedColumnName = "id", nullable = false)
   private Menu idMenu;
 
+  @Column(name = "habilitado")
+  private Boolean habilitado;
+
 }

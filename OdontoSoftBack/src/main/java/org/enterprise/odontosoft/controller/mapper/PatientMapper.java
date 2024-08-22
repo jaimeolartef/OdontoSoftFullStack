@@ -1,18 +1,18 @@
 package org.enterprise.odontosoft.controller.mapper;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
+import lombok.experimental.UtilityClass;
 import org.enterprise.odontosoft.controller.Enum.TipoDocumentoEnum;
 import org.enterprise.odontosoft.model.Entity.Paciente;
 import org.enterprise.odontosoft.model.Entity.Tipodocumento;
 import org.enterprise.odontosoft.util.UtilDate;
 import org.enterprise.odontosoft.view.dto.PacienteDto;
 
-
+@UtilityClass
 public class PatientMapper {
 
-    public static Paciente toEntity(PacienteDto pacienteDto) throws Exception {
+    public static Paciente toEntity(PacienteDto pacienteDto) {
         return Paciente.builder()
             .id(pacienteDto.getId())
             .idtipodocumento(Tipodocumento.builder()
@@ -34,6 +34,7 @@ public class PatientMapper {
             .nombreacompanante(pacienteDto.getNombreacompanante())
             .parentescoacompanante(pacienteDto.getParentescoacompanante())
             .telefonoacompanante(pacienteDto.getTelefonoacompanante())
+            .habilitado(Boolean.TRUE)
             .build();
     }
 
@@ -61,6 +62,6 @@ public class PatientMapper {
     }
 
     public static List<PacienteDto> toDto(List<Paciente> pacientes) {
-        return pacientes.stream().map(PatientMapper::toDto).collect(Collectors.toList());
+        return pacientes.stream().map(PatientMapper::toDto).toList();
     }
 }
