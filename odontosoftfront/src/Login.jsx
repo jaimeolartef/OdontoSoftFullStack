@@ -68,16 +68,18 @@ const Login = (props) => {
           <h2>Inicio de sesión</h2>
           <form>
             <div className="input-box">
-              <input type="usuario" name="usuario" value={loginObj.usuario} onChange={handleInputChange} required />
+              <input type="usuario"  name="usuario" value={loginObj.usuario} onChange={handleInputChange} required />
               <label>Usuario</label>
             </div>
             <div className="input-box">
-              <input type="password" name="clave" value={loginObj.clave} onChange={handleInputChange} required />
+              <input type="password"  name="clave" value={loginObj.clave} onChange={handleInputChange} required />
               <label>Clave</label>
             </div>
+            <div className="center">
             <button type="button" className="btn" onClick={handleLogin}>
               Login
             </button>
+            </div>
           </form>
         </div>
       </div>

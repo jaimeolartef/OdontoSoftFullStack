@@ -35,28 +35,35 @@
   }
 }
 
-/* CSS para input de la aplicacion */
+.btn {
+  width: 100%;
+  height: 45px;
+  background-image: linear-gradient(to bottom right, #34aaf3, #3e3e3e);
+  border: none;
+  outline: none;
+  border-radius: 40px;
+  cursor: pointer;
+  font-size: 1em;
+  color: #fbfbfb;
+  font-weight: 600;
+}
 
+/* CSS para input de la aplicacion */
 /* Estilos existentes para los campos de entrada */
-.input-box input {
+/* Estilos existentes para los campos de entrada */
+.input-box input, .input-box select, .input-box input[type="date"] {
   width: 100%;
   height: 50px;
   background: transparent;
-  border: 2px solid #3e3e3e;
+  border: 2px solid #5c5c5c;
   outline: none;
   border-radius: 40px;
   font-size: 1em;
-  color: #34AAF3FF;
+  color: #5c5c5c;
   padding: 0 20px;
   transition: .5s ease;
   position: relative;
   z-index: 2;
-}
-
-/* Apply the same styles for focus and valid states to all input fields */
-.input-box input:focus,
-.input-box input:valid {
-  border-color: #34AAF3FF;
 }
 
 .input-box label {
@@ -66,20 +73,44 @@
   left: 20px;
   transform: translateY(-77%);
   font-size: 1em;
-  color: #3e3e3e;
+  color: rgba(92, 92, 92, 0.01);
   pointer-events: none;
   transition: .5s ease;
 }
 
-/* Apply the same styles for focus and valid states to all input fields */
-.input-box input:focus + label,
-.input-box input:valid + label {
+/* Aplica los mismos estilos para los estados de enfoque y válidos a todos los campos de entrada. */
+.input-box input + label,
+.input-box select + label,
+.input-box input[type="date"] + label {
   top: 1px;
   font-size: .8em;
-  background: #34AAF3FF;
   padding: 0 6px;
-  color: #ffffff;
+  color: #050505;
   border-radius: 5px;
   z-index: 3;
+}
+
+
+.required-field {
+  color: red;
+  margin-left: 5px;
+}
+
+select:invalid {
+  background-image: linear-gradient(to right, rgb(236, 236, 236), rgba(255, 255, 255, 0.67));
+}
+
+input:invalid {
+  background-image: linear-gradient(to right, rgb(228, 228, 228), rgba(255, 255, 255, 0.67));
+}
+
+.input-box {
+  position: relative;
+  margin: 25px 0;
+}
+
+
+.logo {
+  zoom: 1.5; /* Increase the max-width to enlarge the logo */
 }
 

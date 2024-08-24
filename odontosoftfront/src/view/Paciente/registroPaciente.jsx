@@ -94,8 +94,7 @@ const RegistroPaciente = () => {
       <form onSubmit={handleSubmit}>
         <section className="personal-information">
           <h3>Información Personal</h3>
-          <label>
-            <span className="required-field">* </span>Tipo de documento:{' '}
+          <div className="input-box">
             <select name="idtipodocumento" value={formData.idtipodocumento} onChange={handleChange} required>
               <option value="">Seleccionar...</option>
               <option value="C.C.">Cédula de ciudadanía</option>
@@ -104,32 +103,33 @@ const RegistroPaciente = () => {
               <option value="R.C.">Registro Civil</option>
               <option value="P.S.">Pasaporte</option>
             </select>
-          </label>
+            <label><span className="required-field">* </span>Tipo de documento</label>
+          </div>
           <div className="input-box">
             <input type="text" name="documento" value={formData.documento} onChange={handleChange} required/>
-            <label>Número de documento de identidad</label>
+            <label><span className="required-field">* </span>Número de documento de identidad</label>
           </div>
           <div className="input-box">
             <input type="text" name="primernombre" value={formData.primernombre} onChange={handleChange} required/>
-            <label>Primer nombre</label>
+            <label><span className="required-field">* </span>Primer nombre</label>
           </div>
           <div className="input-box">
             <input type="text" name="segundonombre" value={formData.segundonombre} onChange={handleChange} />
-            <label>Segundo nombre</label>
+            <label><span className="required-field">  </span>Segundo nombre</label>
           </div>
           <div className="input-box">
             <input type="text" name="primerapellido" value={formData.primerapellido} onChange={handleChange} required/>
-            <label>Primer apellido</label>
+            <label><span className="required-field">* </span>Primer apellido</label>
           </div>
-          <label>
-            Segundo apellido:{' '}
+          <div className="input-box">
             <input type="text" name="segundoapellido" value={formData.segundoapellido} onChange={handleChange}/>
-          </label>
-          <label>
-            <span className="required-field">* </span>Fecha de nacimiento:{' '}
+            <label><span className="required-field">  </span>Segundo apellido</label>
+          </div>
+          <div className="input-box">
             <input type="date" name="fechanacimiento" value={formData.fechanacimiento} onChange={handleChange}
                    required/>
-          </label>
+            <label><span className="required-field">* </span>Fecha de nacimiento</label>
+          </div>
           <label>
             Ciudad de nacimiento:{' '}
             <select name="ciudadnacimiento" value={formData.ciudadnacimiento} onChange={handleChange}>
