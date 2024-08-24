@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './registroPaciente.css';
+import '../../App.css';
 import Logo from '../../resource/LogoNegro.png';
 import axios from "axios";
 
@@ -104,86 +105,85 @@ const RegistroPaciente = () => {
               <option value="P.S.">Pasaporte</option>
             </select>
           </label>
-          <label>
-            <span className="required-field">* </span>Número de documento de identidad:{' '}
+          <div className="input-box">
             <input type="text" name="documento" value={formData.documento} onChange={handleChange} required/>
-          </label>
+            <label>Número de documento de identidad</label>
+          </div>
           <div className="input-box">
             <input type="text" name="primernombre" value={formData.primernombre} onChange={handleChange} required/>
             <label>Primer nombre</label>
           </div>
+          <div className="input-box">
+            <input type="text" name="segundonombre" value={formData.segundonombre} onChange={handleChange} />
+            <label>Segundo nombre</label>
+          </div>
+          <div className="input-box">
+            <input type="text" name="primerapellido" value={formData.primerapellido} onChange={handleChange} required/>
+            <label>Primer apellido</label>
+          </div>
           <label>
-            Segundo nombre:{' '}
-            <input type="text" name="segundonombre" value={formData.segundonombre} onChange={handleChange}/>
-            </label>
-            <label>
-              <span className="required-field">* </span>Primer apellido:{' '}
-              <input type="text" name="primerapellido" value={formData.primerapellido} onChange={handleChange}
-                     required/>
-            </label>
-            <label>
-              Segundo apellido:{' '}
-              <input type="text" name="segundoapellido" value={formData.segundoapellido} onChange={handleChange}/>
-            </label>
-            <label>
-              <span className="required-field">* </span>Fecha de nacimiento:{' '}
-              <input type="date" name="fechanacimiento" value={formData.fechanacimiento} onChange={handleChange}
-                     required/>
-            </label>
-            <label>
-              Ciudad de nacimiento:{' '}
-              <select name="ciudadnacimiento" value={formData.ciudadnacimiento} onChange={handleChange}>
-                <option value="">Seleccionar...</option>
-                <option value="Bucaramanga">Bucaramanga</option>
-                <option value="Floridablanca">Floridablanca</option>
-                <option value="Girón">Girón</option>
-              </select>
-            </label>
-            <label>
-              Genero:{' '}
-              <select name="genero" value={formData.genero} onChange={handleChange}>
-                <option value="">Seleccionar...</option>
-                <option value="M">Masculino</option>
-                <option value="F">Femenino</option>
-              </select>
-            </label>
-            <label>
-              <span className="required-field">* </span>Dirección de residencia:{' '}
-              <input type="text" name="direccionresidencia" value={formData.direccionresidencia} onChange={handleChange}
-                     required/>
-            </label>
-            <label>
-              <span className="required-field">* </span>Ciudad de residencia:{' '}
-              <select name="ciudadresidencia" value={formData.ciudadresidencia} onChange={handleChange} required>
-                <option value="">Seleccionar...</option>
-                <option value="Bucaramanga">Bucaramanga</option>
-                <option value="Floridablanca">Floridablanca</option>
-              </select>
-            </label>
-            <label>
-              <span className="required-field">* </span>Número de teléfono:{' '}
-              <input type="text" name="telefono" value={formData.telefono} onChange={handleChange} required/>
-            </label>
-            <label>
-              Estado civil:{' '}
-              <select name="estadocivil" value={formData.estadocivil} onChange={handleChange}>
-                <option value="">Seleccionar...</option>
-                <option value="Soltero">Soltero</option>
-                <option value="Casado">Casado</option>
-                <option value="Divorciado">Divorciado</option>
-                <option value="Unión Libre">Unión Libre</option>
-                <option value="Otro">Otro</option>
-              </select>
-            </label>
-            <label>
-              <span className="required-field">* </span>Correo electrónico:{' '}
-              <input type="email" name="correo" value={formData.correo} onChange={handleChange} required/>
-            </label>
-            <label>
-              ¿Requiere Acompañante?{' '}
-              <input type="checkbox" name="isRequiredCompanion" checked={formData.isRequiredCompanion}
-                     onChange={handleChange}/>
-            </label>
+            Segundo apellido:{' '}
+            <input type="text" name="segundoapellido" value={formData.segundoapellido} onChange={handleChange}/>
+          </label>
+          <label>
+            <span className="required-field">* </span>Fecha de nacimiento:{' '}
+            <input type="date" name="fechanacimiento" value={formData.fechanacimiento} onChange={handleChange}
+                   required/>
+          </label>
+          <label>
+            Ciudad de nacimiento:{' '}
+            <select name="ciudadnacimiento" value={formData.ciudadnacimiento} onChange={handleChange}>
+              <option value="">Seleccionar...</option>
+              <option value="Bucaramanga">Bucaramanga</option>
+              <option value="Floridablanca">Floridablanca</option>
+              <option value="Girón">Girón</option>
+            </select>
+          </label>
+          <label>
+            Genero:{' '}
+            <select name="genero" value={formData.genero} onChange={handleChange}>
+              <option value="">Seleccionar...</option>
+              <option value="M">Masculino</option>
+              <option value="F">Femenino</option>
+            </select>
+          </label>
+          <label>
+            <span className="required-field">* </span>Dirección de residencia:{' '}
+            <input type="text" name="direccionresidencia" value={formData.direccionresidencia} onChange={handleChange}
+                   required/>
+          </label>
+          <label>
+            <span className="required-field">* </span>Ciudad de residencia:{' '}
+            <select name="ciudadresidencia" value={formData.ciudadresidencia} onChange={handleChange} required>
+              <option value="">Seleccionar...</option>
+              <option value="Bucaramanga">Bucaramanga</option>
+              <option value="Floridablanca">Floridablanca</option>
+            </select>
+          </label>
+          <label>
+            <span className="required-field">* </span>Número de teléfono:{' '}
+            <input type="text" name="telefono" value={formData.telefono} onChange={handleChange} required/>
+          </label>
+          <label>
+            Estado civil:{' '}
+            <select name="estadocivil" value={formData.estadocivil} onChange={handleChange}>
+              <option value="">Seleccionar...</option>
+              <option value="Soltero">Soltero</option>
+              <option value="Casado">Casado</option>
+              <option value="Divorciado">Divorciado</option>
+              <option value="Unión Libre">Unión Libre</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </label>
+          <label>
+            <span className="required-field">* </span>Correo electrónico:{' '}
+            <input type="email" name="correo" value={formData.correo} onChange={handleChange} required/>
+          </label>
+          <label>
+            ¿Requiere Acompañante?{' '}
+            <input type="checkbox" name="isRequiredCompanion" checked={formData.isRequiredCompanion}
+                   onChange={handleChange}/>
+          </label>
         </section>
         <section className="emergency-contact-details">
           {formData.isRequiredCompanion && (
@@ -196,11 +196,13 @@ const RegistroPaciente = () => {
               </label>
               <label>
                 <span className="required-field">* </span>Número de teléfono del acompañante:{' '}
-                <input type="text" name="telefonoacompanante" value={formData.telefonoacompanante} onChange={handleChange} required={formData.isRequiredCompanion}/>
+                <input type="text" name="telefonoacompanante" value={formData.telefonoacompanante}
+                       onChange={handleChange} required={formData.isRequiredCompanion}/>
               </label>
               <label>
                 <span className="required-field">* </span>Parentesco del acompañante:{' '}
-                <input type="text" name="parentescoacompanante" value={formData.parentescoacompanante} onChange={handleChange} required={formData.isRequiredCompanion}/>
+                <input type="text" name="parentescoacompanante" value={formData.parentescoacompanante}
+                       onChange={handleChange} required={formData.isRequiredCompanion}/>
               </label>
             </>
           )}

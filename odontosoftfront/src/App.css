@@ -34,3 +34,52 @@
     transform: rotate(360deg);
   }
 }
+
+/* CSS para input de la aplicacion */
+
+/* Estilos existentes para los campos de entrada */
+.input-box input {
+  width: 100%;
+  height: 50px;
+  background: transparent;
+  border: 2px solid #3e3e3e;
+  outline: none;
+  border-radius: 40px;
+  font-size: 1em;
+  color: #34AAF3FF;
+  padding: 0 20px;
+  transition: .5s ease;
+  position: relative;
+  z-index: 2;
+}
+
+/* Apply the same styles for focus and valid states to all input fields */
+.input-box input:focus,
+.input-box input:valid {
+  border-color: #34AAF3FF;
+}
+
+.input-box label {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 20px;
+  transform: translateY(-77%);
+  font-size: 1em;
+  color: #3e3e3e;
+  pointer-events: none;
+  transition: .5s ease;
+}
+
+/* Apply the same styles for focus and valid states to all input fields */
+.input-box input:focus + label,
+.input-box input:valid + label {
+  top: 1px;
+  font-size: .8em;
+  background: #34AAF3FF;
+  padding: 0 6px;
+  color: #ffffff;
+  border-radius: 5px;
+  z-index: 3;
+}
+
