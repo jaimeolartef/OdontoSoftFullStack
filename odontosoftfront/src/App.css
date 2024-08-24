@@ -84,7 +84,7 @@
 .input-box input[type="date"] + label {
   top: 1px;
   font-size: .8em;
-  padding: 0 6px;
+  padding: 0 0;
   color: #050505;
   border-radius: 5px;
   z-index: 3;
@@ -114,3 +114,6 @@ input:invalid {
   zoom: 1.5; /* Increase the max-width to enlarge the logo */
 }
 
+.espacio {
+  margin-bottom: 50px;
+}

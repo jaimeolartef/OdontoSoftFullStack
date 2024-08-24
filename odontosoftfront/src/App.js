@@ -3,7 +3,7 @@ import './Login.css'; // Asegúrate de tener un archivo CSS para estilos
 import axios from "axios";
 import sha256 from 'crypto-js/sha256';
 import { useNavigate } from 'react-router-dom';
-import Inicio from "./view/Inicio";
+import config from './config';
 
 function App() {
 
@@ -32,13 +32,13 @@ function App() {
         const hash = sha256(loginObj.clave).toString();
         loginObj.clave = hash;
 
-        axios.post('http://localhost:8080/user/login', loginObj)
+        axios.post(`${config.baseURL}/user/login`, loginObj)
           .then(response => {
             if (response.data) {
               axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
               localStorage.setItem('jsonwebtoken', response.data.token);
               usuarioDto.codigo = response.data.usuario;
-              axios.post('http://localhost:8080/user/validateRole', usuarioDto)
+              axios.post(`${config.baseURL}/user/validateRole`, usuarioDto)
                 .then(responseMenu => {
                   const responseValidateRole = JSON.stringify(responseMenu.data.menus);
                   localStorage.setItem('menuUser', responseValidateRole);
