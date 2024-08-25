@@ -29,37 +29,36 @@ const Login = (props) => {
   };
 
   const handleLogin = () => {
-    try {
-      const hash = sha256(loginObj.clave).toString();
-      loginObj.clave = hash;
+  try {
+    const hash = sha256(loginObj.clave).toString();
+    loginObj.clave = hash;
 
-      axios.post(`${config.baseURL}/user/login`, loginObj)
-        .then(response => {
-          if (response.data) {
-            axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
-            localStorage.setItem('jsonwebtoken', response.data.token);
-            usuarioDto.codigo = response.data.usuario;
-            axios.post(`${config.baseURL}/user/validateRole`, usuarioDto)
-              .then(responseMenu => {
-                  const responseValidateRole = JSON.stringify(responseMenu.data.menus);
-                  localStorage.setItem('menuUser', responseValidateRole);
-              }).catch(error => {
+    axios.post(`${config.baseURL}/user/login`, loginObj)
+      .then(response => {
+        if (response.data) {
+          axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+          localStorage.setItem('jsonwebtoken', response.data.token);
+          usuarioDto.codigo = response.data.usuario;
+          axios.post(`${config.baseURL}/user/validateRole`, usuarioDto)
+            .then(responseMenu => {
+              const responseValidateRole = JSON.stringify(responseMenu.data.menus);
+              localStorage.setItem('menuUser', responseValidateRole);
+              navigate('/inicio');
+              localStorage.setItem('username', usuarioDto.codigo);
+              props.onLoggedIn();
+            }).catch(error => {
               alert('Error al validar el rol del usuario');
-            })
-            console.log('Por el login');
-            navigate('/inicio');
-            localStorage.setItem('username', usuarioDto.codigo);
-            props.onLoggedIn();
-          }  else {
-            alert('Error de autenticación, por favor validar sus credenciales');
-          }
-        }).catch(error => {
+            });
+        } else {
+          alert('Error de autenticación, por favor validar sus credenciales');
+        }
+      }).catch(error => {
         alert('Error de autenticación, por favor validar sus credenciales');
-      })
-    } catch (error) {
-      alert('Error ' + error);
-    }
-  };
+      });
+  } catch (error) {
+    alert('Error ' + error);
+  }
+};
 
   return (
     <div className="parent">
