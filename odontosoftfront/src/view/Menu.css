@@ -14,3 +14,55 @@
 .menu-item:hover {
   color: #007bff;
 }
+
+/* Estilos del menu */
+.menu {
+  display: flex;
+  justify-content: space-around;
+  padding: 1em;
+  background-color: #f8f9fa;
+}
+
+.menu-item {
+  position: relative;
+  color: #343a40;
+  text-decoration: none;
+  font-size: 1.2em;
+}
+
+.menu-item:hover {
+  color: #007bff;
+}
+
+.menu-item a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.menu-item a:hover {
+  color: inherit;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content a:hover {
+  background-color: #f1f1f1;
+}
+
+.menu-item:hover .dropdown-content {
+  display: block;
+}

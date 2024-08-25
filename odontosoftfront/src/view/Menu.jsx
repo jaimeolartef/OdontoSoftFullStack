@@ -1,6 +1,7 @@
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import React from "react";
-import {connect} from "react-redux";
+import { connect } from "react-redux";
+import './Menu.css';
 
 function Menu(props) {
   // Recuperar la variable del localStorage
@@ -25,14 +26,11 @@ function Menu(props) {
   const renderSubMenu = (menu) => {
     if (menu.menuHijo !== undefined && menu.menuHijo !== null && menu.menuHijo.length > 0) {
       return (
-        <ul>
+        <div className="dropdown-content">
           {menu.menuHijo.map((subMenu, index) => (
-            <li key={index}>
-              <Link to={subMenu.url}>{subMenu.nombreMenu}</Link>
-              {renderSubMenu(subMenu)}
-            </li>
+            <Link key={index} to={subMenu.url}>{subMenu.nombreMenu}</Link>
           ))}
-        </ul>
+        </div>
       );
     }
     return null;
@@ -43,7 +41,7 @@ function Menu(props) {
       {props.isLoggedIn != null && props.isLoggedIn ?
         dataMenu.map((menu, index) => (
           <div key={index} className="menu-item">
-            <Link className="menu-item" to={menu.url}>{menu.nombreMenu}</Link>
+            <Link to={menu.url}>{menu.nombreMenu}</Link>
             {renderSubMenu(menu)}
           </div>
         ))
@@ -58,4 +56,4 @@ const mapStateToProps = (state) => {
   }
 }
 
-export default connect(mapStateToProps)(Menu)
+export default connect(mapStateToProps)(Menu);
