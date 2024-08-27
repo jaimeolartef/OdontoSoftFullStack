@@ -47,9 +47,9 @@ h2 {
     color: #3e3e3e;
     text-align: center;
 }
-.input-box {
-    position: relative;
-    margin: 25px 0;
+
+.input-translate {
+  transform: translateY(10px);
 }
 
 .forgot-pass {

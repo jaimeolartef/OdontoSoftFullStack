@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './consultarPaciente.css';
 import Logo from '../../resource/LogoNegro.png';
-import axios from "axios";
+import '../../App.css';
 
 
 const ConsultarPaciente = () => {
@@ -18,10 +18,10 @@ const ConsultarPaciente = () => {
       </header>
       <form onSubmit={handleSubmit}>
         <section className="personal-information">
-          <h3>Consultar Personal</h3>
+          <h3>Consultar paciente</h3>
 
         </section>
-        <button type="submit">Guardar</button>
+        <button type="submit"  className="btn">Consultar</button>
       </form>
     </div>
   );
