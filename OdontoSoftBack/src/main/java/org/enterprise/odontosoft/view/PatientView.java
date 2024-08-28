@@ -24,8 +24,8 @@ public class PatientView {
     }
 
     @GetMapping("/consultar")
-    public ResponseEntity<List<PacienteDto>> getPatient(@RequestBody ConsultarPacienteDto paciente) {
-        return patientController.getPatient(paciente);
+    public ResponseEntity<List<PacienteDto>> getPatient(@RequestParam String documento, @RequestParam String nombre) {
+        return patientController.getPatient(documento, nombre);
     }
 
     @GetMapping("/consultar/{id}")

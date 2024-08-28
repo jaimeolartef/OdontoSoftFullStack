@@ -61,7 +61,20 @@ public class PatientMapper {
             .build();
     }
 
+    public static PacienteDto toDtoLight(Paciente paciente) {
+        return PacienteDto.builder()
+            .id(paciente.getId())
+            .idtipodocumento(TipoDocumentoEnum.getById(paciente.getIdtipodocumento().getId()).getSigla())
+            .documento(paciente.getDocumento())
+            .primernombre(paciente.getPrimernombre())
+            .segundonombre(paciente.getSegundonombre())
+            .primerapellido(paciente.getPrimerapellido())
+            .segundoapellido(paciente.getSegundoapellido())
+            .telefono(paciente.getTelefono())
+            .build();
+    }
+
     public static List<PacienteDto> toDto(List<Paciente> pacientes) {
-        return pacientes.stream().map(PatientMapper::toDto).toList();
+        return pacientes.stream().map(PatientMapper::toDtoLight).toList();
     }
 }

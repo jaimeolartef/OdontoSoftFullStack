@@ -10,7 +10,7 @@ public interface PatientController {
 
     ResponseEntity<PacienteDto> createPatient(PacienteDto pacienteDto);
 
-    ResponseEntity<List<PacienteDto>> getPatient(ConsultarPacienteDto consultarPacienteDto);
+    ResponseEntity<List<PacienteDto>> getPatient(String documento, String nombre);
 
     ResponseEntity<PacienteDto> getPatientById(Integer id);
 

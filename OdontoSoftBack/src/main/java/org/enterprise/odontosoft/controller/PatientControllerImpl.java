@@ -48,15 +48,15 @@ public class PatientControllerImpl implements PatientController {
     }
 
     @Override
-    public ResponseEntity<List<PacienteDto>> getPatient(ConsultarPacienteDto consultarPacienteDto) {
+    public ResponseEntity<List<PacienteDto>> getPatient(String documento, String nombre) {
         ResponseEntity<List<PacienteDto>> responseEntity;
         try {
             List<Paciente> pacientes;
             List<PacienteDto> pacientesDto;
-            if (Objects.nonNull(consultarPacienteDto.getDocumento()) && StringUtils.hasText(consultarPacienteDto.getDocumento())) {
-                pacientes = patientDao.findByDocument(consultarPacienteDto.getDocumento());
-            } else if (Objects.nonNull(consultarPacienteDto.getNombre()) && StringUtils.hasText(consultarPacienteDto.getNombre())) {
-                pacientes = patientDao.findByName(consultarPacienteDto.getNombre());
+            if (Objects.nonNull(documento) && StringUtils.hasText(documento)) {
+                pacientes = patientDao.findByDocument(documento);
+            } else if (Objects.nonNull(nombre) && StringUtils.hasText(nombre)) {
+                pacientes = patientDao.findByName(nombre);
             } else {
                 responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
                 return responseEntity;
