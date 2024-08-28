@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './pacienteTabla.css';
 
 const PacienteTabla = ({ data }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+  const navigate = useNavigate();
 
   // Calculate the indices for the current page
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -16,6 +18,11 @@ const PacienteTabla = ({ data }) => {
   // Handle page change
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
+  };
+
+  // Handle row click
+  const handleRowClick = (paciente) => {
+    navigate('/modificarPac', { state: { paciente } });
   };
 
   return (
@@ -32,7 +39,7 @@ const PacienteTabla = ({ data }) => {
         </thead>
         <tbody>
           {currentItems.map((paciente, index) => (
-            <tr key={index}>
+            <tr key={index} onClick={() => handleRowClick(paciente)}>
               <td data-label="Documento">{paciente.documento}</td>
               <td data-label="Nombre">{paciente.primernombre} {paciente.segundonombre}</td>
               <td data-label="Primer Apellido">{paciente.primerapellido}</td>

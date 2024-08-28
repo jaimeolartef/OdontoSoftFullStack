@@ -13,6 +13,7 @@ import NavBar from "./view/Navigator/NavBar";
 import reducer from "./store/reducer";
 import requireAuth from "./util/requireAuth";
 import ConsultarPac from "./view/Paciente/consultarPaciente";
+import ModificarPac from "./view/Paciente/modificarPaciente";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -37,6 +38,7 @@ root.render(
             <Route exact path = "/inicio" Component = {requireAuth(Inicio)} />
             <Route exact path = "/registroPac" Component = {requireAuth(RegistroPac)} />
             <Route exact path = "/consultarPac" Component = {requireAuth(ConsultarPac)} />
+            <Route exact path = "/modificarPac" Component = {requireAuth(ModificarPac)} />
           </Routes>
         </NavBar>
       </Provider>
