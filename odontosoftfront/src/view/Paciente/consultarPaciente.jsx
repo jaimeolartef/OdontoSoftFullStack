@@ -4,7 +4,7 @@ import Logo from '../../resource/LogoNegro.png';
 import '../../App.css';
 import axios from "axios";
 import config from "../../config";
-import PacienteTable from "../Paciente/PacienteTable";
+import PacienteTabla from "./pacienteTabla";
 
 
 const ConsultarPaciente = () => {
@@ -74,7 +74,7 @@ const handleSubmit = (e) => {
   return (
     <div className="medical-form-container">
       <header>
-        <img src={Logo} alt="Logo" />
+        <img src={Logo} alt="Logo"/>
         <h1>Registrar Paciente</h1>
       </header>
       <form onSubmit={handleSubmit}>
@@ -91,7 +91,9 @@ const handleSubmit = (e) => {
         </section>
         <button type="submit" className="btn">Consultar</button>
       </form>
-      {responseData.length > 0 && <PacienteTable data={responseData} />}
+      <br/>
+      {responseData.length > 0 && <PacienteTabla data={responseData}/>}
+      <br/>
     </div>
   );
 }
