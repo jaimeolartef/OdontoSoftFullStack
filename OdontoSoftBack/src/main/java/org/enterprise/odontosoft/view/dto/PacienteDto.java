@@ -32,5 +32,6 @@ public class PacienteDto extends MensajeValidation {
     private String nombreacompanante;
     private String parentescoacompanante;
     private String telefonoacompanante;
+    private String habilitado;
 
 }

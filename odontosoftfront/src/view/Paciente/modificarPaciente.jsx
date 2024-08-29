@@ -1,12 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import './modificarPaciente.css';
 import '../../App.css';
 import Logo from '../../resource/LogoNegro.png';
 import axios from "axios";
 import config from '../../config';
+import HabilitadoIndicator from "./Componente/habilitadoIndicador";
 
 const ModificarPaciente = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { id } = location.state || {};
   const [formData, setFormData] = useState({
+    id: '',
     idtipodocumento: '',
     documento: '',
     primernombre: '',
@@ -25,32 +31,44 @@ const ModificarPaciente = () => {
     nombreacompanante: '',
     telefonoacompanante: '',
     parentescoacompanante: '',
-    codigoValidacion: '',
-    mensajeValidacion: ''
+    habilitado: ''
   });
 
-  const initialFormData = {
-    idtipodocumento: '',
-    documento: '',
-    primernombre: '',
-    segundonombre: '',
-    primerapellido: '',
-    segundoapellido: '',
-    fechanacimiento: '',
-    ciudadnacimiento: '',
-    genero: '',
-    direccionresidencia: '',
-    ciudadresidencia: '',
-    telefono: '',
-    estadocivil: '',
-    correo: '',
-    isRequiredCompanion: false,
-    nombreacompanante: '',
-    telefonoacompanante: '',
-    parentescoacompanante: '',
-    codigoValidacion: '',
-    mensajeValidacion: ''
-  }
+  useEffect(() => {
+    if (id) {
+      // Fetch the patient data using the id
+      axios.get(`${config.baseURL}/pacientes/consultar/${id}`)
+        .then(response => {
+          console.log('Patient Data:', response.data);
+          const data = response.data;
+          setFormData({
+            id: data.id || '',
+            idtipodocumento: data.idtipodocumento || '',
+            documento: data.documento || '',
+            primernombre: data.primernombre || '',
+            segundonombre: data.segundonombre || '',
+            primerapellido: data.primerapellido || '',
+            segundoapellido: data.segundoapellido || '',
+            fechanacimiento: data.fechanacimiento || '',
+            ciudadnacimiento: data.ciudadnacimiento || '',
+            genero: data.genero || '',
+            direccionresidencia: data.direccionresidencia || '',
+            ciudadresidencia: data.ciudadresidencia || '',
+            telefono: data.telefono || '',
+            estadocivil: data.estadocivil || '',
+            correo: data.correo || '',
+            isRequiredCompanion: data.nombreacompanante !== null && data.nombreacompanante !== "",
+            nombreacompanante: data.nombreacompanante || '',
+            telefonoacompanante: data.telefonoacompanante || '',
+            parentescoacompanante: data.parentescoacompanante || '',
+            habilitado: data.habilitado === 'true' || false
+          });
+        })
+        .catch(error => {
+          console.error('Error fetching patient data:', error);
+        });
+    }
+  }, [id]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -60,30 +78,52 @@ const ModificarPaciente = () => {
     });
   };
 
-  const resetForm = () => {
-    setFormData(initialFormData);
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Form Data Submitted:', formData);
     let token = localStorage.getItem('jsonwebtoken');
     console.log('Token: ', token);
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-    axios.post(`${config.baseURL}/pacientes/crear`, formData,{
+    axios.put(`${config.baseURL}/pacientes/modificar`, formData,{
       validateStatus: function (status) {
         return status;
       }
     })
       .then(response => {
         console.log('Response: ', response.data);
-        if (response.status === 201) {
-          alert('Paciente registrado con éxito');
-          resetForm();
+        if (response.status === 200) {
+          alert('Paciente modificado con éxito');
+          navigate('/consultarPac');
+
         }  else if (response.status === 400 && response.data.codigoValidacion === '400') {
           alert(response.data.mensajeValidacion);
         }
       })
+  };
+
+  const handleDelete = () => {
+    if (window.confirm('¿Estás seguro de que deseas eliminar este paciente?')) {
+      let token = localStorage.getItem('jsonwebtoken');
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      axios.post(`${config.baseURL}/pacientes/eliminar/${formData.id}`, {
+        validateStatus: function (status) {
+          return status;
+        }
+      })
+        .then(response => {
+          console.log('Response: ', response.data);
+          if (response.status === 200) {
+            alert('Paciente eliminado con éxito');
+            navigate('/consultarPac');
+          } else if (response.status === 400 && response.data.codigoValidacion === '400') {
+            alert(response.data.mensajeValidacion);
+          }
+        })
+        .catch(error => {
+          console.error('Error deleting patient:', error);
+          alert('Error al eliminar el paciente');
+        });
+    }
   };
 
   return (
@@ -95,8 +135,11 @@ const ModificarPaciente = () => {
       <form onSubmit={handleSubmit}>
         <section className="personal-information">
           <h3>Información Personal</h3>
+          <div className="espacio"/>
+          <div>
+            <HabilitadoIndicator habilitado={formData.habilitado} onToggle={handleChange} />
+          </div>
           <div className="input-box">
-            <div className="espacio"/>
             <select name="idtipodocumento" value={formData.idtipodocumento} onChange={handleChange} required>
               <option value="">Seleccionar...</option>
               <option value="C.C.">Cédula de ciudadanía</option>
@@ -116,7 +159,7 @@ const ModificarPaciente = () => {
             <label><span className="required-field">* </span>Primer nombre</label>
           </div>
           <div className="input-box">
-            <input type="text" name="segundonombre" value={formData.segundonombre} onChange={handleChange} />
+            <input type="text" name="segundonombre" value={formData.segundonombre} onChange={handleChange}/>
             <label><span className="required-field">  </span>Segundo nombre</label>
           </div>
           <div className="input-box">
@@ -150,7 +193,8 @@ const ModificarPaciente = () => {
             <label><span className="required-field">  </span>Genero</label>
           </div>
           <div className="input-box">
-            <input type="text" name="direccionresidencia" value={formData.direccionresidencia} onChange={handleChange} required/>
+            <input type="text" name="direccionresidencia" value={formData.direccionresidencia} onChange={handleChange}
+                   required/>
             <label><span className="required-field">* </span>Dirección de residencia</label>
           </div>
           <div className="input-box">
@@ -204,12 +248,15 @@ const ModificarPaciente = () => {
               <div className="input-box">
                 <input type="text" name="parentescoacompanante" value={formData.parentescoacompanante}
                        onChange={handleChange} required={formData.isRequiredCompanion}/>
-                <label><span className="required-field">* </span>Ciudad de nacimiento</label>
+                <label><span className="required-field">* </span>Parentesco</label>
               </div>
             </div>
           )}
         </section>
-        <button type="submit" className="btn">Guardar</button>
+        <div className="button-container">
+          <button type="button" className="btn" onClick={handleDelete}>Eliminar</button>
+          <button type="submit" className="btn">Guardar</button>
+        </div>
       </form>
     </div>
   );

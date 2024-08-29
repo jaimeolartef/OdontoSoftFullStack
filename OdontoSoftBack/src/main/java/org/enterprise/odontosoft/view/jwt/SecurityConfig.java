@@ -41,7 +41,6 @@ public class SecurityConfig {
     authenticationProvider.setUserDetailsService(userService);
     authenticationProvider.setPasswordEncoder(passwordEncoder());
     return http
-      .cors(cors -> cors.configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues()))
       .csrf(AbstractHttpConfigurer::disable)
       .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 //        Set permissions on endpoints

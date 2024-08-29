@@ -58,6 +58,7 @@ public class PatientMapper {
             .nombreacompanante(paciente.getNombreacompanante())
             .parentescoacompanante(paciente.getParentescoacompanante())
             .telefonoacompanante(paciente.getTelefonoacompanante())
+            .habilitado(paciente.isHabilitado() ? "true" : "false")
             .build();
     }
 
@@ -71,6 +72,7 @@ public class PatientMapper {
             .primerapellido(paciente.getPrimerapellido())
             .segundoapellido(paciente.getSegundoapellido())
             .telefono(paciente.getTelefono())
+            .habilitado(paciente.isHabilitado() ? "true" : "false")
             .build();
     }
 

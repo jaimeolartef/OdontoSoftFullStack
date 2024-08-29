@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/pacientes")
+@CrossOrigin(originPatterns = "http://localhost:*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT})
 public class PatientView {
 
     private final PatientController patientController;
@@ -38,7 +39,7 @@ public class PatientView {
         return patientController.updatePatient(paciente);
     }
 
-    @DeleteMapping("/eliminar/{id}")
+    @PostMapping("/eliminar/{id}")
     public ResponseEntity<PacienteDto> deletePatient(@PathVariable Integer id) {
         return patientController.deletePatient(id);
     }

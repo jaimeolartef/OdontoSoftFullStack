@@ -91,7 +91,7 @@ public class Paciente {
   private String telefonoacompanante;
 
   @Column(name = "habilitado")
-    private Boolean habilitado;
+    private boolean habilitado;
 
   @OneToMany(mappedBy = "idpaciente")
   private Set<Cita> citas = new LinkedHashSet<>();

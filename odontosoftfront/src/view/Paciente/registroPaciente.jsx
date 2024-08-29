@@ -204,7 +204,7 @@ const RegistroPaciente = () => {
               <div className="input-box">
                 <input type="text" name="parentescoacompanante" value={formData.parentescoacompanante}
                        onChange={handleChange} required={formData.isRequiredCompanion}/>
-                <label><span className="required-field">* </span>Ciudad de nacimiento</label>
+                <label><span className="required-field">* </span>Parentesco</label>
               </div>
             </div>
           )}

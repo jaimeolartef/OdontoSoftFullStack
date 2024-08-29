@@ -22,7 +22,7 @@ const PacienteTabla = ({ data }) => {
 
   // Handle row click
   const handleRowClick = (paciente) => {
-    navigate('/modificarPac', { state: { paciente } });
+    navigate('/modificarPac', { state: { id: paciente.id } });
   };
 
   return (
@@ -35,6 +35,7 @@ const PacienteTabla = ({ data }) => {
             <th>Primer Apellido</th>
             <th>Segundo Apellido</th>
             <th>Teléfono</th>
+            <th>Habilitado</th>
           </tr>
         </thead>
         <tbody>
@@ -45,6 +46,7 @@ const PacienteTabla = ({ data }) => {
               <td data-label="Primer Apellido">{paciente.primerapellido}</td>
               <td data-label="Segundo Apellido">{paciente.segundoapellido}</td>
               <td data-label="Teléfono">{paciente.telefono}</td>
+              <td data-label="Habilitado">{paciente.habilitado === 'true' ? 'Sí' : 'No'}</td>
             </tr>
           ))}
         </tbody>
