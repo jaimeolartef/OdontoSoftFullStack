@@ -6,6 +6,7 @@ import Logo from '../../resource/LogoNegro.png';
 import axios from "axios";
 import config from '../../config';
 import HabilitadoIndicator from "./Componente/habilitadoIndicador";
+import HabilitadoIndicador from "./Componente/habilitadoIndicador";
 
 const ModificarPaciente = () => {
   const location = useLocation();
@@ -31,15 +32,20 @@ const ModificarPaciente = () => {
     nombreacompanante: '',
     telefonoacompanante: '',
     parentescoacompanante: '',
-    habilitado: ''
+    habilitadopaciente: true
   });
+
+  const updateHabilitado = () => {
+    setFormData({
+      ...formData,
+      habilitadopaciente: !formData.habilitadopaciente
+    });
+  }
 
   useEffect(() => {
     if (id) {
-      // Fetch the patient data using the id
       axios.get(`${config.baseURL}/pacientes/consultar/${id}`)
         .then(response => {
-          console.log('Patient Data:', response.data);
           const data = response.data;
           setFormData({
             id: data.id || '',
@@ -61,7 +67,7 @@ const ModificarPaciente = () => {
             nombreacompanante: data.nombreacompanante || '',
             telefonoacompanante: data.telefonoacompanante || '',
             parentescoacompanante: data.parentescoacompanante || '',
-            habilitado: data.habilitado === 'true' || false
+            habilitadopaciente: data.habilitado === 'true' || false
           });
         })
         .catch(error => {
@@ -76,29 +82,29 @@ const ModificarPaciente = () => {
       ...formData,
       [name]: type === 'checkbox' ? checked : value,
     });
+    if (name === 'habilitado') {
+      console.log('Habilitado aqui estoy:', formData.habilitadopaciente);
+      updateHabilitado();
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Form Data Submitted:', formData);
     let token = localStorage.getItem('jsonwebtoken');
-    console.log('Token: ', token);
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-    axios.put(`${config.baseURL}/pacientes/modificar`, formData,{
+    axios.put(`${config.baseURL}/pacientes/modificar`, formData, {
       validateStatus: function (status) {
         return status;
       }
     })
       .then(response => {
-        console.log('Response: ', response.data);
         if (response.status === 200) {
           alert('Paciente modificado con éxito');
-          navigate('/consultarPac');
-
-        }  else if (response.status === 400 && response.data.codigoValidacion === '400') {
+          navigate('/consultarPac', { state: { redireccionadoModificar: true } });
+        } else if (response.status === 400 && response.data.codigoValidacion === '400') {
           alert(response.data.mensajeValidacion);
         }
-      })
+      });
   };
 
   const handleDelete = () => {
@@ -111,10 +117,9 @@ const ModificarPaciente = () => {
         }
       })
         .then(response => {
-          console.log('Response: ', response.data);
           if (response.status === 200) {
             alert('Paciente eliminado con éxito');
-            navigate('/consultarPac');
+            navigate('/consultarPac', { state: { redireccionadoModificar: true } });
           } else if (response.status === 400 && response.data.codigoValidacion === '400') {
             alert(response.data.mensajeValidacion);
           }
@@ -137,7 +142,7 @@ const ModificarPaciente = () => {
           <h3>Información Personal</h3>
           <div className="espacio"/>
           <div>
-            <HabilitadoIndicator habilitado={formData.habilitado} onToggle={handleChange} />
+            <HabilitadoIndicator habilitadoPaciente={formData.habilitadopaciente} onToggle={handleChange}/>
           </div>
           <div className="input-box">
             <select name="idtipodocumento" value={formData.idtipodocumento} onChange={handleChange} required>

@@ -5,8 +5,11 @@ import '../../App.css';
 import axios from "axios";
 import config from "../../config";
 import PacienteTabla from "./pacienteTabla";
+import {useLocation} from "react-router-dom";
 
 const ConsultarPaciente = () => {
+  const location = useLocation();
+  const { redireccionadoModificar } = location.state || {};
   const [formData, setFormData] = useState({
     documento: '',
     nombre: ''
@@ -17,22 +20,22 @@ const ConsultarPaciente = () => {
     nombre: ''
   };
 
-  const resetForm = () => {
-    setFormData(initialFormData);
-  };
-
   const [responseData, setResponseData] = useState([]);
 
   useEffect(() => {
-    const savedFormData = localStorage.getItem('consultarPacienteFormData');
-    if (savedFormData) {
-      console.log('savedFormData:', savedFormData);
-      setFormData(JSON.parse(savedFormData));
-      console.log('Se va a consumir el servicio con:', JSON.parse(savedFormData));
-      fetchPacientes(JSON.parse(savedFormData)).then(r => r);
-      localStorage.removeItem('consultarPacienteFormData');
+    if (redireccionadoModificar) {
+      if (localStorage.getItem('consultarPacienteFormData')) {
+        setFormData(JSON.parse(localStorage.getItem('consultarPacienteFormData')));
+        console.log('Se va a consumir el servicio con:', formData);
+        fetchPacientes(JSON.parse(localStorage.getItem('consultarPacienteFormData'))).then(r => r);
+        console.log('Removing item from localStorage : ' + localStorage.getItem('consultarPacienteFormData'));
+        localStorage.removeItem('consultarPacienteFormData');
+        console.log('Item removed from localStorage' + localStorage.getItem('consultarPacienteFormData'));
+      }
+    } else if (localStorage.getItem('consultarPacienteFormData')) {
+        localStorage.removeItem('consultarPacienteFormData');
     }
-  }, []);
+}, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -49,6 +52,7 @@ const ConsultarPaciente = () => {
       alert('Debe realizar la busqueda por nombre o por documento.');
       return;
     }
+    localStorage.setItem('consultarPacienteFormData', JSON.stringify(formData));
     fetchPacientes(formData).then(r => r);
   };
 
@@ -65,7 +69,6 @@ const ConsultarPaciente = () => {
 
     if (response.status === 200) {
       setResponseData(response.data);
-      localStorage.setItem('consultarPacienteFormData', JSON.stringify(formData));
     } else if (response.status === 400 && response.data.codigoValidacion === '400') {
       alert(response.data.mensajeValidacion);
     } else if (response.status === 403) {

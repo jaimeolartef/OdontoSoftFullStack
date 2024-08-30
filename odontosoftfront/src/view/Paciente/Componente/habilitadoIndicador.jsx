@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
-const HabilitadoIndicator = ({ habilitado, onToggle }) => {
+const HabilitadoIndicator = ({habilitado, onToggle}) => {
+  useEffect(() => {
+    console.log('Habilitado state updated:', habilitado);
+  }, [habilitado]);
+
   const style = {
     color: habilitado ? 'green' : 'red',
     fontWeight: 'bold'
@@ -9,15 +13,16 @@ const HabilitadoIndicator = ({ habilitado, onToggle }) => {
   return (
     <span style={style}>
       <input
+        name="habilitadopaciente"
         type="checkbox"
         checked={habilitado}
-        onChange={onToggle}
+        onChange={(e) => onToggle({ target: { name: 'habilitado', value: e.target.checked, type: 'checkbox' } })}
         style={{ marginLeft: '10px' }}
       />
-      {habilitado ? 'Habilitado' : 'Inhabilitado'}
+      {habilitado && (<label style={{color: "green", fontWeight: 'bold'}} >Habilitado</label>)}
+      {!habilitado && (<label style={{color: "red", fontWeight: 'bold'}} >Inhabilitado</label>)}
     </span>
   );
 };
 
 export default HabilitadoIndicator;
-
