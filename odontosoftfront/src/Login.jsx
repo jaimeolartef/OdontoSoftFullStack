@@ -6,7 +6,6 @@ import {connect} from "react-redux";
 import { useNavigate } from 'react-router-dom';
 import config from './config';
 import showMessage from "../src/util/UtilMessage";
-//TODO poder dar enter en el boton de la contraseña para hacer login
 
 const Login = (props) => {
   const [loginObj, setLoginObj] = useState({

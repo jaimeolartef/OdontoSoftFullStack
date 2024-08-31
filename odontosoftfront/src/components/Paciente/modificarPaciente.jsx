@@ -34,6 +34,13 @@ const ModificarPaciente = () => {
     habilitado: true
   });
 
+  const updateHabilitado = () => {
+    setFormData({
+      ...formData,
+      habilitado: !formData.habilitado
+    });
+  }
+
   useEffect(() => {
     if (id) {
       axios.get(`${config.baseURL}/pacientes/consultar/${id}`)
@@ -73,7 +80,6 @@ const ModificarPaciente = () => {
     setFormData({
       ...formData,
       [name]: type === 'checkbox' ? checked : value,
-      habilitado: !formData.habilitado
     });
   };
 
@@ -113,7 +119,7 @@ const ModificarPaciente = () => {
                 name="habilitadopaciente"
                 type="checkbox"
                 checked={formData.habilitado}
-                onChange={handleChange} style={{marginLeft: '10px'}}/>
+                onChange={updateHabilitado} style={{marginLeft: '10px'}}/>
                   {formData.habilitado && (<label style={{color: "green", fontWeight: 'bold'}}>Habilitado</label>)}
                   {!formData.habilitado && (<label style={{color: "red", fontWeight: 'bold'}}>Inhabilitado</label>)}
             </span>
