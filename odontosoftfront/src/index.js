@@ -14,6 +14,8 @@ import reducer from "./store/reducer";
 import requireAuth from "./util/requireAuth";
 import ConsultarPac from "./view/Paciente/consultarPaciente";
 import ModificarPac from "./view/Paciente/modificarPaciente";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -43,6 +45,7 @@ root.render(
         </NavBar>
       </Provider>
     </BrowserRouter>
+    <ToastContainer />
   </React.StrictMode>
 );
 

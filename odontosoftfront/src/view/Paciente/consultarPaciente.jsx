@@ -6,6 +6,7 @@ import axios from "axios";
 import config from "../../config";
 import PacienteTabla from "./pacienteTabla";
 import {useLocation} from "react-router-dom";
+import showMessage from "../../util/UtilMessage";
 
 const ConsultarPaciente = () => {
   const location = useLocation();
@@ -14,11 +15,6 @@ const ConsultarPaciente = () => {
     documento: '',
     nombre: ''
   });
-
-  const initialFormData = {
-    documento: '',
-    nombre: ''
-  };
 
   const [responseData, setResponseData] = useState([]);
 
@@ -49,14 +45,13 @@ const ConsultarPaciente = () => {
     e.preventDefault();
 
     if (!formData.documento && !formData.nombre) {
-      alert('Debe realizar la busqueda por nombre o por documento.');
+      showMessage('warning','Debe realizar la busqueda por nombre o por documento.');
       return;
     }
-    localStorage.setItem('consultarPacienteFormData', JSON.stringify(formData));
     fetchPacientes(formData).then(r => r);
   };
 
-  const fetchPacientes = async (formData) => {
+const fetchPacientes = async (formData) => {
   try {
     let token = localStorage.getItem('jsonwebtoken');
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
@@ -70,18 +65,18 @@ const ConsultarPaciente = () => {
     if (response.status === 200) {
       setResponseData(response.data);
     } else if (response.status === 400 && response.data.codigoValidacion === '400') {
-      alert(response.data.mensajeValidacion);
+      showMessage('error',response.data.mensajeValidacion);
     } else if (response.status === 403) {
-      alert('No autorizado');
+      showMessage('error','No autorizado');
     } else if (response.status > 400) {
-      alert('Error en la solicitud');
+      showMessage('error','Error en la solicitud');
     }
   } catch (error) {
     console.error('Error:', error);
     if (error.response && error.response.status === 403) {
-      alert('No autorizado');
+      showMessage('error','No autorizado');
     } else {
-      alert('Error en la solicitud');
+      showMessage('error','Error en la solicitud');
     }
   }
 };
@@ -107,7 +102,7 @@ const ConsultarPaciente = () => {
         <button type="submit" className="btn">Consultar</button>
       </form>
       <br/>
-      {responseData.length > 0 && <PacienteTabla data={responseData}/>}
+      {responseData.length > 0 && <PacienteTabla data={responseData} formData={formData}/>}
       <br/>
     </div>
   );

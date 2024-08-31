@@ -4,6 +4,7 @@ import axios from "axios";
 import sha256 from 'crypto-js/sha256';
 import { useNavigate } from 'react-router-dom';
 import config from './config';
+import showMessage from "../src/util/UtilMessage";
 
 function App() {
 
@@ -43,19 +44,19 @@ function App() {
                   const responseValidateRole = JSON.stringify(responseMenu.data.menus);
                   localStorage.setItem('menuUser', responseValidateRole);
                 }).catch(error => {
-                alert('Error al validar el rol del usuario');
+                showMessage('error','Error al validar el rol del usuario');
               })
               console.log('Por el app');
               navigate('/inicio');
               localStorage.setItem('username', usuarioDto.codigo);
             }  else {
-              alert('Error de autenticación, por favor validar sus credenciales');
+              showMessage('error','Error de autenticación, por favor validar sus credenciales');
             }
           }).catch(error => {
-          alert('Error de autenticación, por favor validar sus credenciales');
+          showMessage('error','Error de autenticación, por favor validar sus credenciales');
         })
       } catch (error) {
-        alert('Error ' + error);
+        showMessage('error','Error ' + error);
       }
     };
 

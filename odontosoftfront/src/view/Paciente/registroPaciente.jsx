@@ -4,6 +4,7 @@ import '../../App.css';
 import Logo from '../../resource/LogoNegro.png';
 import axios from "axios";
 import config from '../../config';
+import showMessage from "../../util/UtilMessage";
 
 const RegistroPaciente = () => {
   const [formData, setFormData] = useState({
@@ -26,7 +27,8 @@ const RegistroPaciente = () => {
     telefonoacompanante: '',
     parentescoacompanante: '',
     codigoValidacion: '',
-    mensajeValidacion: ''
+    mensajeValidacion: '',
+    habilitado: true
   });
 
   const initialFormData = {
@@ -49,7 +51,8 @@ const RegistroPaciente = () => {
     telefonoacompanante: '',
     parentescoacompanante: '',
     codigoValidacion: '',
-    mensajeValidacion: ''
+    mensajeValidacion: '',
+    habilitado: true
   }
 
   const handleChange = (e) => {
@@ -78,10 +81,10 @@ const RegistroPaciente = () => {
         .then(response => {
           console.log('Response: ', response.data);
           if (response.status === 201) {
-            alert('Paciente registrado con éxito');
+            showMessage('success','Paciente registrado con éxito');
             resetForm();
           }  else if (response.status === 400 && response.data.codigoValidacion === '400') {
-            alert(response.data.mensajeValidacion);
+            showMessage('error',response.data.mensajeValidacion);
           }
         })
   };
@@ -159,7 +162,7 @@ const RegistroPaciente = () => {
               <option value="Bucaramanga">Bucaramanga</option>
               <option value="Floridablanca">Floridablanca</option>
             </select>
-            <label><span className="required-field">  </span>Ciudad de residencia</label>
+            <label><span className="required-field">*  </span>Ciudad de residencia</label>
           </div>
           <div className="input-box">
             <input type="text" name="telefono" value={formData.telefono} onChange={handleChange} required/>
@@ -178,7 +181,7 @@ const RegistroPaciente = () => {
           </div>
           <div className="input-box">
             <input type="email" name="correo" value={formData.correo} onChange={handleChange} required/>
-            <label><span className="required-field">  </span>Correo electrónico</label>
+            <label><span className="required-field">* </span>Correo electrónico</label>
           </div>
           <div>
             <label>¿Requiere Acompañante? </label>

@@ -1,6 +1,7 @@
 package org.enterprise.odontosoft.controller.mapper;
 
 import java.util.List;
+import java.util.Objects;
 
 import lombok.experimental.UtilityClass;
 import org.enterprise.odontosoft.controller.Enum.TipoDocumentoEnum;
@@ -34,7 +35,7 @@ public class PatientMapper {
             .nombreacompanante(pacienteDto.getNombreacompanante())
             .parentescoacompanante(pacienteDto.getParentescoacompanante())
             .telefonoacompanante(pacienteDto.getTelefonoacompanante())
-            .habilitado(Boolean.TRUE)
+            .habilitado(Objects.equals(pacienteDto.getHabilitado(), "true"))
             .build();
     }
 

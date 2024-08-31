@@ -5,8 +5,7 @@ import '../../App.css';
 import Logo from '../../resource/LogoNegro.png';
 import axios from "axios";
 import config from '../../config';
-import HabilitadoIndicator from "./Componente/habilitadoIndicador";
-import HabilitadoIndicador from "./Componente/habilitadoIndicador";
+import showMessage from "../../util/UtilMessage";
 
 const ModificarPaciente = () => {
   const location = useLocation();
@@ -32,15 +31,8 @@ const ModificarPaciente = () => {
     nombreacompanante: '',
     telefonoacompanante: '',
     parentescoacompanante: '',
-    habilitadopaciente: true
+    habilitado: true
   });
-
-  const updateHabilitado = () => {
-    setFormData({
-      ...formData,
-      habilitadopaciente: !formData.habilitadopaciente
-    });
-  }
 
   useEffect(() => {
     if (id) {
@@ -67,7 +59,7 @@ const ModificarPaciente = () => {
             nombreacompanante: data.nombreacompanante || '',
             telefonoacompanante: data.telefonoacompanante || '',
             parentescoacompanante: data.parentescoacompanante || '',
-            habilitadopaciente: data.habilitado === 'true' || false
+            habilitado: data.habilitado === 'true' || false
           });
         })
         .catch(error => {
@@ -81,11 +73,8 @@ const ModificarPaciente = () => {
     setFormData({
       ...formData,
       [name]: type === 'checkbox' ? checked : value,
+      habilitado: !formData.habilitado
     });
-    if (name === 'habilitado') {
-      console.log('Habilitado aqui estoy:', formData.habilitadopaciente);
-      updateHabilitado();
-    }
   };
 
   const handleSubmit = (e) => {
@@ -99,37 +88,14 @@ const ModificarPaciente = () => {
     })
       .then(response => {
         if (response.status === 200) {
-          alert('Paciente modificado con éxito');
+          showMessage('success','Paciente modificado con éxito');
           navigate('/consultarPac', { state: { redireccionadoModificar: true } });
         } else if (response.status === 400 && response.data.codigoValidacion === '400') {
-          alert(response.data.mensajeValidacion);
+          showMessage('error',response.data.mensajeValidacion);
         }
       });
   };
 
-  const handleDelete = () => {
-    if (window.confirm('¿Estás seguro de que deseas eliminar este paciente?')) {
-      let token = localStorage.getItem('jsonwebtoken');
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      axios.post(`${config.baseURL}/pacientes/eliminar/${formData.id}`, {
-        validateStatus: function (status) {
-          return status;
-        }
-      })
-        .then(response => {
-          if (response.status === 200) {
-            alert('Paciente eliminado con éxito');
-            navigate('/consultarPac', { state: { redireccionadoModificar: true } });
-          } else if (response.status === 400 && response.data.codigoValidacion === '400') {
-            alert(response.data.mensajeValidacion);
-          }
-        })
-        .catch(error => {
-          console.error('Error deleting patient:', error);
-          alert('Error al eliminar el paciente');
-        });
-    }
-  };
 
   return (
     <div className="medical-form-container">
@@ -142,7 +108,15 @@ const ModificarPaciente = () => {
           <h3>Información Personal</h3>
           <div className="espacio"/>
           <div>
-            <HabilitadoIndicator habilitadoPaciente={formData.habilitadopaciente} onToggle={handleChange}/>
+            <span>
+              <input
+                name="habilitadopaciente"
+                type="checkbox"
+                checked={formData.habilitado}
+                onChange={handleChange} style={{marginLeft: '10px'}}/>
+                  {formData.habilitado && (<label style={{color: "green", fontWeight: 'bold'}}>Habilitado</label>)}
+                  {!formData.habilitado && (<label style={{color: "red", fontWeight: 'bold'}}>Inhabilitado</label>)}
+            </span>
           </div>
           <div className="input-box">
             <select name="idtipodocumento" value={formData.idtipodocumento} onChange={handleChange} required>
@@ -259,7 +233,6 @@ const ModificarPaciente = () => {
           )}
         </section>
         <div className="button-container">
-          <button type="button" className="btn" onClick={handleDelete}>Eliminar</button>
           <button type="submit" className="btn">Guardar</button>
         </div>
       </form>

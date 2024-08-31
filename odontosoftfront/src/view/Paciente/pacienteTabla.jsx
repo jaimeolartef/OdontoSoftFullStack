@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './pacienteTabla.css';
 
-const PacienteTabla = ({ data }) => {
+const PacienteTabla = ({ data, formData }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const navigate = useNavigate();
@@ -22,6 +22,7 @@ const PacienteTabla = ({ data }) => {
 
   // Handle row click
   const handleRowClick = (paciente) => {
+    localStorage.setItem('consultarPacienteFormData', JSON.stringify(formData));
     navigate('/modificarPac', { state: { id: paciente.id } });
   };
 
