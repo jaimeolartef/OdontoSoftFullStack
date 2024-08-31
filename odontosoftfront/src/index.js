@@ -4,16 +4,16 @@ import './index.css';
 import { createStore } from 'redux'
 import reportWebVitals from './reportWebVitals';
 import Login from "./Login";
-import Inicio from "./view/Inicio";
-import RegistroPac from "./view/Paciente/registroPaciente";
+import Inicio from "./components/Inicio";
+import RegistroPac from "./components/Paciente/registroPaciente";
 import {setAuthenticationHeader} from "./util/authenticate";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import {Provider} from "react-redux";
-import NavBar from "./view/Navigator/NavBar";
+import NavBar from "./components/Navigator/NavBar";
 import reducer from "./store/reducer";
 import requireAuth from "./util/requireAuth";
-import ConsultarPac from "./view/Paciente/consultarPaciente";
-import ModificarPac from "./view/Paciente/modificarPaciente";
+import ConsultarPac from "./components/Paciente/consultarPaciente";
+import ModificarPac from "./components/Paciente/modificarPaciente";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
