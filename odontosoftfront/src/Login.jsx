@@ -61,6 +61,12 @@ const Login = (props) => {
   }
 };
 
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      handleLogin();
+    }
+  };
+
   return (
     <div className="parent">
       <div className="container">
@@ -72,7 +78,7 @@ const Login = (props) => {
               <label>Usuario</label>
             </div>
             <div className="input-box">
-              <input type="password" className="input-translate" name="clave" value={loginObj.clave} onChange={handleInputChange} required/>
+              <input type="password" className="input-translate" name="clave" value={loginObj.clave} onChange={handleInputChange} onKeyDown={handleKeyDown}  required/>
               <label>Clave</label>
             </div>
             <div className="center">
