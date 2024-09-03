@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './pacienteTabla.css';
+import MedicalIcon from '../../resource/MedicalIcon.png'; // Importar el icono desde la carpeta resource
 
 const PacienteTabla = ({ data, formData }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -26,6 +27,12 @@ const PacienteTabla = ({ data, formData }) => {
     navigate('/modificarPac', { state: { id: paciente.id } });
   };
 
+  // Handle medical record icon click
+  const handleMedicalRecordClick = (paciente) => {
+    console.log('Paciente: ', paciente.id);
+    navigate('/historiaPac', { state: { idPatient: paciente.id } });
+  };
+
   return (
     <div className="table-container">
       <table>
@@ -37,6 +44,7 @@ const PacienteTabla = ({ data, formData }) => {
             <th>Segundo Apellido</th>
             <th>Teléfono</th>
             <th>Habilitado</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -48,6 +56,14 @@ const PacienteTabla = ({ data, formData }) => {
               <td data-label="Segundo Apellido">{paciente.segundoapellido}</td>
               <td data-label="Teléfono">{paciente.telefono}</td>
               <td data-label="Habilitado">{paciente.habilitado === 'true' ? 'Sí' : 'No'}</td>
+              <td data-label="Acciones">
+                <img
+                  src={MedicalIcon}
+                  alt="Historia Clinicia"
+                  style={{ marginRight: '5px', width: '35px', height: '35px', cursor: 'pointer' }}
+                  onClick={(e) => { e.stopPropagation(); handleMedicalRecordClick(paciente); }}
+                />
+              </td>
             </tr>
           ))}
         </tbody>

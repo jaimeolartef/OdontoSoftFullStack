@@ -1,0 +1,80 @@
+/**.medical-form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  max-width: 800px;
+  margin: auto;
+}
+
+header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.logo {
+  max-width: 100px;
+  margin-bottom: 10px;
+}
+
+.personal-information, .emergency-contact-details {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.input-box {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+.input-box input, .input-box select {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.input-box label {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+@media (min-width: 600px) {
+  .personal-information, .emergency-contact-details {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .input-box {
+    flex: 1 1 45%;
+    margin-right: 10px;
+  }
+
+  .input-box:nth-child(2n) {
+    margin-right: 0;
+  }
+}
+
+@media (min-width: 900px) {
+  .medical-form-container {
+    max-width: 1200px;
+  }
+
+  .input-box {
+    flex: 1 1 30%;
+  }
+
+  .input-box:nth-child(3n) {
+    margin-right: 0;
+  }
+}**/
+
+.table-container td[data-label="Acciones"] {
+  text-align: center;
+  vertical-align: middle;
+}

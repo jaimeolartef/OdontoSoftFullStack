@@ -14,6 +14,7 @@ import reducer from "./store/reducer";
 import requireAuth from "./util/requireAuth";
 import ConsultarPac from "./components/Paciente/consultarPaciente";
 import ModificarPac from "./components/Paciente/modificarPaciente";
+import HistoriaPac from "../src/components/HistoriaClinica/ReadOnlyPaciente";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -41,6 +42,7 @@ root.render(
             <Route exact path = "/registroPac" Component = {requireAuth(RegistroPac)} />
             <Route exact path = "/consultarPac" Component = {requireAuth(ConsultarPac)} />
             <Route exact path = "/modificarPac" Component = {requireAuth(ModificarPac)} />
+            <Route exact path = "/historiaPac" Component = {requireAuth(HistoriaPac)} />
           </Routes>
         </NavBar>
       </Provider>

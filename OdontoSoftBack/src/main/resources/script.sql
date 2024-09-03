@@ -112,12 +112,12 @@ INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES
 INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES (DEFAULT, 'Agenda'::varchar(50), null, null, true::boolean);
 INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES (DEFAULT, 'Configuración'::varchar(50), null, null, true::boolean);
 
-INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES (DEFAULT, 'Registrar'::varchar(50), 1::integer, '/registroPac',  true::boolean);
+INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES (DEFAULT, 'Registrar paciente'::varchar(50), 1::integer, '/registroPac',  true::boolean);
 INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES (DEFAULT, 'Asignación de citas'::varchar(50), 2::integer, '/asigCita',true::boolean);
 INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES (DEFAULT, 'Mi calendario'::varchar(50), 2::integer, '/calendario',true::boolean);
 INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES (DEFAULT, 'Roles'::varchar(50), 3::integer, '/role', true::boolean);
 INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES (DEFAULT, 'Usuarios'::varchar(50), 3::integer, '/usuario', true::boolean);
-INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES (DEFAULT, 'Consultar'::varchar(50), 1::integer, '/consultarPac',  true::boolean);
+INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES (DEFAULT, 'Consultar '::varchar(50), 1::integer, '/consultarPac',  true::boolean);
 
 INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado) VALUES (DEFAULT, 1::integer, 1::integer, true);
 INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado) VALUES (DEFAULT, 1::integer, 2::integer, true);
