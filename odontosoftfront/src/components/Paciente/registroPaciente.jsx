@@ -6,6 +6,10 @@ import axios from "axios";
 import config from '../../config';
 import showMessage from "../../util/UtilMessage";
 
+//TODO 1: Agregar la auditoria al registro de pacientes usuario y fecha de creacion y modificacion
+//TODO 2: Ajustar los formularios con estilos bootstrap
+//TODO 3: Estoy creando la estructura de la BD
+
 const RegistroPaciente = () => {
   const [formData, setFormData] = useState({
     idtipodocumento: '',

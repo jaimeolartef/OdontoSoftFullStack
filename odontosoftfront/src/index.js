@@ -14,7 +14,7 @@ import reducer from "./store/reducer";
 import requireAuth from "./util/requireAuth";
 import ConsultarPac from "./components/Paciente/consultarPaciente";
 import ModificarPac from "./components/Paciente/modificarPaciente";
-import HistoriaPac from "../src/components/HistoriaClinica/ReadOnlyPaciente";
+import HistoriaPac from "../src/components/HistoriaClinica/MedicalRecord";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 

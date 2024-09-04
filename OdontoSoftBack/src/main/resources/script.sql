@@ -70,6 +70,10 @@ create table paciente
     nombreAcompanante     VARCHAR(50),
     parentescoAcompanante VARCHAR(20),
     telefonoAcompanante   VARCHAR(20),
+    idUsuarioCreacion    int,
+    fechaCreacion date,
+    idUsuarioModificacion    int,
+    fechaModificacion date,
     habilitado  bool DEFAULT false NOT NULL,
     primary key (id),
     foreign key (idTipoDocumento) references tipoDocumento(id)
@@ -91,6 +95,12 @@ create table historiaClinica
 (
     id            serial,
     idPaciente    int,
+    motivoConsulta varchar,
+    enfermedadActual varchar,
+    ultimoMedicoTratante varchar,
+    observacionesAntec varchar,
+    observacionesAntecOdon varchar,
+    observacionesHabitos varchar,
     idUsuarioCreacion    int,
     fechaCreacion date,
     idUsuarioModificacion    int,
@@ -100,6 +110,59 @@ create table historiaClinica
     foreign key (idPaciente) references paciente (id),
     foreign key (idUsuarioCreacion) references usuario (id),
     foreign key (idUsuarioModificacion) references usuario (id)
+);
+
+create table antecedentePaciente
+(
+    id            serial,
+    idHistoriaClinica    int,
+    idAntecedente int,
+    opciones varchar,
+    idUsuarioCreacion    int,
+    fechaCreacion date,
+    idUsuarioModificacion    int,
+    fechaModificacion date,
+    habilitado  bool DEFAULT false NOT NULL,
+    primary key (id),
+    foreign key (idHistoriaClinica) references historiaClinica (id),
+    foreign key (idAntecedente) references antecedente (id),
+    foreign key (idUsuarioCreacion) references usuario (id),
+    foreign key (idUsuarioModificacion) references usuario (id)
+);
+
+create table habitoPaciente
+(
+    id            serial,
+    idHistoriaClinica    int,
+    idHabito int,
+    opciones varchar,
+    idUsuarioCreacion    int,
+    fechaCreacion date,
+    idUsuarioModificacion    int,
+    fechaModificacion date,
+    habilitado  bool DEFAULT false NOT NULL,
+    primary key (id),
+    foreign key (idHistoriaClinica) references historiaClinica (id),
+    foreign key (idHabito) references habito (id),
+    foreign key (idUsuarioCreacion) references usuario (id),
+    foreign key (idUsuarioModificacion) references usuario (id)
+);
+
+create table antecedente
+(
+    id           serial,
+    descripcion varchar,
+    odontologico bool DEFAULT false NOT NULL,
+    habilitado  bool DEFAULT false NOT NULL,
+    primary key (id)
+);
+
+create table habito
+(
+    id           serial,
+    descripcion varchar,
+    habilitado  bool DEFAULT false NOT NULL,
+    primary key (id)
 );
 
 

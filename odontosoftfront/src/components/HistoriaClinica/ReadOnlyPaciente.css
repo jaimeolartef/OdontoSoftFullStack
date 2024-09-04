@@ -78,3 +78,13 @@ header {
   text-align: center;
   vertical-align: middle;
 }
+
+/* odontosoftfront/src/components/HistoriaClinica/ReadOnlyPaciente.css */
+.bold-label {
+  font-weight: bold;
+}
+
+.patient-info-table td {
+  width: 25%; /* Ensure each column has an equal width */
+}
+

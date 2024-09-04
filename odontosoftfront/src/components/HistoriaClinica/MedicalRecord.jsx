@@ -2,6 +2,9 @@ import ReadOnlyPaciente from "../HistoriaClinica/ReadOnlyPaciente";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
+//TODO 1: Agregar la auditoria al registro de pacientes usuario y fecha de creacion y modificacion
+//TODO 2: Agregar un enumerado con las respuestas de los antecedentes medicos
+
 const MedicalRecord = () => {
   const location = useLocation();
   const { idPatient } = location.state || {};
@@ -10,7 +13,7 @@ const MedicalRecord = () => {
   });
 
   useEffect(() => {
-    console.log('idPatient: ', idPatient);
+    console.log('idPatient medical record:', idPatient);
     if (idPatient) {
       setFormPatient({
         idPatient: idPatient || ''
@@ -21,6 +24,7 @@ const MedicalRecord = () => {
   return (
     <div className="parent-component">
       <h2>Información de la Persona</h2>
+      <ReadOnlyPaciente idPatient={formPatient.idPatient} />
     </div>
   );
 };
