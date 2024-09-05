@@ -70,8 +70,8 @@ create table paciente
     nombreAcompanante     VARCHAR(50),
     parentescoAcompanante VARCHAR(20),
     telefonoAcompanante   VARCHAR(20),
-    idUsuarioCreacion    int,
-    fechaCreacion date,
+    idUsuarioCreacion    int NOT NULL,
+    fechaCreacion date NOT NULL,
     idUsuarioModificacion    int,
     fechaModificacion date,
     habilitado  bool DEFAULT false NOT NULL,
@@ -94,15 +94,21 @@ create table cita
 create table historiaClinica
 (
     id            serial,
-    idPaciente    int,
+    idPaciente    int not null,
     motivoConsulta varchar,
     enfermedadActual varchar,
     ultimoMedicoTratante varchar,
-    observacionesAntec varchar,
-    observacionesAntecOdon varchar,
-    observacionesHabitos varchar,
-    idUsuarioCreacion    int,
-    fechaCreacion date,
+    observacionAntec varchar,
+    observacionAntecOdon varchar,
+    observacion varchar,
+    observacionAnaFunc varchar,
+    observacionExaEstomat varchar,
+    observacionOdontograma varchar,
+    observacionExaPeriodontal varchar,
+    observacionAnalisisOclu varchar,
+    idUsuarioCreacion    int NOT NULL,
+    atmMusculatura boolean DEFAULT false NOT NULL, -- normal: true anormal: false
+    fechaCreacion date NOT NULL,
     idUsuarioModificacion    int,
     fechaModificacion date,
     habilitado  bool DEFAULT false NOT NULL,
@@ -115,11 +121,11 @@ create table historiaClinica
 create table antecedentePaciente
 (
     id            serial,
-    idHistoriaClinica    int,
+    idHistoriaClinica    int not null,
     idAntecedente int,
     opciones varchar,
-    idUsuarioCreacion    int,
-    fechaCreacion date,
+    idUsuarioCreacion    int NOT NULL,
+    fechaCreacion date NOT NULL,
     idUsuarioModificacion    int,
     fechaModificacion date,
     habilitado  bool DEFAULT false NOT NULL,
@@ -133,11 +139,11 @@ create table antecedentePaciente
 create table habitoPaciente
 (
     id            serial,
-    idHistoriaClinica    int,
+    idHistoriaClinica    int not null,
     idHabito int,
-    opciones varchar,
-    idUsuarioCreacion    int,
-    fechaCreacion date,
+    opciones boolean,
+    idUsuarioCreacion    int NOT NULL,
+    fechaCreacion date NOT NULL,
     idUsuarioModificacion    int,
     fechaModificacion date,
     habilitado  bool DEFAULT false NOT NULL,
@@ -164,6 +170,230 @@ create table habito
     habilitado  bool DEFAULT false NOT NULL,
     primary key (id)
 );
+
+create table signoVital
+(
+    id           serial,
+    idHistoriaClinica int not null,
+    peso float,
+    talla float,
+    temperatura float,
+    presionArterial varchar,
+    pulso float,
+    frecuenciaRespiratoria float,
+    idUsuarioCreacion    int NOT NULL,
+    fechaCreacion date NOT NULL,
+    idUsuarioModificacion    int,
+    fechaModificacion date,
+    habilitado  bool DEFAULT false NOT NULL,
+    primary key (id),
+    foreign key (idHistoriaClinica) references historiaClinica (id),
+    foreign key (idUsuarioCreacion) references usuario (id),
+    foreign key (idUsuarioModificacion) references usuario (id)
+);
+
+create table analisisFuncional
+(
+    id           serial,
+    idHistoriaClinica int not null,
+    masticacion boolean DEFAULT false NOT NULL,
+    deglucion boolean DEFAULT false NOT NULL,
+    fonacion boolean DEFAULT false NOT NULL,
+    respiracion boolean DEFAULT false NOT NULL,
+    idUsuarioCreacion    int NOT NULL,
+    fechaCreacion date NOT NULL,
+    idUsuarioModificacion    int,
+    fechaModificacion date,
+    habilitado  bool DEFAULT false NOT NULL,
+    primary key (id),
+    foreign key (idUsuarioCreacion) references usuario (id),
+    foreign key (idUsuarioModificacion) references usuario (id)
+);
+
+create table examenEstomatologico
+(
+    id           serial,
+    idHistoriaClinica int,
+    labioSuperior boolean DEFAULT false NOT NULL,
+    labioInferior boolean DEFAULT false NOT NULL,
+    comisura boolean DEFAULT false NOT NULL,
+    menton boolean DEFAULT false NOT NULL,
+    frenillos boolean DEFAULT false NOT NULL,
+    surcosVestibulares boolean DEFAULT false NOT NULL,
+    carrilos boolean DEFAULT false NOT NULL,
+    procesosAlveolares boolean DEFAULT false NOT NULL,
+    regionFaringea boolean DEFAULT false NOT NULL,
+    paladarBlando boolean DEFAULT false NOT NULL,
+    paladarDuro boolean DEFAULT false NOT NULL,
+    pisoBoca boolean DEFAULT false NOT NULL,
+    dorsoLengua boolean DEFAULT false NOT NULL,
+    vientreLengua boolean DEFAULT false NOT NULL,
+    glandulasParotidas boolean DEFAULT false NOT NULL,
+    glandulasSublinguales boolean DEFAULT false NOT NULL,
+    glandulasSubmaxilares boolean DEFAULT false NOT NULL,
+    glandulasSalivaresMenor boolean DEFAULT false NOT NULL,
+    maxilarSuperior boolean DEFAULT false NOT NULL,
+    maxilarInferior boolean DEFAULT false NOT NULL,
+    idUsuarioCreacion    int NOT NULL,
+    fechaCreacion date NOT NULL,
+    idUsuarioModificacion    int,
+    fechaModificacion date,
+    habilitado  bool DEFAULT false NOT NULL,
+    primary key (id),
+    foreign key (idHistoriaClinica) references historiaClinica (id),
+    foreign key (idUsuarioCreacion) references usuario (id),
+    foreign key (idUsuarioModificacion) references usuario (id)
+);
+
+CREATE TABLE odontograma
+(
+    id                    SERIAL PRIMARY KEY,
+    idHistoriaClinica     int                not null,
+    fecha                 DATE               NOT NULL,
+    idUsuarioCreacion     int               NOT NULL,
+    fechaCreacion         date             NOT NULL,
+    idUsuarioModificacion int,
+    fechaModificacion     date,
+    habilitado            bool DEFAULT false NOT NULL,
+    foreign key (idHistoriaClinica) references historiaClinica (id),
+    foreign key (idUsuarioCreacion) references usuario (id),
+    foreign key (idUsuarioModificacion) references usuario (id)
+);
+
+CREATE TABLE diente -- tabla para visualizar los dientes en el odontograma
+(
+    id           SERIAL PRIMARY KEY,
+    dienteNumero INT          NOT NULL,
+    descripcion  VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE estadoDiente -- tabla para visualizar los estados de los dientes en el odontograma
+(
+    id          SERIAL PRIMARY KEY,
+    descripcion VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE tratamiento -- tabla para visualizar los tratamientos en el odontograma
+(
+    id          SERIAL PRIMARY KEY,
+    descripcion VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE detalleOdontograma
+(
+    id               SERIAL PRIMARY KEY,
+    idOdontograma    INT  NOT NULL,
+    idDiente         INT  NOT NULL,
+    idEstado         INT  NOT NULL,
+    idTratamiento    INT  NOT NULL,
+    fechaTratamiento DATE NOT NULL,
+    idUsuarioCreacion     int NOT NULL,
+    fechaCreacion         date NOT NULL,
+    idUsuarioModificacion int,
+    fechaModificacion     date,
+    habilitado            bool DEFAULT false NOT NULL,
+    FOREIGN KEY (idOdontograma) REFERENCES odontograma (id),
+    FOREIGN KEY (idDiente) REFERENCES diente (id),
+    FOREIGN KEY (idEstado) REFERENCES estadoDiente (id),
+    FOREIGN KEY (idTratamiento) REFERENCES Tratamiento (id),
+    foreign key (idUsuarioCreacion) references usuario (id),
+    foreign key (idUsuarioModificacion) references usuario (id)
+);
+
+-- revisar falta la tabla examen dental
+-- revisar esta tabla
+CREATE TABLE examenPeriodontal (
+                                    id SERIAL PRIMARY KEY,
+                                    idHistoriaClinica int not null,
+                                    fechaExamen DATE,
+                                    diente INTEGER,
+                                    movilidad BOOLEAN,
+                                    bolsaVestibular NUMERIC(3,2),
+                                    bolsaPalatal NUMERIC(3,2),
+                                    puntoHemorragico BOOLEAN,
+                                    idUsuarioCreacion     int NOT NULL,
+                                    fechaCreacion         date NOT NULL,
+                                    idUsuarioModificacion int,
+                                    fechaModificacion     date,
+                                    habilitado            bool DEFAULT false NOT NULL,
+                                    foreign key (idHistoriaClinica) references historiaClinica (id),
+                                    foreign key (idUsuarioCreacion) references usuario (id),
+                                    foreign key (idUsuarioModificacion) references usuario (id)
+);
+
+-- revisar si se puede dejar configurable
+CREATE TABLE analisisOclusion (
+                                   id SERIAL PRIMARY KEY,
+                                   idHistoriaClinica int not null,
+                                   fechaExamen DATE,
+                                   relacionMolarDerecha varchar,
+                                   relacionMolarIzquierda varchar,
+                                   relacionCaninaDerecha varchar,
+                                   relacionCaninaIzquierda varchar,
+                                   sobremordidaHorizontal NUMERIC(3,2), -- Milimetros
+                                   dientesAusentes BOOLEAN, --si: true no: false
+                                   contactoInicialRc BOOLEAN,
+                                   sobremordidaVertical NUMERIC(3,2), -- Porcentaje
+                                   soportePostAdecu BOOLEAN, --si: true no: false
+                                   deflexionMandibular BOOLEAN, --si: true no: false
+                                   idUsuarioCreacion     int NOT NULL,
+                                   fechaCreacion         date NOT NULL,
+                                   idUsuarioModificacion int,
+                                   fechaModificacion     date,
+                                   habilitado            bool DEFAULT false NOT NULL,
+                                   foreign key (idHistoriaClinica) references historiaClinica (id),
+                                   foreign key (idHistoriaClinica) references historiaClinica (id),
+);
+
+CREATE TABLE tipoAcoplamientoDienteAnt  -- tabla para visualizar los tipos de acoplamiento en el odontograma
+(
+                                           id SERIAL PRIMARY KEY,
+                                           descripcion varchar,
+                                           habilitado bool DEFAULT false NOT NULL
+);
+
+CREATE TABLE acoplamientoDienteAnt (
+                                         id SERIAL PRIMARY KEY,
+                                         idHistoriaClinica int not null,
+                                         fechaExamen DATE,
+                                         idTipoAcoplamiento INTEGER,
+                                         seleccion boolean DEFAULT false NOT NULL,
+                                         idUsuarioCreacion     int NOT NULL,
+                                         fechaCreacion         date NOT NULL,
+                                         idUsuarioModificacion int,
+                                         fechaModificacion     date,
+                                         habilitado            bool DEFAULT false NOT NULL,
+                                         foreign key (idHistoriaClinica) references historiaClinica (id),
+                                         foreign key (idTipoAcoplamiento) references tipoAcoplamientoDienteAnt (id),
+                                         foreign key (idUsuarioCreacion) references usuario (id),
+                                         foreign key (idUsuarioModificacion) references usuario (id)
+);
+
+CREATE TABLE tipoContatoOclusalesMov  -- tabla para visualizar los tipos de contacto oclusales en el odontograma
+(
+    id SERIAL PRIMARY KEY,
+    descripcion varchar,
+    habilitado bool DEFAULT false NOT NULL
+);
+
+CREATE TABLE contactoOclusalesMov (
+    id SERIAL PRIMARY KEY,
+    idHistoriaClinica int not null,
+    fechaExamen DATE,
+    idTipoContacOcluMov INTEGER, -- referencia de la tabla tipoContatoOclusalesMov
+    seleccion boolean DEFAULT false NOT NULL,
+    cuales varchar,
+    idUsuarioCreacion     int NOT NULL,
+    fechaCreacion         date NOT NULL,
+    idUsuarioModificacion int,
+    fechaModificacion     date,
+    habilitado            bool DEFAULT false NOT NULL,
+    foreign key (idHistoriaClinica) references historiaClinica (id),
+    foreign key (idTipoContacOcluMov) references TipoContatoOclusalesMov (id),
+    foreign key (idUsuarioCreacion) references usuario (id),
+    foreign key (idUsuarioModificacion) references usuario (id)
+);
+
 
 
 INSERT INTO public.rol (id, descripcion, habilitado) VALUES (DEFAULT, 'Administrador'::varchar(200), true::boolean);
