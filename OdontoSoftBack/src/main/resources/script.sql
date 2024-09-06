@@ -11,17 +11,17 @@ create table tipoDocumento
 
 CREATE TABLE menu
 (
-    id          serial            NOT NULL,
-    descripcion varchar(50) NOT NULL,
-    id_menu_padre int NULL,
-    url varchar(100) NULL,
-    habilitado  bool DEFAULT false NOT NULL,
+    id            serial             NOT NULL,
+    descripcion   varchar(50)        NOT NULL,
+    id_menu_padre int                NULL,
+    url           varchar(100)       NULL,
+    habilitado    bool DEFAULT false NOT NULL,
     CONSTRAINT menu_pkey PRIMARY KEY (id)
 );
 
 CREATE TABLE rol
 (
-    id          serial            NOT NULL,
+    id          serial             NOT NULL,
     descripcion varchar(200)       NOT NULL,
     habilitado  bool DEFAULT false NOT NULL,
     CONSTRAINT rol_pkey PRIMARY KEY (id)
@@ -29,10 +29,10 @@ CREATE TABLE rol
 
 CREATE TABLE permiso_menu
 (
-    id      serial NOT NULL,
-    id_rol  int    NOT NULL,
-    id_menu int    NOT NULL,
-    habilitado  bool DEFAULT false NOT NULL,
+    id         serial             NOT NULL,
+    id_rol     int                NOT NULL,
+    id_menu    int                NOT NULL,
+    habilitado bool DEFAULT false NOT NULL,
     CONSTRAINT permiso_menu_pkey PRIMARY KEY (id),
     CONSTRAINT permiso_menu_id_menu FOREIGN KEY (id_menu) REFERENCES menu (id),
     CONSTRAINT permiso_menu_id_rol FOREIGN KEY (id_rol) REFERENCES menu (id)
@@ -40,10 +40,10 @@ CREATE TABLE permiso_menu
 
 CREATE TABLE usuario
 (
-    id         serial            NOT NULL,
+    id         serial             NOT NULL,
     nombre     varchar(50)        NOT NULL,
     clave      text               NOT NULL,
-    id_rol     int               NOT NULL,
+    id_rol     int                NOT NULL,
     habilitado bool DEFAULT false NOT NULL,
     codigo     varchar(20)        NULL,
     CONSTRAINT usuario_pkey PRIMARY KEY (id),
@@ -70,13 +70,13 @@ create table paciente
     nombreAcompanante     VARCHAR(50),
     parentescoAcompanante VARCHAR(20),
     telefonoAcompanante   VARCHAR(20),
-    idUsuarioCreacion    int NOT NULL,
-    fechaCreacion date NOT NULL,
-    idUsuarioModificacion    int,
-    fechaModificacion date,
-    habilitado  bool DEFAULT false NOT NULL,
+    idUsuarioCreacion     int                NOT NULL,
+    fechaCreacion         date               NOT NULL,
+    idUsuarioModificacion int,
+    fechaModificacion     date,
+    habilitado            bool DEFAULT false NOT NULL,
     primary key (id),
-    foreign key (idTipoDocumento) references tipoDocumento(id)
+    foreign key (idTipoDocumento) references tipoDocumento (id)
 );
 
 create table cita
@@ -88,68 +88,33 @@ create table cita
     idPaciente INT,
     primary key (id),
     foreign key (idPaciente) references paciente (id),
-    habilitado  bool DEFAULT false NOT NULL
+    habilitado bool DEFAULT false NOT NULL
 );
 
 create table historiaClinica
 (
-    id            serial,
-    idPaciente    int not null,
-    motivoConsulta varchar,
-    enfermedadActual varchar,
-    ultimoMedicoTratante varchar,
-    observacionAntec varchar,
-    observacionAntecOdon varchar,
-    observacion varchar,
-    observacionAnaFunc varchar,
-    observacionExaEstomat varchar,
-    observacionOdontograma varchar,
+    id                        serial,
+    idPaciente                int                   not null,
+    motivoConsulta            varchar,
+    enfermedadActual          varchar,
+    ultimoMedicoTratante      varchar,
+    observacionAntec          varchar,
+    observacionAntecOdon      varchar,
+    observacion               varchar,
+    observacionAnaFunc        varchar,
+    observacionExaEstomat     varchar,
+    observacionOdontograma    varchar,
     observacionExaPeriodontal varchar,
-    observacionAnalisisOclu varchar,
-    idUsuarioCreacion    int NOT NULL,
-    atmMusculatura boolean DEFAULT false NOT NULL, -- normal: true anormal: false
-    fechaCreacion date NOT NULL,
-    idUsuarioModificacion    int,
-    fechaModificacion date,
-    habilitado  bool DEFAULT false NOT NULL,
+    observacionAnalisisOclu   varchar,
+    observacionAyudaDiag      varchar,
+    idUsuarioCreacion         int                   NOT NULL,
+    atmMusculatura            boolean DEFAULT false NOT NULL, -- normal: true anormal: false
+    fechaCreacion             date                  NOT NULL,
+    idUsuarioModificacion     int,
+    fechaModificacion         date,
+    habilitado                bool    DEFAULT false NOT NULL,
     primary key (id),
     foreign key (idPaciente) references paciente (id),
-    foreign key (idUsuarioCreacion) references usuario (id),
-    foreign key (idUsuarioModificacion) references usuario (id)
-);
-
-create table antecedentePaciente
-(
-    id            serial,
-    idHistoriaClinica    int not null,
-    idAntecedente int,
-    opciones varchar,
-    idUsuarioCreacion    int NOT NULL,
-    fechaCreacion date NOT NULL,
-    idUsuarioModificacion    int,
-    fechaModificacion date,
-    habilitado  bool DEFAULT false NOT NULL,
-    primary key (id),
-    foreign key (idHistoriaClinica) references historiaClinica (id),
-    foreign key (idAntecedente) references antecedente (id),
-    foreign key (idUsuarioCreacion) references usuario (id),
-    foreign key (idUsuarioModificacion) references usuario (id)
-);
-
-create table habitoPaciente
-(
-    id            serial,
-    idHistoriaClinica    int not null,
-    idHabito int,
-    opciones boolean,
-    idUsuarioCreacion    int NOT NULL,
-    fechaCreacion date NOT NULL,
-    idUsuarioModificacion    int,
-    fechaModificacion date,
-    habilitado  bool DEFAULT false NOT NULL,
-    primary key (id),
-    foreign key (idHistoriaClinica) references historiaClinica (id),
-    foreign key (idHabito) references habito (id),
     foreign key (idUsuarioCreacion) references usuario (id),
     foreign key (idUsuarioModificacion) references usuario (id)
 );
@@ -157,35 +122,71 @@ create table habitoPaciente
 create table antecedente
 (
     id           serial,
-    descripcion varchar,
+    descripcion  varchar,
     odontologico bool DEFAULT false NOT NULL,
-    habilitado  bool DEFAULT false NOT NULL,
+    habilitado   bool DEFAULT false NOT NULL,
     primary key (id)
+);
+
+create table antecedentePaciente
+(
+    id                    serial,
+    idHistoriaClinica     int                not null,
+    idAntecedente         int,
+    opciones              varchar,
+    idUsuarioCreacion     int                NOT NULL,
+    fechaCreacion         date               NOT NULL,
+    idUsuarioModificacion int,
+    fechaModificacion     date,
+    habilitado            bool DEFAULT false NOT NULL,
+    primary key (id),
+    foreign key (idHistoriaClinica) references historiaClinica (id),
+    foreign key (idAntecedente) references antecedente (id),
+    foreign key (idUsuarioCreacion) references usuario (id),
+    foreign key (idUsuarioModificacion) references usuario (id)
 );
 
 create table habito
 (
-    id           serial,
+    id          serial,
     descripcion varchar,
     habilitado  bool DEFAULT false NOT NULL,
     primary key (id)
 );
 
+create table habitoPaciente
+(
+    id                    serial,
+    idHistoriaClinica     int                not null,
+    idHabito              int,
+    opciones              boolean,
+    idUsuarioCreacion     int                NOT NULL,
+    fechaCreacion         date               NOT NULL,
+    idUsuarioModificacion int,
+    fechaModificacion     date,
+    habilitado            bool DEFAULT false NOT NULL,
+    primary key (id),
+    foreign key (idHistoriaClinica) references historiaClinica (id),
+    foreign key (idHabito) references habito (id),
+    foreign key (idUsuarioCreacion) references usuario (id),
+    foreign key (idUsuarioModificacion) references usuario (id)
+);
+
 create table signoVital
 (
-    id           serial,
-    idHistoriaClinica int not null,
-    peso float,
-    talla float,
-    temperatura float,
-    presionArterial varchar,
-    pulso float,
+    id                     serial,
+    idHistoriaClinica      int                not null,
+    peso                   float,
+    talla                  float,
+    temperatura            float,
+    presionArterial        varchar,
+    pulso                  float,
     frecuenciaRespiratoria float,
-    idUsuarioCreacion    int NOT NULL,
-    fechaCreacion date NOT NULL,
-    idUsuarioModificacion    int,
-    fechaModificacion date,
-    habilitado  bool DEFAULT false NOT NULL,
+    idUsuarioCreacion      int                NOT NULL,
+    fechaCreacion          date               NOT NULL,
+    idUsuarioModificacion  int,
+    fechaModificacion      date,
+    habilitado             bool DEFAULT false NOT NULL,
     primary key (id),
     foreign key (idHistoriaClinica) references historiaClinica (id),
     foreign key (idUsuarioCreacion) references usuario (id),
@@ -194,17 +195,17 @@ create table signoVital
 
 create table analisisFuncional
 (
-    id           serial,
-    idHistoriaClinica int not null,
-    masticacion boolean DEFAULT false NOT NULL,
-    deglucion boolean DEFAULT false NOT NULL,
-    fonacion boolean DEFAULT false NOT NULL,
-    respiracion boolean DEFAULT false NOT NULL,
-    idUsuarioCreacion    int NOT NULL,
-    fechaCreacion date NOT NULL,
-    idUsuarioModificacion    int,
-    fechaModificacion date,
-    habilitado  bool DEFAULT false NOT NULL,
+    id                    serial,
+    idHistoriaClinica     int                   not null,
+    masticacion           boolean DEFAULT false NOT NULL,
+    deglucion             boolean DEFAULT false NOT NULL,
+    fonacion              boolean DEFAULT false NOT NULL,
+    respiracion           boolean DEFAULT false NOT NULL,
+    idUsuarioCreacion     int                   NOT NULL,
+    fechaCreacion         date                  NOT NULL,
+    idUsuarioModificacion int,
+    fechaModificacion     date,
+    habilitado            bool    DEFAULT false NOT NULL,
     primary key (id),
     foreign key (idUsuarioCreacion) references usuario (id),
     foreign key (idUsuarioModificacion) references usuario (id)
@@ -212,49 +213,34 @@ create table analisisFuncional
 
 create table examenEstomatologico
 (
-    id           serial,
-    idHistoriaClinica int,
-    labioSuperior boolean DEFAULT false NOT NULL,
-    labioInferior boolean DEFAULT false NOT NULL,
-    comisura boolean DEFAULT false NOT NULL,
-    menton boolean DEFAULT false NOT NULL,
-    frenillos boolean DEFAULT false NOT NULL,
-    surcosVestibulares boolean DEFAULT false NOT NULL,
-    carrilos boolean DEFAULT false NOT NULL,
-    procesosAlveolares boolean DEFAULT false NOT NULL,
-    regionFaringea boolean DEFAULT false NOT NULL,
-    paladarBlando boolean DEFAULT false NOT NULL,
-    paladarDuro boolean DEFAULT false NOT NULL,
-    pisoBoca boolean DEFAULT false NOT NULL,
-    dorsoLengua boolean DEFAULT false NOT NULL,
-    vientreLengua boolean DEFAULT false NOT NULL,
-    glandulasParotidas boolean DEFAULT false NOT NULL,
-    glandulasSublinguales boolean DEFAULT false NOT NULL,
-    glandulasSubmaxilares boolean DEFAULT false NOT NULL,
+    id                      serial,
+    idHistoriaClinica       int,
+    labioSuperior           boolean DEFAULT false NOT NULL,
+    labioInferior           boolean DEFAULT false NOT NULL,
+    comisura                boolean DEFAULT false NOT NULL,
+    menton                  boolean DEFAULT false NOT NULL,
+    frenillos               boolean DEFAULT false NOT NULL,
+    surcosVestibulares      boolean DEFAULT false NOT NULL,
+    carrilos                boolean DEFAULT false NOT NULL,
+    procesosAlveolares      boolean DEFAULT false NOT NULL,
+    regionFaringea          boolean DEFAULT false NOT NULL,
+    paladarBlando           boolean DEFAULT false NOT NULL,
+    paladarDuro             boolean DEFAULT false NOT NULL,
+    pisoBoca                boolean DEFAULT false NOT NULL,
+    dorsoLengua             boolean DEFAULT false NOT NULL,
+    vientreLengua           boolean DEFAULT false NOT NULL,
+    glandulasParotidas      boolean DEFAULT false NOT NULL,
+    glandulasSublinguales   boolean DEFAULT false NOT NULL,
+    glandulasSubmaxilares   boolean DEFAULT false NOT NULL,
     glandulasSalivaresMenor boolean DEFAULT false NOT NULL,
-    maxilarSuperior boolean DEFAULT false NOT NULL,
-    maxilarInferior boolean DEFAULT false NOT NULL,
-    idUsuarioCreacion    int NOT NULL,
-    fechaCreacion date NOT NULL,
-    idUsuarioModificacion    int,
-    fechaModificacion date,
-    habilitado  bool DEFAULT false NOT NULL,
+    maxilarSuperior         boolean DEFAULT false NOT NULL,
+    maxilarInferior         boolean DEFAULT false NOT NULL,
+    idUsuarioCreacion       int                   NOT NULL,
+    fechaCreacion           date                  NOT NULL,
+    idUsuarioModificacion   int,
+    fechaModificacion       date,
+    habilitado              bool    DEFAULT false NOT NULL,
     primary key (id),
-    foreign key (idHistoriaClinica) references historiaClinica (id),
-    foreign key (idUsuarioCreacion) references usuario (id),
-    foreign key (idUsuarioModificacion) references usuario (id)
-);
-
-CREATE TABLE odontograma
-(
-    id                    SERIAL PRIMARY KEY,
-    idHistoriaClinica     int                not null,
-    fecha                 DATE               NOT NULL,
-    idUsuarioCreacion     int               NOT NULL,
-    fechaCreacion         date             NOT NULL,
-    idUsuarioModificacion int,
-    fechaModificacion     date,
-    habilitado            bool DEFAULT false NOT NULL,
     foreign key (idHistoriaClinica) references historiaClinica (id),
     foreign key (idUsuarioCreacion) references usuario (id),
     foreign key (idUsuarioModificacion) references usuario (id)
@@ -279,16 +265,31 @@ CREATE TABLE tratamiento -- tabla para visualizar los tratamientos en el odontog
     descripcion VARCHAR(50) NOT NULL
 );
 
+CREATE TABLE odontograma
+(
+    id                    SERIAL PRIMARY KEY,
+    idHistoriaClinica     int                not null,
+    fecha                 DATE               NOT NULL,
+    idUsuarioCreacion     int                NOT NULL,
+    fechaCreacion         date               NOT NULL,
+    idUsuarioModificacion int,
+    fechaModificacion     date,
+    habilitado            bool DEFAULT false NOT NULL,
+    foreign key (idHistoriaClinica) references historiaClinica (id),
+    foreign key (idUsuarioCreacion) references usuario (id),
+    foreign key (idUsuarioModificacion) references usuario (id)
+);
+
 CREATE TABLE detalleOdontograma
 (
-    id               SERIAL PRIMARY KEY,
-    idOdontograma    INT  NOT NULL,
-    idDiente         INT  NOT NULL,
-    idEstado         INT  NOT NULL,
-    idTratamiento    INT  NOT NULL,
-    fechaTratamiento DATE NOT NULL,
-    idUsuarioCreacion     int NOT NULL,
-    fechaCreacion         date NOT NULL,
+    id                    SERIAL PRIMARY KEY,
+    idOdontograma         INT                NOT NULL,
+    idDiente              INT                NOT NULL,
+    idEstado              INT                NOT NULL,
+    idTratamiento         INT                NOT NULL,
+    fechaTratamiento      DATE               NOT NULL,
+    idUsuarioCreacion     int                NOT NULL,
+    fechaCreacion         date               NOT NULL,
     idUsuarioModificacion int,
     fechaModificacion     date,
     habilitado            bool DEFAULT false NOT NULL,
@@ -300,134 +301,311 @@ CREATE TABLE detalleOdontograma
     foreign key (idUsuarioModificacion) references usuario (id)
 );
 
--- revisar falta la tabla examen dental
--- revisar esta tabla
-CREATE TABLE examenPeriodontal (
-                                    id SERIAL PRIMARY KEY,
-                                    idHistoriaClinica int not null,
-                                    fechaExamen DATE,
-                                    diente INTEGER,
-                                    movilidad BOOLEAN,
-                                    bolsaVestibular NUMERIC(3,2),
-                                    bolsaPalatal NUMERIC(3,2),
-                                    puntoHemorragico BOOLEAN,
-                                    idUsuarioCreacion     int NOT NULL,
-                                    fechaCreacion         date NOT NULL,
-                                    idUsuarioModificacion int,
-                                    fechaModificacion     date,
-                                    habilitado            bool DEFAULT false NOT NULL,
-                                    foreign key (idHistoriaClinica) references historiaClinica (id),
-                                    foreign key (idUsuarioCreacion) references usuario (id),
-                                    foreign key (idUsuarioModificacion) references usuario (id)
-);
 
--- revisar si se puede dejar configurable
-CREATE TABLE analisisOclusion (
-                                   id SERIAL PRIMARY KEY,
-                                   idHistoriaClinica int not null,
-                                   fechaExamen DATE,
-                                   relacionMolarDerecha varchar,
-                                   relacionMolarIzquierda varchar,
-                                   relacionCaninaDerecha varchar,
-                                   relacionCaninaIzquierda varchar,
-                                   sobremordidaHorizontal NUMERIC(3,2), -- Milimetros
-                                   dientesAusentes BOOLEAN, --si: true no: false
-                                   contactoInicialRc BOOLEAN,
-                                   sobremordidaVertical NUMERIC(3,2), -- Porcentaje
-                                   soportePostAdecu BOOLEAN, --si: true no: false
-                                   deflexionMandibular BOOLEAN, --si: true no: false
-                                   idUsuarioCreacion     int NOT NULL,
-                                   fechaCreacion         date NOT NULL,
-                                   idUsuarioModificacion int,
-                                   fechaModificacion     date,
-                                   habilitado            bool DEFAULT false NOT NULL,
-                                   foreign key (idHistoriaClinica) references historiaClinica (id),
-                                   foreign key (idHistoriaClinica) references historiaClinica (id),
-);
-
-CREATE TABLE tipoAcoplamientoDienteAnt  -- tabla para visualizar los tipos de acoplamiento en el odontograma
+--tabla para visualizar los tipos de alteraciones en el odontograma
+create table tipoAlteracion
 (
-                                           id SERIAL PRIMARY KEY,
-                                           descripcion varchar,
-                                           habilitado bool DEFAULT false NOT NULL
+    id          serial PRIMARY KEY,
+    descripcion varchar(20) NOT NULL -- color, tamaño, forma, etc.
 );
 
-CREATE TABLE acoplamientoDienteAnt (
-                                         id SERIAL PRIMARY KEY,
-                                         idHistoriaClinica int not null,
-                                         fechaExamen DATE,
-                                         idTipoAcoplamiento INTEGER,
-                                         seleccion boolean DEFAULT false NOT NULL,
-                                         idUsuarioCreacion     int NOT NULL,
-                                         fechaCreacion         date NOT NULL,
-                                         idUsuarioModificacion int,
-                                         fechaModificacion     date,
-                                         habilitado            bool DEFAULT false NOT NULL,
-                                         foreign key (idHistoriaClinica) references historiaClinica (id),
-                                         foreign key (idTipoAcoplamiento) references tipoAcoplamientoDienteAnt (id),
-                                         foreign key (idUsuarioCreacion) references usuario (id),
-                                         foreign key (idUsuarioModificacion) references usuario (id)
-);
 
-CREATE TABLE tipoContatoOclusalesMov  -- tabla para visualizar los tipos de contacto oclusales en el odontograma
+CREATE TABLE examenDental
 (
-    id SERIAL PRIMARY KEY,
-    descripcion varchar,
-    habilitado bool DEFAULT false NOT NULL
-);
-
-CREATE TABLE contactoOclusalesMov (
-    id SERIAL PRIMARY KEY,
-    idHistoriaClinica int not null,
-    fechaExamen DATE,
-    idTipoContacOcluMov INTEGER, -- referencia de la tabla tipoContatoOclusalesMov
-    seleccion boolean DEFAULT false NOT NULL,
-    cuales varchar,
-    idUsuarioCreacion     int NOT NULL,
-    fechaCreacion         date NOT NULL,
+    id                    SERIAL PRIMARY KEY,
+    idHistoriaClinica     int                not null,
+    fechaExamen           DATE,
+    denticion             VARCHAR(20), -- decidua, mixta, permanente
+    formArcoSuperior      VARCHAR(20), -- ovalado, cuadrado, triangular
+    formArcoInferior      VARCHAR(20), -- ovalado, cuadrado, triangular
+    simetriArcoSuperior   VARCHAR(20), -- simetrico, asimetrico, armonicos
+    simetriArcoInferior   VARCHAR(20), -- simetrico, asimetrico, armonicos
+    riesgoCaries          VARCHAR(20),
+    idUsuarioCreacion     int                NOT NULL,
+    fechaCreacion         date               NOT NULL,
     idUsuarioModificacion int,
     fechaModificacion     date,
     habilitado            bool DEFAULT false NOT NULL,
+    foreign key (idHistoriaClinica) references historiaClinica (id),
+    foreign key (idUsuarioCreacion) references usuario (id),
+    foreign key (idUsuarioModificacion) references usuario (id)
+);
+
+CREATE TABLE alteracionDental
+(
+    id               SERIAL PRIMARY KEY,
+    idExamenDental   INTEGER not null,
+    diente           INTEGER,
+    idTipoAlteracion INTEGER not null,
+    descripcion      VARCHAR(500),
+    foreign key (idExamenDental) references examenDental (id),
+    foreign key (idTipoAlteracion) references tipoAlteracion (id),
+);
+
+-- tabla para visualizar los cuadrantes en el odontograma
+create table tipoCuadrante
+(
+    id          serial PRIMARY KEY,
+    descripcion varchar(10) NOT NULL -- C.O.P.   C.E.O.
+);
+
+
+CREATE TABLE historiaCaries
+(
+    id                    SERIAL PRIMARY KEY,
+    idHistoriaClinica     int                not null,
+    fechaExamen           DATE,
+    idTipoCuadrante       INTEGER,
+    sanos                 INTEGER,
+    cariados              INTEGER,
+    obturados             INTEGER,
+    perdidos              INTEGER,
+    extraccionIndicada    INTEGER,
+    idUsuarioCreacion     int                NOT NULL,
+    fechaCreacion         date               NOT NULL,
+    idUsuarioModificacion int,
+    fechaModificacion     date,
+    habilitado            bool DEFAULT false NOT NULL,
+    foreign key (idHistoriaClinica) references historiaClinica (id),
+    foreign key (idUsuarioCreacion) references usuario (id),
+    foreign key (idUsuarioModificacion) references usuario (id),
+    foreign key (idTipoCuadrante) references tipoCuadrante (id)
+);
+
+
+-- revisar esta tabla
+CREATE TABLE examenPeriodontal
+(
+    id                    SERIAL PRIMARY KEY,
+    idHistoriaClinica     int                not null,
+    fechaExamen           DATE,
+    diente                INTEGER,
+    movilidad             BOOLEAN,
+    bolsaVestibular       NUMERIC(3, 2),
+    bolsaPalatal          NUMERIC(3, 2),
+    puntoHemorragico      BOOLEAN,
+    idUsuarioCreacion     int                NOT NULL,
+    fechaCreacion         date               NOT NULL,
+    idUsuarioModificacion int,
+    fechaModificacion     date,
+    habilitado            bool DEFAULT false NOT NULL,
+    foreign key (idHistoriaClinica) references historiaClinica (id),
+    foreign key (idUsuarioCreacion) references usuario (id),
+    foreign key (idUsuarioModificacion) references usuario (id)
+);
+
+
+CREATE TABLE analisisOclusion
+(
+    id                      SERIAL PRIMARY KEY,
+    idHistoriaClinica       int                not null,
+    fechaExamen             DATE,
+    relacionMolarDerecha    varchar,
+    relacionMolarIzquierda  varchar,
+    relacionCaninaDerecha   varchar,
+    relacionCaninaIzquierda varchar,
+    sobremordidaHorizontal  NUMERIC(3, 2), -- Milimetros
+    dientesAusentes         BOOLEAN,       --si: true no: false
+    contactoInicialRc       BOOLEAN,
+    sobremordidaVertical    NUMERIC(3, 2), -- Porcentaje
+    soportePostAdecu        BOOLEAN,       --si: true no: false
+    deflexionMandibular     BOOLEAN,       --si: true no: false
+    idUsuarioCreacion       int                NOT NULL,
+    fechaCreacion           date               NOT NULL,
+    idUsuarioModificacion   int,
+    fechaModificacion       date,
+    habilitado              bool DEFAULT false NOT NULL,
+    foreign key (idHistoriaClinica) references historiaClinica (id),
+    foreign key (idHistoriaClinica) references historiaClinica (id)
+);
+
+CREATE TABLE tipoAcoplamientoDienteAnt -- tabla para visualizar los tipos de acoplamiento en el odontograma
+(
+    id          SERIAL PRIMARY KEY,
+    descripcion varchar,
+    habilitado  bool DEFAULT false NOT NULL
+);
+
+CREATE TABLE tipoContatoOclusalesMov -- tabla para visualizar los tipos de contacto oclusales en el odontograma
+(
+    id          SERIAL PRIMARY KEY,
+    descripcion varchar,
+    habilitado  bool DEFAULT false NOT NULL
+);
+
+CREATE TABLE acoplamientoDienteAnt
+(
+    id                    SERIAL PRIMARY KEY,
+    idHistoriaClinica     int                   not null,
+    fechaExamen           DATE,
+    idTipoAcoplamiento    INTEGER,
+    seleccion             boolean DEFAULT false NOT NULL,
+    idUsuarioCreacion     int                   NOT NULL,
+    fechaCreacion         date                  NOT NULL,
+    idUsuarioModificacion int,
+    fechaModificacion     date,
+    habilitado            bool    DEFAULT false NOT NULL,
+    foreign key (idHistoriaClinica) references historiaClinica (id),
+    foreign key (idTipoAcoplamiento) references tipoAcoplamientoDienteAnt (id),
+    foreign key (idUsuarioCreacion) references usuario (id),
+    foreign key (idUsuarioModificacion) references usuario (id)
+);
+
+CREATE TABLE contactoOclusalesMov
+(
+    id                    SERIAL PRIMARY KEY,
+    idHistoriaClinica     int                   not null,
+    fechaExamen           DATE,
+    idTipoContacOcluMov   INTEGER, -- referencia de la tabla tipoContatoOclusalesMov
+    seleccion             boolean DEFAULT false NOT NULL,
+    cuales                varchar,
+    idUsuarioCreacion     int                   NOT NULL,
+    fechaCreacion         date                  NOT NULL,
+    idUsuarioModificacion int,
+    fechaModificacion     date,
+    habilitado            bool    DEFAULT false NOT NULL,
     foreign key (idHistoriaClinica) references historiaClinica (id),
     foreign key (idTipoContacOcluMov) references TipoContatoOclusalesMov (id),
     foreign key (idUsuarioCreacion) references usuario (id),
     foreign key (idUsuarioModificacion) references usuario (id)
 );
 
+-- tabla para visualizar los tipos de diagnostico
+CREATE TABLE tipoDiagnostico
+(
+    id          SERIAL PRIMARY KEY,
+    codigo      varchar(10),
+    descripcion varchar,
+    habilitado  bool DEFAULT false NOT NULL
+);
+
+create table diagnostico
+(
+    id                    serial PRIMARY KEY,
+    idHistoriaClinica     int                not null,
+    idTipoDiagnostico     int                not null,
+    idUsuarioCreacion     int                NOT NULL,
+    fechaCreacion         date               NOT NULL,
+    idUsuarioModificacion int,
+    fechaModificacion     date,
+    definitivo            bool DEFAULT false NOT NULL,
+    habilitado            bool DEFAULT false NOT NULL,
+    foreign key (idHistoriaClinica) references historiaClinica (id),
+    foreign key (idUsuarioCreacion) references usuario (id),
+    foreign key (idUsuarioModificacion) references usuario (id),
+    foreign key (idTipoDiagnostico) references tipoDiagnostico (id)
+);
+
+--listado de ayudas diagnosticas
+CREATE TABLE tipoAyudaDiag
+(
+    id          SERIAL PRIMARY KEY,
+    codigo      varchar(10),
+    descripcion varchar,
+    habilitado  bool DEFAULT false NOT NULL
+);
+
+CREATE TABLE ayudaDiagnostica
+(
+    id                    SERIAL PRIMARY KEY,
+    idHistoriaClinica     int     not null,
+    idTipoAyudaDiag       INTEGER not null,
+    idUsuarioCreacion     int     NOT NULL,
+    fechaCreacion         date    NOT NULL,
+    idUsuarioModificacion int,
+    fechaModificacion     date,
+    foreign key (idHistoriaClinica) references historiaClinica (id),
+    foreign key (idUsuarioCreacion) references usuario (id),
+    foreign key (idUsuarioModificacion) references usuario (id),
+    foreign key (idTipoAyudaDiag) references tipoAyudaDiag (id)
+);
+
+-- listado de tipos de tratamiento
+CREATE TABLE tipoTratamiento
+(
+    id          SERIAL PRIMARY KEY,
+    codigo      varchar(10),
+    descripcion varchar,
+    habilitado  bool DEFAULT false NOT NULL
+);
 
 
-INSERT INTO public.rol (id, descripcion, habilitado) VALUES (DEFAULT, 'Administrador'::varchar(200), true::boolean);
-INSERT INTO public.rol (id, descripcion, habilitado) VALUES (DEFAULT, 'Paciente'::varchar(200), true::boolean);
+CREATE TABLE planTratamiento
+(
+    id                    SERIAL PRIMARY KEY,
+    idHistoriaClinica     int     not null,
+    idTipoTratam       INTEGER not null,
+    idUsuarioCreacion     int     NOT NULL,
+    fechaCreacion         date    NOT NULL,
+    idUsuarioModificacion int,
+    fechaModificacion     date,
+    foreign key (idHistoriaClinica) references historiaClinica (id),
+    foreign key (idTipoTratam) references tipoTratamiento (id),
+    foreign key (idUsuarioCreacion) references usuario (id),
+    foreign key (idUsuarioModificacion) references usuario (id)
+);
 
-INSERT INTO public.usuario (id, nombre, clave, id_rol, habilitado, codigo) VALUES (DEFAULT, 'jaime.olarte'::varchar(50), '1234'::text, 1::integer, true::boolean, 'jaime.olarte'::varchar(20));
 
-INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES (DEFAULT, 'Pacientes'::varchar(50),null, null, true::boolean);
-INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES (DEFAULT, 'Agenda'::varchar(50), null, null, true::boolean);
-INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES (DEFAULT, 'Configuración'::varchar(50), null, null, true::boolean);
 
-INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES (DEFAULT, 'Registrar paciente'::varchar(50), 1::integer, '/registroPac',  true::boolean);
-INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES (DEFAULT, 'Asignación de citas'::varchar(50), 2::integer, '/asigCita',true::boolean);
-INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES (DEFAULT, 'Mi calendario'::varchar(50), 2::integer, '/calendario',true::boolean);
-INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES (DEFAULT, 'Roles'::varchar(50), 3::integer, '/role', true::boolean);
-INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES (DEFAULT, 'Usuarios'::varchar(50), 3::integer, '/usuario', true::boolean);
-INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado) VALUES (DEFAULT, 'Consultar '::varchar(50), 1::integer, '/consultarPac',  true::boolean);
+INSERT INTO public.rol (id, descripcion, habilitado)
+VALUES (DEFAULT, 'Administrador'::varchar(200), true::boolean);
+INSERT INTO public.rol (id, descripcion, habilitado)
+VALUES (DEFAULT, 'Paciente'::varchar(200), true::boolean);
 
-INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado) VALUES (DEFAULT, 1::integer, 1::integer, true);
-INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado) VALUES (DEFAULT, 1::integer, 2::integer, true);
-INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado) VALUES (DEFAULT, 1::integer, 3::integer, true);
-INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado) VALUES (DEFAULT, 1::integer, 4::integer, true);
-INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado) VALUES (DEFAULT, 1::integer, 5::integer, true);
-INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado) VALUES (DEFAULT, 1::integer, 6::integer, true);
-INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado) VALUES (DEFAULT, 1::integer, 7::integer, true);
-INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado) VALUES (DEFAULT, 1::integer, 8::integer, true);
-INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado) VALUES (DEFAULT, 2::integer, 2::integer, true);
-INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado) VALUES (DEFAULT, 1::integer, 9::integer, true);
+INSERT INTO public.usuario (id, nombre, clave, id_rol, habilitado, codigo)
+VALUES (DEFAULT, 'jaime.olarte'::varchar(50), '1234'::text, 1::integer, true::boolean, 'jaime.olarte'::varchar(20));
 
-INSERT INTO public.tipodocumento(id, codigo, nombre, habilitado) VALUES(1, 'C.C.', 'Cédula de Ciudadanía', true);
-INSERT INTO public.tipodocumento(id, codigo, nombre, habilitado) VALUES(2, 'C.E.', 'Cédula de Extranjerí', true);
-INSERT INTO public.tipodocumento (id, codigo, nombre, habilitado) VALUES(3, 'T.I.', 'Tarjeta de Identidad', true);
-INSERT INTO public.tipodocumento (id, codigo, nombre, habilitado) VALUES(4, 'R.C.', 'Registro Civil', true);
-INSERT INTO public.tipodocumento (id, codigo, nombre, habilitado) VALUES(5, 'P.S', 'Pasaporte', true);
+INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado)
+VALUES (DEFAULT, 'Pacientes'::varchar(50), null, null, true::boolean);
+INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado)
+VALUES (DEFAULT, 'Agenda'::varchar(50), null, null, true::boolean);
+INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado)
+VALUES (DEFAULT, 'Configuración'::varchar(50), null, null, true::boolean);
+
+INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado)
+VALUES (DEFAULT, 'Registrar paciente'::varchar(50), 1::integer, '/registroPac', true::boolean);
+INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado)
+VALUES (DEFAULT, 'Asignación de citas'::varchar(50), 2::integer, '/asigCita', true::boolean);
+INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado)
+VALUES (DEFAULT, 'Mi calendario'::varchar(50), 2::integer, '/calendario', true::boolean);
+INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado)
+VALUES (DEFAULT, 'Roles'::varchar(50), 3::integer, '/role', true::boolean);
+INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado)
+VALUES (DEFAULT, 'Usuarios'::varchar(50), 3::integer, '/usuario', true::boolean);
+INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado)
+VALUES (DEFAULT, 'Consultar '::varchar(50), 1::integer, '/consultarPac', true::boolean);
+
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado)
+VALUES (DEFAULT, 1::integer, 1::integer, true);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado)
+VALUES (DEFAULT, 1::integer, 2::integer, true);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado)
+VALUES (DEFAULT, 1::integer, 3::integer, true);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado)
+VALUES (DEFAULT, 1::integer, 4::integer, true);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado)
+VALUES (DEFAULT, 1::integer, 5::integer, true);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado)
+VALUES (DEFAULT, 1::integer, 6::integer, true);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado)
+VALUES (DEFAULT, 1::integer, 7::integer, true);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado)
+VALUES (DEFAULT, 1::integer, 8::integer, true);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado)
+VALUES (DEFAULT, 2::integer, 2::integer, true);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado)
+VALUES (DEFAULT, 1::integer, 9::integer, true);
+
+INSERT INTO public.tipodocumento(id, codigo, nombre, habilitado)
+VALUES (1, 'C.C.', 'Cédula de Ciudadanía', true);
+INSERT INTO public.tipodocumento(id, codigo, nombre, habilitado)
+VALUES (2, 'C.E.', 'Cédula de Extranjerí', true);
+INSERT INTO public.tipodocumento (id, codigo, nombre, habilitado)
+VALUES (3, 'T.I.', 'Tarjeta de Identidad', true);
+INSERT INTO public.tipodocumento (id, codigo, nombre, habilitado)
+VALUES (4, 'R.C.', 'Registro Civil', true);
+INSERT INTO public.tipodocumento (id, codigo, nombre, habilitado)
+VALUES (5, 'P.S', 'Pasaporte', true);
 
 
 
