@@ -97,6 +97,6 @@ public class Paciente {
   private Set<Cita> citas = new LinkedHashSet<>();
 
   @OneToMany(mappedBy = "idpaciente")
-  private Set<Historiaclinica> historiaclinicas = new LinkedHashSet<>();
+  private Set<HistoriaClinica> historiaclinicas = new LinkedHashSet<>();
 
 }

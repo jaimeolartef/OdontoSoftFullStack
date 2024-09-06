@@ -1,0 +1,67 @@
+package org.enterprise.odontosoft.model.Entity;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
+
+import java.time.LocalDate;
+
+@Getter
+@Setter
+@Entity
+@Table(name = "detalleodontograma")
+public class DetalleOdontograma {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ColumnDefault("nextval('detalleodontograma_id_seq')")
+    @Column(name = "id", nullable = false)
+    private Integer id;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "idodontograma", nullable = false)
+    private Odontograma idodontograma;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "iddiente", nullable = false)
+    private Diente iddiente;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "idestado", nullable = false)
+    private EstadoDiente idestado;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "idtratamiento", nullable = false)
+    private Tratamiento idtratamiento;
+
+    @NotNull
+    @Column(name = "fechatratamiento", nullable = false)
+    private LocalDate fechatratamiento;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "idusuariocreacion", nullable = false)
+    private Usuario idusuariocreacion;
+
+    @NotNull
+    @Column(name = "fechacreacion", nullable = false)
+    private LocalDate fechacreacion;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "idusuariomodificacion")
+    private Usuario idusuariomodificacion;
+
+    @Column(name = "fechamodificacion")
+    private LocalDate fechamodificacion;
+
+    @NotNull
+    @ColumnDefault("false")
+    @Column(name = "habilitado", nullable = false)
+    private Boolean habilitado = false;
+
+}

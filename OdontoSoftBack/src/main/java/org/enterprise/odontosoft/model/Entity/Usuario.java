@@ -47,9 +47,9 @@ public class Usuario {
   private String codigo;
 
   @OneToMany(mappedBy = "idusuariocreacion")
-  private Set<Historiaclinica> historiaClinicasUsuario = new LinkedHashSet<>();
+  private Set<HistoriaClinica> historiaClinicasUsuario = new LinkedHashSet<>();
 
   @OneToMany(mappedBy = "idusuariomodificacion")
-  private Set<Historiaclinica> historiaClinicasUsuarioMod = new LinkedHashSet<>();
+  private Set<HistoriaClinica> historiaClinicasUsuarioMod = new LinkedHashSet<>();
 
 }
