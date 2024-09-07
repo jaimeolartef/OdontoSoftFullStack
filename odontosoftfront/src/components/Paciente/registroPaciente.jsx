@@ -8,7 +8,6 @@ import showMessage from "../../util/UtilMessage";
 
 //TODO 1: Agregar la auditoria al registro de pacientes usuario y fecha de creacion y modificacion
 //TODO 2: Ajustar los formularios con estilos bootstrap
-//TODO 3: Estoy creando la estructura de la BD
 
 const RegistroPaciente = () => {
   const [formData, setFormData] = useState({
@@ -123,7 +122,7 @@ const RegistroPaciente = () => {
             <label><span className="required-field">* </span>Primer nombre</label>
           </div>
           <div className="input-box">
-            <input type="text" name="segundonombre" value={formData.segundonombre} onChange={handleChange} />
+            <input type="text" name="segundonombre" value={formData.segundonombre} onChange={handleChange}/>
             <label><span className="required-field">  </span>Segundo nombre</label>
           </div>
           <div className="input-box">
@@ -157,7 +156,8 @@ const RegistroPaciente = () => {
             <label><span className="required-field">  </span>Genero</label>
           </div>
           <div className="input-box">
-            <input type="text" name="direccionresidencia" value={formData.direccionresidencia} onChange={handleChange} required/>
+            <input type="text" name="direccionresidencia" value={formData.direccionresidencia} onChange={handleChange}
+                   required/>
             <label><span className="required-field">* </span>Dirección de residencia</label>
           </div>
           <div className="input-box">
@@ -216,7 +216,7 @@ const RegistroPaciente = () => {
             </div>
           )}
         </section>
-        <button type="submit" className="btn">Guardar</button>
+        <button type="submit" className="btn btn-primary">Guardar</button>
       </form>
     </div>
   );

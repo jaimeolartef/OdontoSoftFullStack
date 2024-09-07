@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import './Login.css'; // Asegúrate de tener un archivo CSS para estilos
+import React, { useState, useEffect } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './Login.css'; // Asegúrate de tener un archivo CSS para estilos adicionales
 import axios from "axios";
 import sha256 from 'crypto-js/sha256';
-import {connect} from "react-redux";
+import { connect } from "react-redux";
 import { useNavigate } from 'react-router-dom';
 import config from './config';
 import showMessage from "../src/util/UtilMessage";
@@ -13,12 +14,38 @@ const Login = (props) => {
     clave: '',
   });
 
-
   const [usuarioDto, setUsuarioDto] = useState({
-    codigo : ''
+    codigo: ''
+  });
+
+  const [validation, setValidation] = useState({
+    usuario: null,
+    clave: null,
   });
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Example starter JavaScript for disabling form submissions if there are invalid fields
+    (() => {
+      'use strict'
+
+      // Fetch all the forms we want to apply custom Bootstrap validation styles to
+      const forms = document.querySelectorAll('.needs-validation')
+
+      // Loop over them and prevent submission
+      Array.from(forms).forEach(form => {
+        form.addEventListener('submit', event => {
+          if (!form.checkValidity()) {
+            event.preventDefault()
+            event.stopPropagation()
+          }
+
+          form.classList.add('was-validated')
+        }, false)
+      })
+    })();
+  }, []);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -28,65 +55,72 @@ const Login = (props) => {
     }));
   };
 
-  const handleLogin = () => {
-  try {
-    const hash = sha256(loginObj.clave).toString();
-    loginObj.clave = hash;
+  const handleLogin = (event) => {
+    event.preventDefault();
+    try {
+      const hash = sha256(loginObj.clave).toString();
+      loginObj.clave = hash;
 
-    axios.post(`${config.baseURL}/user/login`, loginObj)
-      .then(response => {
-        if (response.data) {
-          axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
-          localStorage.setItem('jsonwebtoken', response.data.token);
-          usuarioDto.codigo = response.data.usuario;
-          axios.post(`${config.baseURL}/user/validateRole`, usuarioDto)
-            .then(responseMenu => {
-              const responseValidateRole = JSON.stringify(responseMenu.data.menus);
-              localStorage.setItem('menuUser', responseValidateRole);
-              navigate('/inicio');
-              localStorage.setItem('username', usuarioDto.codigo);
-              props.onLoggedIn();
-            }).catch(error => {
-            showMessage('error','Error al validar el rol del usuario');
-            });
-        } else {
-          showMessage('error','Error de autenticación, por favor validar sus credenciales');
-        }
-      }).catch(error => {
-      showMessage('error','Error de autenticación, por favor validar sus credenciales');
-      });
-  } catch (error) {
-    showMessage('error','Error ' + error);
-  }
-};
+      axios.post(`${config.baseURL}/user/login`, loginObj)
+        .then(response => {
+          if (response.data) {
+            axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+            localStorage.setItem('jsonwebtoken', response.data.token);
+            usuarioDto.codigo = response.data.usuario;
+            axios.post(`${config.baseURL}/user/validateRole`, usuarioDto)
+              .then(responseMenu => {
+                const responseValidateRole = JSON.stringify(responseMenu.data.menus);
+                localStorage.setItem('menuUser', responseValidateRole);
+                navigate('/inicio');
+                localStorage.setItem('username', usuarioDto.codigo);
+                props.onLoggedIn();
+              }).catch(error => {
+                showMessage('error', 'Error al validar el rol del usuario');
+              });
+          } else {
+            showMessage('error', 'Error de autenticación, por favor validar sus credenciales');
+          }
+        }).catch(error => {
+          showMessage('error', 'Error de autenticación, por favor validar sus credenciales');
+        });
+    } catch (error) {
+      showMessage('error', 'Error ' + error);
+    }
+  };
 
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
-      handleLogin();
+      handleLogin(event);
     }
   };
 
   return (
-    <div className="parent">
-      <div className="container">
-        <div>
-          <h2>Inicio de sesión</h2>
-          <form>
-            <div className="input-box">
-              <input type="usuario" className="input-translate" name="usuario" value={loginObj.usuario} onChange={handleInputChange} required/>
-              <label>Usuario</label>
+    <div className="d-flex justify-content-center align-items-center vh-100">
+      <div className="card p-4" style={{ width: '400px' }}>
+        <h2 className="card-title text-center">Inicio de sesión</h2>
+        <form className="row g-3 needs-validation" noValidate onSubmit={handleLogin}>
+          <div className="form-floating mb-3">
+            <input type="text" className="form-control" name="usuario" value={loginObj.usuario}
+                   onChange={handleInputChange} placeholder="Usuario" required/>
+            <label>Usuario</label>
+            <div className="invalid-feedback">
+              Debe ingresar un usuario
             </div>
-            <div className="input-box">
-              <input type="password" className="input-translate" name="clave" value={loginObj.clave} onChange={handleInputChange} onKeyDown={handleKeyDown}  required/>
-              <label>Clave</label>
+          </div>
+          <div className="form-floating mb-3">
+            <input id="floatingInputPwd" type="password" className="form-control" name="clave" value={loginObj.clave}
+                   onChange={handleInputChange} onKeyDown={handleKeyDown} placeholder="Clave" required/>
+            <label htmlFor="floatingInputPwd">Clave</label>
+            <div className="invalid-feedback">
+              Debe ingresar una clave
             </div>
-            <div className="center">
-              <button type="button" className="btn" onClick={handleLogin}>
-                Iniciar Sesión
-              </button>
-            </div>
-          </form>
-        </div>
+          </div>
+          <div className="d-grid">
+            <button type="submit" className="btn btn-primary">
+              Iniciar Sesión
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
@@ -94,7 +128,7 @@ const Login = (props) => {
 
 const mapDisPatchToProps = (dispatch) => {
   return {
-    onLoggedIn: () => dispatch({type: 'ON_LOGGED_IN'})
+    onLoggedIn: () => dispatch({ type: 'ON_LOGGED_IN' })
   }
 }
 

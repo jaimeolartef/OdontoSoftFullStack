@@ -1,17 +1,5 @@
-.App {
-  text-align: center;
-}
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
 
 .App-header {
   display: flex;
@@ -35,79 +23,7 @@
   }
 }
 
-.btn {
-  width: 100%;
-  height: 45px;
-  background-image: linear-gradient(to bottom right, #34aaf3, #3e3e3e);
-  border: none;
-  outline: none;
-  border-radius: 40px;
-  cursor: pointer;
-  font-size: 1em;
-  color: #fbfbfb;
-  font-weight: 600;
-}
 
-/* CSS para input de la aplicacion */
-/* Estilos existentes para los campos de entrada */
-/* Estilos existentes para los campos de entrada */
-.input-box input, .input-box select, .input-box input[type="date"] {
-  width: 100%;
-  height: 50px;
-  background: transparent;
-  border: 2px solid #5c5c5c;
-  outline: none;
-  border-radius: 40px;
-  font-size: 1em;
-  color: #5c5c5c;
-  padding: 0 20px;
-  transition: .5s ease;
-  position: relative;
-  z-index: 2;
-}
-
-.input-box label {
-  position: absolute;
-  z-index: 1;
-  top: 50%;
-  left: 20px;
-  transform: translateY(-77%);
-  font-size: 1em;
-  color: rgba(92, 92, 92, 0.01);
-  pointer-events: none;
-  transition: .5s ease;
-}
-
-/* Aplica los mismos estilos para los estados de enfoque y válidos a todos los campos de entrada. */
-.input-box input + label,
-.input-box select + label,
-.input-box input[type="date"] + label {
-  top: 1px;
-  font-size: .8em;
-  padding: 0 0;
-  color: #050505;
-  border-radius: 5px;
-  z-index: 3;
-}
-
-
-.required-field {
-  color: red;
-  margin-left: 5px;
-}
-
-select:invalid {
-  background-image: linear-gradient(to right, rgb(236, 236, 236), rgba(255, 255, 255, 0.67));
-}
-
-input:invalid {
-  background-image: linear-gradient(to right, rgb(228, 228, 228), rgba(255, 255, 255, 0.67));
-}
-
-.input-box {
-  position: relative;
-  margin: 25px 0;
-}
 
 
 .logo {
