@@ -56,9 +56,6 @@ select {
   box-sizing: border-box; /* Asegura que el padding y el borde estén incluidos en el ancho total */
 }
 
-input[type="checkbox"] {
-  margin-right: 10px;
-}
 
 button {
   padding: 14px;
