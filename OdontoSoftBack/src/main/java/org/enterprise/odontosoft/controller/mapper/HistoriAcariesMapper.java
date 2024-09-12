@@ -8,6 +8,8 @@ import org.enterprise.odontosoft.model.Entity.Usuario;
 import org.enterprise.odontosoft.view.dto.request.HistoriAcariesRequest;
 import org.enterprise.odontosoft.view.dto.response.HistoriAcariesResponse;
 
+import java.util.Objects;
+
 @UtilityClass
 public class HistoriAcariesMapper {
 
@@ -43,7 +45,7 @@ public class HistoriAcariesMapper {
                 .extraccionindicada(historiAcaries.getExtraccionindicada())
                 .idusuariocreacion(historiAcaries.getIdusuariocreacion().getId())
                 .fechacreacion(historiAcaries.getFechacreacion())
-                .idusuariomodificacion(historiAcaries.getIdusuariomodificacion().getId())
+                .idusuariomodificacion(Objects.nonNull(historiAcaries.getIdusuariomodificacion()) ? historiAcaries.getIdusuariomodificacion().getId() : null)
                 .fechamodificacion(historiAcaries.getFechamodificacion())
                 .habilitado(historiAcaries.getHabilitado())
                 .build();

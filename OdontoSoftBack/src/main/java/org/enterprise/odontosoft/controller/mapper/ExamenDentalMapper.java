@@ -7,6 +7,8 @@ import org.enterprise.odontosoft.model.Entity.Usuario;
 import org.enterprise.odontosoft.view.dto.request.ExamenDentalRequest;
 import org.enterprise.odontosoft.view.dto.response.ExamenDentalResponse;
 
+import java.util.Objects;
+
 @UtilityClass
 public class ExamenDentalMapper {
 
@@ -42,7 +44,7 @@ public class ExamenDentalMapper {
                 .riesgocaries(examenDental.getRiesgocaries())
                 .idusuariocreacion(examenDental.getIdusuariocreacion().getId())
                 .fechacreacion(examenDental.getFechacreacion())
-                .idusuariomodificacion(examenDental.getIdusuariomodificacion().getId())
+                .idusuariomodificacion(Objects.nonNull(examenDental.getIdusuariomodificacion()) ? examenDental.getIdusuariomodificacion().getId() : null)
                 .fechamodificacion(examenDental.getFechamodificacion())
                 .habilitado(examenDental.getHabilitado())
                 .build();

@@ -8,6 +8,8 @@ import org.enterprise.odontosoft.model.Entity.Usuario;
 import org.enterprise.odontosoft.view.dto.request.AntecedentePacienteRequest;
 import org.enterprise.odontosoft.view.dto.response.AntecedentePacienteResponse;
 
+import java.util.Objects;
+
 @UtilityClass
 public class AntecedentePacienteMapper {
 
@@ -31,9 +33,9 @@ public class AntecedentePacienteMapper {
                 .idhistoriaclinica(antecedentePaciente.getIdhistoriaclinica().getId())
                 .idantecedente(antecedentePaciente.getIdantecedente().getId())
                 .opciones(antecedentePaciente.getOpciones())
-                .idusuariocreacion(antecedentePaciente.getIdusuariocreacion().getId())
+                .idusuariocreacion(Objects.nonNull(antecedentePaciente.getIdusuariocreacion()) ? antecedentePaciente.getIdusuariocreacion().getId() : null)
                 .fechacreacion(antecedentePaciente.getFechacreacion())
-                .idusuariomodificacion(antecedentePaciente.getIdusuariomodificacion().getId())
+                .idusuariomodificacion(Objects.nonNull(antecedentePaciente.getIdusuariomodificacion()) ? antecedentePaciente.getIdusuariomodificacion().getId() : null)
                 .fechamodificacion(antecedentePaciente.getFechamodificacion())
                 .habilitado(antecedentePaciente.getHabilitado())
                 .build();

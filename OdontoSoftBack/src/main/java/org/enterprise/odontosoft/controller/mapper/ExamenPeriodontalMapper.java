@@ -7,6 +7,8 @@ import org.enterprise.odontosoft.model.Entity.Usuario;
 import org.enterprise.odontosoft.view.dto.request.ExamenPeriodontalRequest;
 import org.enterprise.odontosoft.view.dto.response.ExamenPeriodontalResponse;
 
+import java.util.Objects;
+
 @UtilityClass
 public class ExamenPeriodontalMapper {
 
@@ -40,7 +42,7 @@ public class ExamenPeriodontalMapper {
             .puntohemorragico(examenPeriodontal.getPuntohemorragico())
             .idusuariocreacion(examenPeriodontal.getIdusuariocreacion().getId())
             .fechacreacion(examenPeriodontal.getFechacreacion())
-            .idusuariomodificacion(examenPeriodontal.getIdusuariomodificacion().getId())
+            .idusuariomodificacion(Objects.nonNull(examenPeriodontal.getIdusuariomodificacion()) ? examenPeriodontal.getIdusuariomodificacion().getId() : null)
             .fechamodificacion(examenPeriodontal.getFechamodificacion())
             .habilitado(examenPeriodontal.getHabilitado())
             .build();

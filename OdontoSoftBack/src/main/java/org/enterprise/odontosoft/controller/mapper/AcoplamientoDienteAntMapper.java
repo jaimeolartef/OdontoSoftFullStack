@@ -8,6 +8,8 @@ import org.enterprise.odontosoft.model.Entity.Usuario;
 import org.enterprise.odontosoft.view.dto.request.AcoplamientoDienteAntRequest;
 import org.enterprise.odontosoft.view.dto.response.AcoplamientoDienteAntResponse;
 
+import java.util.Objects;
+
 @UtilityClass
 public class AcoplamientoDienteAntMapper {
 
@@ -32,9 +34,9 @@ public class AcoplamientoDienteAntMapper {
                 .idtipoacoplamiento(acoplamientoDienteAnt.getIdtipoacoplamiento().getId())
                 .fechaexamen(acoplamientoDienteAnt.getFechaexamen())
                 .seleccion(acoplamientoDienteAnt.getSeleccion())
-                .idusuariocreacion(acoplamientoDienteAnt.getIdusuariocreacion().getId())
+                .idusuariocreacion(Objects.nonNull(acoplamientoDienteAnt.getIdusuariocreacion()) ? acoplamientoDienteAnt.getIdusuariocreacion().getId() : null)
                 .fechacreacion(acoplamientoDienteAnt.getFechacreacion())
-                .idusuariomodificacion(acoplamientoDienteAnt.getIdusuariomodificacion().getId())
+                .idusuariomodificacion(Objects.nonNull(acoplamientoDienteAnt.getIdusuariomodificacion()) ? acoplamientoDienteAnt.getIdusuariomodificacion().getId() : null)
                 .fechamodificacion(acoplamientoDienteAnt.getFechamodificacion())
                 .habilitado(acoplamientoDienteAnt.getHabilitado())
                 .build();

@@ -7,6 +7,8 @@ import org.enterprise.odontosoft.model.Entity.Usuario;
 import org.enterprise.odontosoft.view.dto.request.ExamenEstomatologicoRequest;
 import org.enterprise.odontosoft.view.dto.response.ExamenEstomatologicoResponse;
 
+import java.util.Objects;
+
 @UtilityClass
 public class ExamenEstomatologicoMapper {
 
@@ -70,7 +72,7 @@ public class ExamenEstomatologicoMapper {
             .maxilarinferior(examenEstomatologico.getMaxilarinferior())
             .idusuariocreacion(examenEstomatologico.getIdusuariocreacion().getId())
             .fechacreacion(examenEstomatologico.getFechacreacion())
-            .idusuariomodificacion(examenEstomatologico.getIdusuariomodificacion().getId())
+            .idusuariomodificacion(Objects.nonNull(examenEstomatologico.getIdusuariomodificacion()) ? examenEstomatologico.getIdusuariomodificacion().getId() : null)
             .fechamodificacion(examenEstomatologico.getFechamodificacion())
             .habilitado(examenEstomatologico.getHabilitado())
             .build();

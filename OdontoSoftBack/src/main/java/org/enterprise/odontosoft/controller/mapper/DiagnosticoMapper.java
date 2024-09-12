@@ -8,6 +8,8 @@ import org.enterprise.odontosoft.model.Entity.Usuario;
 import org.enterprise.odontosoft.view.dto.request.DiagnosticoRequest;
 import org.enterprise.odontosoft.view.dto.response.DiagnosticoResponse;
 
+import java.util.Objects;
+
 @UtilityClass
 public class DiagnosticoMapper {
 
@@ -33,7 +35,7 @@ public class DiagnosticoMapper {
                 .definitivo(diagnostico.getDefinitivo())
                 .idusuariocreacion(diagnostico.getIdusuariocreacion().getId())
                 .fechacreacion(diagnostico.getFechacreacion())
-                .idusuariomodificacion(diagnostico.getIdusuariomodificacion().getId())
+                .idusuariomodificacion(Objects.nonNull(diagnostico.getIdusuariomodificacion()) ? diagnostico.getIdusuariomodificacion().getId() : null)
                 .fechamodificacion(diagnostico.getFechamodificacion())
                 .habilitado(diagnostico.getHabilitado())
                 .build();

@@ -8,6 +8,8 @@ import org.enterprise.odontosoft.model.Entity.Usuario;
 import org.enterprise.odontosoft.view.dto.request.PlanTratamientoRequest;
 import org.enterprise.odontosoft.view.dto.response.PlanTratamientoResponse;
 
+import java.util.Objects;
+
 @UtilityClass
 public class PlanTratamientoMapper {
 
@@ -30,7 +32,7 @@ public class PlanTratamientoMapper {
                 .idtipotratam(planTratamiento.getIdtipotratam().getId())
                 .idusuariocreacion(planTratamiento.getIdusuariocreacion().getId())
                 .fechacreacion(planTratamiento.getFechacreacion())
-                .idusuariomodificacion(planTratamiento.getIdusuariomodificacion().getId())
+                .idusuariomodificacion(Objects.nonNull(planTratamiento.getIdusuariomodificacion()) ? planTratamiento.getIdusuariomodificacion().getId() : null)
                 .fechamodificacion(planTratamiento.getFechamodificacion())
                 .build();
     }

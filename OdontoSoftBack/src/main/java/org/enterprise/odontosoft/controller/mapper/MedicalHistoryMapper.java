@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 @UtilityClass
 public class MedicalHistoryMapper {
-
+//TODO REVISAR COMO SE ESTA DEVOLVIENDO EL ID DEL PACIENTE Y EL USUARIO EN EL RESPONSE DEBE SER STRING SOLO EL NOMBRE
     public static HistoriaClinica toEntity(HistoriaClinicaRequest historiaClinicaRequest) {
         return HistoriaClinica.builder()
             .id(historiaClinicaRequest.getId())

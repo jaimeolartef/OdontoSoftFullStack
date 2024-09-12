@@ -8,6 +8,8 @@ import org.enterprise.odontosoft.model.Entity.Usuario;
 import org.enterprise.odontosoft.view.dto.request.HabitoPacienteRequest;
 import org.enterprise.odontosoft.view.dto.response.HabitoPacienteResponse;
 
+import java.util.Objects;
+
 @UtilityClass
 public class HabitoPacienteMapper {
 
@@ -33,7 +35,7 @@ public class HabitoPacienteMapper {
                 .opciones(habitoPaciente.getOpciones())
                 .idusuariocreacion(habitoPaciente.getIdusuariocreacion().getId())
                 .fechacreacion(habitoPaciente.getFechacreacion())
-                .idusuariomodificacion(habitoPaciente.getIdusuariomodificacion().getId())
+                .idusuariomodificacion(Objects.nonNull(habitoPaciente.getIdusuariomodificacion()) ? habitoPaciente.getIdusuariomodificacion().getId() : null)
                 .fechamodificacion(habitoPaciente.getFechamodificacion())
                 .habilitado(habitoPaciente.getHabilitado())
                 .build();

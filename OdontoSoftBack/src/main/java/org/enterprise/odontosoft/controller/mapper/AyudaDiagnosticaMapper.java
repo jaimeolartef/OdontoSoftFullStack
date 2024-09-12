@@ -8,6 +8,8 @@ import org.enterprise.odontosoft.model.Entity.Usuario;
 import org.enterprise.odontosoft.view.dto.request.AyudaDiagnosticaRequest;
 import org.enterprise.odontosoft.view.dto.response.AyudaDiagnosticaResponse;
 
+import java.util.Objects;
+
 @UtilityClass
 public class AyudaDiagnosticaMapper {
 
@@ -30,7 +32,7 @@ public class AyudaDiagnosticaMapper {
                 .idtipoayudadiag(ayudaDiagnostica.getIdtipoayudadiag().getId())
                 .idusuariocreacion(ayudaDiagnostica.getIdusuariocreacion().getId())
                 .fechacreacion(ayudaDiagnostica.getFechacreacion())
-                .idusuariomodificacion(ayudaDiagnostica.getIdusuariomodificacion().getId())
+                .idusuariomodificacion(Objects.nonNull(ayudaDiagnostica.getIdusuariomodificacion()) ? ayudaDiagnostica.getIdusuariomodificacion().getId() : null)
                 .fechamodificacion(ayudaDiagnostica.getFechamodificacion())
                 .build();
     }

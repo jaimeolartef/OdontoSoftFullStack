@@ -7,6 +7,7 @@ import org.enterprise.odontosoft.model.Entity.Usuario;
 import org.enterprise.odontosoft.view.dto.request.OdontogramaRequest;
 import org.enterprise.odontosoft.view.dto.response.OdontogramaResponse;
 
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @UtilityClass
@@ -35,7 +36,7 @@ public class OdontogramaMapper {
             .fecha(odontograma.getFecha())
             .idusuariocreacion(odontograma.getIdusuariocreacion().getId())
             .fechacreacion(odontograma.getFechacreacion())
-            .idusuariomodificacion(odontograma.getIdusuariomodificacion().getId())
+            .idusuariomodificacion(Objects.nonNull(odontograma.getIdusuariomodificacion()) ? odontograma.getIdusuariomodificacion().getId() : null)
             .fechamodificacion(odontograma.getFechamodificacion())
             .habilitado(odontograma.getHabilitado())
             .detalleodontogramas(odontograma.getDetalleodontogramas().stream()

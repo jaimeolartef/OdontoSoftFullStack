@@ -8,6 +8,8 @@ import org.enterprise.odontosoft.model.Entity.Usuario;
 import org.enterprise.odontosoft.view.dto.request.ContactoOclusalesMovRequest;
 import org.enterprise.odontosoft.view.dto.response.ContactoOclusalesMovResponse;
 
+import java.util.Objects;
+
 @UtilityClass
 public class ContactoOclusalesMovMapper {
 
@@ -37,7 +39,7 @@ public class ContactoOclusalesMovMapper {
                 .cuales(contactoOclusalesMov.getCuales())
                 .idusuariocreacion(contactoOclusalesMov.getIdusuariocreacion().getId())
                 .fechacreacion(contactoOclusalesMov.getFechacreacion())
-                .idusuariomodificacion(contactoOclusalesMov.getIdusuariomodificacion().getId())
+                .idusuariomodificacion(Objects.nonNull(contactoOclusalesMov.getIdusuariomodificacion()) ? contactoOclusalesMov.getIdusuariomodificacion().getId() : null)
                 .fechamodificacion(contactoOclusalesMov.getFechamodificacion())
                 .habilitado(contactoOclusalesMov.getHabilitado())
                 .build();

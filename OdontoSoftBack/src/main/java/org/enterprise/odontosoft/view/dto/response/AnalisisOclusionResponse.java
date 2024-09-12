@@ -17,7 +17,7 @@ public class AnalisisOclusionResponse {
     private Integer id;
 
     @NotNull
-    private HistoriaClinicaResponse idhistoriaclinica;
+    private Integer idhistoriaclinica;
 
     private LocalDateTime fechaexamen;
 
@@ -42,12 +42,12 @@ public class AnalisisOclusionResponse {
     private Boolean deflexionmandibular;
 
     @NotNull
-    private Usuario idusuariocreacion;
+    private String idusuariocreacion;
 
     @NotNull
     private LocalDateTime fechacreacion;
 
-    private Usuario idusuariomodificacion;
+    private String idusuariomodificacion;
 
     private LocalDateTime fechamodificacion;
 

@@ -7,6 +7,8 @@ import org.enterprise.odontosoft.model.Entity.Usuario;
 import org.enterprise.odontosoft.view.dto.request.SignoVitalRequest;
 import org.enterprise.odontosoft.view.dto.response.SignoVitalResponse;
 
+import java.util.Objects;
+
 @UtilityClass
 public class SignoVitalMapper {
 
@@ -40,7 +42,7 @@ public class SignoVitalMapper {
                 .frecuenciarespiratoria(signoVital.getFrecuenciarespiratoria())
                 .idusuariocreacion(signoVital.getIdusuariocreacion().getId())
                 .fechacreacion(signoVital.getFechacreacion())
-                .idusuariomodificacion(signoVital.getIdusuariomodificacion().getId())
+                .idusuariomodificacion(Objects.nonNull(signoVital.getIdusuariomodificacion()) ? signoVital.getIdusuariomodificacion().getId() : null)
                 .fechamodificacion(signoVital.getFechamodificacion())
                 .habilitado(signoVital.getHabilitado())
                 .build();
