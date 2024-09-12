@@ -3,8 +3,8 @@ package org.enterprise.odontosoft.view;
 import java.util.List;
 
 import org.enterprise.odontosoft.controller.PatientController;
-import org.enterprise.odontosoft.view.dto.ConsultarPacienteDto;
-import org.enterprise.odontosoft.view.dto.PacienteDto;
+import org.enterprise.odontosoft.view.dto.request.PacienteRequest;
+import org.enterprise.odontosoft.view.dto.response.PacienteResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,27 +20,23 @@ public class PatientView {
     }
 
     @PostMapping("/crear")
-    public ResponseEntity<PacienteDto> createPatient(@RequestBody PacienteDto paciente) {
+    public ResponseEntity<PacienteResponse> createPatient(@RequestBody PacienteRequest paciente) {
         return patientController.createPatient(paciente);
     }
 
     @GetMapping("/consultar")
-    public ResponseEntity<List<PacienteDto>> getPatient(@RequestParam String documento, @RequestParam String nombre) {
+    public ResponseEntity<List<PacienteResponse>> getPatient(@RequestParam String documento, @RequestParam String nombre) {
         return patientController.getPatient(documento.trim(), nombre.trim());
     }
 
     @GetMapping("/consultar/{id}")
-    public ResponseEntity<PacienteDto> getPatientById(@PathVariable Integer id) {
+    public ResponseEntity<PacienteResponse> getPatientById(@PathVariable Integer id) {
         return patientController.getPatientById(id);
     }
 
     @PutMapping("/modificar")
-    public ResponseEntity<PacienteDto> updatePatient(@RequestBody PacienteDto paciente) {
+    public ResponseEntity<PacienteResponse> updatePatient(@RequestBody PacienteRequest paciente) {
         return patientController.updatePatient(paciente);
     }
 
-    @PostMapping("/eliminar/{id}")
-    public ResponseEntity<PacienteDto> deletePatient(@PathVariable Integer id) {
-        return patientController.deletePatient(id);
-    }
 }

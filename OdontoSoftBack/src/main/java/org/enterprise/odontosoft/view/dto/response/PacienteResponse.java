@@ -1,16 +1,20 @@
-package org.enterprise.odontosoft.view.dto;
+package org.enterprise.odontosoft.view.dto.response;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.enterprise.odontosoft.view.dto.MensajeValidation;
 
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
 @Getter
-public class PacienteDto extends MensajeValidation {
+public class PacienteResponse extends MensajeValidation {
 
-    public PacienteDto(String codigo, String mensaje) {
+    public PacienteResponse(String codigo, String mensaje) {
         super(codigo, mensaje);
     }
 

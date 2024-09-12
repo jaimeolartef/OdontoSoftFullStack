@@ -2,14 +2,16 @@ package org.enterprise.odontosoft.model.Entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @Entity
@@ -28,7 +30,7 @@ public class Odontograma {
 
     @NotNull
     @Column(name = "fecha", nullable = false)
-    private LocalDate fecha;
+    private LocalDateTime fecha;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -37,14 +39,14 @@ public class Odontograma {
 
     @NotNull
     @Column(name = "fechacreacion", nullable = false)
-    private LocalDate fechacreacion;
+    private LocalDateTime fechacreacion;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idusuariomodificacion")
     private Usuario idusuariomodificacion;
 
     @Column(name = "fechamodificacion")
-    private LocalDate fechamodificacion;
+    private LocalDateTime fechamodificacion;
 
     @NotNull
     @ColumnDefault("false")

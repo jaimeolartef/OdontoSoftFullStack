@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -50,14 +50,14 @@ public class AnalisisFuncional {
 
     @NotNull
     @Column(name = "fechacreacion", nullable = false)
-    private LocalDate fechacreacion;
+    private LocalDateTime fechacreacion;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idusuariomodificacion")
     private Usuario idusuariomodificacion;
 
     @Column(name = "fechamodificacion")
-    private LocalDate fechamodificacion;
+    private LocalDateTime fechamodificacion;
 
     @NotNull
     @ColumnDefault("false")

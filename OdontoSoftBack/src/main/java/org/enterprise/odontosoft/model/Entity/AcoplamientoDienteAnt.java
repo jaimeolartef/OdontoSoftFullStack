@@ -2,12 +2,13 @@ package org.enterprise.odontosoft.model.Entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import java.time.LocalDateTime;
 
-import java.time.LocalDate;
-
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @Entity
@@ -25,7 +26,7 @@ public class AcoplamientoDienteAnt {
     private HistoriaClinica idhistoriaclinica;
 
     @Column(name = "fechaexamen")
-    private LocalDate fechaexamen;
+    private LocalDateTime fechaexamen;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idtipoacoplamiento")
@@ -43,14 +44,14 @@ public class AcoplamientoDienteAnt {
 
     @NotNull
     @Column(name = "fechacreacion", nullable = false)
-    private LocalDate fechacreacion;
+    private LocalDateTime fechacreacion;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idusuariomodificacion")
     private Usuario idusuariomodificacion;
 
     @Column(name = "fechamodificacion")
-    private LocalDate fechamodificacion;
+    private LocalDateTime fechamodificacion;
 
     @NotNull
     @ColumnDefault("false")

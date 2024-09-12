@@ -8,39 +8,40 @@ import org.enterprise.odontosoft.controller.Enum.TipoDocumentoEnum;
 import org.enterprise.odontosoft.model.Entity.Paciente;
 import org.enterprise.odontosoft.model.Entity.Tipodocumento;
 import org.enterprise.odontosoft.util.UtilDate;
-import org.enterprise.odontosoft.view.dto.PacienteDto;
+import org.enterprise.odontosoft.view.dto.request.PacienteRequest;
+import org.enterprise.odontosoft.view.dto.response.PacienteResponse;
 
 @UtilityClass
 public class PatientMapper {
 
-    public static Paciente toEntity(PacienteDto pacienteDto) {
+    public static Paciente toEntity(PacienteRequest pacienteRequest) {
         return Paciente.builder()
-            .id(pacienteDto.getId())
+            .id(pacienteRequest.getId())
             .idtipodocumento(Tipodocumento.builder()
-                .id(TipoDocumentoEnum.getBySigla(pacienteDto.getIdtipodocumento()).getId())
+                .id(TipoDocumentoEnum.getBySigla(pacienteRequest.getIdtipodocumento()).getId())
                 .build())
-            .documento(pacienteDto.getDocumento())
-            .primernombre(pacienteDto.getPrimernombre())
-            .segundonombre(pacienteDto.getSegundonombre())
-            .primerapellido(pacienteDto.getPrimerapellido())
-            .segundoapellido(pacienteDto.getSegundoapellido())
-            .fechanacimiento(UtilDate.convertToLocalDate(pacienteDto.getFechanacimiento()))
-            .ciudadnacimiento(pacienteDto.getCiudadnacimiento())
-            .genero(pacienteDto.getGenero())
-            .estadocivil(pacienteDto.getEstadocivil())
-            .direccionresidencia(pacienteDto.getDireccionresidencia())
-            .ciudadresidencia(pacienteDto.getCiudadresidencia())
-            .telefono(pacienteDto.getTelefono())
-            .correo(pacienteDto.getCorreo())
-            .nombreacompanante(pacienteDto.getNombreacompanante())
-            .parentescoacompanante(pacienteDto.getParentescoacompanante())
-            .telefonoacompanante(pacienteDto.getTelefonoacompanante())
-            .habilitado(Objects.equals(pacienteDto.getHabilitado(), "true"))
+            .documento(pacienteRequest.getDocumento())
+            .primernombre(pacienteRequest.getPrimernombre())
+            .segundonombre(pacienteRequest.getSegundonombre())
+            .primerapellido(pacienteRequest.getPrimerapellido())
+            .segundoapellido(pacienteRequest.getSegundoapellido())
+            .fechanacimiento(UtilDate.convertToLocalDate(pacienteRequest.getFechanacimiento()))
+            .ciudadnacimiento(pacienteRequest.getCiudadnacimiento())
+            .genero(pacienteRequest.getGenero())
+            .estadocivil(pacienteRequest.getEstadocivil())
+            .direccionresidencia(pacienteRequest.getDireccionresidencia())
+            .ciudadresidencia(pacienteRequest.getCiudadresidencia())
+            .telefono(pacienteRequest.getTelefono())
+            .correo(pacienteRequest.getCorreo())
+            .nombreacompanante(pacienteRequest.getNombreacompanante())
+            .parentescoacompanante(pacienteRequest.getParentescoacompanante())
+            .telefonoacompanante(pacienteRequest.getTelefonoacompanante())
+            .habilitado(Objects.equals(pacienteRequest.getHabilitado(), "true"))
             .build();
     }
 
-    public static PacienteDto toDto(Paciente paciente) {
-        return PacienteDto.builder()
+    public static PacienteResponse toDto(Paciente paciente) {
+        return PacienteResponse.builder()
             .id(paciente.getId())
             .idtipodocumento(TipoDocumentoEnum.getById(paciente.getIdtipodocumento().getId()).getSigla())
             .documento(paciente.getDocumento())
@@ -63,8 +64,8 @@ public class PatientMapper {
             .build();
     }
 
-    public static PacienteDto toDtoLight(Paciente paciente) {
-        return PacienteDto.builder()
+    public static PacienteResponse toDtoLight(Paciente paciente) {
+        return PacienteResponse.builder()
             .id(paciente.getId())
             .idtipodocumento(TipoDocumentoEnum.getById(paciente.getIdtipodocumento().getId()).getSigla())
             .documento(paciente.getDocumento())
@@ -77,7 +78,7 @@ public class PatientMapper {
             .build();
     }
 
-    public static List<PacienteDto> toDto(List<Paciente> pacientes) {
+    public static List<PacienteResponse> toDto(List<Paciente> pacientes) {
         return pacientes.stream().map(PatientMapper::toDtoLight).toList();
     }
 }

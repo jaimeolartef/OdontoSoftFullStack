@@ -546,6 +546,124 @@ CREATE TABLE planTratamiento
 );
 
 
+alter table public.acoplamientodienteant
+    alter column fechaexamen type timestamp using fechaexamen::timestamp;
+
+alter table public.acoplamientodienteant
+    alter column fechacreacion type timestamp using fechacreacion::timestamp;
+
+alter table public.acoplamientodienteant
+    alter column fechamodificacion type timestamp using fechamodificacion::timestamp;
+
+alter table public.analisisfuncional
+    alter column fechacreacion type timestamp using fechacreacion::timestamp;
+
+alter table public.analisisfuncional
+    alter column fechamodificacion type timestamp using fechamodificacion::timestamp;
+
+alter table public.analisisoclusion
+    alter column fechaexamen type timestamp using fechaexamen::timestamp;
+
+alter table public.analisisoclusion
+    alter column fechacreacion type timestamp using fechacreacion::timestamp;
+
+alter table public.analisisoclusion
+    alter column fechamodificacion type timestamp using fechamodificacion::timestamp;
+
+alter table public.antecedentepaciente
+    alter column fechacreacion type timestamp using fechacreacion::timestamp;
+
+alter table public.antecedentepaciente
+    alter column fechamodificacion type timestamp using fechamodificacion::timestamp;
+
+alter table public.ayudadiagnostica
+    alter column fechacreacion type timestamp using fechacreacion::timestamp;
+
+alter table public.ayudadiagnostica
+    alter column fechamodificacion type timestamp using fechamodificacion::timestamp;
+
+alter table public.contactooclusalesmov
+    alter column fechacreacion type timestamp using fechacreacion::timestamp;
+
+alter table public.contactooclusalesmov
+    alter column fechamodificacion type timestamp using fechamodificacion::timestamp;
+
+
+alter table public.detalleodontograma
+    alter column fechacreacion type timestamp using fechacreacion::timestamp;
+
+alter table public.detalleodontograma
+    alter column fechamodificacion type timestamp using fechamodificacion::timestamp;
+
+alter table public.diagnostico
+    alter column fechacreacion type timestamp using fechacreacion::timestamp;
+
+alter table public.diagnostico
+    alter column fechamodificacion type timestamp using fechamodificacion::timestamp;
+
+alter table public.examendental
+    alter column fechacreacion type timestamp using fechacreacion::timestamp;
+
+alter table public.examendental
+    alter column fechamodificacion type timestamp using fechamodificacion::timestamp;
+
+alter table public.examenestomatologico
+    alter column fechacreacion type timestamp using fechacreacion::timestamp;
+
+alter table public.examenestomatologico
+    alter column fechamodificacion type timestamp using fechamodificacion::timestamp;
+
+alter table public.examenperiodontal
+    alter column fechacreacion type timestamp using fechacreacion::timestamp;
+
+alter table public.examenperiodontal
+    alter column fechamodificacion type timestamp using fechamodificacion::timestamp;
+
+alter table public.historiacaries
+    alter column fechacreacion type timestamp using fechacreacion::timestamp;
+
+alter table public.historiacaries
+    alter column fechamodificacion type timestamp using fechamodificacion::timestamp;
+
+alter table public.odontograma
+    alter column fechacreacion type timestamp using fechacreacion::timestamp;
+
+alter table public.odontograma
+    alter column fechamodificacion type timestamp using fechamodificacion::timestamp;
+
+alter table public.plantratamiento
+    alter column fechacreacion type timestamp using fechacreacion::timestamp;
+
+alter table public.plantratamiento
+    alter column fechamodificacion type timestamp using fechamodificacion::timestamp;
+
+alter table public.signovital
+    alter column fechacreacion type timestamp using fechacreacion::timestamp;
+
+alter table public.signovital
+    alter column fechamodificacion type timestamp using fechamodificacion::timestamp;
+
+alter table public.contactooclusalesmov
+    alter column fechaexamen type timestamp using fechaexamen::timestamp;
+
+alter table public.detalleodontograma
+    alter column fechatratamiento type timestamp using fechatratamiento::timestamp;
+
+alter table public.examendental
+    alter column fechaexamen type timestamp using fechaexamen::timestamp;
+
+
+alter table public.examenperiodontal
+    alter column fechaexamen type timestamp using fechaexamen::timestamp;
+
+alter table public.historiacaries
+    alter column fechaexamen type timestamp using fechaexamen::timestamp;
+
+alter table public.odontograma
+    alter column fecha type timestamp using fecha::timestamp;
+
+
+
 
 INSERT INTO public.rol (id, descripcion, habilitado)
 VALUES (DEFAULT, 'Administrador'::varchar(200), true::boolean);
