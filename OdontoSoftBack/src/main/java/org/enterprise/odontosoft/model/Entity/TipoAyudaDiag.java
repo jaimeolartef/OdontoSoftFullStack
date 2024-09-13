@@ -38,4 +38,7 @@ public class TipoAyudaDiag {
     @OneToMany(mappedBy = "idtipoayudadiag")
     private Set<AyudaDiagnostica> ayudadiagnosticas = new LinkedHashSet<>();
 
+    public String getCodigoDescripcion() {
+        return String.join(" - ",codigo,descripcion).trim();
+    }
 }

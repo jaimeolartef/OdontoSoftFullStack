@@ -29,7 +29,7 @@ public class PlanTratamientoMapper {
         return PlanTratamientoResponse.builder()
                 .id(planTratamiento.getId())
                 .idhistoriaclinica(planTratamiento.getIdhistoriaclinica().getId())
-                .idtipotratam(planTratamiento.getIdtipotratam().getId())
+                .tipotratamiento(planTratamiento.getIdtipotratam().getCodigoDescripcion())
                 .idusuariocreacion(planTratamiento.getIdusuariocreacion().getId())
                 .fechacreacion(planTratamiento.getFechacreacion())
                 .idusuariomodificacion(Objects.nonNull(planTratamiento.getIdusuariomodificacion()) ? planTratamiento.getIdusuariomodificacion().getId() : null)

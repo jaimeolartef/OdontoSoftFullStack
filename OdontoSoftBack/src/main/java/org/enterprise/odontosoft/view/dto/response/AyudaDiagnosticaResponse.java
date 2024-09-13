@@ -18,7 +18,7 @@ public class AyudaDiagnosticaResponse {
     private Integer idhistoriaclinica;
 
     @NotNull
-    private Integer idtipoayudadiag;
+    private String idtipoayudadiag;
 
     @NotNull
     private Integer idusuariocreacion;

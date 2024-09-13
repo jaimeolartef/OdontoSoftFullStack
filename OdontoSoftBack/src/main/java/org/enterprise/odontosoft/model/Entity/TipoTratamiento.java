@@ -38,4 +38,8 @@ public class TipoTratamiento {
     @OneToMany(mappedBy = "idtipotratam")
     private Set<PlanTratamiento> plantratamientos = new LinkedHashSet<>();
 
+    public String getCodigoDescripcion() {
+        return String.join(" - ", this.codigo, this.descripcion);
+    }
+
 }

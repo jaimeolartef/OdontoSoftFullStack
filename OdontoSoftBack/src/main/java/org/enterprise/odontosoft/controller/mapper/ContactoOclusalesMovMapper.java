@@ -34,7 +34,7 @@ public class ContactoOclusalesMovMapper {
                 .id(contactoOclusalesMov.getId())
                 .idhistoriaclinica(contactoOclusalesMov.getIdhistoriaclinica().getId())
                 .fechaexamen(contactoOclusalesMov.getFechaexamen())
-                .idtipocontacoclumov(contactoOclusalesMov.getIdtipocontacoclumov().getId())
+                .idtipocontacoclumov(contactoOclusalesMov.getIdtipocontacoclumov().getDescripcion())
                 .seleccion(contactoOclusalesMov.getSeleccion())
                 .cuales(contactoOclusalesMov.getCuales())
                 .idusuariocreacion(contactoOclusalesMov.getIdusuariocreacion().getId())

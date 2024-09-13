@@ -20,7 +20,7 @@ public class PlanTratamientoResponse {
     private Integer idhistoriaclinica;
 
     @NotNull
-    private Integer idtipotratam;
+    private String tipotratamiento;
 
     @NotNull
     private Integer idusuariocreacion;

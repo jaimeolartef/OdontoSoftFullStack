@@ -99,4 +99,7 @@ public class Paciente {
   @OneToMany(mappedBy = "idpaciente")
   private Set<HistoriaClinica> historiaclinicas = new LinkedHashSet<>();
 
+  public String getNombreCompleto() {
+    return String.join(" ", primernombre, segundonombre, primerapellido, segundoapellido).trim();
+  }
 }

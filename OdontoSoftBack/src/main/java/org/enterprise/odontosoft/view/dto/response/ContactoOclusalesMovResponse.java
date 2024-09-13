@@ -21,7 +21,7 @@ public class ContactoOclusalesMovResponse {
 
     private LocalDateTime fechaexamen;
 
-    private Integer idtipocontacoclumov;
+    private String idtipocontacoclumov;
 
     @NotNull
     private Boolean seleccion;

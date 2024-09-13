@@ -31,7 +31,7 @@ public class DiagnosticoMapper {
         return DiagnosticoResponse.builder()
                 .id(diagnostico.getId())
                 .idhistoriaclinica(diagnostico.getIdhistoriaclinica().getId())
-                .idtipodiagnostico(diagnostico.getIdtipodiagnostico().getId())
+                .idtipodiagnostico(diagnostico.getIdtipodiagnostico().getCodigoDescripcion())
                 .definitivo(diagnostico.getDefinitivo())
                 .idusuariocreacion(diagnostico.getIdusuariocreacion().getId())
                 .fechacreacion(diagnostico.getFechacreacion())

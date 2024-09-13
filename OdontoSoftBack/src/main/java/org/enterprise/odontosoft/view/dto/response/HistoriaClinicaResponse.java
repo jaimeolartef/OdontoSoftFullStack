@@ -21,7 +21,7 @@ public class HistoriaClinicaResponse extends MensajeValidation {
     }
 
     private Integer id;
-    private Integer idpaciente;
+    private String idpaciente;
 
     private String motivoconsulta;
     private String enfermedadactual;
@@ -35,10 +35,10 @@ public class HistoriaClinicaResponse extends MensajeValidation {
     private String observacionexaperiodontal;
     private String observacionanalisisoclu;
     private String observacionayudadiag;
-    private Integer idusuariocreacion;
+    private String idusuariocreacion;
     private Boolean atmmusculatura;
     private LocalDateTime fechacreacion;
-    private Integer idusuariomodificacion;
+    private String idusuariomodificacion;
     private LocalDateTime fechamodificacion;
     private Boolean habilitado;
 

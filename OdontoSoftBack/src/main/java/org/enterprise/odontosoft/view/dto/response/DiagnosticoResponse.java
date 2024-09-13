@@ -20,7 +20,7 @@ public class DiagnosticoResponse {
     private Integer idhistoriaclinica;
 
     @NotNull
-    private Integer idtipodiagnostico;
+    private String idtipodiagnostico;
 
     @NotNull
     private Integer idusuariocreacion;

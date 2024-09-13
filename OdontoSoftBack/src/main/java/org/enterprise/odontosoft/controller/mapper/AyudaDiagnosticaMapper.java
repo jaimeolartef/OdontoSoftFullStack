@@ -29,7 +29,7 @@ public class AyudaDiagnosticaMapper {
         return AyudaDiagnosticaResponse.builder()
                 .id(ayudaDiagnostica.getId())
                 .idhistoriaclinica(ayudaDiagnostica.getIdhistoriaclinica().getId())
-                .idtipoayudadiag(ayudaDiagnostica.getIdtipoayudadiag().getId())
+                .idtipoayudadiag(ayudaDiagnostica.getIdtipoayudadiag().getCodigoDescripcion())
                 .idusuariocreacion(ayudaDiagnostica.getIdusuariocreacion().getId())
                 .fechacreacion(ayudaDiagnostica.getFechacreacion())
                 .idusuariomodificacion(Objects.nonNull(ayudaDiagnostica.getIdusuariomodificacion()) ? ayudaDiagnostica.getIdusuariomodificacion().getId() : null)
