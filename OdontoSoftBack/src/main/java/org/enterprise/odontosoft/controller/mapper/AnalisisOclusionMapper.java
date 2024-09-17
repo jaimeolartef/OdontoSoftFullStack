@@ -3,9 +3,9 @@ package org.enterprise.odontosoft.controller.mapper;
 import lombok.experimental.UtilityClass;
 import org.enterprise.odontosoft.model.Entity.AnalisisOclusion;
 import org.enterprise.odontosoft.model.Entity.HistoriaClinica;
+import org.enterprise.odontosoft.model.Entity.Usuario;
 import org.enterprise.odontosoft.view.dto.request.AnalisisOclusionRequest;
 import org.enterprise.odontosoft.view.dto.response.AnalisisOclusionResponse;
-import org.enterprise.odontosoft.view.dto.response.HistoriaClinicaResponse;
 
 import java.util.Objects;
 
@@ -16,7 +16,7 @@ public class AnalisisOclusionMapper {
         return AnalisisOclusion.builder()
             .id(analisisOclusionRequest.getId())
             .idhistoriaclinica(HistoriaClinica.builder()
-                .id(analisisOclusionRequest.getIdhistoriaclinica().getId())
+                .id(analisisOclusionRequest.getIdhistoriaclinica())
                 .build())
             .fechaexamen(analisisOclusionRequest.getFechaexamen())
             .relacionmolarderecha(analisisOclusionRequest.getRelacionmolarderecha())
@@ -29,9 +29,13 @@ public class AnalisisOclusionMapper {
             .sobremordidavertical(analisisOclusionRequest.getSobremordidavertical())
             .soportepostadecu(analisisOclusionRequest.getSoportepostadecu())
             .deflexionmandibular(analisisOclusionRequest.getDeflexionmandibular())
-            .idusuariocreacion(analisisOclusionRequest.getIdusuariocreacion())
+            .idusuariocreacion(Usuario.builder()
+                .id(analisisOclusionRequest.getIdusuariocreacion())
+                .build())
             .fechacreacion(analisisOclusionRequest.getFechacreacion())
-            .idusuariomodificacion(analisisOclusionRequest.getIdusuariomodificacion())
+            .idusuariomodificacion(Objects.nonNull(analisisOclusionRequest.getIdusuariomodificacion()) ? Usuario.builder()
+                .id(analisisOclusionRequest.getIdusuariomodificacion())
+                .build() : null)
             .fechamodificacion(analisisOclusionRequest.getFechamodificacion())
             .habilitado(analisisOclusionRequest.getHabilitado())
             .build();

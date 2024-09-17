@@ -21,7 +21,7 @@ public class DiagnosticoMapper {
                 .definitivo(diagnosticoRequest.getDefinitivo())
                 .idusuariocreacion(Usuario.builder().id(diagnosticoRequest.getIdusuariocreacion()).build())
                 .fechacreacion(diagnosticoRequest.getFechacreacion())
-                .idusuariomodificacion(Usuario.builder().id(diagnosticoRequest.getIdusuariomodificacion()).build())
+                .idusuariomodificacion(Objects.nonNull(diagnosticoRequest.getIdusuariomodificacion()) ? Usuario.builder().id(diagnosticoRequest.getIdusuariomodificacion()).build() : null)
                 .fechamodificacion(diagnosticoRequest.getFechamodificacion())
                 .habilitado(diagnosticoRequest.getHabilitado())
                 .build();

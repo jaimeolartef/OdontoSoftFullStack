@@ -26,7 +26,7 @@ public class HistoriAcariesMapper {
                 .extraccionindicada(historiAcariesRequest.getExtraccionindicada())
                 .idusuariocreacion(Usuario.builder().id(historiAcariesRequest.getIdusuariocreacion()).build())
                 .fechacreacion(historiAcariesRequest.getFechacreacion())
-                .idusuariomodificacion(Usuario.builder().id(historiAcariesRequest.getIdusuariomodificacion()).build())
+                .idusuariomodificacion(Objects.nonNull(historiAcariesRequest.getIdusuariomodificacion()) ? Usuario.builder().id(historiAcariesRequest.getIdusuariomodificacion()).build() : null)
                 .fechamodificacion(historiAcariesRequest.getFechamodificacion())
                 .habilitado(historiAcariesRequest.getHabilitado())
                 .build();

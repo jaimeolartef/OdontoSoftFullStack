@@ -20,7 +20,7 @@ public class OdontogramaMapper {
             .fecha(odontogramaRequest.getFecha())
             .idusuariocreacion(Usuario.builder().id(odontogramaRequest.getIdusuariocreacion()).build())
             .fechacreacion(odontogramaRequest.getFechacreacion())
-            .idusuariomodificacion(Usuario.builder().id(odontogramaRequest.getIdusuariomodificacion()).build())
+            .idusuariomodificacion(Objects.nonNull(odontogramaRequest.getIdusuariomodificacion()) ? Usuario.builder().id(odontogramaRequest.getIdusuariomodificacion()).build() : null)
             .fechamodificacion(odontogramaRequest.getFechamodificacion())
             .habilitado(odontogramaRequest.getHabilitado())
             .detalleodontogramas(odontogramaRequest.getDetalleodontogramas().stream()

@@ -39,7 +39,7 @@ public class ExamenEstomatologicoMapper {
                 .maxilarinferior(request.getMaxilarinferior())
                 .idusuariocreacion(Usuario.builder().id(request.getIdusuariocreacion()).build())
                 .fechacreacion(request.getFechacreacion())
-                .idusuariomodificacion(Usuario.builder().id(request.getIdusuariomodificacion()).build())
+                .idusuariomodificacion(Objects.nonNull(request.getIdusuariomodificacion()) ? Usuario.builder().id(request.getIdusuariomodificacion()).build() : null)
                 .fechamodificacion(request.getFechamodificacion())
                 .habilitado(request.getHabilitado())
                 .build();

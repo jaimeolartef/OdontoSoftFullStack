@@ -21,7 +21,7 @@ public class AntecedentePacienteMapper {
                 .opciones(antecedentePaciente.getOpciones())
                 .idusuariocreacion(Usuario.builder().id(antecedentePaciente.getIdusuariocreacion()).build())
                 .fechacreacion(antecedentePaciente.getFechacreacion())
-                .idusuariomodificacion(Usuario.builder().id(antecedentePaciente.getIdusuariomodificacion()).build())
+                .idusuariomodificacion(Objects.nonNull(antecedentePaciente.getIdusuariomodificacion()) ? Usuario.builder().id(antecedentePaciente.getIdusuariomodificacion()).build() : null)
                 .fechamodificacion(antecedentePaciente.getFechamodificacion())
                 .habilitado(antecedentePaciente.getHabilitado())
                 .build();

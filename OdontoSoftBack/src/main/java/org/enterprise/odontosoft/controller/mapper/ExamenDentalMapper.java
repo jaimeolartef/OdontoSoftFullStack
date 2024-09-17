@@ -25,7 +25,7 @@ public class ExamenDentalMapper {
                 .riesgocaries(examenDentalRequest.getRiesgocaries())
                 .idusuariocreacion(Usuario.builder().id(examenDentalRequest.getIdusuariocreacion()).build())
                 .fechacreacion(examenDentalRequest.getFechacreacion())
-                .idusuariomodificacion(Usuario.builder().id(examenDentalRequest.getIdusuariomodificacion()).build())
+                .idusuariomodificacion(Objects.nonNull(examenDentalRequest.getIdusuariomodificacion()) ? Usuario.builder().id(examenDentalRequest.getIdusuariomodificacion()).build() :  null)
                 .fechamodificacion(examenDentalRequest.getFechamodificacion())
                 .habilitado(examenDentalRequest.getHabilitado())
                 .build();

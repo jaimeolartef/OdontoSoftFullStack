@@ -2,7 +2,6 @@ package org.enterprise.odontosoft.view.dto.request;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.enterprise.odontosoft.model.Entity.Usuario;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -15,7 +14,7 @@ public class AnalisisOclusionRequest {
     private Integer id;
 
     @NotNull
-    private HistoriaClinicaRequest idhistoriaclinica;
+    private Integer idhistoriaclinica;
 
     private LocalDateTime fechaexamen;
 
@@ -40,12 +39,12 @@ public class AnalisisOclusionRequest {
     private Boolean deflexionmandibular;
 
     @NotNull
-    private Usuario idusuariocreacion;
+    private Integer idusuariocreacion;
 
     @NotNull
     private LocalDateTime fechacreacion;
 
-    private Usuario idusuariomodificacion;
+    private Integer idusuariomodificacion;
 
     private LocalDateTime fechamodificacion;
 

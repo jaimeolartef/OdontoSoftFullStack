@@ -24,7 +24,7 @@ public class ExamenPeriodontalMapper {
                 .puntohemorragico(examenPeriodontalRequest.getPuntohemorragico())
                 .idusuariocreacion(Usuario.builder().id(examenPeriodontalRequest.getIdusuariocreacion()).build())
                 .fechacreacion(examenPeriodontalRequest.getFechacreacion())
-                .idusuariomodificacion(Usuario.builder().id(examenPeriodontalRequest.getIdusuariomodificacion()).build())
+                .idusuariomodificacion(Objects.nonNull(examenPeriodontalRequest.getIdusuariomodificacion()) ? Usuario.builder().id(examenPeriodontalRequest.getIdusuariomodificacion()).build() : null)
                 .fechamodificacion(examenPeriodontalRequest.getFechamodificacion())
                 .habilitado(examenPeriodontalRequest.getHabilitado())
                 .build();

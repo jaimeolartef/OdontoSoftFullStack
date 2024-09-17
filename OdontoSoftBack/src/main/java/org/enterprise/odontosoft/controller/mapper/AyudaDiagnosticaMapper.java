@@ -20,7 +20,7 @@ public class AyudaDiagnosticaMapper {
                  .idtipoayudadiag(TipoAyudaDiag.builder().id(ayudaDiagnosticaRequest.getIdtipoayudadiag()).build())
                 .idusuariocreacion(Usuario.builder().id(ayudaDiagnosticaRequest.getIdusuariocreacion()).build())
                 .fechacreacion(ayudaDiagnosticaRequest.getFechacreacion())
-                .idusuariomodificacion(Usuario.builder().id(ayudaDiagnosticaRequest.getIdusuariomodificacion()).build())
+                .idusuariomodificacion(Objects.nonNull(ayudaDiagnosticaRequest.getIdusuariomodificacion()) ? Usuario.builder().id(ayudaDiagnosticaRequest.getIdusuariomodificacion()).build(): null)
                 .fechamodificacion(ayudaDiagnosticaRequest.getFechamodificacion())
                 .build();
     }

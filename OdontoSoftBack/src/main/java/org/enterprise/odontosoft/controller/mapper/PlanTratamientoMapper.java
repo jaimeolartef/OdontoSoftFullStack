@@ -20,7 +20,7 @@ public class PlanTratamientoMapper {
                 .idtipotratam(TipoTratamiento.builder().id(planTratamientoRequest.getIdtipotratam()).build())
                 .idusuariocreacion(Usuario.builder().id(planTratamientoRequest.getIdusuariocreacion()).build())
                 .fechacreacion(planTratamientoRequest.getFechacreacion())
-                .idusuariomodificacion(Usuario.builder().id(planTratamientoRequest.getIdusuariomodificacion()).build())
+                .idusuariomodificacion(Objects.nonNull(planTratamientoRequest.getIdusuariomodificacion()) ? Usuario.builder().id(planTratamientoRequest.getIdusuariomodificacion()).build() : null)
                 .fechamodificacion(planTratamientoRequest.getFechamodificacion())
                 .build();
     }

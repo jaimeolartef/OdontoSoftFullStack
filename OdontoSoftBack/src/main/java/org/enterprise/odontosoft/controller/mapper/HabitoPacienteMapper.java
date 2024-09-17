@@ -21,7 +21,7 @@ public class HabitoPacienteMapper {
                 .opciones(habitoPacienteRequest.getOpciones())
                 .idusuariocreacion(Usuario.builder().id(habitoPacienteRequest.getIdusuariocreacion()).build())
                 .fechacreacion(habitoPacienteRequest.getFechacreacion())
-                .idusuariomodificacion(Usuario.builder().id(habitoPacienteRequest.getIdusuariomodificacion()).build())
+                .idusuariomodificacion(Objects.nonNull(habitoPacienteRequest.getIdusuariomodificacion()) ? Usuario.builder().id(habitoPacienteRequest.getIdusuariomodificacion()).build() : null)
                 .fechamodificacion(habitoPacienteRequest.getFechamodificacion())
                 .habilitado(habitoPacienteRequest.getHabilitado())
                 .build();

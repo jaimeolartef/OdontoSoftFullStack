@@ -23,7 +23,7 @@ public class ContactoOclusalesMovMapper {
                 .cuales(contactoOclusalesMovRequest.getCuales())
                 .idusuariocreacion(Usuario.builder().id(contactoOclusalesMovRequest.getIdusuariocreacion()).build())
                 .fechacreacion(contactoOclusalesMovRequest.getFechacreacion())
-                .idusuariomodificacion(Usuario.builder().id(contactoOclusalesMovRequest.getIdusuariomodificacion()).build())
+                .idusuariomodificacion(Objects.nonNull(contactoOclusalesMovRequest.getIdusuariomodificacion()) ? Usuario.builder().id(contactoOclusalesMovRequest.getIdusuariomodificacion()).build() : null)
                 .fechamodificacion(contactoOclusalesMovRequest.getFechamodificacion())
                 .habilitado(contactoOclusalesMovRequest.getHabilitado())
                 .build();

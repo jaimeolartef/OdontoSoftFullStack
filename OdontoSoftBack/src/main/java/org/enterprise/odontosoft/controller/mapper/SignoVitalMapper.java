@@ -24,7 +24,7 @@ public class SignoVitalMapper {
                 .frecuenciarespiratoria(signoVital.getFrecuenciarespiratoria())
                 .idusuariocreacion(Usuario.builder().id(signoVital.getIdusuariocreacion()).build())
                 .fechacreacion(signoVital.getFechacreacion())
-                .idusuariomodificacion(Usuario.builder().id(signoVital.getIdusuariomodificacion()).build())
+                .idusuariomodificacion(Objects.nonNull(signoVital.getIdusuariomodificacion()) ? Usuario.builder().id(signoVital.getIdusuariomodificacion()).build() : null)
                 .fechamodificacion(signoVital.getFechamodificacion())
                 .habilitado(signoVital.getHabilitado())
                 .build();

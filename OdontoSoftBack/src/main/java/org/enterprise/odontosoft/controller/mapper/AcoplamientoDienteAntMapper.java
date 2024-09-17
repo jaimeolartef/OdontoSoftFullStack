@@ -22,8 +22,9 @@ public class AcoplamientoDienteAntMapper {
                 .seleccion(acoplamientoDienteAntRequest.getSeleccion())
                 .idusuariocreacion(Usuario.builder().id(acoplamientoDienteAntRequest.getIdusuariocreacion()).build())
                 .fechacreacion(acoplamientoDienteAntRequest.getFechacreacion())
-                .idusuariomodificacion(Usuario.builder().id(acoplamientoDienteAntRequest.getIdusuariomodificacion()).build())
+                .idusuariomodificacion(Objects.nonNull(acoplamientoDienteAntRequest.getIdusuariomodificacion()) ? Usuario.builder().id(acoplamientoDienteAntRequest.getIdusuariomodificacion()).build() : null)
                 .fechamodificacion(acoplamientoDienteAntRequest.getFechamodificacion())
+                .habilitado(acoplamientoDienteAntRequest.getHabilitado())
                 .build();
     }
 
