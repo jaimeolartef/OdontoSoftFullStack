@@ -1,90 +1,69 @@
-/**.medical-form-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
-  max-width: 800px;
-  margin: auto;
-}
-
-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.logo {
-  max-width: 100px;
-  margin-bottom: 10px;
-}
-
-.personal-information, .emergency-contact-details {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 20px;
-}
-
-.input-box {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 10px;
-}
-
-.input-box input, .input-box select {
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.input-box label {
-  margin-bottom: 5px;
-  font-weight: bold;
-}
-
-@media (min-width: 600px) {
-  .personal-information, .emergency-contact-details {
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-
-  .input-box {
-    flex: 1 1 45%;
-    margin-right: 10px;
-  }
-
-  .input-box:nth-child(2n) {
-    margin-right: 0;
-  }
-}
-
-@media (min-width: 900px) {
-  .medical-form-container {
-    max-width: 1200px;
-  }
-
-  .input-box {
-    flex: 1 1 30%;
-  }
-
-  .input-box:nth-child(3n) {
-    margin-right: 0;
-  }
-}**/
-
-.table-container td[data-label="Acciones"] {
-  text-align: center;
-  vertical-align: middle;
-}
-
-/* odontosoftfront/src/components/HistoriaClinica/ReadOnlyPaciente.css */
 .bold-label {
-  font-weight: bold;
+    font-weight: bold;
+}
+/* Estilos de la tabla de información personal */
+.personal-information .patient-info-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
 }
 
-.patient-info-table td {
-  width: 25%; /* Ensure each column has an equal width */
+.personal-information .patient-info-table th,
+.personal-information .patient-info-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
 }
 
+.personal-information .patient-info-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+.personal-information .patient-info-table td:nth-child(1),
+.personal-information .patient-info-table td:nth-child(3) {
+    background-color: rgba(0, 123, 255, 0.4); /* Color distinto para las columnas 1 y 3 */
+}
+
+/* Estilos responsivos */
+@media screen and (max-width: 600px) {
+    .personal-information .patient-info-table,
+    .personal-information .patient-info-table thead,
+    .personal-information .patient-info-table tbody,
+    .personal-information .patient-info-table th,
+    .personal-information .patient-info-table td,
+    .personal-information .patient-info-table tr {
+        display: block;
+    }
+
+    .personal-information .patient-info-table thead tr {
+        display: none;
+    }
+
+    .personal-information .patient-info-table td {
+        position: relative;
+        padding-left: 50%;
+        text-align: right;
+    }
+
+    .personal-information .patient-info-table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 50%;
+        padding-left: 10px;
+        font-weight: bold;
+        text-align: left;
+    }
+
+    .personal-information .patient-info-table tr {
+        margin-bottom: 10px;
+    }
+}
+
+/* Estilos de Bootstrap para pantallas mayores a 601px */
+@media screen and (min-width: 601px) {
+    .personal-information .patient-info-table {
+        @apply .table .table-striped .table-bordered;
+    }
+}

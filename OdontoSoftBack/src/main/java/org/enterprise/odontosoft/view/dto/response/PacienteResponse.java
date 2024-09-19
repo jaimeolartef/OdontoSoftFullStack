@@ -36,6 +36,7 @@ public class PacienteResponse extends MensajeValidation {
     private String nombreacompanante;
     private String parentescoacompanante;
     private String telefonoacompanante;
+    private Integer idHistoriaClinica;
     private String habilitado;
 
 }

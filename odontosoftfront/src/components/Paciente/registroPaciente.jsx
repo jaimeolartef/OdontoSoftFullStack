@@ -114,7 +114,7 @@ const RegistroPaciente = () => {
 
   return (
     <div className="d-flex justify-content-center align-items-center">
-      <div className="card p-4" style={{width: '800px'}}>
+      <div className="card p-4" style={{width: '1200px'}}>
         <header className="text-center mb-4">
           <img src={Logo} alt="Logo" className="mb-3" style={{maxWidth: '140px'}}/>
           <h1>Registrar Paciente</h1>
@@ -154,12 +154,14 @@ const RegistroPaciente = () => {
               </div>
             </div>
             <div className="form-floating mb-3">
-              <input type="text" className="form-control" name="segundonombre" placeholder="Segundo Nombre" value={formData.segundonombre}
+              <input type="text" className="form-control" name="segundonombre" placeholder="Segundo Nombre"
+                     value={formData.segundonombre}
                      onChange={handleChange}/>
               <label>Segundo nombre</label>
             </div>
             <div className="form-floating mb-3">
-              <input type="text" className="form-control" name="primerapellido" placeholder="Primer Apellido" value={formData.primerapellido}
+              <input type="text" className="form-control" name="primerapellido" placeholder="Primer Apellido"
+                     value={formData.primerapellido}
                      onChange={handleChange} required/>
               <label>Primer apellido</label>
               <div className="invalid-feedback">
@@ -167,12 +169,14 @@ const RegistroPaciente = () => {
               </div>
             </div>
             <div className="form-floating mb-3">
-              <input type="text" className="form-control" name="segundoapellido" placeholder="Segundo Apellido" value={formData.segundoapellido}
+              <input type="text" className="form-control" name="segundoapellido" placeholder="Segundo Apellido"
+                     value={formData.segundoapellido}
                      onChange={handleChange}/>
               <label>Segundo apellido</label>
             </div>
             <div className="form-floating mb-3">
-              <input type="date" className="form-control" name="fechanacimiento" placeholder="Fecha nacimiento" value={formData.fechanacimiento}
+              <input type="date" className="form-control" name="fechanacimiento" placeholder="Fecha nacimiento"
+                     value={formData.fechanacimiento}
                      onChange={handleChange} required/>
               <label>Fecha de nacimiento</label>
               <div className="invalid-feedback">
@@ -218,7 +222,8 @@ const RegistroPaciente = () => {
               </div>
             </div>
             <div className="form-floating mb-3">
-              <input type="text" className="form-control" name="telefono" placeholder="Telefono" value={formData.telefono}
+              <input type="text" className="form-control" name="telefono" placeholder="Telefono"
+                     value={formData.telefono}
                      onChange={handleChange} required/>
               <label>Número de teléfono</label>
               <div className="invalid-feedback">
@@ -237,7 +242,8 @@ const RegistroPaciente = () => {
               <label>Estado civil</label>
             </div>
             <div className="form-floating mb-3">
-              <input type="email" className="form-control" name="correo" placeholder="Correo electronico" value={formData.correo} onChange={handleChange}
+              <input type="email" className="form-control" name="correo" placeholder="Correo electronico"
+                     value={formData.correo} onChange={handleChange}
                      required/>
               <label>Correo electrónico</label>
               <div className="invalid-feedback">
@@ -254,7 +260,8 @@ const RegistroPaciente = () => {
             <section className="mb-4">
               <h3>Datos del acompañante</h3>
               <div className="form-floating mb-3">
-                <input type="text" className="form-control" name="nombreacompanante" placeholder="Nombre Acompañante" value={formData.nombreacompanante}
+                <input type="text" className="form-control" name="nombreacompanante" placeholder="Nombre Acompañante"
+                       value={formData.nombreacompanante}
                        onChange={handleChange} required={formData.isRequiredCompanion}/>
                 <label>Nombre completo del acompañante</label>
                 <div className="invalid-feedback">

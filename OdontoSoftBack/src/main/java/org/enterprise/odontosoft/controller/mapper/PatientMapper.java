@@ -75,6 +75,7 @@ public class PatientMapper {
             .segundoapellido(paciente.getSegundoapellido())
             .telefono(paciente.getTelefono())
             .habilitado(paciente.isHabilitado() ? "true" : "false")
+            .idHistoriaClinica(paciente.getHistoriaclinicas().stream().findFirst().map(historiaClinica -> historiaClinica.getId()).orElse(null))
             .build();
     }
 

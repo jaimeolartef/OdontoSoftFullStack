@@ -27,13 +27,14 @@ const PacienteTabla = ({ data, formData }) => {
   };
 
   const handleMedicalRecordClick = (paciente) => {
-    navigate('/historiaPac', { state: { idPatient: paciente.id } });
+    navigate('/historiaPac', { state: { patient: paciente } });
   };
 
   return (
     <div className="table-container">
-      <table className="table table-striped table-bordered">
-        <thead className="thead-dark">
+      <div className="table-responsive">
+        <table className="table table-striped table-bordered">
+          <thead className="thead-dark">
           <tr>
             <th>Documento</th>
             <th>Nombre</th>
@@ -43,8 +44,8 @@ const PacienteTabla = ({ data, formData }) => {
             <th>Habilitado</th>
             <th>Acciones</th>
           </tr>
-        </thead>
-        <tbody>
+          </thead>
+          <tbody>
           {currentItems.map((paciente, index) => (
             <tr key={index}>
               <td data-label="Documento">{paciente.documento}</td>
@@ -54,31 +55,32 @@ const PacienteTabla = ({ data, formData }) => {
               <td data-label="Teléfono">{paciente.telefono}</td>
               <td data-label="Habilitado">{paciente.habilitado === 'true' ? 'Sí' : 'No'}</td>
               <td data-label="Acciones">
-                {paciente.habilitado === 'true' && (
+                {paciente.idHistoriaClinica  !== null && (
                   <>
                     <img src={MedicalIcon} alt="Historia Clinica"
-                      style={{ marginRight: '5px', width: '35px', height: '35px', cursor: 'pointer' }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleMedicalRecordClick(paciente);
-                      }}
-                      data-tooltip-id="tooltip" data-tooltip-content="Ver Historia Clinica" />
-                    <Tooltip id="tooltip" />
+                         style={{marginRight: '5px', width: '35px', height: '35px', cursor: 'pointer'}}
+                         onClick={(e) => {
+                           e.stopPropagation();
+                           handleMedicalRecordClick(paciente);
+                         }}
+                         data-tooltip-id="tooltip" data-tooltip-content="Ver Historia Clinica"/>
+                    <Tooltip id="tooltip"/>
                   </>
                 )}
                 <img src={EditIcon} alt="Editar Paciente"
-                  style={{ marginRight: '5px', width: '35px', height: '35px', cursor: 'pointer' }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleEditClick(paciente);
-                  }}
-                  data-tooltip-id="editTooltip" data-tooltip-content="Editar Paciente" />
-                <Tooltip id="editTooltip" />
+                     style={{marginRight: '5px', width: '35px', height: '35px', cursor: 'pointer'}}
+                     onClick={(e) => {
+                       e.stopPropagation();
+                       handleEditClick(paciente);
+                     }}
+                     data-tooltip-id="editTooltip" data-tooltip-content="Editar Paciente"/>
+                <Tooltip id="editTooltip"/>
               </td>
             </tr>
           ))}
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      </div>
       <nav aria-label="Page navigation example">
         <ul className="pagination">
           <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`} style={{width: '110px'}}>
