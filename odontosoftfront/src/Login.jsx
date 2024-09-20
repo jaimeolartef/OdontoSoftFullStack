@@ -95,8 +95,8 @@ const Login = (props) => {
   };
 
   return (
-    <div className="d-flex justify-content-center align-items-center vh-100">
-      <div className="card p-4" style={{ width: '400px' }}>
+    <div className="d-flex justify-content-center align-items-center min-vh-100">
+      <div className="card p-5 w-99" >
         <h2 className="card-title text-center">Inicio de sesión</h2>
         <form className="row g-3 needs-validation" noValidate onSubmit={handleLogin}>
           <div className="form-floating mb-3">

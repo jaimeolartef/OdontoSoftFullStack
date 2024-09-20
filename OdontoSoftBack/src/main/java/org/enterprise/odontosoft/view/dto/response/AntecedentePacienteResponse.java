@@ -13,24 +13,12 @@ import java.time.LocalDateTime;
 public class AntecedentePacienteResponse {
 
     private Integer id;
-
-    @NotNull
     private Integer idhistoriaclinica;
-
     private Integer idantecedente;
-
     private String opciones;
-
-    @NotNull
     private Integer idusuariocreacion;
-
-    @NotNull
     private LocalDateTime fechacreacion;
-
     private Integer idusuariomodificacion;
-
     private LocalDateTime fechamodificacion;
-
-    @NotNull
     private Boolean habilitado;
 }

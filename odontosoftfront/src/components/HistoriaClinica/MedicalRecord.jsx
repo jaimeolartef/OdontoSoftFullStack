@@ -25,6 +25,13 @@ const MedicalRecord = () => {
     antecedentesMedicos: ''
   });
 
+  const [formAntecedentesMedicos, setFormAntecedentesMedicos] = useState({
+    id,
+    descripcion,
+    odontologico,
+    habilitado
+  });
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -38,8 +45,24 @@ const MedicalRecord = () => {
     enfermedadActual: data.enfermedadactual || ''
   });
 
+  const mapAntecedentesMedicos = (data) => ({
+    id: data.id || '',
+    descripcion: data.descripcion || '',
+    odontologico: data.odontologico || '',
+    habilitado: data.habilitado || ''
+  });
+
   useEffect(() => {
-    console.log('idPatient medical record:', patient);
+    console.log('Antecedentes: ', formAntecedentesMedicos);
+    if (formAntecedentesMedicos) {
+      axios.get(`${config.baseURL}/precedenthistory/get`+ formAntecedentesMedicos.id)
+        .then(response => {
+          console.log('medical history:', response.data);
+          setFormAntecedentesMedicos(mapAntecedentesMedicos(response.data));
+        })
+        .catch(error => console.error('Error fetching medical history:', error));
+    }
+
     if (patient) {
       setFormPatient(prev => ({
         ...prev,
@@ -87,6 +110,7 @@ const MedicalRecord = () => {
           <TextArea label="Enfermedad actual"
                     value={formMedicalHistory.enfermedadActual}
                     onChange={handleEnfermedadActual}/>
+
           <div className="espacio"/>
           <button type="submit" className="btn btn-primary">Guardar</button>
         </form>

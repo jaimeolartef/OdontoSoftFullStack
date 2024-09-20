@@ -28,12 +28,12 @@ public class Antecedente {
     @NotNull
     @ColumnDefault("false")
     @Column(name = "odontologico", nullable = false)
-    private Boolean odontologico = false;
+    private Boolean odontologico;
 
     @NotNull
     @ColumnDefault("false")
     @Column(name = "habilitado", nullable = false)
-    private Boolean habilitado = false;
+    private Boolean habilitado;
 
     @OneToMany(mappedBy = "idantecedente")
     private Set<AntecedentePaciente> antecedentepacientes = new LinkedHashSet<>();
