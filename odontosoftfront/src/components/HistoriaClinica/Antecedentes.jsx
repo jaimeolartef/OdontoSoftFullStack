@@ -3,7 +3,7 @@ import React from 'react';
 const Antecedentes = ({antecedentes, onChange}) => {
   return (
     <div>
-      {antecedentes.filter(antecedente => !antecedente.odontologico).map((antecedente, index) => (
+      {antecedentes.map((antecedente, index) => (
         <div key={index} className="antecedente-item mb-3">
           <label className="form-label">{antecedente.descripcion}</label>
           <div className="options d-flex">

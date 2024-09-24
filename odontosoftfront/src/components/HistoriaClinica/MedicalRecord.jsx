@@ -7,6 +7,7 @@ import Logo from "../../resource/LogoNegro.png";
 import config from "../../config";
 import Antecedentes from "./Antecedentes";
 
+
 const MedicalRecord = () => {
   const location = useLocation();
   const { patient } = location.state || {};
@@ -43,14 +44,15 @@ const MedicalRecord = () => {
     descripcion: data.descripcion || '',
     odontologico: data.odontologico || false,
     habilitado: data.habilitado || '',
-    seleccionado: data.seleccionado || '' // Campo para almacenar la opción seleccionada
+    seleccionado: data.seleccionado || ''
   });
 
   useEffect(() => {
     axios.get(`${config.baseURL}/precedenthistory/get`)
       .then(response => {
         if (Array.isArray(response.data)) {
-          setAntecedentesMedicos(response.data.map(mapAntecedentes));
+          const antecedentes = response.data.map(mapAntecedentes);
+          setAntecedentesMedicos(antecedentes.filter(item => !item.odontologico));
           console.log('Antecedentes médicos:', antecedentesMedicos);
         }
       })
@@ -121,7 +123,6 @@ const MedicalRecord = () => {
                     value={formMedicalHistory.observacionAntec}
                     onChange={handleObservacionAntec}/>
           <div className="espacio"/>
-          <Antecedentes antecedentes={antecedentesMedicos} onChange={handleAntecedenteChange}/>
           <button type="submit" className="btn btn-primary">Guardar</button>
         </form>
       </div>
