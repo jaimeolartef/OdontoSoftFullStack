@@ -4,7 +4,7 @@ const Antecedentes = ({antecedentes, onChange}) => {
   return (
     <div>
       {antecedentes.map((antecedente, index) => (
-        <div key={index} className="antecedente-item mb-3">
+        <div className="antecedente-item mb-3">
           <label className="form-label">{antecedente.descripcion}</label>
           <div className="options d-flex">
             {['SI', 'NO', 'NO SABE'].map(option => (
@@ -13,7 +13,6 @@ const Antecedentes = ({antecedentes, onChange}) => {
                   <input
                     className="form-check-input"
                     type="radio"
-                    name={`antecedente-${index}`}
                     value={option}
                     onChange={() => onChange(antecedente, option)}
                     checked={antecedente.seleccionado === option}
