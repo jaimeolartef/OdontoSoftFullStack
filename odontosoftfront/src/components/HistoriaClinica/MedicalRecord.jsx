@@ -1,7 +1,7 @@
 import ReadOnlyPaciente from "../HistoriaClinica/ReadOnlyPaciente";
 import TextArea from "./TextArea";
-import React, {useEffect, useState} from "react";
-import {useLocation} from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import axios from "axios";
 import Logo from "../../resource/LogoNegro.png";
 import config from "../../config";
@@ -9,7 +9,7 @@ import Antecedentes from "./Antecedentes";
 
 const MedicalRecord = () => {
   const location = useLocation();
-  const {patient} = location.state || {};
+  const { patient } = location.state || {};
   const [formPatient, setFormPatient] = useState({
     idHistoriaClinica: '',
     idPaciente: '',
@@ -19,28 +19,31 @@ const MedicalRecord = () => {
     idHistoriaClinica: '',
     idPaciente: '',
     motivoConsulta: '',
-    enfermedadActual: ''
+    enfermedadActual: '',
+    observacionAntec: ''
   });
 
-  const [antecedentesMedicos, setAntecedentesMedicos] = useState([]); // Initialize as an empty array
+  const [antecedentesMedicos, setAntecedentesMedicos] = useState([]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Lógica para manejar el envío del formulario
+    console.log('Formulario:', formPatient, formMedicalHistory, antecedentesMedicos);
   }
 
   const mapMedicalHistory = (data) => ({
     idHistoriaClinica: data.id || '',
     idPatient: data.idpaciente || '',
     motivoConsulta: data.motivoconsulta || '',
-    enfermedadActual: data.enfermedadactual || ''
+    enfermedadActual: data.enfermedadactual || '',
+    observacionAntec: data.observacionantec || ''
   });
 
   const mapAntecedentes = (data) => ({
     id: data.id || '',
     descripcion: data.descripcion || '',
     odontologico: data.odontologico || false,
-    habilitado: data.habilitado || ''
+    habilitado: data.habilitado || '',
+    seleccionado: data.seleccionado || '' // Campo para almacenar la opción seleccionada
   });
 
   useEffect(() => {
@@ -80,11 +83,26 @@ const MedicalRecord = () => {
     }));
   };
 
+  const handleObservacionAntec = (event) => {
+    setFormPatient(prev => ({
+      ...prev,
+      observacionAntec: event.target.value
+    }));
+  };
+
+  const handleAntecedenteChange = (antecedente, value) => {
+    setAntecedentesMedicos(prev => {
+      return prev.map(item =>
+        item.id === antecedente.id ? {...item, seleccionado: value} : item
+      );
+    });
+  };
+
   return (
     <div className="d-flex justify-content-center align-items-center">
-      <div className="card p-4" style={{width: '1200px'}}>
+      <div className="card p-4" style={{ width: '1200px' }}>
         <header className="text-center mb-4">
-          <img src={Logo} alt="Logo" className="mb-3" style={{maxWidth: '140px'}}/>
+          <img src={Logo} alt="Logo" className="mb-3" style={{ maxWidth: '140px' }} />
           <h1>Historia Clínica Odontológica</h1>
         </header>
         <form onSubmit={handleSubmit} className="needs-validation" noValidate>
@@ -97,7 +115,13 @@ const MedicalRecord = () => {
                     value={formMedicalHistory.enfermedadActual}
                     onChange={handleEnfermedadActual}/>
           <div className="espacio"/>
-          <Antecedentes antecedentes={antecedentesMedicos}/>
+          <Antecedentes antecedentes={antecedentesMedicos} onChange={handleAntecedenteChange}/>
+          <div className="espacio"/>
+          <TextArea label="Observación antecedentes"
+                    value={formMedicalHistory.observacionAntec}
+                    onChange={handleObservacionAntec}/>
+          <div className="espacio"/>
+          <Antecedentes antecedentes={antecedentesMedicos} onChange={handleAntecedenteChange}/>
           <button type="submit" className="btn btn-primary">Guardar</button>
         </form>
       </div>
