@@ -7,9 +7,6 @@ import Logo from "../../resource/LogoNegro.png";
 import config from "../../config";
 import Antecedentes from "./Antecedentes";
 
-//TODO 1: Agregar la auditoria al registro de pacientes usuario y fecha de creacion y modificacion
-//TODO 2: Agregar un enumerado con las respuestas de los antecedentes medicos
-
 const MedicalRecord = () => {
   const location = useLocation();
   const {patient} = location.state || {};
@@ -25,13 +22,7 @@ const MedicalRecord = () => {
     enfermedadActual: ''
   });
 
-  const [antecedentesMedicos, setAntecedentesMedicos] = useState({
-    id: '',
-    descripcion: '',
-    odontologico: false,
-    habilitado: ''
-  });
-
+  const [antecedentesMedicos, setAntecedentesMedicos] = useState([]); // Initialize as an empty array
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -55,7 +46,10 @@ const MedicalRecord = () => {
   useEffect(() => {
     axios.get(`${config.baseURL}/precedenthistory/get`)
       .then(response => {
-        setAntecedentesMedicos(response.data.map(mapAntecedentes));
+        if (Array.isArray(response.data)) {
+          setAntecedentesMedicos(response.data.map(mapAntecedentes));
+          console.log('Antecedentes médicos:', antecedentesMedicos);
+        }
       })
       .catch(error => console.error('Error fetching medical history:', error));
 
