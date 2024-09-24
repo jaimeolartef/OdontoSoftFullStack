@@ -97,8 +97,8 @@ const MedicalRecord = () => {
                     value={formMedicalHistory.enfermedadActual}
                     onChange={handleEnfermedadActual}/>
           <div className="espacio"/>
-          <button type="submit" className="btn btn-primary">Guardar</button>
           <Antecedentes antecedentes={antecedentesMedicos}/>
+          <button type="submit" className="btn btn-primary">Guardar</button>
         </form>
       </div>
     </div>
