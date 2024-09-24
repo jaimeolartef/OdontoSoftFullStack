@@ -1,21 +1,24 @@
 import React from 'react';
 
-const AntecedentesMedicos = ({ antecedentes }) => {
+const Antecedentes = ({ antecedentes }) => {
   return (
     <div>
       {antecedentes.map((antecedente, index) => (
-        <div key={index} className="antecedente-item">
-          <label>{antecedente.descripcion}</label>
-          <div className="options">
-            <label>
-              <input type="radio" name={`antecedente-${index}`} value="SI" /> SI
-            </label>
-            <label>
-              <input type="radio" name={`antecedente-${index}`} value="NO" /> NO
-            </label>
-            <label>
-              <input type="radio" name={`antecedente-${index}`} value="NO SABE" /> NO SABE
-            </label>
+        <div key={index} className="antecedente-item mb-3">
+          <label className="form-label">{antecedente.descripcion}</label>
+          <div className="options d-flex justify-content-between">
+            <div className="form-check form-check-inline">
+              <input className="form-check-input" type="radio" name={`antecedente-${index}`} value="SI" />
+              <label className="form-check-label">SI</label>
+            </div>
+            <div className="form-check form-check-inline">
+              <input className="form-check-input" type="radio" name={`antecedente-${index}`} value="NO" />
+              <label className="form-check-label">NO</label>
+            </div>
+            <div className="form-check form-check-inline">
+              <input className="form-check-input" type="radio" name={`antecedente-${index}`} value="NO SABE" />
+              <label className="form-check-label">NO SABE</label>
+            </div>
           </div>
         </div>
       ))}
@@ -23,4 +26,4 @@ const AntecedentesMedicos = ({ antecedentes }) => {
   );
 };
 
-export default AntecedentesMedicos;
+export default Antecedentes;
