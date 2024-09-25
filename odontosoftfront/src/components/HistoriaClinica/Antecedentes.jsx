@@ -4,7 +4,7 @@ const Antecedentes = ({antecedentes, onChange}) => {
   return (
     <div>
       {antecedentes.map((antecedente, index) => (
-        <div className="antecedente-item mb-3">
+        <div key={antecedente.id} className="antecedente-item mb-3">
           <label className="form-label">{antecedente.descripcion}</label>
           <div className="options d-flex">
             {['SI', 'NO', 'NO SABE'].map(option => (
