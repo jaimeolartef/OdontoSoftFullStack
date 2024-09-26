@@ -1,6 +1,6 @@
 import ReadOnlyPaciente from "../HistoriaClinica/ReadOnlyPaciente";
 import TextArea from "./TextArea";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react"; // Importa useMemo
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import Logo from "../../resource/LogoNegro.png";
@@ -11,10 +11,15 @@ import AntecedentesOdont from "./Antecedentes";
 
 const MedicalRecord = () => {
   const location = useLocation();
-  const { patient } = location.state || {};
+
+  // Utiliza useMemo para memorizar el objeto patient
+  const patient = useMemo(() => {
+    return location.state?.patient || {};
+  }, [location.state]);
+
   const [formPatient, setFormPatient] = useState({
     idHistoriaClinica: '',
-    idPaciente: '',
+    idPaciente: ''
   });
 
   const [formMedicalHistory, setFormMedicalHistory] = useState({
@@ -55,7 +60,7 @@ const MedicalRecord = () => {
 
  useEffect(() => {
   const fetchData = async () => {
-    if (patient) {
+    console.log('Patient:', patient);
       // Sets the form patient data using the patient information from the location state
       setFormPatient(prev => ({
         ...prev,
@@ -69,33 +74,29 @@ const MedicalRecord = () => {
         console.log('Historia clinica:', response.data); // Logs the fetched medical history data
         // Maps and sets the medical history data
         setFormMedicalHistory(mapMedicalHistory(response.data));
+        console.log('Formulario: ', formMedicalHistory);
 
         // Fetches the antecedent history data from the server
         const antecedentsResponse = await axios.get(`${config.baseURL}/precedenthistory/get`);
         if (Array.isArray(antecedentsResponse.data)) {
           const antecedentes = antecedentsResponse.data.map(mapAntecedentes);
 
-          // TODO NO ME CARGAN LOS ANTECEDENTES
           const antecedentesMed = antecedentes.filter(item => !item.odontologico);
           antecedentesMed.forEach(antecedente => {
-            console.log('id: ', antecedente.id);
-            console.log('Antecedentes:', formMedicalHistory.antecedentepacientes.find(item => item.idantecedente === antecedente.id));
-            antecedente.seleccionado = formMedicalHistory.antecedentepacientes.find(item => item.idantecedente === antecedente.id)?.opciones || '';
+            antecedente.seleccionado = response.data.antecedentepacientes.find(item => item.idantecedente == antecedente.id)?.opciones || '';
           });
           setAntecedentesMedicos(antecedentesMed);
 
           const antecedentesOdont = antecedentes.filter(item => item.odontologico);
           antecedentesOdont.forEach(antecedente => {
-            console.log('id: ', antecedente.id);
-            console.log('Antecedentes odontologicos:', formMedicalHistory.antecedentepacientes.find(item => item.idantecedente === antecedente.id));
-            antecedente.seleccionado = formMedicalHistory.antecedentepacientes.find(item => item.idantecedente === antecedente.id)?.opciones || '';
+            antecedente.seleccionado = response.data.antecedentepacientes.find(item => item.idantecedente == antecedente.id)?.opciones || '';
           });
           setAntecedentesOdont(antecedentesOdont);
         }
       } catch (error) {
         console.error('Error fetching medical history:', error);
       }
-    }
+
   };
 
   fetchData();
@@ -146,8 +147,7 @@ const handleAntecedenteOdontChange = (antecedenteOdont, value) => {
   });
 };
 
-
-  /**
+/**
  * Handles the change event for the "Observación antecedentes odontológicos" field.
  * Updates the `observacionAntecOdon` property in the `formPatient` state.
  *
@@ -184,6 +184,7 @@ const handleObservacionAntecOdon = (event) => {
                     onChange={handleObservacionAntec}/>
           <div className="espacio"/>
           <AntecedentesOdont antecedentes={antecedentesOdont} onChange={handleAntecedenteOdontChange}/>
+          <label className="form-label">aqui {formMedicalHistory.antecedentepacientes.length}</label>
           <TextArea label="Observación antecedentes"
                     value={formMedicalHistory.observacionantecodon}
                     onChange={handleObservacionAntecOdon}/>
