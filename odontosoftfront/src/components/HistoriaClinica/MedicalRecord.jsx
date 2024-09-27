@@ -7,7 +7,7 @@ import Logo from "../../resource/LogoNegro.png";
 import config from "../../config";
 import Antecedentes from "./Antecedentes";
 import AntecedentesOdont from "./Antecedentes";
-
+import Habitos from "./Habitos";
 
 const MedicalRecord = () => {
   const location = useLocation();
@@ -29,7 +29,8 @@ const MedicalRecord = () => {
     enfermedadActual: '',
     observacionAntec: '',
     observacionantecodon: '',
-    antecedentepacientes: []
+    antecedentepacientes: [],
+    habitopacientes: []
   });
 
   const [antecedentesMedicos, setAntecedentesMedicos] = useState([]);
@@ -37,18 +38,23 @@ const MedicalRecord = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     console.log('Formulario:', formPatient, formMedicalHistory, antecedentesMedicos, antecedentesOdont);
   }
 
-  const mapMedicalHistory = (data) => ({
-    idHistoriaClinica: data.id || '',
-    idPatient: data.idpaciente || '',
-    motivoConsulta: data.motivoconsulta || '',
-    enfermedadActual: data.enfermedadactual || '',
-    observacionAntec: data.observacionantec || '',
-    observacionantecodon: data.observacionantecodon || '',
-    antecedentepacientes: data.antecedentepacientes || []
-  });
+  const mapMedicalHistory = (data) => {
+    const mappedData = {
+      idHistoriaClinica: data.id || '',
+      idPatient: data.idpaciente || '',
+      motivoConsulta: data.motivoconsulta || '',
+      enfermedadActual: data.enfermedadactual || '',
+      observacionAntec: data.observacionantec || '',
+      observacionantecodon: data.observacionantecodon || '',
+      antecedentepacientes: data.antecedentepacientes || [],
+      habitopacientes: data.habitopacientes || []
+    };
+    return mappedData;
+  };
 
   const mapAntecedentes = (data) => ({
     id: data.id || '',
@@ -60,7 +66,6 @@ const MedicalRecord = () => {
 
  useEffect(() => {
   const fetchData = async () => {
-    console.log('Patient:', patient);
       // Sets the form patient data using the patient information from the location state
       setFormPatient(prev => ({
         ...prev,
@@ -68,39 +73,42 @@ const MedicalRecord = () => {
         idPatient: patient.id || ''
       }));
 
-      try {
-        // Fetches the medical history data for the specific patient
-        const response = await axios.get(`${config.baseURL}/historiaClinica/consultar/` + patient.idHistoriaClinica);
-        console.log('Historia clinica:', response.data); // Logs the fetched medical history data
-        // Maps and sets the medical history data
-        setFormMedicalHistory(mapMedicalHistory(response.data));
-        console.log('Formulario: ', formMedicalHistory);
+    // Fetches the medical history data for the specific patient
+    const response = await axios.get(`${config.baseURL}/historiaClinica/consultar/` + patient.idHistoriaClinica);
+    // Maps and sets the medical history data
+    setFormMedicalHistory(mapMedicalHistory(response.data));
+  };
 
-        // Fetches the antecedent history data from the server
+  fetchData();
+}, []);
+
+ //TODO mover los antecedentes a su respectivo archivo
+  useEffect(() => {
+    // Este useEffect se ejecutará después del primer useEffect
+    const fetchHistoria = async () => {
+      try {
         const antecedentsResponse = await axios.get(`${config.baseURL}/precedenthistory/get`);
         if (Array.isArray(antecedentsResponse.data)) {
           const antecedentes = antecedentsResponse.data.map(mapAntecedentes);
 
           const antecedentesMed = antecedentes.filter(item => !item.odontologico);
           antecedentesMed.forEach(antecedente => {
-            antecedente.seleccionado = response.data.antecedentepacientes.find(item => item.idantecedente == antecedente.id)?.opciones || '';
+            antecedente.seleccionado = formMedicalHistory.antecedentepacientes.find(item => item.idantecedente == antecedente.id)?.opciones || '';
           });
           setAntecedentesMedicos(antecedentesMed);
 
           const antecedentesOdont = antecedentes.filter(item => item.odontologico);
           antecedentesOdont.forEach(antecedente => {
-            antecedente.seleccionado = response.data.antecedentepacientes.find(item => item.idantecedente == antecedente.id)?.opciones || '';
+            antecedente.seleccionado = formMedicalHistory.antecedentepacientes.find(item => item.idantecedente == antecedente.id)?.opciones || '';
           });
           setAntecedentesOdont(antecedentesOdont);
         }
       } catch (error) {
         console.error('Error fetching medical history:', error);
       }
-
-  };
-
-  fetchData();
-}, [patient]);
+    };
+    fetchHistoria();
+  }, [formMedicalHistory.enfermedadActual]);
 
   const handleMotivoConsultaChange = (event) => {
     setFormPatient(prev => ({
@@ -124,7 +132,6 @@ const MedicalRecord = () => {
   };
 
   const handleAntecedenteChange = (antecedente, value) => {
-    console.log('Antecedentes change: ', value);
     setAntecedentesMedicos(prev => {
       return prev.map(item =>
         item.id === antecedente.id ? {...item, seleccionado: value} : item
@@ -184,10 +191,11 @@ const handleObservacionAntecOdon = (event) => {
                     onChange={handleObservacionAntec}/>
           <div className="espacio"/>
           <AntecedentesOdont antecedentes={antecedentesOdont} onChange={handleAntecedenteOdontChange}/>
-          <label className="form-label">aqui {formMedicalHistory.antecedentepacientes.length}</label>
           <TextArea label="Observación antecedentes"
                     value={formMedicalHistory.observacionantecodon}
                     onChange={handleObservacionAntecOdon}/>
+          <div className="espacio"/>
+          <Habitos formMedicalHistory={formMedicalHistory}/>
           <div className="espacio"/>
           <button type="submit" className="btn btn-primary">Guardar</button>
         </form>

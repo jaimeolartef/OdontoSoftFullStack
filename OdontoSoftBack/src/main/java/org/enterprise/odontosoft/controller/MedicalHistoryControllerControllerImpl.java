@@ -16,7 +16,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @Controller
-public class MedicalHistoryImpl implements MedicalHistory {
+public class MedicalHistoryControllerControllerImpl implements MedicalHistoryController {
 
     private final HistoriaClinicaDao historiaClinicaDao;
     private final AcoplamientoDienteAntDao acoplamientoDienteAntDao;
@@ -35,7 +35,7 @@ public class MedicalHistoryImpl implements MedicalHistory {
     private final SignoVitalDao signoVitalDao;
     private final DetalleOdontogramaDao detalleOdontogramaDao;
 
-    private static final Logger logger = LoggerFactory.getLogger(MedicalHistoryImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(MedicalHistoryControllerControllerImpl.class);
 
     @Override
     public ResponseEntity<HistoriaClinicaResponse> createMedicalHistory(HistoriaClinicaRequest historiaClinicaRequest) {

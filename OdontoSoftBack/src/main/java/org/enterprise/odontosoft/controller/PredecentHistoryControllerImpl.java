@@ -12,7 +12,7 @@ import java.util.NoSuchElementException;
 
 @AllArgsConstructor
 @Controller
-public class PredecentHistoryImpl implements PrecedentHistory {
+public class PredecentHistoryControllerImpl implements PrecedentHistoryController {
 
     private final AntecedenteDao antecedenteDao;
 

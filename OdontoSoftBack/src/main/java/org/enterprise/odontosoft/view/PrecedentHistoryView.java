@@ -1,7 +1,7 @@
 package org.enterprise.odontosoft.view;
 
 import lombok.RequiredArgsConstructor;
-import org.enterprise.odontosoft.controller.PrecedentHistory;
+import org.enterprise.odontosoft.controller.PrecedentHistoryController;
 import org.enterprise.odontosoft.view.dto.MensajeValidation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +15,7 @@ import java.util.NoSuchElementException;
 @CrossOrigin(originPatterns = "http://localhost:*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT})
 public class PrecedentHistoryView {
 
-    private final PrecedentHistory precedentHistory;
+    private final PrecedentHistoryController precedentHistory;
 
     @GetMapping("/get")
     public ResponseEntity getAntecedentes() {

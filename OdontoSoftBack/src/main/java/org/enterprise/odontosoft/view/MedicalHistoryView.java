@@ -1,6 +1,6 @@
 package org.enterprise.odontosoft.view;
 
-import org.enterprise.odontosoft.controller.MedicalHistory;
+import org.enterprise.odontosoft.controller.MedicalHistoryController;
 import org.enterprise.odontosoft.view.dto.request.HistoriaClinicaRequest;
 import org.enterprise.odontosoft.view.dto.response.HistoriaClinicaResponse;
 import org.springframework.http.ResponseEntity;
@@ -11,24 +11,24 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(originPatterns = "http://localhost:*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT})
 public class MedicalHistoryView {
 
-    private final MedicalHistory medicalHistory;
+    private final MedicalHistoryController medicalHistoryController;
 
-    public MedicalHistoryView(MedicalHistory medicalHistory) {
-        this.medicalHistory = medicalHistory;
+    public MedicalHistoryView(MedicalHistoryController medicalHistoryController) {
+        this.medicalHistoryController = medicalHistoryController;
     }
 
     @PostMapping("/crear")
     public ResponseEntity<HistoriaClinicaResponse> createMedicalHistory(@RequestBody HistoriaClinicaRequest historiaClinicaRequest) {
-        return medicalHistory.createMedicalHistory(historiaClinicaRequest);
+        return medicalHistoryController.createMedicalHistory(historiaClinicaRequest);
     }
 
     @GetMapping("/consultar/{id}")
     public ResponseEntity<HistoriaClinicaResponse> getMedicalHistoryById(@PathVariable Integer id) {
-        return medicalHistory.getMedicalHistoryById(id);
+        return medicalHistoryController.getMedicalHistoryById(id);
     }
 
     @PutMapping("/modificar")
     public ResponseEntity<HistoriaClinicaResponse> updateMedicalHistory(@RequestBody HistoriaClinicaRequest historiaClinicaRequest) {
-        return medicalHistory.updateMedicalHistory(historiaClinicaRequest);
+        return medicalHistoryController.updateMedicalHistory(historiaClinicaRequest);
     }
 }
