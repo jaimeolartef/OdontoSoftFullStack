@@ -30,7 +30,8 @@ const MedicalRecord = () => {
     observacionAntec: '',
     observacionantecodon: '',
     antecedentepacientes: [],
-    habitopacientes: []
+    habitopacientes: [],
+    observacion: ''
   });
 
   const handleSubmit = (e) => {
@@ -47,7 +48,8 @@ const MedicalRecord = () => {
       observacionAntec: data.observacionantec || '',
       observacionantecodon: data.observacionantecodon || '',
       antecedentepacientes: data.antecedentepacientes || [],
-      habitopacientes: data.habitopacientes || []
+      habitopacientes: data.habitopacientes || [],
+      observacion: data.observacion || ''
     };
     return mappedData;
   };
@@ -75,26 +77,26 @@ const MedicalRecord = () => {
     fetchData();
   }, [formPatient.idPaciente]);
 
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setFormMedicalHistory(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
 
   /**
-   * Handles the change event for the "Observación antecedentes odontológicos" field.
-   * Updates the `observacionAntecOdon` property in the `formPatient` state.
-   *
-   * @param {Object} event - The event object from the input field.
-   */
-  const handleObservacionAntecOdon = (event) => {
-    setFormPatient(prev => ({
-      ...prev,
-      observacionAntecOdon: event.target.value
-    }));
-  };
+ * Handles input changes for form fields.
+ *
+ * This function updates the `formMedicalHistory` state with the new value
+ * of the input field that triggered the event. It uses the `name` attribute
+ * of the input field to determine which property of the state to update.
+ *
+ * @param {Object} event - The event object from the input field.
+ * @param {Object} event.target - The target element of the event.
+ * @param {string} event.target.name - The name of the input field.
+ * @param {string} event.target.value - The new value of the input field.
+ */
+const handleInputChange = (event) => {
+  const { name, value } = event.target;
+  setFormMedicalHistory(prev => ({
+    ...prev,
+    [name]: value
+  }));
+};
 
   return (
     <div className="d-flex justify-content-center align-items-center">
@@ -129,6 +131,10 @@ const MedicalRecord = () => {
                     onChange={handleInputChange}/>
           <div className="espacio"/>
           <Habitos formMedicalHistory={formMedicalHistory}/>
+          <TextArea label="Observación"
+                    name="observacion"
+                    value={formMedicalHistory.observacion}
+                    onChange={handleInputChange}/>
           <div className="espacio"/>
           <button type="submit" className="btn btn-primary">Guardar</button>
         </form>

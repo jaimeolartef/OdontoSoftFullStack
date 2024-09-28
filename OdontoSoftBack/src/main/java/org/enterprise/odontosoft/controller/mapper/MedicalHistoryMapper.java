@@ -1,6 +1,8 @@
 package org.enterprise.odontosoft.controller.mapper;
 
+import io.micrometer.common.util.StringUtils;
 import lombok.experimental.UtilityClass;
+import org.apache.catalina.util.StringUtil;
 import org.enterprise.odontosoft.model.Entity.*;
 import org.enterprise.odontosoft.view.dto.request.HistoriaClinicaRequest;
 import org.enterprise.odontosoft.view.dto.response.HistoriaClinicaResponse;
@@ -51,7 +53,9 @@ public class MedicalHistoryMapper {
                 .ultimomedicotratante(historiaClinica.getUltimomedicotratante())
                 .observacionantec(historiaClinica.getObservacionantec())
                 .observacionantecodon(historiaClinica.getObservacionantecodon())
-                .observacion(historiaClinica.getObservacion())
+                .observacion(Objects.nonNull(historiaClinica.getObservacion()) || StringUtils.isBlank(historiaClinica.getObservacion())
+                        ? getObservaciones()
+                        : historiaClinica.getObservacion())
                 .observacionanafunc(historiaClinica.getObservacionanafunc())
                 .observacionexaestomat(historiaClinica.getObservacionexaestomat())
                 .observacionodontograma(historiaClinica.getObservacionodontograma())
@@ -91,6 +95,27 @@ public class MedicalHistoryMapper {
                         historiaClinica.getPlantratamientos().stream().map(PlanTratamientoMapper::toResponse).toList())
                 .signovitals(historiaClinica.getSignovitals().stream().map(SignoVitalMapper::toResponse).toList())
                 .build();
+    }
+
+    public static String getObservaciones() {
+        StringBuilder observaciones = new StringBuilder();
+        observaciones.append("Observaciones: \n");
+        observaciones.append("\n");
+        observaciones.append("\n");
+        observaciones.append("Antecedentes médicos y odontológicos familiares: \n");
+        observaciones.append("\n");
+        observaciones.append("\n");
+        observaciones.append("Estado socioeconómico actual\n");
+        observaciones.append("\n");
+        observaciones.append("\n");
+        observaciones.append("Examen físico general: \n");
+        observaciones.append("\n");
+        observaciones.append("\n");
+        observaciones.append("Aspecto fisico del paciente: \n");
+        observaciones.append("\n");
+        observaciones.append("\n");
+        observaciones.append("Señales particulares: \n");
+        return  observaciones.toString();
     }
 
     public static HistoriaClinicaResponse toDtoLigth(HistoriaClinica historiaClinica) {
