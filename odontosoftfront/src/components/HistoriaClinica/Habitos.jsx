@@ -25,13 +25,10 @@ const Habitos = ({formMedicalHistory}) => {
     const fetchHabitos = async () => {
       const habitosResponse = await axios.get(`${config.baseURL}/habitshistory/getall`);
       if (Array.isArray(habitosResponse.data)) {
-        console.log('Habitos response:', habitosResponse.data);
-        console.log('Historia clinica 2:', formMedicalHistory);
         const habitos = habitosResponse.data.map(mapHabitos);
         habitos.forEach(habito => {
           habito.opciones = formMedicalHistory.habitopacientes.find(item => item.id == habito.id)?.opciones || '';
         });
-        console.log('Habitos paciente:', habitos);
         setHabitosPaciente(habitos);
       }
     };
@@ -42,7 +39,6 @@ const Habitos = ({formMedicalHistory}) => {
   return (
     <div>
       {habitosPaciente.map((habitoPac, index) => (
-        console.log('Habitos pantalla:', habitoPac),
           <div key={habitoPac.id} className="antecedente-item mb-3">
             <label className="form-label">{habitoPac.descripcion}</label>
             <div className="options d-flex">
