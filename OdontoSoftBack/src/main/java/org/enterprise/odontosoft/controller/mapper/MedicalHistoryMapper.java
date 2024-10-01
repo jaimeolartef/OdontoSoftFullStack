@@ -72,6 +72,8 @@ public class MedicalHistoryMapper {
                 .habilitado(historiaClinica.getHabilitado())
                 .acoplamientodienteants(historiaClinica.getAcoplamientodienteants().stream()
                         .map(AcoplamientoDienteAntMapper::toResponse).toList())
+                .analisisfuncionals(historiaClinica.getAnalisisfuncionals().stream()
+                    .map(AnalisisFuncionalMapper::toResponse).toList())
                 .analisisoclusions(historiaClinica.getAnalisisoclusions().stream()
                         .map(AnalisisOclusionMapper::toResponse).toList())
                 .antecedentepacientes(historiaClinica.getAntecedentepacientes().stream()

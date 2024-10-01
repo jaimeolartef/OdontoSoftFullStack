@@ -50,32 +50,37 @@ const Antecedentes = ({formMedicalHistory}) => {
   };
 
   return (
-    <div>
-      {antecedentesOdont.map((antecedente, index) => (
-        <div key={antecedente.id} className="antecedente-item mb-3">
-          <label className="form-label">{antecedente.descripcion}</label>
-          <div className="options d-flex">
-            {['SI', 'NO'].map(option => (
-              <div key={option} className="form-check form-check-inline">
-                <div>
-                  <input
-                    className="form-check-input"
-                    type="radio"
-                    value={option}
-                    onChange={() => handleAntecedenteOdontChange(antecedente, option)}
-                    checked={antecedente.seleccionado === option}
-                    style={{width: '20px', height: '20px'}}/>
+    <div className="card">
+      <div className="card-header">
+        <h2>Antecedentes Odontológicos</h2>
+      </div>
+      <div className="card-body">
+        {antecedentesOdont.map((antecedente, index) => (
+          <div key={antecedente.id} className="antecedente-item mb-3">
+            <label className="form-label">{antecedente.descripcion}</label>
+            <div className="options d-flex">
+              {['SI', 'NO'].map(option => (
+                <div key={option} className="form-check form-check-inline">
+                  <div>
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      value={option}
+                      onChange={() => handleAntecedenteOdontChange(antecedente, option)}
+                      checked={antecedente.seleccionado === option}
+                      style={{width: '20px', height: '20px'}}/>
+                  </div>
+                  <div>
+                    <label className="form-check-label" style={{marginLeft: '10px'}}>{option}</label>
+                  </div>
                 </div>
-                <div>
-                  <label className="form-check-label" style={{marginLeft: '10px'}}>{option}</label>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
-  );
-};
+      );
+      };
 
-export default Antecedentes;
+      export default Antecedentes;

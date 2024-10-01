@@ -8,6 +8,7 @@ import config from "../../config";
 import Antecedentes from "./Antecedentes";
 import AntecedentesOdont from "./AntecedentesOdontol";
 import Habitos from "./Habitos";
+import SignosVitales from "./signosVitales";
 
 const MedicalRecord = () => {
   const location = useLocation();
@@ -31,7 +32,9 @@ const MedicalRecord = () => {
     observacionantecodon: '',
     antecedentepacientes: [],
     habitopacientes: [],
-    observacion: ''
+    observacion: '',
+    signovitals: [],
+    analisisfuncionals: []
   });
 
   const handleSubmit = (e) => {
@@ -49,7 +52,9 @@ const MedicalRecord = () => {
       observacionantecodon: data.observacionantecodon || '',
       antecedentepacientes: data.antecedentepacientes || [],
       habitopacientes: data.habitopacientes || [],
-      observacion: data.observacion || ''
+      observacion: data.observacion || '',
+      signovitals: data.signovitals || [],
+      analisisfuncionals: data.analisisfuncionals || []
     };
     return mappedData;
   };
@@ -125,16 +130,20 @@ const handleInputChange = (event) => {
                     onChange={handleInputChange}/>
           <div className="espacio"/>
           <AntecedentesOdont formMedicalHistory={formMedicalHistory}/>
-          <TextArea label="Observación antecedentes"
+          <div className="espacio"/>
+          <TextArea label="Observación antecedentes odontológicos"
                     name="observacionantecodon"
                     value={formMedicalHistory.observacionantecodon}
                     onChange={handleInputChange}/>
           <div className="espacio"/>
           <Habitos formMedicalHistory={formMedicalHistory}/>
+          <div className="espacio"/>
           <TextArea label="Observación"
                     name="observacion"
                     value={formMedicalHistory.observacion}
                     onChange={handleInputChange}/>
+          <div className="espacio"/>
+          <SignosVitales formMedicalHistory={formMedicalHistory}/>
           <div className="espacio"/>
           <button type="submit" className="btn btn-primary">Guardar</button>
         </form>

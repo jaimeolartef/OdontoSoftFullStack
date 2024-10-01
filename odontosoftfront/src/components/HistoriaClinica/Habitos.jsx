@@ -37,8 +37,12 @@ const Habitos = ({formMedicalHistory}) => {
 
 
   return (
-    <div>
-      {habitosPaciente.map((habitoPac, index) => (
+    <div className="card">
+      <div className="card-header">
+        <h2>Hábitos</h2>
+      </div>
+      <div className="card-body">
+        {habitosPaciente.map((habitoPac, index) => (
           <div key={habitoPac.id} className="antecedente-item mb-3">
             <label className="form-label">{habitoPac.descripcion}</label>
             <div className="options d-flex">
@@ -60,9 +64,10 @@ const Habitos = ({formMedicalHistory}) => {
               ))}
             </div>
           </div>
-      ))}
+        ))}
+      </div>
     </div>
-  );
-};
+      );
+      };
 
-export default Habitos;
+      export default Habitos;

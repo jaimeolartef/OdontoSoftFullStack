@@ -97,6 +97,9 @@ public class HistoriaClinica {
     private Set<AnalisisOclusion> analisisoclusions = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "idhistoriaclinica")
+    private Set<AnalisisFuncional> analisisfuncionals = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "idhistoriaclinica")
     private Set<AntecedentePaciente> antecedentepacientes = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "idhistoriaclinica")

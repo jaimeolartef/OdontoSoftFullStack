@@ -2,7 +2,6 @@ package org.enterprise.odontosoft.view.dto.response;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.enterprise.odontosoft.model.Entity.*;
 import org.enterprise.odontosoft.view.dto.MensajeValidation;
 
 import java.time.LocalDateTime;
@@ -44,6 +43,7 @@ public class HistoriaClinicaResponse extends MensajeValidation {
 
     private List<AcoplamientoDienteAntResponse> acoplamientodienteants = new ArrayList<>();
     private List<AnalisisOclusionResponse> analisisoclusions = new ArrayList<>();
+    private List<AnalisisFuncionalResponse> analisisfuncionals = new ArrayList<>();
     private List<AntecedentePacienteResponse> antecedentepacientes = new ArrayList<>();
     private List<AyudaDiagnosticaResponse> ayudadiagnosticas = new ArrayList<>();
     private List<ContactoOclusalesMovResponse> contactooclusalesmovs = new ArrayList<>();
