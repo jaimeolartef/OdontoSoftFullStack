@@ -8,9 +8,10 @@ import config from "../../config";
 import Antecedentes from "./Antecedentes";
 import AntecedentesOdont from "./AntecedentesOdontol";
 import Habitos from "./Habitos";
-import SignosVitales from "./signosVitales";
-import AnalisisFuncional from "./analisisFuncional";
-import ExamenEstomatologico from "./examenEstomatologico";
+import SignosVitales from "./SignosVitales";
+import AnalisisFuncional from "./AnalisisFuncional";
+import ExamenEstomatologico from "./ExamenEstomatologico";
+import Odontograma from "./Odontograma";
 
 const MedicalRecord = () => {
   const location = useLocation();
@@ -159,6 +160,9 @@ const handleInputChange = (event) => {
                     onChange={handleInputChange}/>
           <div className="espacio"/>
           <ExamenEstomatologico formMedicalHistory={formMedicalHistory}/>
+          <div className="espacio"/>
+          <Odontograma formMedicalHistory={formMedicalHistory}/>
+          <div className="espacio"/>
           <button type="submit" className="btn btn-primary">Guardar</button>
         </form>
       </div>
