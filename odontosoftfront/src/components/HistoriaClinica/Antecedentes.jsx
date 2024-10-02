@@ -42,6 +42,11 @@ const Antecedentes = ({formMedicalHistory}) => {
         item.id === antecedente.id ? {...item, seleccionado: value} : item
       );
     });
+    console.log('antecedente:', antecedente);
+    console.log('formMedicalHistory:', formMedicalHistory.antecedentepacientes);
+    formMedicalHistory.antecedentepacientes = formMedicalHistory.antecedentepacientes.map(item =>
+      item.idantecedente == antecedente.id ? {...item, opciones: value} : item
+    );
   };
 
   return (

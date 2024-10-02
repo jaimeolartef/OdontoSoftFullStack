@@ -29,11 +29,17 @@ const AnalisisFuncional = ({ formMedicalHistory }) => {
   });
 
   const handleChange = (e) => {
-    const { name, checked } = e.target;
+    const { name, type, value, checked } = e.target;
+    console.log('name:', name, 'type:', type, 'value:', value, 'checked:', checked);
+    const newValue = type === 'checkbox' ? checked : value;
+    console.log('newValue:', newValue);
     setAnalisisFunc(prev => ({
       ...prev,
-      [name]: checked
+      [name]: newValue
     }));
+    formMedicalHistory.analisisfuncionals = formMedicalHistory.analisisfuncionals.map(item =>
+      item.id === analisisFunc.id ? { ...item, [name]: newValue } : item
+    );
   };
 
   return (
@@ -68,7 +74,7 @@ const AnalisisFuncional = ({ formMedicalHistory }) => {
             id="fonacion"
             checked={analisisFunc.fonacion}
             onChange={handleChange}/>
-          <label className="form-check-label" htmlFor="fonacion">Fonación:</label>
+          <label className="form-check-label" htmlFor="fonacion">Fonación</label>
         </div>
         <div className="form-check">
           <input className="form-check-input"
@@ -77,7 +83,7 @@ const AnalisisFuncional = ({ formMedicalHistory }) => {
             id="respiracion"
             checked={analisisFunc.respiracion}
             onChange={handleChange}/>
-          <label className="form-check-label" htmlFor="respiracion">Respiración:</label>
+          <label className="form-check-label" htmlFor="respiracion">Respiración</label>
         </div>
       </div>
     </div>

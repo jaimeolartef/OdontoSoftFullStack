@@ -19,6 +19,12 @@ const Habitos = ({formMedicalHistory}) => {
         item.id === habito.id ? {...item, opciones: value} : item
       );
     });
+    formMedicalHistory.habitopacientes = formMedicalHistory.habitopacientes.map(item =>
+      item.id === habito.id ? {...item, opciones: value} : item
+    );
+    if (!formMedicalHistory.habitopacientes.some(item => item.id === habito.id)) {
+      formMedicalHistory.habitopacientes.push({id: habito.id, idhistoriaclinica: formMedicalHistory.idHistoriaClinica, idhabito: habito.id, opciones: value});
+    }
   };
 
   useEffect(() => {

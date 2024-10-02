@@ -10,6 +10,7 @@ import AntecedentesOdont from "./AntecedentesOdontol";
 import Habitos from "./Habitos";
 import SignosVitales from "./signosVitales";
 import AnalisisFuncional from "./analisisFuncional";
+import ExamenEstomatologico from "./examenEstomatologico";
 
 const MedicalRecord = () => {
   const location = useLocation();
@@ -35,7 +36,9 @@ const MedicalRecord = () => {
     habitopacientes: [],
     observacion: '',
     signovitals: [],
-    analisisfuncionals: []
+    analisisfuncionals: [],
+    observacionanafunc: '',
+    examenestomatologicos: []
   });
 
   const handleSubmit = (e) => {
@@ -55,7 +58,9 @@ const MedicalRecord = () => {
       habitopacientes: data.habitopacientes || [],
       observacion: data.observacion || '',
       signovitals: data.signovitals || [],
-      analisisfuncionals: data.analisisfuncionals || []
+      analisisfuncionals: data.analisisfuncionals || [],
+      observacionanafunc: data.observacionanafunc || '',
+      examenestomatologicos: data.examenestomatologicos || []
     };
     return mappedData;
   };
@@ -148,6 +153,12 @@ const handleInputChange = (event) => {
           <div className="espacio"/>
           <AnalisisFuncional formMedicalHistory={formMedicalHistory}/>
           <div className="espacio"/>
+          <TextArea label="Observación"
+                    name="observacionanafunc"
+                    value={formMedicalHistory.observacionanafunc}
+                    onChange={handleInputChange}/>
+          <div className="espacio"/>
+          <ExamenEstomatologico formMedicalHistory={formMedicalHistory}/>
           <button type="submit" className="btn btn-primary">Guardar</button>
         </form>
       </div>

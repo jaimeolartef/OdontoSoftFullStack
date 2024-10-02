@@ -16,6 +16,9 @@ const SignosVitales = ({ formMedicalHistory }) => {
       ...prev,
       [name]: value
     }));
+   formMedicalHistory.signovitals = formMedicalHistory.signovitals.map(item =>
+      item.id === signos.id ? { ...item, [name]: value } : item
+    );
   };
 
   const mapSignos = (data) => ({

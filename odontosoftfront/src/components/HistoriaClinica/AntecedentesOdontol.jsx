@@ -47,6 +47,9 @@ const Antecedentes = ({formMedicalHistory}) => {
         itemO.id === antecedenteOdont.id ? {...itemO, seleccionado: value} : itemO
       );
     });
+    formMedicalHistory.antecedentepacientes = formMedicalHistory.antecedentepacientes.map(item =>
+      item.idantecedente == antecedenteOdont.id ? {...item, opciones: value} : item
+    );
   };
 
   return (
