@@ -38,11 +38,11 @@ const SignosVitales = ({ formMedicalHistory }) => {
   }, [formMedicalHistory]);
 
   return (
-    <div class="card">
+    <div className="card">
       <div className="card-header">
         <h2>Signos Vitales</h2>
       </div>
-      <div class="card-body">
+      <div className="card-body">
         <div>
           <label>Peso (Kg):</label>
           <input

@@ -9,6 +9,7 @@ import Antecedentes from "./Antecedentes";
 import AntecedentesOdont from "./AntecedentesOdontol";
 import Habitos from "./Habitos";
 import SignosVitales from "./signosVitales";
+import AnalisisFuncional from "./analisisFuncional";
 
 const MedicalRecord = () => {
   const location = useLocation();
@@ -144,6 +145,8 @@ const handleInputChange = (event) => {
                     onChange={handleInputChange}/>
           <div className="espacio"/>
           <SignosVitales formMedicalHistory={formMedicalHistory}/>
+          <div className="espacio"/>
+          <AnalisisFuncional formMedicalHistory={formMedicalHistory}/>
           <div className="espacio"/>
           <button type="submit" className="btn btn-primary">Guardar</button>
         </form>
