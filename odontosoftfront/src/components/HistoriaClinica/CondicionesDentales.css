@@ -1,0 +1,19 @@
+/* odontosoftfront/src/components/HistoriaClinica/CondicionesDentales.css */
+.condiciones-dentales {
+  margin-bottom: 20px;
+}
+
+.condiciones-dentales table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.condiciones-dentales th, .condiciones-dentales td {
+  border: 1px solid #000;
+  padding: 8px;
+  text-align: center;
+}
+
+.condiciones-dentales th {
+  background-color: #f2f2f2;
+}
