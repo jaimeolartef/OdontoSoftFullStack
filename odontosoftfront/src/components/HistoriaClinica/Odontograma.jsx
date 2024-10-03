@@ -23,22 +23,18 @@ const Odontograma = () => {
   const renderTooth = (index, label) => (
     <div key={index} className="tooth">
       <div className="tooth-label">{label}</div>
-      <div
-        className={`tooth-fragment top-left ${teeth[index].topLeft}`}
-        onClick={() => handleFragmentClick(index, 'topLeft')}
-      ></div>
-      <div
-        className={`tooth-fragment top-right ${teeth[index].topRight}`}
-        onClick={() => handleFragmentClick(index, 'topRight')}
-      ></div>
-      <div
-        className={`tooth-fragment bottom-left ${teeth[index].bottomLeft}`}
-        onClick={() => handleFragmentClick(index, 'bottomLeft')}
-      ></div>
-      <div
-        className={`tooth-fragment bottom-right ${teeth[index].bottomRight}`}
-        onClick={() => handleFragmentClick(index, 'bottomRight')}
-      ></div>
+      <div className={`tooth-fragment top-left ${teeth[index].topLeft}`}
+           onClick={() => handleFragmentClick(index, 'topLeft')}></div>
+
+      <div className={`tooth-fragment top-right ${teeth[index].topRight}`}
+           onClick={() => handleFragmentClick(index, 'topRight')}></div>
+
+      <div className={`tooth-fragment bottom-left ${teeth[index].bottomLeft}`}
+           onClick={() => handleFragmentClick(index, 'bottomLeft')}></div>
+
+      <div className={`tooth-fragment bottom-right ${teeth[index].bottomRight}`}
+           onClick={() => handleFragmentClick(index, 'bottomRight')}></div>
+
       <div className="central-circle"></div>
     </div>
   );
@@ -53,13 +49,18 @@ const Odontograma = () => {
           <CondicionesDentales />
           <div className="espacio" />
           <div className="odontograma">
-            <div className="row">
-              {Array.from({ length: 8 }, (_, i) => renderTooth(i, 18 - i))}
-              {Array.from({ length: 8 }, (_, i) => renderTooth(i + 8, 21 + i))}
+            <div className="rowOdonto">
+              {Array.from({length: 8}, (_, i) => renderTooth(i, 18 - i))}
+              <div className="tabulacion"></div>
+              <div className="tabulacion"></div>
+              {Array.from({length: 8}, (_, i) => renderTooth(i + 8, 21 + i))}
             </div>
-            <div className="row">
-              {Array.from({ length: 8 }, (_, i) => renderTooth(i + 16, 48 - i))}
-              {Array.from({ length: 8 }, (_, i) => renderTooth(i + 24, 31 + i))}
+            <div className="espacio"/>
+            <div className="rowOdonto">
+              {Array.from({length: 8}, (_, i) => renderTooth(i + 16, 48 - i))}
+              <div className="tabulacion"></div>
+              <div className="tabulacion"></div>
+              {Array.from({length: 8}, (_, i) => renderTooth(i + 24, 31 + i))}
             </div>
           </div>
         </div>
