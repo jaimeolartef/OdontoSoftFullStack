@@ -20,49 +20,65 @@
 .tooth {
   width: 50px;
   height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: relative;
   border: 1px solid #000;
   border-radius: 50%;
   cursor: pointer;
-  position: relative;
-}
-
-.tooth.healthy {
-  background-color: #fff;
-}
-
-.tooth.decayed {
-  background-color: #f00;
-}
-
-.inner-circle {
-  width: 30px;
-  height: 30px;
-  background-color: #fff;
-  border: 1px solid #000;
-  border-radius: 50%;
-  position: absolute;
-}
-
-.x-line {
-  position: absolute;
-  width: 2px;
-  height: 50px;
-  background-color: #000;
-}
-
-.x-line1 {
-  transform: rotate(45deg);
-}
-
-.x-line2 {
-  transform: rotate(-45deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .tooth-label {
   position: absolute;
   top: -20px;
   font-size: 12px;
+}
+
+.tooth-fragment {
+  position: absolute;
+  width: 50%;
+  height: 50%;
+  border: 1px solid #000; /* Add border to each fragment */
+}
+
+.top-left {
+  top: 0;
+  left: 0;
+  border-top-left-radius: 50%;
+}
+
+.top-right {
+  top: 0;
+  right: 0;
+  border-top-right-radius: 50%;
+}
+
+.bottom-left {
+  bottom: 0;
+  left: 0;
+  border-bottom-left-radius: 50%;
+}
+
+.bottom-right {
+  bottom: 0;
+  right: 0;
+  border-bottom-right-radius: 50%;
+}
+
+.tooth-fragment.healthy {
+  background-color: rgba(200, 230, 201, 0);
+}
+
+.tooth-fragment.decayed {
+  background-color: #ffcdd2;
+}
+
+.central-circle {
+  width: 20px;
+  height: 20px;
+  background-color: #fff;
+  border: 1px solid #000;
+  border-radius: 50%;
+  position: absolute;
 }
