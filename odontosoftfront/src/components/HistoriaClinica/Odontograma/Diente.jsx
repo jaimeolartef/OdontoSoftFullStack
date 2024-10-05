@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import Modal from './Modal'; // Ensure the path is correct
+import SimbList from './ListaSimb'; // Ensure the path is correct
 
-const Segment = ({ d, index, isSelected, onClick }) => {
+const Segmento = ({ d, index, isSelected, onClick }) => {
   return (
     <path
       d={d}
@@ -15,15 +17,22 @@ const Segment = ({ d, index, isSelected, onClick }) => {
 const CircleSegments = () => {
   const [selectedSegments, setSelectedSegments] = useState([false, false, false, false]);
   const [isCircleSelected, setIsCircleSelected] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   const handleSegmentClick = (index) => {
     const newSelectedSegments = [...selectedSegments];
     newSelectedSegments[index] = !newSelectedSegments[index];
     setSelectedSegments(newSelectedSegments);
+    setShowModal(true);
   };
 
   const handleCircleClick = () => {
     setIsCircleSelected(!isCircleSelected);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
   };
 
   const segmentPaths = [
@@ -34,23 +43,31 @@ const CircleSegments = () => {
   ];
 
   return (
-    <svg width="100" height="100" viewBox="0 0 200 200" style={{ transform: 'rotate(45deg)' }}>
-      {segmentPaths.map((d, index) => (
-        <Segment
-          key={index}
-          d={d}
-          index={index}
-          isSelected={selectedSegments[index]}
-          onClick={handleSegmentClick}
+    <div>
+      <svg width="100" height="100" viewBox="0 0 200 200" style={{ transform: 'rotate(45deg)' }}>
+        {segmentPaths.map((d, index) => (
+          <Segmento
+            key={index}
+            d={d}
+            index={index}
+            isSelected={selectedSegments[index]}
+            onClick={handleSegmentClick}
+          />
+        ))}
+        <circle
+          cx="100"
+          cy="100"
+          r="20"
+          fill={isCircleSelected ? 'orange' : 'white'}
+          stroke="black"
+          strokeWidth="2"
+          onClick={handleCircleClick}
         />
-      ))}
-      <circle cx="100" cy="100" r="20"
-        fill={isCircleSelected ? 'orange' : 'white'}
-        stroke="black"
-        strokeWidth="2"
-        onClick={handleCircleClick}
-      />
-    </svg>
+      </svg>
+      <Modal show={showModal} onClose={closeModal}>
+        <SimbList />
+      </Modal>
+    </div>
   );
 };
 

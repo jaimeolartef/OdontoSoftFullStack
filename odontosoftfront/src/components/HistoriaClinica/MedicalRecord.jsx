@@ -11,7 +11,7 @@ import Habitos from "./Habitos";
 import SignosVitales from "./SignosVitales";
 import AnalisisFuncional from "./AnalisisFuncional";
 import ExamenEstomatologico from "./ExamenEstomatologico";
-import Odontograma from "./Odontograma";
+import Odontograma from "./Odontograma/Odontograma";
 
 const MedicalRecord = () => {
   const location = useLocation();
