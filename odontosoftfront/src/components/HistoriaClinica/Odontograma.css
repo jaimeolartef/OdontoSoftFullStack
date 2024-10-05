@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
 }
 
 .odontograma {
@@ -9,72 +10,41 @@
   flex-direction: column;
   align-items: center;
   gap: 20px;
+  width: 100%;
 }
 
 .rowOdonto {
   display: flex;
   justify-content: center;
   gap: 10px;
+  flex-wrap: wrap;
+  width: 100%;
 }
 
 .tooth {
-  transform: rotate(45deg);
-  width: 50px;
-  height: 50px;
   position: relative;
-  border: 1px solid #000;
-  border-radius: 50%;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 10%; /* Adjust as needed */
+  min-width: 50px; /* Ensure a minimum size */
 }
 
 .tooth-label {
   position: relative;
   top: 50%;
   left: 50%;
-  transform: translate(-416%, -292%) rotate(-46deg);
-  font-size: 12px;
+  transform: translate(-50%, -50%) rotate(-45deg);
+  font-size: 1vw; /* Use relative units */
 }
 
 .tooth-fragment {
   position: absolute;
   width: 50%;
   height: 50%;
-  border: 1px solid #000; /* Add border to each fragment */
+  border: 1px solid #000;
 }
 
-.top-left {
-  top: 0;
-  left: 0;
-  border-top-left-radius: 50%;
-}
-
-.top-right {
-  top: 0;
-  right: 0;
-  border-top-right-radius: 50%;
-}
-
-.bottom-left {
-  bottom: 0;
-  left: 0;
-  border-bottom-left-radius: 50%;
-}
-
-.bottom-right {
-  bottom: 0;
-  right: 0;
-  border-bottom-right-radius: 50%;
-}
-
-.tooth-fragment.healthy {
-  background-color: rgba(200, 230, 201, 0);
-}
-
-.tooth-fragment.decayed {
-  background-color: #ffcdd2;
+.top-left, .top-right, .bottom-left, .bottom-right {
+  border-radius: 50%;
 }
 
 .central-circle {
