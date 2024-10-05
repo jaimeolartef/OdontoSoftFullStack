@@ -14,11 +14,16 @@ const Segment = ({ d, index, isSelected, onClick }) => {
 
 const CircleSegments = () => {
   const [selectedSegments, setSelectedSegments] = useState([false, false, false, false]);
+  const [isCircleSelected, setIsCircleSelected] = useState(false);
 
   const handleSegmentClick = (index) => {
     const newSelectedSegments = [...selectedSegments];
     newSelectedSegments[index] = !newSelectedSegments[index];
     setSelectedSegments(newSelectedSegments);
+  };
+
+  const handleCircleClick = () => {
+    setIsCircleSelected(!isCircleSelected);
   };
 
   const segmentPaths = [
@@ -30,7 +35,6 @@ const CircleSegments = () => {
 
   return (
     <svg width="100" height="100" viewBox="0 0 200 200" style={{ transform: 'rotate(45deg)' }}>
-      {/* Dibujar los segmentos */}
       {segmentPaths.map((d, index) => (
         <Segment
           key={index}
@@ -40,9 +44,12 @@ const CircleSegments = () => {
           onClick={handleSegmentClick}
         />
       ))}
-
-      {/* Dibujar el círculo en el centro */}
-      <circle cx="100" cy="100" r="20" fill="white" stroke="black" strokeWidth="2" />
+      <circle cx="100" cy="100" r="20"
+        fill={isCircleSelected ? 'orange' : 'white'}
+        stroke="black"
+        strokeWidth="2"
+        onClick={handleCircleClick}
+      />
     </svg>
   );
 };
