@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Modal from './Modal'; // Ensure the path is correct
 import SimbList from './ListaSimb'; // Ensure the path is correct
 
 const Segmento = ({ d, index, isSelected, onClick }) => {
@@ -17,22 +16,23 @@ const Segmento = ({ d, index, isSelected, onClick }) => {
 const CircleSegments = () => {
   const [selectedSegments, setSelectedSegments] = useState([false, false, false, false]);
   const [isCircleSelected, setIsCircleSelected] = useState(false);
-  const [showModal, setShowModal] = useState(false);
+  const [mostrarLista, setMostrarLista] = useState(false);
 
   const handleSegmentClick = (index) => {
     const newSelectedSegments = [...selectedSegments];
     newSelectedSegments[index] = !newSelectedSegments[index];
     setSelectedSegments(newSelectedSegments);
-    setShowModal(true);
+    toggleLista();
+  };
+
+  // Función para cambiar el estado de mostrarLista
+  const toggleLista = () => {
+    setMostrarLista(!mostrarLista);
   };
 
   const handleCircleClick = () => {
     setIsCircleSelected(!isCircleSelected);
-    setShowModal(true);
-  };
-
-  const closeModal = () => {
-    setShowModal(false);
+    toggleLista();
   };
 
   const segmentPaths = [
@@ -64,9 +64,9 @@ const CircleSegments = () => {
           onClick={handleCircleClick}
         />
       </svg>
-      <Modal show={showModal} onClose={closeModal}>
+      {mostrarLista && (
         <SimbList />
-      </Modal>
+      )}
     </div>
   );
 };
