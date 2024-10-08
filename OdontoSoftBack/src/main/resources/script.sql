@@ -256,7 +256,8 @@ CREATE TABLE diente -- tabla para visualizar los dientes en el odontograma
 CREATE TABLE estadoDiente -- tabla para visualizar los estados de los dientes en el odontograma
 (
     id          SERIAL PRIMARY KEY,
-    descripcion VARCHAR(50) NOT NULL
+    descripcion VARCHAR(50) NOT NULL,
+    codigo varchar not null
 );
 
 CREATE TABLE tratamiento -- tabla para visualizar los tratamientos en el odontograma

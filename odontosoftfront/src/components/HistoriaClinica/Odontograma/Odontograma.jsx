@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, {useEffect} from 'react';
 import './Odontograma.css'; // Ensure you have a CSS file for custom styles
 import CondicionesDentales from './CondicionesDentale';
 import Diente from './Diente';  // Ensure the path is correct
 
-const Odontograma = () => {
+const Odontograma = ({ formMedicalHistory }) => {
   const renderTooth = (index, toothNumber) => {
     return (
       <div key={index} className="tooth">
@@ -12,6 +12,12 @@ const Odontograma = () => {
       </div>
     );
   };
+
+  useEffect(() => {
+    if (Array.isArray(formMedicalHistory)) {
+
+    }
+  }, [formMedicalHistory]);
 
   return (
     <div className="card">

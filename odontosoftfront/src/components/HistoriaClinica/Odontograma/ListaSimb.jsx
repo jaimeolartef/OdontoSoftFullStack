@@ -2,10 +2,10 @@ import React from 'react';
 import './CondicionesDentales.css';
 import './ListaSimb.css';
 
-const SimbList = () => {
+const SimbList = ({ toggleLista }) => {
   const handleTdClick = (symbol) => {
     console.log(`Selected symbol: ${symbol}`);
-    // Aquí puedes agregar la acción que deseas realizar
+    toggleLista();
   };
 
   return (
@@ -18,31 +18,31 @@ const SimbList = () => {
         </thead>
         <tbody>
           <tr>
-            <td className="red-figure" onClick={() => handleTdClick('■')}>■</td>
+            <td className="red-figure" onClick={() => handleTdClick('CR')}>■</td>
           </tr>
           <tr>
-            <td className="blue-figure" onClick={() => handleTdClick('■')}>■</td>
+            <td className="blue-figure" onClick={() => handleTdClick('OB')}>■</td>
           </tr>
           <tr>
-            <td className="blue-figure" onClick={() => handleTdClick('□')}>□</td>
+            <td className="blue-figure" onClick={() => handleTdClick('CC')}>□</td>
           </tr>
           <tr>
-            <td className="blue-figure" onClick={() => handleTdClick('=')}>=</td>
+            <td className="blue-figure" onClick={() => handleTdClick('PE')}>=</td>
           </tr>
           <tr>
-            <td className="red-figure" onClick={() => handleTdClick('X')}>X</td>
+            <td className="red-figure" onClick={() => handleTdClick('EI')}>X</td>
           </tr>
           <tr>
-            <td className="blue-figure" onClick={() => handleTdClick('-')}>-</td>
+            <td className="blue-figure" onClick={() => handleTdClick('SE')}>-</td>
           </tr>
           <tr>
-            <td className="blue-figure" onClick={() => handleTdClick('I')}>I</td>
+            <td className="blue-figure" onClick={() => handleTdClick('EX')}>I</td>
           </tr>
           <tr>
-            <td className="red-figure" onClick={() => handleTdClick('Δ')}>Δ</td>
+            <td className="red-figure" onClick={() => handleTdClick('NE')}>Δ</td>
           </tr>
           <tr>
-            <td className="blue-figure" onClick={() => handleTdClick('Δ')}>Δ</td>
+            <td className="blue-figure" onClick={() => handleTdClick('CT')}>Δ</td>
           </tr>
         </tbody>
       </table>

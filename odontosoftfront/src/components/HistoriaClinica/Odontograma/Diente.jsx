@@ -25,7 +25,6 @@ const CircleSegments = () => {
     toggleLista();
   };
 
-  // Función para cambiar el estado de mostrarLista
   const toggleLista = () => {
     setMostrarLista(!mostrarLista);
   };
@@ -36,10 +35,10 @@ const CircleSegments = () => {
   };
 
   const segmentPaths = [
-    'M 100 100 L 100 50 A 50 50 0 0 1 150 100 Z', // Segment 1
-    'M 100 100 L 150 100 A 50 50 0 0 1 100 150 Z', // Segment 2
-    'M 100 100 L 100 150 A 50 50 0 0 1 50 100 Z',  // Segment 3
-    'M 100 100 L 50 100 A 50 50 0 0 1 100 50 Z',   // Segment 4
+    'M 100 100 L 100 50 A 50 50 0 0 1 150 100 Z',
+    'M 100 100 L 150 100 A 50 50 0 0 1 100 150 Z',
+    'M 100 100 L 100 150 A 50 50 0 0 1 50 100 Z',
+    'M 100 100 L 50 100 A 50 50 0 0 1 100 50 Z',
   ];
 
   return (
@@ -65,7 +64,7 @@ const CircleSegments = () => {
         />
       </svg>
       {mostrarLista && (
-        <SimbList />
+        <SimbList toggleLista={toggleLista} />
       )}
     </div>
   );

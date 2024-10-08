@@ -27,6 +27,9 @@ public class EstadoDiente {
     @Column(name = "descripcion", nullable = false, length = 50)
     private String descripcion;
 
+    @Column(name = "codigo", nullable = false)
+    private String codigo;
+
     @OneToMany(mappedBy = "idestado")
     private Set<DetalleOdontograma> detalleodontogramas = new LinkedHashSet<>();
 
