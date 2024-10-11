@@ -6,9 +6,9 @@ import Diente from './Diente';  // Ensure the path is correct
 const Odontograma = ({ formMedicalHistory }) => {
   const renderTooth = (index, toothNumber) => {
     return (
-      <div key={index} className="tooth">
+      <div key={index} className="">
         <div style={{ textAlign: 'center' }}>{toothNumber}</div>
-        <Diente />
+        <Diente toothNumber={toothNumber}/>
       </div>
     );
   };
@@ -26,20 +26,31 @@ const Odontograma = ({ formMedicalHistory }) => {
       </div>
       <div className="card-body">
         <div className="odontograma-container">
-          <CondicionesDentales />
-          <div className="espacio" />
+          <CondicionesDentales/>
+          <div className="espacio"/>
           <div className="odontograma">
             <div className="rowOdonto">
               {Array.from({length: 8}, (_, i) => renderTooth(i, 18 - i))}
-            </div>
-            <div className="rowOdonto">
+              <div className="vertical-line"></div>
               {Array.from({length: 8}, (_, i) => renderTooth(i + 8, 21 + i))}
             </div>
             <div className="rowOdonto">
               {Array.from({length: 8}, (_, i) => renderTooth(i + 16, 48 - i))}
+              <div className="vertical-line"></div>
+              {Array.from({length: 8}, (_, i) => renderTooth(i + 24, 31 + i))}
+            </div>
+          </div>
+          <div className="espacio"/>
+          <div id="kids" className="odontograma">
+            <div className="rowOdonto">
+              {Array.from({length: 5}, (_, i) => renderTooth(i, 55 - i))}
+              <div className="vertical-line"></div>
+              {Array.from({length: 5}, (_, i) => renderTooth(i + 5, 61 + i))}
             </div>
             <div className="rowOdonto">
-              {Array.from({length: 8}, (_, i) => renderTooth(i + 24, 31 + i))}
+              {Array.from({length: 5}, (_, i) => renderTooth(i + 10, 85 - i))}
+              <div className="vertical-line"></div>
+              {Array.from({length: 5}, (_, i) => renderTooth(i + 15, 71 + i))}
             </div>
           </div>
         </div>

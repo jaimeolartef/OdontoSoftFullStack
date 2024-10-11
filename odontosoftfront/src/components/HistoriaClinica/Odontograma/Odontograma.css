@@ -55,3 +55,10 @@
   border-radius: 50%;
   position: absolute;
 }
+
+.vertical-line {
+  border-left: 1px solid black;
+  width: 1px;
+  background-color: black;
+  margin: 0 10px; /* Ajusta el margen según sea necesario */
+}

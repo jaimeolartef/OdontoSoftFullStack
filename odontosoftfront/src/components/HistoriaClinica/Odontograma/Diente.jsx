@@ -1,38 +1,71 @@
-import React, { useState } from 'react';
-import SimbList from './ListaSimb'; // Ensure the path is correct
+import React, { useState, useEffect, useRef } from 'react';
+import SimbList from './ListaSimb'; // Asegúrate de que la ruta sea correcta
 
-const Segmento = ({ d, index, isSelected, onClick }) => {
+const Segmento = ({ d, index, isSelected, onClick, symbol }) => {
   return (
-    <path
-      d={d}
-      fill={isSelected ? 'orange' : 'white'}
-      stroke="black"
-      strokeWidth="2"
-      onClick={() => onClick(index)}
-    />
+    <g onClick={() => onClick(index)}>
+      <path
+        d={d}
+        fill={isSelected ? 'none' : 'white'}
+        stroke="black"
+        strokeWidth="2"
+      />
+      {isSelected && symbol && (
+        <text
+          x="124" // Ajusta estas coordenadas según sea necesario
+          y="76" // Ajusta estas coordenadas según sea necesario
+          fontSize="20"
+          fill="black"
+          textAnchor="middle" // Centra el texto en las coordenadas especificadas
+          alignmentBaseline="central" // Centra verticalmente el texto en las coordenadas especificadas
+        >
+          {symbol}
+        </text>
+      )}
+    </g>
   );
 };
 
-const CircleSegments = () => {
+const Diente = (toothNumber) => {
   const [selectedSegments, setSelectedSegments] = useState([false, false, false, false]);
   const [isCircleSelected, setIsCircleSelected] = useState(false);
   const [mostrarLista, setMostrarLista] = useState(false);
+  const [selectedSymbol, setSelectedSymbol] = useState(null);
+  const listaRef = useRef(null);
+  console.log(`Diente ${toothNumber} rendered`);
 
   const handleSegmentClick = (index) => {
+    console.log(`Segment ${index} clicked`);
+    console.log(`Diente ${toothNumber} clicked`);
     const newSelectedSegments = [...selectedSegments];
     newSelectedSegments[index] = !newSelectedSegments[index];
     setSelectedSegments(newSelectedSegments);
-    toggleLista();
+    setMostrarLista(true); // Mostrar la lista al hacer clic en un segmento
   };
 
-  const toggleLista = () => {
-    setMostrarLista(!mostrarLista);
+  const handleSymbolSelect = (symbol) => {
+    setSelectedSymbol(symbol);
+    console.log(`Selected symbol: ${symbol}`);
+    setMostrarLista(false);
+  };
+
+  const handleClickOutside = (event) => {
+    if (listaRef.current && !listaRef.current.contains(event.target)) {
+      setMostrarLista(false);
+    }
   };
 
   const handleCircleClick = () => {
     setIsCircleSelected(!isCircleSelected);
-    toggleLista();
+    setMostrarLista(true); // Mostrar la lista al hacer clic en el círculo
   };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const segmentPaths = [
     'M 100 100 L 100 50 A 50 50 0 0 1 150 100 Z',
@@ -43,13 +76,15 @@ const CircleSegments = () => {
 
   return (
     <div>
-      <svg width="100" height="100" viewBox="0 0 200 200" style={{ transform: 'rotate(45deg)' }}>
+      <svg width="75" height="75" viewBox="0 0 200 200" style={{ transform: 'rotate(45deg)' }}>
         {segmentPaths.map((d, index) => (
           <Segmento
             key={index}
             d={d}
             index={index}
             isSelected={selectedSegments[index]}
+            symbol={selectedSymbol}
+            toothNumber={toothNumber}
             onClick={handleSegmentClick}
           />
         ))}
@@ -64,10 +99,12 @@ const CircleSegments = () => {
         />
       </svg>
       {mostrarLista && (
-        <SimbList toggleLista={toggleLista} />
+        <div ref={listaRef}>
+          <SimbList toggleLista={() => setMostrarLista(false)} onSymbolSelect={handleSymbolSelect} />
+        </div>
       )}
     </div>
   );
 };
 
-export default CircleSegments;
+export default Diente;

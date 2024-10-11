@@ -130,7 +130,7 @@ const ModificarPaciente = () => {
 
   return (
     <div className="d-flex justify-content-center align-items-center">
-      <div className="card p-4" style={{ width: '1200px' }}>
+      <div className="card p-4" style={{ width: '1500px' }}>
         <header className="text-center mb-4">
           <img src={Logo} alt="Logo" className="mb-3" style={{ maxWidth: '140px' }}/>
           <h1>Modificar Paciente</h1>

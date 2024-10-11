@@ -2,9 +2,9 @@ import React from 'react';
 import './CondicionesDentales.css';
 import './ListaSimb.css';
 
-const SimbList = ({ toggleLista }) => {
+const SimbList = ({ toggleLista, onSymbolSelect }) => {
   const handleTdClick = (symbol) => {
-    console.log(`Selected symbol: ${symbol}`);
+    onSymbolSelect(symbol);
     toggleLista();
   };
 
