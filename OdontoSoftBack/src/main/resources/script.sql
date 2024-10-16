@@ -286,6 +286,7 @@ CREATE TABLE detalleOdontograma
     id                    SERIAL PRIMARY KEY,
     idOdontograma         INT                NOT NULL,
     idDiente              INT                NOT NULL,
+    idsegmento integer default 5 not null,
     idEstado              INT                NOT NULL,
     idTratamiento         INT                NOT NULL,
     fechaTratamiento      DATE               NOT NULL,

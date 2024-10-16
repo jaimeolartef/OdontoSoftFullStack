@@ -1,25 +1,24 @@
 import React, { useState, useEffect, useRef } from 'react';
 import SimbList from './ListaSimb'; // Asegúrate de que la ruta sea correcta
 
-const Segmento = ({ d, index, isSelected, onClick, symbol }) => {
+const Segmento = ({ d, idsegmento, isSelected, onClick, detalleOdonto }) => {
   return (
-    <g onClick={() => onClick(index)}>
+    <g onClick={() => onClick(idsegmento)}>
       <path
         d={d}
-        fill={isSelected ? 'none' : 'white'}
+        fill={isSelected ? 'red' : 'white'}
         stroke="black"
         strokeWidth="2"
       />
-      {isSelected && symbol && (
+      {isSelected && detalleOdonto && (
         <text
           x="124" // Ajusta estas coordenadas según sea necesario
           y="76" // Ajusta estas coordenadas según sea necesario
           fontSize="20"
           fill="black"
           textAnchor="middle" // Centra el texto en las coordenadas especificadas
-          alignmentBaseline="central" // Centra verticalmente el texto en las coordenadas especificadas
-        >
-          {symbol}
+          alignmentBaseline="central">
+          {detalleOdonto.idestado}
         </text>
       )}
     </g>
@@ -30,23 +29,60 @@ const Diente = (toothNumber) => {
   const [selectedSegments, setSelectedSegments] = useState([false, false, false, false]);
   const [isCircleSelected, setIsCircleSelected] = useState(false);
   const [mostrarLista, setMostrarLista] = useState(false);
-  const [selectedSymbol, setSelectedSymbol] = useState(null);
   const listaRef = useRef(null);
-  console.log(`Diente ${toothNumber} rendered`);
 
-  const handleSegmentClick = (index) => {
-    console.log(`Segment ${index} clicked`);
-    console.log(`Diente ${toothNumber} clicked`);
+  /**const [detalleOdonto, setDetalleOdonto] = useState({
+    iddiente: '',
+    idestado: '',
+    idsegmento: 0
+  });*/
+
+  const [segmentos, setSegmentos] = useState({
+  });
+
+  const handleSegmentClick = (idsegmento) => {
+    // console.log(`Segment clicked`, idsegmento);
+    // console.log(`Diente toothNumber clicked`, toothNumber.toothNumber);
     const newSelectedSegments = [...selectedSegments];
-    newSelectedSegments[index] = !newSelectedSegments[index];
+    newSelectedSegments[idsegmento] = !newSelectedSegments[idsegmento];
     setSelectedSegments(newSelectedSegments);
-    setMostrarLista(true); // Mostrar la lista al hacer clic en un segmento
+    setMostrarLista(true);
+
+    /**setDetalleOdonto(prev => ({
+      ...prev,
+      idsegmento: idsegmento
+    }));*/
+
+    setSegmentos(prev => ({
+      ...prev,
+      [idsegmento]: {
+        ...prev[idsegmento],
+        iddiente: toothNumber.toothNumber,
+        idsegmento: idsegmento
+      }
+    }));
   };
 
-  const handleSymbolSelect = (symbol) => {
-    setSelectedSymbol(symbol);
-    console.log(`Selected symbol: ${symbol}`);
+  const handleSymbolSelect = (idestado, idsegmento) => {
+    console.log(`Selected symbol: `, idestado);
+    console.log(`Selected idsegmento: `, idsegmento);
     setMostrarLista(false);
+
+    /**Actualizar detalleOdonto
+    setDetalleOdonto(prev => ({
+      ...prev,
+      iddiente: toothNumber.toothNumber,
+      idsegmento: idsegmento,
+      idestado: idestado
+    }));*/
+
+    setSegmentos(prev => ({
+      ...prev,
+      [idsegmento]: {
+        ...prev[idsegmento],
+      }
+    }));
+    console.log(`Detalle odonto: `, segmentos);
   };
 
   const handleClickOutside = (event) => {
@@ -77,14 +113,13 @@ const Diente = (toothNumber) => {
   return (
     <div>
       <svg width="75" height="75" viewBox="0 0 200 200" style={{ transform: 'rotate(45deg)' }}>
-        {segmentPaths.map((d, index) => (
+        {segmentPaths.map((d, idsegmento) => (
           <Segmento
-            key={index}
+            key={idsegmento}
             d={d}
-            index={index}
-            isSelected={selectedSegments[index]}
-            symbol={selectedSymbol}
-            toothNumber={toothNumber}
+            idsegmento={idsegmento}
+            isSelected={selectedSegments[idsegmento]}
+            detalleOdonto={segmentos[idsegmento]}
             onClick={handleSegmentClick}
           />
         ))}
@@ -100,7 +135,7 @@ const Diente = (toothNumber) => {
       </svg>
       {mostrarLista && (
         <div ref={listaRef}>
-          <SimbList toggleLista={() => setMostrarLista(false)} onSymbolSelect={handleSymbolSelect} />
+          <SimbList toggleLista={() => setMostrarLista(false)} onSymbolSelect={handleSymbolSelect}/>
         </div>
       )}
     </div>
