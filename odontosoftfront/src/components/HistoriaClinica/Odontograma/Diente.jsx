@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './Odontograma.css';
+import EstadoDiente from "./EstadoDiente";
 
 const Segmento = ({ d, idsegmento, onClick, detalleOdonto }) => {
   // Determina el color basado en el estado seleccionado
@@ -116,12 +117,21 @@ const Diente = (toothNumber) => {
             <option value="CC">Corona completa</option>
             <option value="PE">Prótesis existente</option>
             <option value="EI">Extracción Indicada</option>
+            <option value="SE">Sin erupcionar</option>
             <option value="EX">Extraído</option>
             <option value="NE">Necesita endodoncia</option>
             <option value="CT">Con tratamiento de conductos</option>
           </select>
         </div>
       )}
+
+      <EstadoDiente simbolo="Δ" color="red" segmentos={segmentos} estado="NE"/>
+      <EstadoDiente simbolo="Δ" color="blue" segmentos={segmentos} estado="CT"/>
+      <EstadoDiente simbolo="I" color="blue" segmentos={segmentos} estado="EX"/>
+      <EstadoDiente simbolo="-" color="blue" segmentos={segmentos} estado="SE"/>
+      <EstadoDiente simbolo="X" color="red" segmentos={segmentos} estado="EI"/>
+      <EstadoDiente simbolo="=" color="blue" segmentos={segmentos} estado="PE"/>
+      <EstadoDiente simbolo="□" color="blue" segmentos={segmentos} estado="CC"/>
     </div>
   );
 };
