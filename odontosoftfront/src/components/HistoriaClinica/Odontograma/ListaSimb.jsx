@@ -2,9 +2,9 @@ import React from 'react';
 import './CondicionesDentales.css';
 import './ListaSimb.css';
 
-const SimbList = ({ toggleLista, onSymbolSelect}) => {
-  const handleTdClick = (idestado, idsegmento) => {
-    onSymbolSelect(idestado, idsegmento);
+const ListaSimb = ({ toggleLista, onSymbolSelect, idsegmentoActual }) => {
+  const handleTdClick = (idestado) => {
+    onSymbolSelect(idestado, idsegmentoActual);
     toggleLista();
   };
 
@@ -18,10 +18,10 @@ const SimbList = ({ toggleLista, onSymbolSelect}) => {
         </thead>
         <tbody>
           <tr>
-            <td className="red-figure" onClick={() => handleTdClick('CR', '')}>■</td>
+            <td className="red-figure" onClick={() => handleTdClick('CR')}>■</td>
           </tr>
           <tr>
-            <td className="blue-figure" onClick={() => handleTdClick('OB', '')}>■</td>
+            <td className="blue-figure" onClick={() => handleTdClick('OB')}>■</td>
           </tr>
           <tr>
             <td className="blue-figure" onClick={() => handleTdClick('CC', '5')}>□</td>
@@ -50,4 +50,4 @@ const SimbList = ({ toggleLista, onSymbolSelect}) => {
   );
 };
 
-export default SimbList;
+export default ListaSimb;

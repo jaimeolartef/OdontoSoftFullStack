@@ -1,24 +1,26 @@
-import React, { useState, useEffect, useRef } from 'react';
-import SimbList from './ListaSimb'; // Asegúrate de que la ruta sea correcta
+import React, { useState } from 'react';
+import './Odontograma.css';
 
-const Segmento = ({ d, idsegmento, isSelected, onClick, detalleOdonto }) => {
+const Segmento = ({ d, idsegmento, onClick, detalleOdonto }) => {
+  // Determina el color basado en el estado seleccionado
+  const fillColor = detalleOdonto?.idestado === 'CR' ? 'red' : (detalleOdonto?.idestado === 'OB' ? 'blue' : 'white');
+
   return (
-    <g onClick={() => onClick(idsegmento)}>
+    <g onClick={(event) => onClick(idsegmento, event)}>
       <path
         d={d}
-        fill={isSelected ? 'red' : 'white'}
+        fill={fillColor}
         stroke="black"
         strokeWidth="2"
       />
-      {isSelected && detalleOdonto && (
+      {detalleOdonto && (
         <text
           x="124" // Ajusta estas coordenadas según sea necesario
-          y="76" // Ajusta estas coordenadas según sea necesario
+          y="76"  // Ajusta estas coordenadas según sea necesario
           fontSize="20"
           fill="black"
-          textAnchor="middle" // Centra el texto en las coordenadas especificadas
+          textAnchor="middle"
           alignmentBaseline="central">
-          {detalleOdonto.idestado}
         </text>
       )}
     </g>
@@ -28,80 +30,49 @@ const Segmento = ({ d, idsegmento, isSelected, onClick, detalleOdonto }) => {
 const Diente = (toothNumber) => {
   const [selectedSegments, setSelectedSegments] = useState([false, false, false, false]);
   const [isCircleSelected, setIsCircleSelected] = useState(false);
-  const [mostrarLista, setMostrarLista] = useState(false);
-  const listaRef = useRef(null);
+  const [segmentos, setSegmentos] = useState({});
+  const [currentSegment, setCurrentSegment] = useState(null);
 
-  /**const [detalleOdonto, setDetalleOdonto] = useState({
-    iddiente: '',
-    idestado: '',
-    idsegmento: 0
-  });*/
-
-  const [segmentos, setSegmentos] = useState({
-  });
-
-  const handleSegmentClick = (idsegmento) => {
-    // console.log(`Segment clicked`, idsegmento);
-    // console.log(`Diente toothNumber clicked`, toothNumber.toothNumber);
+  const handleSegmentClick = (event) => {
     const newSelectedSegments = [...selectedSegments];
-    newSelectedSegments[idsegmento] = !newSelectedSegments[idsegmento];
+    newSelectedSegments[event] = !newSelectedSegments[event];
     setSelectedSegments(newSelectedSegments);
-    setMostrarLista(true);
 
-    /**setDetalleOdonto(prev => ({
-      ...prev,
-      idsegmento: idsegmento
-    }));*/
+    // Establece el segmento actual para mostrar la lista desplegable
+    setCurrentSegment(event);
 
-    setSegmentos(prev => ({
+    setSegmentos((prev) => ({
       ...prev,
-      [idsegmento]: {
-        ...prev[idsegmento],
+      [event]: {
+        ...prev[event],
         iddiente: toothNumber.toothNumber,
-        idsegmento: idsegmento
-      }
+        idsegmento: event,
+      },
     }));
   };
 
-  const handleSymbolSelect = (idestado, idsegmento) => {
-    console.log(`Selected symbol: `, idestado);
-    console.log(`Selected idsegmento: `, idsegmento);
-    setMostrarLista(false);
+  const handleDropdownChange = (event) => {
+    const value = event.target.value;
+    console.log('Dropdown value:', value);
 
-    /**Actualizar detalleOdonto
-    setDetalleOdonto(prev => ({
-      ...prev,
-      iddiente: toothNumber.toothNumber,
-      idsegmento: idsegmento,
-      idestado: idestado
-    }));*/
+    if (currentSegment !== null) {
+      // Actualiza el segmento actual con el valor seleccionado en la lista desplegable
+      setSegmentos((prev) => ({
+        ...prev,
+        [currentSegment]: {
+          ...prev[currentSegment],
+          idestado: value, // Guardar el estado seleccionado
+        },
+      }));
 
-    setSegmentos(prev => ({
-      ...prev,
-      [idsegmento]: {
-        ...prev[idsegmento],
-      }
-    }));
-    console.log(`Detalle odonto: `, segmentos);
-  };
-
-  const handleClickOutside = (event) => {
-    if (listaRef.current && !listaRef.current.contains(event.target)) {
-      setMostrarLista(false);
+      // Ocultar la lista desplegable después de seleccionar una opción
+      setCurrentSegment(null);
     }
   };
 
   const handleCircleClick = () => {
     setIsCircleSelected(!isCircleSelected);
-    setMostrarLista(true); // Mostrar la lista al hacer clic en el círculo
   };
-
-  useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
 
   const segmentPaths = [
     'M 100 100 L 100 50 A 50 50 0 0 1 150 100 Z',
@@ -111,16 +82,15 @@ const Diente = (toothNumber) => {
   ];
 
   return (
-    <div>
+    <div style={{ position: 'relative' }}>
       <svg width="75" height="75" viewBox="0 0 200 200" style={{ transform: 'rotate(45deg)' }}>
         {segmentPaths.map((d, idsegmento) => (
           <Segmento
             key={idsegmento}
             d={d}
             idsegmento={idsegmento}
-            isSelected={selectedSegments[idsegmento]}
             detalleOdonto={segmentos[idsegmento]}
-            onClick={handleSegmentClick}
+            onClick={(e) => handleSegmentClick(e)} // Capturar el evento click para obtener las coordenadas
           />
         ))}
         <circle
@@ -133,9 +103,23 @@ const Diente = (toothNumber) => {
           onClick={handleCircleClick}
         />
       </svg>
-      {mostrarLista && (
-        <div ref={listaRef}>
-          <SimbList toggleLista={() => setMostrarLista(false)} onSymbolSelect={handleSymbolSelect}/>
+
+      {/* Mostrar lista desplegable flotante si hay un segmento seleccionado */}
+      {currentSegment !== null && (
+        <div
+          className="optionTooth">
+          <label htmlFor="estado-select">Selecciona un estado:</label>
+          <select id="estado-select" onChange={handleDropdownChange}>
+            <option value="">Seleccionar</option>
+            <option value="CR">Caries o recurrencia</option>
+            <option value="OB">Obturado</option>
+            <option value="CC">Corona completa</option>
+            <option value="PE">Prótesis existente</option>
+            <option value="EI">Extracción Indicada</option>
+            <option value="EX">Extraído</option>
+            <option value="NE">Necesita endodoncia</option>
+            <option value="CT">Con tratamiento de conductos</option>
+          </select>
         </div>
       )}
     </div>
