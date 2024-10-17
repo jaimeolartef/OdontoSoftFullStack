@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './Odontograma.css';
 import EstadoDiente from "./EstadoDiente";
 
@@ -48,6 +48,7 @@ const Diente = (toothNumber) => {
   const [isCircleSelected, setIsCircleSelected] = useState(false);
   const [segmentos, setSegmentos] = useState({});
   const [currentSegment, setCurrentSegment] = useState(null);
+  const dropdownRef = useRef(null);
 
   const handleSegmentClick = (idsegmento) => {
     const newSelectedSegments = [...selectedSegments];
@@ -78,6 +79,31 @@ const Diente = (toothNumber) => {
       setCurrentSegment(null);
     }
   };
+
+  const closeDropdown = () => {
+    setCurrentSegment(null);
+  };
+
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      closeDropdown();
+    }
+  };
+
+  const handleEscapeKey = (event) => {
+    if (event.key === 'Escape') {
+      closeDropdown();
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleEscapeKey);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscapeKey);
+    };
+  }, []);
 
   const handleCircleClick = (idsegmento) => {
     setIsCircleSelected(!isCircleSelected);
@@ -112,7 +138,7 @@ const Diente = (toothNumber) => {
       </svg>
 
       {currentSegment !== null && (
-        <div className="optionTooth">
+        <div className="optionTooth" ref={dropdownRef}>
           <label htmlFor="estado-select">Selecciona un estado:</label>
           <select id="estado-select" onChange={handleDropdownChange}>
             <option value="">Seleccionar</option>
