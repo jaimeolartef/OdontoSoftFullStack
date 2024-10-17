@@ -3,7 +3,6 @@ import './Odontograma.css';
 import EstadoDiente from "./EstadoDiente";
 
 const Segmento = ({ d, idsegmento, onClick, detalleOdonto }) => {
-  // Determina el color basado en el estado seleccionado
   const fillColor = detalleOdonto?.idestado === 'CR' ? 'red' : (detalleOdonto?.idestado === 'OB' ? 'blue' : 'white');
 
   return (
@@ -16,8 +15,8 @@ const Segmento = ({ d, idsegmento, onClick, detalleOdonto }) => {
       />
       {detalleOdonto && (
         <text
-          x="124" // Ajusta estas coordenadas según sea necesario
-          y="76"  // Ajusta estas coordenadas según sea necesario
+          x="124"
+          y="76"
           fontSize="20"
           fill="black"
           textAnchor="middle"
@@ -28,51 +27,62 @@ const Segmento = ({ d, idsegmento, onClick, detalleOdonto }) => {
   );
 };
 
+const Circle = ({ idsegmento, detalleOdonto, onClick }) => {
+  const fillColor = detalleOdonto?.idestado === 'CR' ? 'red' : (detalleOdonto?.idestado === 'OB' ? 'blue' : 'white');
+
+  return (
+    <circle
+      cx="100"
+      cy="100"
+      r="20"
+      fill={fillColor}
+      stroke="black"
+      strokeWidth="2"
+      onClick={() => onClick(idsegmento)}
+    />
+  );
+};
+
 const Diente = (toothNumber) => {
   const [selectedSegments, setSelectedSegments] = useState([false, false, false, false]);
   const [isCircleSelected, setIsCircleSelected] = useState(false);
   const [segmentos, setSegmentos] = useState({});
   const [currentSegment, setCurrentSegment] = useState(null);
 
-  const handleSegmentClick = (event) => {
+  const handleSegmentClick = (idsegmento) => {
     const newSelectedSegments = [...selectedSegments];
-    newSelectedSegments[event] = !newSelectedSegments[event];
+    newSelectedSegments[idsegmento] = !newSelectedSegments[idsegmento];
     setSelectedSegments(newSelectedSegments);
-
-    // Establece el segmento actual para mostrar la lista desplegable
-    setCurrentSegment(event);
+    setCurrentSegment(idsegmento);
 
     setSegmentos((prev) => ({
       ...prev,
-      [event]: {
-        ...prev[event],
+      [idsegmento]: {
+        ...prev[idsegmento],
         iddiente: toothNumber.toothNumber,
-        idsegmento: event,
+        idsegmento: idsegmento,
       },
     }));
   };
 
   const handleDropdownChange = (event) => {
     const value = event.target.value;
-    console.log('Dropdown value:', value);
-
     if (currentSegment !== null) {
-      // Actualiza el segmento actual con el valor seleccionado en la lista desplegable
       setSegmentos((prev) => ({
         ...prev,
         [currentSegment]: {
           ...prev[currentSegment],
-          idestado: value, // Guardar el estado seleccionado
+          idestado: value,
         },
       }));
-
-      // Ocultar la lista desplegable después de seleccionar una opción
       setCurrentSegment(null);
     }
   };
 
-  const handleCircleClick = () => {
+  const handleCircleClick = (idsegmento) => {
     setIsCircleSelected(!isCircleSelected);
+    handleSegmentClick(idsegmento);
+    console.log('Círculo seleccionado:', idsegmento);
   };
 
   const segmentPaths = [
@@ -91,24 +101,18 @@ const Diente = (toothNumber) => {
             d={d}
             idsegmento={idsegmento}
             detalleOdonto={segmentos[idsegmento]}
-            onClick={(e) => handleSegmentClick(e)} // Capturar el evento click para obtener las coordenadas
+            onClick={handleSegmentClick}
           />
         ))}
-        <circle
-          cx="100"
-          cy="100"
-          r="20"
-          fill={isCircleSelected ? 'orange' : 'white'}
-          stroke="black"
-          strokeWidth="2"
+        <Circle
+          idsegmento={4} // Assuming the circle is a separate segment with id 4
+          detalleOdonto={segmentos[4]}
           onClick={handleCircleClick}
         />
       </svg>
 
-      {/* Mostrar lista desplegable flotante si hay un segmento seleccionado */}
       {currentSegment !== null && (
-        <div
-          className="optionTooth">
+        <div className="optionTooth">
           <label htmlFor="estado-select">Selecciona un estado:</label>
           <select id="estado-select" onChange={handleDropdownChange}>
             <option value="">Seleccionar</option>
