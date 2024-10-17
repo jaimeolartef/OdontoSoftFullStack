@@ -30,9 +30,7 @@ const AnalisisFuncional = ({ formMedicalHistory }) => {
 
   const handleChange = (e) => {
     const { name, type, value, checked } = e.target;
-    console.log('name:', name, 'type:', type, 'value:', value, 'checked:', checked);
     const newValue = type === 'checkbox' ? checked : value;
-    console.log('newValue:', newValue);
     setAnalisisFunc(prev => ({
       ...prev,
       [name]: newValue

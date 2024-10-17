@@ -5,7 +5,6 @@ import config from "../../config";
 const Antecedentes = ({formMedicalHistory}) => {
 
   useEffect(() => {
-    console.log('formMedicalHistory antecedentes:', formMedicalHistory);
     // Este useEffect se ejecutará después del primer useEffect
     const fetchHistoria = async () => {
       try {

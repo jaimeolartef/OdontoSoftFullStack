@@ -43,24 +43,35 @@ const Circle = ({ idsegmento, detalleOdonto, onClick }) => {
   );
 };
 
-const Diente = (toothNumber) => {
+const Diente = ({ toothNumber, onClick }) => {
   const [selectedSegments, setSelectedSegments] = useState([false, false, false, false]);
   const [isCircleSelected, setIsCircleSelected] = useState(false);
   const [segmentos, setSegmentos] = useState({});
   const [currentSegment, setCurrentSegment] = useState(null);
   const dropdownRef = useRef(null);
 
+  /**
+   * Handles the click event on a segment.
+   * Toggles the selection state of the clicked segment,
+   * updates the current segment, and sets the segment details.
+   *
+   * @param {number} idsegmento - The ID of the clicked segment.
+   */
   const handleSegmentClick = (idsegmento) => {
+    // Toggle the selection state of the clicked segment
     const newSelectedSegments = [...selectedSegments];
     newSelectedSegments[idsegmento] = !newSelectedSegments[idsegmento];
     setSelectedSegments(newSelectedSegments);
+
+    // Set the current segment to the clicked segment
     setCurrentSegment(idsegmento);
 
+    // Update the segment details with the tooth number and segment ID
     setSegmentos((prev) => ({
       ...prev,
       [idsegmento]: {
         ...prev[idsegmento],
-        iddiente: toothNumber.toothNumber,
+        iddiente: toothNumber,
         idsegmento: idsegmento,
       },
     }));
@@ -68,14 +79,27 @@ const Diente = (toothNumber) => {
 
   const handleDropdownChange = (event) => {
     const value = event.target.value;
-    if (currentSegment !== null) {
+    let segmento = currentSegment;
+
+    console.log('event.target.value:', value);
+    console.log('currentSegment:', segmento);
+    if (segmento !== null) {
+
       setSegmentos((prev) => ({
         ...prev,
-        [currentSegment]: {
-          ...prev[currentSegment],
+        [segmento]: {
+          ...prev[segmento],
           idestado: value,
         },
       }));
+      // Llama al callback onClick con el número de diente y los segmentos actualizados
+      onClick(toothNumber, {
+        ...segmentos,
+        [segmento]: {
+          ...segmentos[segmento],
+          idestado: value,
+        },
+      });
       setCurrentSegment(null);
     }
   };

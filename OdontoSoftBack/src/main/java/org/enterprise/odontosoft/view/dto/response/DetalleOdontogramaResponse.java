@@ -18,7 +18,7 @@ public class DetalleOdontogramaResponse {
     private Integer idodontograma;
     private Integer iddiente;
     private String descripcionDiente;
-    private String estado;
+    private String idestado;
     private String tratamiento;
     private LocalDateTime fechatratamiento;
     private Integer idusuariocreacion;
@@ -26,4 +26,5 @@ public class DetalleOdontogramaResponse {
     private Integer idusuariomodificacion;
     private LocalDateTime fechamodificacion;
     private Boolean habilitado;
+    private Integer idsegmento;
 }

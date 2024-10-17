@@ -40,4 +40,7 @@ public class DetalleOdontogramaRequest {
 
     @NotNull
     private Boolean habilitado;
+
+    @NotNull
+    private Integer idsegmento;
 }

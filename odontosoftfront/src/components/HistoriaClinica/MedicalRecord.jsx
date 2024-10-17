@@ -39,12 +39,12 @@ const MedicalRecord = () => {
     signovitals: [],
     analisisfuncionals: [],
     observacionanafunc: '',
-    examenestomatologicos: []
+    examenestomatologicos: [],
+    odontogramas: []
   });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Formulario:', formPatient, formMedicalHistory);
   }
 
   const mapMedicalHistory = (data) => {
@@ -61,7 +61,8 @@ const MedicalRecord = () => {
       signovitals: data.signovitals || [],
       analisisfuncionals: data.analisisfuncionals || [],
       observacionanafunc: data.observacionanafunc || '',
-      examenestomatologicos: data.examenestomatologicos || []
+      examenestomatologicos: data.examenestomatologicos || [],
+      odontogramas: data.odontogramas || []
     };
     return mappedData;
   };

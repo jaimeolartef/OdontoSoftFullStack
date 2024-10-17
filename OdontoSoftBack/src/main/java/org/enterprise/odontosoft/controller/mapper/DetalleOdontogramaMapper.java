@@ -23,6 +23,7 @@ public class DetalleOdontogramaMapper {
             .idusuariomodificacion(Objects.nonNull(detalleOdontogramaRequest.getIdusuariomodificacion()) ? Usuario.builder().id(detalleOdontogramaRequest.getIdusuariomodificacion()).build() : null)
             .fechamodificacion(detalleOdontogramaRequest.getFechamodificacion())
             .habilitado(detalleOdontogramaRequest.getHabilitado())
+            .idsegmento(detalleOdontogramaRequest.getIdsegmento())
             .build();
     }
 
@@ -32,7 +33,7 @@ public class DetalleOdontogramaMapper {
             .idodontograma(detalleOdontograma.getIdodontograma().getId())
             .iddiente(detalleOdontograma.getIddiente().getId())
             .descripcionDiente(detalleOdontograma.getIddiente().getDescripcion())
-            .estado(detalleOdontograma.getIdestado().getDescripcion())
+            .idestado(detalleOdontograma.getIdestado().getDescripcion())
             .tratamiento(detalleOdontograma.getIdtratamiento().getDescripcion())
             .fechatratamiento(detalleOdontograma.getFechatratamiento())
             .idusuariocreacion(detalleOdontograma.getIdusuariocreacion().getId())
@@ -40,6 +41,7 @@ public class DetalleOdontogramaMapper {
             .idusuariomodificacion(Objects.nonNull(detalleOdontograma.getIdusuariomodificacion()) ? detalleOdontograma.getIdusuariomodificacion().getId() : null)
             .fechamodificacion(detalleOdontograma.getFechamodificacion())
             .habilitado(detalleOdontograma.getHabilitado())
+            .idsegmento(detalleOdontograma.getIdsegmento())
             .build();
     }
 }

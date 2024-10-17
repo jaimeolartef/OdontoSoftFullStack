@@ -66,4 +66,8 @@ public class DetalleOdontograma {
     @Column(name = "habilitado", nullable = false)
     private Boolean habilitado = false;
 
+    @NotNull
+    @Column(name = "idsegmento", nullable = false)
+    private Integer idsegmento;
+
 }

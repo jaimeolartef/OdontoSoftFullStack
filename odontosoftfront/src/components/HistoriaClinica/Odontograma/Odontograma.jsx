@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import './Odontograma.css'; // Ensure you have a CSS file for custom styles
 import CondicionesDentales from './CondicionesDentale';
 import Diente from './Diente';  // Ensure the path is correct
@@ -8,14 +8,89 @@ const Odontograma = ({ formMedicalHistory }) => {
     return (
       <div key={index} className="">
         <div style={{ textAlign: 'center' }}>{toothNumber}</div>
-        <Diente toothNumber={toothNumber}/>
+        <Diente toothNumber={toothNumber} onClick={handleToothClick}/>
       </div>
     );
   };
 
-  useEffect(() => {
-    if (Array.isArray(formMedicalHistory)) {
+  const [idOdontograma, setIdOdontograma] = useState('');
 
+  const handleToothClick = (toothNumber, segmentos) => {
+    console.log('Tooth number:', toothNumber);
+    console.log('Segmentos:', segmentos);
+
+    Object.keys(segmentos).forEach(key => {
+      const value = segmentos[key].idestado;
+      if (value === 'NE' || value === 'CT' || value === 'EX' || value === 'SE' || value === 'EI' || value === 'PE' || value === 'CC') {
+        segmentos[key].idsegmento = 5;
+      }
+
+      if (formMedicalHistory.odontogramas.length === 0) {
+        formMedicalHistory.odontogramas.push({
+          id: '',
+          idhistoriaclinica: formMedicalHistory.idHistoriaClinica,
+          detalleodontogramas: [],
+          habilitado: true,
+        });
+      }
+
+      formMedicalHistory.odontogramas.forEach(itemOdon => {
+        if (itemOdon.detalleodontogramas.length === 0) {
+          itemOdon.detalleodontogramas.push({
+            id: '',
+            iddiente: segmentos[key].iddiente,
+            idsegmento: segmentos[key].idsegmento,
+            idestado: segmentos[key].idestado,
+            fechacreacion: new Date().toISOString(),
+            fechatratamiento: new Date().toISOString(),
+            habilitado: true,
+            idodontograma: idOdontograma,
+          });
+          return;
+        }
+
+        itemOdon.detalleodontogramas.forEach(itemDetOdon => {
+          if (itemOdon.detalleodontogramas.find(item => item.iddiente == segmentos[key].iddiente && item.idsegmento == segmentos[key].idsegmento) === undefined) {
+            itemOdon.detalleodontogramas.push({
+              id: '',
+              iddiente: segmentos[key].iddiente,
+              idsegmento: segmentos[key].idsegmento,
+              idestado: segmentos[key].idestado,
+              fechacreacion: new Date().toISOString(),
+              fechatratamiento: new Date().toISOString(),
+              habilitado: true,
+              idodontograma: idOdontograma,
+            });
+          } else {
+            itemOdon.detalleodontogramas = itemOdon.detalleodontogramas.map(item => {
+              if (item.iddiente == segmentos[key].iddiente && item.idsegmento == segmentos[key].idsegmento) {
+                return {
+                  ...item,
+                  idestado: segmentos[key].idestado,
+                  fechatratamiento: new Date().toISOString(),
+                  fechamodificacion: new Date().toISOString()
+                };
+              }
+              return item;
+            });
+          }
+        });
+      });
+    });
+    console.log('historia Clinica desde el odontograma:', formMedicalHistory);
+    console.log('historia Clinica desde el odontograma:', formMedicalHistory);
+  }
+
+  useEffect(() => {
+    if (formMedicalHistory.odontogramas.length === 0) {
+      formMedicalHistory.odontogramas.push({
+        id: '',
+        idhistoriaclinica: formMedicalHistory.idHistoriaClinica,
+        detalleodontogramas: [],
+        habilitado: true,
+      });
+    } else {
+      setIdOdontograma(formMedicalHistory.odontogramas[0].id);
     }
   }, [formMedicalHistory]);
 
