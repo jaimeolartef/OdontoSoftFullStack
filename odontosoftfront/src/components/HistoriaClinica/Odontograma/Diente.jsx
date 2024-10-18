@@ -43,7 +43,7 @@ const Circle = ({ idsegmento, detalleOdonto, onClick }) => {
   );
 };
 
-const Diente = ({ toothNumber, onClick }) => {
+const Diente = ({ toothNumber, onClick, odontograma }) => {
   const [selectedSegments, setSelectedSegments] = useState([false, false, false, false]);
   const [isCircleSelected, setIsCircleSelected] = useState(false);
   const [segmentos, setSegmentos] = useState({});
@@ -128,6 +128,52 @@ const Diente = ({ toothNumber, onClick }) => {
       document.removeEventListener('keydown', handleEscapeKey);
     };
   }, []);
+
+  useEffect(() => {
+    if (odontograma !== null && odontograma.length > 0) {
+      odontograma.forEach((item) => {
+        item.detalleodontogramas.forEach((detalle) => {
+
+        });
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (odontograma !== null && odontograma.length > 0) {
+      odontograma.forEach((item) => {
+        item.detalleodontogramas.forEach((detalle) => {
+          //falla aqui no entra
+          console.log('Detalle:', detalle.idestado != undefined && detalle.idsegmento != undefined && detalle.iddiente != undefined);
+          if(detalle && detalle.idestado !== undefined && detalle.idsegmento !== undefined && detalle.iddiente !== undefined) {
+            loadDetalleOdontograma(detalle.idestado, detalle.idsegmento, detalle.iddiente);
+          }
+        });
+      });
+    }
+  }, []);
+
+  const loadDetalleOdontograma = (idestado, segmento, toothNumber) => {
+    console.log('event.target.value:', idestado);
+    console.log('currentSegment:', segmento);
+    console.log('toothNumber:', toothNumber);
+      setSegmentos((prev) => ({
+        ...prev,
+        [segmento]: {
+          ...prev[segmento],
+          idestado: idestado,
+        },
+      }));
+      // Llama al callback onClick con el número de diente y los segmentos actualizados
+      onClick(toothNumber, {
+        ...segmentos,
+        [segmento]: {
+          ...segmentos[segmento],
+          idestado: idestado,
+        },
+      });
+      setCurrentSegment(null);
+  };
 
   const handleCircleClick = (idsegmento) => {
     setIsCircleSelected(!isCircleSelected);

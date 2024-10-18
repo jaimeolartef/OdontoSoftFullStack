@@ -2,7 +2,6 @@ package org.enterprise.odontosoft.controller.mapper;
 
 import io.micrometer.common.util.StringUtils;
 import lombok.experimental.UtilityClass;
-import org.apache.catalina.util.StringUtil;
 import org.enterprise.odontosoft.model.Entity.*;
 import org.enterprise.odontosoft.view.dto.request.HistoriaClinicaRequest;
 import org.enterprise.odontosoft.view.dto.response.HistoriaClinicaResponse;
@@ -12,6 +11,8 @@ import java.util.Objects;
 @UtilityClass
 public class MedicalHistoryMapper {
     public static HistoriaClinica toEntity(HistoriaClinicaRequest historiaClinicaRequest) {
+        //se debe homologar el estado del diente con la BD
+        // se debe homologar el diente con la BD
         return HistoriaClinica.builder()
                 .id(historiaClinicaRequest.getId())
                 .idpaciente(Paciente.builder()

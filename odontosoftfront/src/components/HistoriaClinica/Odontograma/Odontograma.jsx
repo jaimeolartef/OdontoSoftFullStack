@@ -8,7 +8,7 @@ const Odontograma = ({ formMedicalHistory }) => {
     return (
       <div key={index} className="">
         <div style={{ textAlign: 'center' }}>{toothNumber}</div>
-        <Diente toothNumber={toothNumber} onClick={handleToothClick}/>
+        <Diente toothNumber={toothNumber} onClick={handleToothClick} odontograma={formMedicalHistory.odontogramas}/>
       </div>
     );
   };
