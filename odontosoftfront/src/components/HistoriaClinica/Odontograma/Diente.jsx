@@ -166,6 +166,7 @@ const Diente = ({ toothNumber, onClick }) => {
           <label htmlFor="estado-select">Selecciona un estado:</label>
           <select id="estado-select" onChange={handleDropdownChange}>
             <option value="">Seleccionar</option>
+            <option value="DS">Diente sano</option>
             <option value="CR">Caries o recurrencia</option>
             <option value="OB">Obturado</option>
             <option value="CC">Corona completa</option>
@@ -182,10 +183,11 @@ const Diente = ({ toothNumber, onClick }) => {
       <EstadoDiente simbolo="Δ" color="red" segmentos={segmentos} estado="NE"/>
       <EstadoDiente simbolo="Δ" color="blue" segmentos={segmentos} estado="CT"/>
       <EstadoDiente simbolo="I" color="blue" segmentos={segmentos} estado="EX"/>
-      <EstadoDiente simbolo="-" color="blue" segmentos={segmentos} estado="SE"/>
+      <EstadoDiente simbolo="‒" color="blue" segmentos={segmentos} estado="SE"/>
       <EstadoDiente simbolo="X" color="red" segmentos={segmentos} estado="EI"/>
       <EstadoDiente simbolo="=" color="blue" segmentos={segmentos} estado="PE"/>
       <EstadoDiente simbolo="□" color="blue" segmentos={segmentos} estado="CC"/>
+      <EstadoDiente simbolo="" color="white" segmentos={segmentos} estado="DS"/>
     </div>
   );
 };

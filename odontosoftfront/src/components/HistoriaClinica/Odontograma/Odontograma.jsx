@@ -21,6 +21,7 @@ const Odontograma = ({ formMedicalHistory }) => {
 
     Object.keys(segmentos).forEach(key => {
       const value = segmentos[key].idestado;
+
       if (value === 'NE' || value === 'CT' || value === 'EX' || value === 'SE' || value === 'EI' || value === 'PE' || value === 'CC') {
         segmentos[key].idsegmento = 5;
       }
@@ -49,32 +50,38 @@ const Odontograma = ({ formMedicalHistory }) => {
           return;
         }
 
-        itemOdon.detalleodontogramas.forEach(itemDetOdon => {
-          if (itemOdon.detalleodontogramas.find(item => item.iddiente == segmentos[key].iddiente && item.idsegmento == segmentos[key].idsegmento) === undefined) {
-            itemOdon.detalleodontogramas.push({
-              id: '',
-              iddiente: segmentos[key].iddiente,
-              idsegmento: segmentos[key].idsegmento,
-              idestado: segmentos[key].idestado,
-              fechacreacion: new Date().toISOString(),
-              fechatratamiento: new Date().toISOString(),
-              habilitado: true,
-              idodontograma: idOdontograma,
-            });
-          } else {
-            itemOdon.detalleodontogramas = itemOdon.detalleodontogramas.map(item => {
-              if (item.iddiente == segmentos[key].iddiente && item.idsegmento == segmentos[key].idsegmento) {
-                return {
-                  ...item,
-                  idestado: segmentos[key].idestado,
-                  fechatratamiento: new Date().toISOString(),
-                  fechamodificacion: new Date().toISOString()
-                };
-              }
-              return item;
-            });
-          }
-        });
+        if (value === 'DS') {
+          console.log('Seleccion segmento diente');
+          itemOdon.detalleodontogramas = itemOdon.detalleodontogramas.filter(item => !(item.iddiente === segmentos[key].iddiente && item.idsegmento == 5));
+          itemOdon.detalleodontogramas = itemOdon.detalleodontogramas.filter(item => !(item.iddiente === segmentos[key].iddiente && item.idsegmento === segmentos[key].idsegmento));
+        } else {
+          itemOdon.detalleodontogramas.forEach(itemDetOdon => {
+            if (itemOdon.detalleodontogramas.find(item => item.iddiente == segmentos[key].iddiente && item.idsegmento == segmentos[key].idsegmento) === undefined) {
+              itemOdon.detalleodontogramas.push({
+                id: '',
+                iddiente: segmentos[key].iddiente,
+                idsegmento: segmentos[key].idsegmento,
+                idestado: segmentos[key].idestado,
+                fechacreacion: new Date().toISOString(),
+                fechatratamiento: new Date().toISOString(),
+                habilitado: true,
+                idodontograma: idOdontograma,
+              });
+            } else {
+              itemOdon.detalleodontogramas = itemOdon.detalleodontogramas.map(item => {
+                if (item.iddiente == segmentos[key].iddiente && item.idsegmento == segmentos[key].idsegmento) {
+                  return {
+                    ...item,
+                    idestado: segmentos[key].idestado,
+                    fechatratamiento: new Date().toISOString(),
+                    fechamodificacion: new Date().toISOString()
+                  };
+                }
+                return item;
+              });
+            }
+          });
+        }
       });
     });
     console.log('historia Clinica desde el odontograma:', formMedicalHistory);

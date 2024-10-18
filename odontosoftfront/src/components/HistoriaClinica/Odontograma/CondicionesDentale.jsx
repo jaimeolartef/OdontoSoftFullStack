@@ -30,7 +30,7 @@ const CondicionesDentales = () => {
     <td>Extracción Indicada</td>
     <td className="red-figure">X</td>
     <td>Sin erupcionar</td>
-    <td className="blue-figure" style={{transform: 'scale(1.6)' }}>-</td>
+    <td className="blue-figure" style={{transform: 'scale(1.6)' }}>‒</td>
   </tr>
   <tr>
     <td>Extraído</td>
