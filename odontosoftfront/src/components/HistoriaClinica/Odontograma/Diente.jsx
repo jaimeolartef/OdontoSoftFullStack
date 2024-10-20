@@ -50,39 +50,13 @@ const Diente = ({ toothNumber, onClick, odontograma }) => {
   const [currentSegment, setCurrentSegment] = useState(null);
   const dropdownRef = useRef(null);
 
-  /**
-   * Handles the click event on a segment.
-   * Toggles the selection state of the clicked segment,
-   * updates the current segment, and sets the segment details.
-   *
-   * @param {number} idsegmento - The ID of the clicked segment.
-   */
-  const handleSegmentClick = (idsegmento) => {
-    // Toggle the selection state of the clicked segment
-    const newSelectedSegments = [...selectedSegments];
-    newSelectedSegments[idsegmento] = !newSelectedSegments[idsegmento];
-    setSelectedSegments(newSelectedSegments);
-
-    // Set the current segment to the clicked segment
-    setCurrentSegment(idsegmento);
-
-    // Update the segment details with the tooth number and segment ID
-    setSegmentos((prev) => ({
-      ...prev,
-      [idsegmento]: {
-        ...prev[idsegmento],
-        iddiente: toothNumber,
-        idsegmento: idsegmento,
-      },
-    }));
-  };
 
   const handleDropdownChange = (event) => {
     const value = event.target.value;
     let segmento = currentSegment;
 
-    console.log('event.target.value:', value);
-    console.log('currentSegment:', segmento);
+
+    console.log('paso 2:  por handleDropdownChange');
     if (segmento !== null) {
 
       setSegmentos((prev) => ({
@@ -132,47 +106,29 @@ const Diente = ({ toothNumber, onClick, odontograma }) => {
   useEffect(() => {
     if (odontograma !== null && odontograma.length > 0) {
       odontograma.forEach((item) => {
-        item.detalleodontogramas.forEach((detalle) => {
-
-        });
+        if (item.iddiente !== toothNumber) return;
+        handleSegmentClick(item.idsegmento);
+        handleDropdownChange({ target: { value: item.idestado } });
       });
     }
-  }, []);
+  }, [odontograma]);
 
-  useEffect(() => {
-    if (odontograma !== null && odontograma.length > 0) {
-      odontograma.forEach((item) => {
-        item.detalleodontogramas.forEach((detalle) => {
-          //falla aqui no entra
-          console.log('Detalle:', detalle.idestado != undefined && detalle.idsegmento != undefined && detalle.iddiente != undefined);
-          if(detalle && detalle.idestado !== undefined && detalle.idsegmento !== undefined && detalle.iddiente !== undefined) {
-            loadDetalleOdontograma(detalle.idestado, detalle.idsegmento, detalle.iddiente);
-          }
-        });
-      });
-    }
-  }, []);
+  const handleSegmentClick = (idsegmento) => {
+    console.log('paso 1:  por handleSegmentClick');
+    const newSelectedSegments = [...selectedSegments];
+    newSelectedSegments[idsegmento] = !newSelectedSegments[idsegmento];
+    setSelectedSegments(newSelectedSegments);
 
-  const loadDetalleOdontograma = (idestado, segmento, toothNumber) => {
-    console.log('event.target.value:', idestado);
-    console.log('currentSegment:', segmento);
-    console.log('toothNumber:', toothNumber);
-      setSegmentos((prev) => ({
-        ...prev,
-        [segmento]: {
-          ...prev[segmento],
-          idestado: idestado,
-        },
-      }));
-      // Llama al callback onClick con el número de diente y los segmentos actualizados
-      onClick(toothNumber, {
-        ...segmentos,
-        [segmento]: {
-          ...segmentos[segmento],
-          idestado: idestado,
-        },
-      });
-      setCurrentSegment(null);
+    setCurrentSegment(idsegmento);
+
+    setSegmentos((prev) => ({
+      ...prev,
+      [idsegmento]: {
+        ...prev[idsegmento],
+        iddiente: toothNumber,
+        idsegmento: idsegmento,
+      },
+    }));
   };
 
   const handleCircleClick = (idsegmento) => {

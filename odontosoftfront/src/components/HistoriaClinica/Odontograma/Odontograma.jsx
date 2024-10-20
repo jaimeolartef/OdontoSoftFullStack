@@ -1,23 +1,13 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import './Odontograma.css'; // Ensure you have a CSS file for custom styles
 import CondicionesDentales from './CondicionesDentale';
 import Diente from './Diente';  // Ensure the path is correct
 
 const Odontograma = ({ formMedicalHistory }) => {
-  const renderTooth = (index, toothNumber) => {
-    return (
-      <div key={index} className="">
-        <div style={{ textAlign: 'center' }}>{toothNumber}</div>
-        <Diente toothNumber={toothNumber} onClick={handleToothClick} odontograma={formMedicalHistory.odontogramas}/>
-      </div>
-    );
-  };
-
   const [idOdontograma, setIdOdontograma] = useState('');
 
   const handleToothClick = (toothNumber, segmentos) => {
-    console.log('Tooth number:', toothNumber);
-    console.log('Segmentos:', segmentos);
+    console.log('paso 3: por handleToothClick');
 
     Object.keys(segmentos).forEach(key => {
       const value = segmentos[key].idestado;
@@ -60,6 +50,8 @@ const Odontograma = ({ formMedicalHistory }) => {
             item.iddiente == segmentos[key].iddiente && item.idsegmento == segmentos[key].idsegmento
           );
 
+          console.log('existingItem:', !existingItem);
+
           if (!existingItem) {
             itemOdon.detalleodontogramas.push({
               id: '',
@@ -72,6 +64,7 @@ const Odontograma = ({ formMedicalHistory }) => {
               idodontograma: idOdontograma,
             });
           } else {
+            console.log('entro por aqui');
             itemOdon.detalleodontogramas = itemOdon.detalleodontogramas.map(item =>
               item.iddiente == segmentos[key].iddiente && item.idsegmento == segmentos[key].idsegmento
                 ? {
@@ -102,6 +95,19 @@ const Odontograma = ({ formMedicalHistory }) => {
       setIdOdontograma(formMedicalHistory.odontogramas[0].id);
     }
   }, [formMedicalHistory]);
+
+  const renderTooth = (index, toothNumber) => {
+    if (formMedicalHistory.odontogramas.length > 0) {
+      return (
+        <div key={index} className="">
+          <div style={{textAlign: 'center'}}>{toothNumber}</div>
+          <Diente toothNumber={toothNumber} onClick={handleToothClick}
+                  odontograma={formMedicalHistory.odontogramas[0].detalleodontogramas}/>
+        </div>
+      );
+    }
+    return null;
+  };
 
   return (
     <div className="card">
