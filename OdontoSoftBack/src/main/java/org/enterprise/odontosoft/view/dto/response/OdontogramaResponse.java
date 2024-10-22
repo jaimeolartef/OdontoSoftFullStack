@@ -1,17 +1,20 @@
 package org.enterprise.odontosoft.view.dto.response;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
+import org.enterprise.odontosoft.view.dto.MensajeValidation;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @Getter
 @Setter
-public class OdontogramaResponse {
+public class OdontogramaResponse extends MensajeValidation {
 
     private Integer id;
 
@@ -35,4 +38,8 @@ public class OdontogramaResponse {
 
     @NotNull
     private Boolean habilitado;
+
+    public OdontogramaResponse(String codigo, String mensaje) {
+        super(codigo, mensaje);
+    }
 }

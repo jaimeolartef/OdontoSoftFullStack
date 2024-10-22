@@ -50,15 +50,10 @@ const Diente = ({ toothNumber, onClick, odontograma }) => {
   const [currentSegment, setCurrentSegment] = useState(null);
   const dropdownRef = useRef(null);
 
-
   const handleDropdownChange = (event) => {
     const value = event.target.value;
     let segmento = currentSegment;
-
-
-    console.log('paso 2:  por handleDropdownChange');
     if (segmento !== null) {
-
       setSegmentos((prev) => ({
         ...prev,
         [segmento]: {
@@ -66,7 +61,6 @@ const Diente = ({ toothNumber, onClick, odontograma }) => {
           idestado: value,
         },
       }));
-      // Llama al callback onClick con el número de diente y los segmentos actualizados
       onClick(toothNumber, {
         ...segmentos,
         [segmento]: {
@@ -111,16 +105,13 @@ const Diente = ({ toothNumber, onClick, odontograma }) => {
         handleDropdownChange({ target: { value: item.idestado } });
       });
     }
-  }, [odontograma]);
+  }, [odontograma, toothNumber]);
 
   const handleSegmentClick = (idsegmento) => {
-    console.log('paso 1:  por handleSegmentClick');
     const newSelectedSegments = [...selectedSegments];
     newSelectedSegments[idsegmento] = !newSelectedSegments[idsegmento];
     setSelectedSegments(newSelectedSegments);
-
     setCurrentSegment(idsegmento);
-
     setSegmentos((prev) => ({
       ...prev,
       [idsegmento]: {
@@ -134,7 +125,6 @@ const Diente = ({ toothNumber, onClick, odontograma }) => {
   const handleCircleClick = (idsegmento) => {
     setIsCircleSelected(!isCircleSelected);
     handleSegmentClick(idsegmento);
-    console.log('Círculo seleccionado:', idsegmento);
   };
 
   const segmentPaths = [
@@ -157,7 +147,7 @@ const Diente = ({ toothNumber, onClick, odontograma }) => {
           />
         ))}
         <Circle
-          idsegmento={4} // Assuming the circle is a separate segment with id 4
+          idsegmento={4}
           detalleOdonto={segmentos[4]}
           onClick={handleCircleClick}
         />

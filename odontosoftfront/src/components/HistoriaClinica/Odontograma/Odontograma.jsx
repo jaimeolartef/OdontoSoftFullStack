@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import './Odontograma.css'; // Ensure you have a CSS file for custom styles
+import './Odontograma.css'
 import CondicionesDentales from './CondicionesDentale';
-import Diente from './Diente';  // Ensure the path is correct
+import Diente from './Diente';
 
 const Odontograma = ({ formMedicalHistory }) => {
   const [idOdontograma, setIdOdontograma] = useState('');
@@ -15,6 +15,8 @@ const Odontograma = ({ formMedicalHistory }) => {
       if (['NE', 'CT', 'EX', 'SE', 'EI', 'PE', 'CC'].includes(value)) {
         segmentos[key].idsegmento = 5;
       }
+
+      console.log('paso 3 segmento: ', segmentos[key]);
 
       if (formMedicalHistory.odontogramas.length === 0) {
         formMedicalHistory.odontogramas.push({
@@ -41,7 +43,6 @@ const Odontograma = ({ formMedicalHistory }) => {
         }
 
         if (value === 'DS') {
-          console.log('Seleccion segmento diente');
           itemOdon.detalleodontogramas = itemOdon.detalleodontogramas.filter(item =>
             !(item.iddiente === segmentos[key].iddiente && (item.idsegmento == 5 || item.idsegmento === segmentos[key].idsegmento))
           );
@@ -49,8 +50,6 @@ const Odontograma = ({ formMedicalHistory }) => {
           const existingItem = itemOdon.detalleodontogramas.find(item =>
             item.iddiente == segmentos[key].iddiente && item.idsegmento == segmentos[key].idsegmento
           );
-
-          console.log('existingItem:', !existingItem);
 
           if (!existingItem) {
             itemOdon.detalleodontogramas.push({
@@ -64,7 +63,6 @@ const Odontograma = ({ formMedicalHistory }) => {
               idodontograma: idOdontograma,
             });
           } else {
-            console.log('entro por aqui');
             itemOdon.detalleodontogramas = itemOdon.detalleodontogramas.map(item =>
               item.iddiente == segmentos[key].iddiente && item.idsegmento == segmentos[key].idsegmento
                 ? {
