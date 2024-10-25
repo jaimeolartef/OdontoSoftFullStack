@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/odontograma")
-@CrossOrigin(originPatterns = "http://localhost:*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT})
 public class OdontogramView {
 
 	private final OdontogramController odontogramController;

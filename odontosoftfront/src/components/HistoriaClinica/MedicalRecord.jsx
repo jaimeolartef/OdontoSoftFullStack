@@ -1,7 +1,7 @@
 import ReadOnlyPaciente from "../HistoriaClinica/ReadOnlyPaciente";
 import TextArea from "./TextArea";
 import React, {useEffect, useState, useMemo} from "react"; // Importa useMemo
-import {useLocation} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import axios from "axios";
 import Logo from "../../resource/LogoNegro.png";
 import config from "../../config";
@@ -12,9 +12,12 @@ import SignosVitales from "./SignosVitales";
 import AnalisisFuncional from "./AnalisisFuncional";
 import ExamenEstomatologico from "./ExamenEstomatologico";
 import Odontograma from "./Odontograma/Odontograma";
+import MedicalIcon from "../../resource/MedicalIcon.png";
+import {Tooltip} from "react-tooltip";
 
 const MedicalRecord = () => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Utiliza useMemo para memorizar el objeto patient
   const patient = useMemo(() => {
@@ -91,6 +94,12 @@ const MedicalRecord = () => {
   }, [formPatient.idPaciente]);
 
 
+
+  const handleMedicalRecordClick = (idHistoriaClinica) => {
+    navigate('/odontograma', { state: { idHistoriaClinica: idHistoriaClinica } });
+  };
+
+
   /**
  * Handles input changes for form fields.
  *
@@ -120,6 +129,15 @@ const handleInputChange = (event) => {
         </header>
         <form onSubmit={handleSubmit} className="needs-validation" noValidate>
           <ReadOnlyPaciente idPatient={formPatient.idPaciente}/>
+          <div className="espacio"/>
+          <img src={MedicalIcon} alt="Historia Clinica"
+               style={{marginRight: '5px', width: '35px', height: '35px', cursor: 'pointer'}}
+               onClick={(e) => {
+                 e.stopPropagation();
+                 handleMedicalRecordClick(formMedicalHistory.idHistoriaClinica);
+               }}
+               data-tooltip-id="tooltip" data-tooltip-content="Ver Historia Clinica"/>
+          <Tooltip id="tooltip"/>
           <div className="espacio"/>
           <TextArea label="Motivo consulta"
                     name="motivoConsulta"
@@ -162,7 +180,7 @@ const handleInputChange = (event) => {
           <div className="espacio"/>
           <ExamenEstomatologico formMedicalHistory={formMedicalHistory}/>
           <div className="espacio"/>
-          <Odontograma formMedicalHistory={formMedicalHistory}/>
+          {/*<Odontograma formMedicalHistory={formMedicalHistory}/>*/}
           <div className="espacio"/>
           <button type="submit" className="btn btn-primary">Guardar</button>
         </form>

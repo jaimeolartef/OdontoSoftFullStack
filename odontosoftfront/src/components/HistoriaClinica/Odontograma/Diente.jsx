@@ -43,31 +43,55 @@ const Circle = ({ idsegmento, detalleOdonto, onClick }) => {
   );
 };
 
-const Diente = ({ toothNumber, onClick, odontograma }) => {
+const Diente = ({ toothNumber, onClick, initSegmentos }) => {
   const [selectedSegments, setSelectedSegments] = useState([false, false, false, false]);
   const [isCircleSelected, setIsCircleSelected] = useState(false);
-  const [segmentos, setSegmentos] = useState({});
+  const [segmentos, setSegmentos] = useState({
+    0: {iddiente: toothNumber, idsegmento: 0, idestado: ''},
+    1: {iddiente: toothNumber, idsegmento: 1, idestado: ''},
+    2: {iddiente: toothNumber, idsegmento: 2, idestado: ''},
+    3: {iddiente: toothNumber, idsegmento: 3, idestado: ''},
+    4: {iddiente: toothNumber, idsegmento: 4, idestado: ''},
+    5: {iddiente: toothNumber, idsegmento: 5, idestado: ''}});
   const [currentSegment, setCurrentSegment] = useState(null);
   const dropdownRef = useRef(null);
 
+  useEffect(() => {
+    console.log('initSegmentos 1:', initSegmentos);
+    setSegmentos(initSegmentos);
+  }, [initSegmentos]);
+
   const handleDropdownChange = (event) => {
-    const value = event.target.value;
-    let segmento = currentSegment;
-    if (segmento !== null) {
-      setSegmentos((prev) => ({
-        ...prev,
-        [segmento]: {
-          ...prev[segmento],
-          idestado: value,
-        },
-      }));
-      onClick(toothNumber, {
-        ...segmentos,
-        [segmento]: {
-          ...segmentos[segmento],
-          idestado: value,
-        },
-      });
+    const estado = event.target.value;
+    let indexSegmento = currentSegment;
+    console.log('value 1:', estado);
+    console.log('value 2:', segmentos);
+    if (indexSegmento !== null) {
+      if (['NE', 'CT', 'EX', 'SE', 'EI', 'PE', 'CC'].includes(estado)) {
+        setSegmentos((prev) => {
+          const updatedSegmentos = {
+            ...prev,
+            [5]: {
+              ...prev[5],
+              idestado: estado,
+            },
+          };
+          onClick(5, updatedSegmentos);
+          return updatedSegmentos;
+        });
+      } else {
+        setSegmentos((prev) => {
+          const updatedSegmentos = {
+            ...prev,
+            [indexSegmento]: {
+              ...prev[indexSegmento],
+              idestado: estado,
+            },
+          };
+          onClick(indexSegmento, updatedSegmentos);
+          return updatedSegmentos;
+        });
+      }
       setCurrentSegment(null);
     }
   };
@@ -96,16 +120,6 @@ const Diente = ({ toothNumber, onClick, odontograma }) => {
       document.removeEventListener('keydown', handleEscapeKey);
     };
   }, []);
-
-  useEffect(() => {
-    if (odontograma !== null && odontograma.length > 0) {
-      odontograma.forEach((item) => {
-        if (item.iddiente !== toothNumber) return;
-        handleSegmentClick(item.idsegmento);
-        handleDropdownChange({ target: { value: item.idestado } });
-      });
-    }
-  }, [odontograma, toothNumber]);
 
   const handleSegmentClick = (idsegmento) => {
     const newSelectedSegments = [...selectedSegments];

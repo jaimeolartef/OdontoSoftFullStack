@@ -1,58 +1,79 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import './Odontograma.css'
 import CondicionesDentales from './CondicionesDentale';
 import Diente from './Diente';
+import {useLocation} from "react-router-dom";
+import axios from "axios";
+import config from "../../../config";
 
-const Odontograma = ({ formMedicalHistory }) => {
+const Odontograma = () => {
+  const location = useLocation();
+
+  // Utiliza useMemo para memorizar el objeto patient
+  const idHistoriaClinica = useMemo(() => {
+    return location.state?.idHistoriaClinica || {};
+  }, [location.state]);
+
+
   const [idOdontograma, setIdOdontograma] = useState('');
+  const [initOdontograma, setInitOdontograma] = useState({
+    id: 0,
+    idhistoriaclinica: 0,
+    fecha: '',
+    idusuariocreacion: 1,
+    fechacreacion: '',
+    idusuariomodificacion: '',
+    fechamodificacion: '',
+    detalleodontogramas: [],
+    habilitado: true
+  });
+  const mapFormOdontograma = (data) => ({
+    id: data.id || '',
+    idhistoriaclinica: data.idhistoriaclinica || '',
+    fecha: data.fecha || '',
+    idusuariocreacion: data.idusuariocreacion || 1,
+    fechacreacion: data.fechacreacion || '',
+    idusuariomodificacion: data.idusuariomodificacion || '',
+    fechamodificacion: data.fechamodificacion || '',
+    detalleodontogramas: data.detalleodontogramas || [],
+    habilitado: data.habilitado || true
+  });
 
-  const handleToothClick = (toothNumber, segmentos) => {
-    console.log('paso 3: por handleToothClick');
+  const handleToothClick = (indexSegmento, segmentos) => {
+    console.log('paso 3: por handleToothClick: ', segmentos);
 
-    Object.keys(segmentos).forEach(key => {
+    Object.keys(segmentos).filter(key => segmentos[key].idsegmento === indexSegmento).forEach(key => {
       const value = segmentos[key].idestado;
 
-      if (['NE', 'CT', 'EX', 'SE', 'EI', 'PE', 'CC'].includes(value)) {
-        segmentos[key].idsegmento = 5;
-      }
-
+      console.log('paso 3 indexSegmento: ', indexSegmento);
       console.log('paso 3 segmento: ', segmentos[key]);
 
-      if (formMedicalHistory.odontogramas.length === 0) {
-        formMedicalHistory.odontogramas.push({
+      if (initOdontograma.detalleodontogramas.length === 0) {
+        initOdontograma.detalleodontogramas.push({
           id: '',
-          idhistoriaclinica: formMedicalHistory.idHistoriaClinica,
-          detalleodontogramas: [],
+          iddiente: segmentos[key].iddiente,
+          idsegmento: segmentos[key].idsegmento,
+          idestado: segmentos[key].idestado,
+          fechacreacion: new Date().toISOString(),
+          fechatratamiento: new Date().toISOString(),
           habilitado: true,
+          idodontograma: idOdontograma,
         });
-      }
-
-      formMedicalHistory.odontogramas.forEach(itemOdon => {
-        if (itemOdon.detalleodontogramas.length === 0) {
-          itemOdon.detalleodontogramas.push({
-            id: '',
-            iddiente: segmentos[key].iddiente,
-            idsegmento: segmentos[key].idsegmento,
-            idestado: segmentos[key].idestado,
-            fechacreacion: new Date().toISOString(),
-            fechatratamiento: new Date().toISOString(),
-            habilitado: true,
-            idodontograma: idOdontograma,
-          });
-          return;
-        }
-
+        return;
+      } else {
         if (value === 'DS') {
-          itemOdon.detalleodontogramas = itemOdon.detalleodontogramas.filter(item =>
-            !(item.iddiente === segmentos[key].iddiente && (item.idsegmento == 5 || item.idsegmento === segmentos[key].idsegmento))
+          // Eliminar el segmento si el estado es 'DS'
+          initOdontograma.detalleodontogramas = initOdontograma.detalleodontogramas.filter(
+            itemOdon => !(itemOdon.iddiente === segmentos[key].iddiente && itemOdon.idsegmento === segmentos[key].idsegmento)
           );
         } else {
-          const existingItem = itemOdon.detalleodontogramas.find(item =>
-            item.iddiente == segmentos[key].iddiente && item.idsegmento == segmentos[key].idsegmento
+          const existingItemIndex = initOdontograma.detalleodontogramas.findIndex(
+            itemOdon => itemOdon.iddiente === segmentos[key].iddiente && itemOdon.idsegmento === segmentos[key].idsegmento
           );
 
-          if (!existingItem) {
-            itemOdon.detalleodontogramas.push({
+          if (existingItemIndex === -1) {
+            // Agregar nuevo segmento si no existe
+            initOdontograma.detalleodontogramas.push({
               id: '',
               iddiente: segmentos[key].iddiente,
               idsegmento: segmentos[key].idsegmento,
@@ -63,45 +84,77 @@ const Odontograma = ({ formMedicalHistory }) => {
               idodontograma: idOdontograma,
             });
           } else {
-            itemOdon.detalleodontogramas = itemOdon.detalleodontogramas.map(item =>
-              item.iddiente == segmentos[key].iddiente && item.idsegmento == segmentos[key].idsegmento
-                ? {
-                  ...item,
-                  idestado: segmentos[key].idestado,
-                  fechatratamiento: new Date().toISOString(),
-                  fechamodificacion: new Date().toISOString()
-                }
-                : item
-            );
+            // Actualizar segmento existente
+            initOdontograma.detalleodontogramas[existingItemIndex] = {
+              ...initOdontograma.detalleodontogramas[existingItemIndex],
+              idestado: segmentos[key].idestado,
+              fechatratamiento: new Date().toISOString(),
+              fechamodificacion: new Date().toISOString(),
+            };
           }
         }
-      });
+      }
     });
-
-    console.log('historia Clinica desde el odontograma:', formMedicalHistory);
+    console.log('paso 3 initOdontograma: ', initOdontograma);
   }
 
-  useEffect(() => {
-    if (formMedicalHistory.odontogramas.length === 0) {
-      formMedicalHistory.odontogramas.push({
-        id: '',
-        idhistoriaclinica: formMedicalHistory.idHistoriaClinica,
-        detalleodontogramas: [],
-        habilitado: true,
-      });
-    } else {
-      setIdOdontograma(formMedicalHistory.odontogramas[0].id);
+useEffect(() => {
+  const fetchOdontograma = async () => {
+    console.log('paso 0: por useEffect:', initOdontograma.id === '' || initOdontograma.id === 0);
+    if (initOdontograma.id === '' || initOdontograma.id === 0) {
+      console.log('paso 0: cargo el odontograma: ', idHistoriaClinica);
+      let token = localStorage.getItem('jsonwebtoken');
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      try {
+        const response = await axios.get(`${config.baseURL}/odontograma/consultar/` + idHistoriaClinica);
+        console.log('odontograma consultar:', response.data);
+        setInitOdontograma(mapFormOdontograma(response.data));
+      } catch (error) {
+        console.error('Error fetching patient data:', error);
+      }
     }
-  }, [formMedicalHistory]);
+  };
+
+  fetchOdontograma();
+}, []);
+
+  useEffect(() => {
+    console.log('initOdontograma actualizado:', initOdontograma);
+    // Realiza cualquier acción que dependa del initOdontograma actualizado aquí
+  }, [initOdontograma]);
 
   const renderTooth = (index, toothNumber) => {
-    if (formMedicalHistory.odontogramas.length > 0) {
+      const initSegmentos = {
+        0: {iddiente: toothNumber, idsegmento: 0, idestado: ''},
+        1: {iddiente: toothNumber, idsegmento: 1, idestado: ''},
+        2: {iddiente: toothNumber, idsegmento: 2, idestado: ''},
+        3: {iddiente: toothNumber, idsegmento: 3, idestado: ''},
+        4: {iddiente: toothNumber, idsegmento: 4, idestado: ''},
+        5: {iddiente: toothNumber, idsegmento: 5, idestado: ''}
+      };
+
+    if (initOdontograma && initOdontograma.detalleodontogramas.length > 0) {
+      initOdontograma.detalleodontogramas
+        .filter(item => item.iddiente === toothNumber)
+        .forEach(item => {
+        if (item.iddiente === toothNumber) {
+          if (item.iddiente === toothNumber) {
+            if (['NE', 'CT', 'EX', 'SE', 'EI', 'PE', 'CC'].includes(item.idestado)) {
+              initSegmentos[5].idestado = item.idestado;
+            } else {
+              initSegmentos[item.idsegmento].idestado = item.idestado;
+            }
+          }
+        }
+      }, []);
+      console.log('paso 1: por renderTooth:', initSegmentos);
+
       return (
-        <div key={index} className="">
-          <div style={{textAlign: 'center'}}>{toothNumber}</div>
-          <Diente toothNumber={toothNumber} onClick={handleToothClick}
-                  odontograma={formMedicalHistory.odontogramas[0].detalleodontogramas}/>
-        </div>
+          <div key={index} className="">
+            <div style={{textAlign: 'center'}}>{toothNumber}</div>
+            <Diente toothNumber={toothNumber} onClick={handleToothClick}
+                    initSegmentos={initSegmentos}/>
+          </div>
       );
     }
     return null;
