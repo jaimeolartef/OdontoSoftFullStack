@@ -42,8 +42,7 @@ const Odontograma = () => {
   const handleToothClick = (indexSegmento, segmentos) => {
     console.log('paso 3: por handleToothClick: ', segmentos);
 
-    Object.keys(segmentos).filter(key => segmentos[key].idsegmento === indexSegmento).forEach(key => {
-      const value = segmentos[key].idestado;
+    Object.keys(segmentos).forEach(key => {
 
       console.log('paso 3 indexSegmento: ', indexSegmento);
       console.log('paso 3 segmento: ', segmentos[key]);
@@ -61,17 +60,11 @@ const Odontograma = () => {
         });
         return;
       } else {
-        if (value === 'DS') {
-          // Eliminar el segmento si el estado es 'DS'
-          initOdontograma.detalleodontogramas = initOdontograma.detalleodontogramas.filter(
-            itemOdon => !(itemOdon.iddiente === segmentos[key].iddiente && itemOdon.idsegmento === segmentos[key].idsegmento)
-          );
-        } else {
           const existingItemIndex = initOdontograma.detalleodontogramas.findIndex(
             itemOdon => itemOdon.iddiente === segmentos[key].iddiente && itemOdon.idsegmento === segmentos[key].idsegmento
           );
 
-          if (existingItemIndex === -1) {
+          if (existingItemIndex === -1 && segmentos[key].idestado !== 'DS') {
             // Agregar nuevo segmento si no existe
             initOdontograma.detalleodontogramas.push({
               id: '',
@@ -83,16 +76,15 @@ const Odontograma = () => {
               habilitado: true,
               idodontograma: idOdontograma,
             });
-          } else {
+          } else if (existingItemIndex > -1 && segmentos[key].idestado === 'DS') {
             // Actualizar segmento existente
             initOdontograma.detalleodontogramas[existingItemIndex] = {
               ...initOdontograma.detalleodontogramas[existingItemIndex],
-              idestado: segmentos[key].idestado,
+              idestado: segmentos[key].idestado === 'DS' ? '' : segmentos[key].idestado, // si esta vacio significa que se debe eliminar
               fechatratamiento: new Date().toISOString(),
               fechamodificacion: new Date().toISOString(),
             };
           }
-        }
       }
     });
     console.log('paso 3 initOdontograma: ', initOdontograma);
@@ -125,12 +117,12 @@ useEffect(() => {
 
   const renderTooth = (index, toothNumber) => {
       const initSegmentos = {
-        0: {iddiente: toothNumber, idsegmento: 0, idestado: ''},
-        1: {iddiente: toothNumber, idsegmento: 1, idestado: ''},
-        2: {iddiente: toothNumber, idsegmento: 2, idestado: ''},
-        3: {iddiente: toothNumber, idsegmento: 3, idestado: ''},
-        4: {iddiente: toothNumber, idsegmento: 4, idestado: ''},
-        5: {iddiente: toothNumber, idsegmento: 5, idestado: ''}
+        0: {iddiente: toothNumber, idsegmento: 0, idestado: 'DS'},
+        1: {iddiente: toothNumber, idsegmento: 1, idestado: 'DS'},
+        2: {iddiente: toothNumber, idsegmento: 2, idestado: 'DS'},
+        3: {iddiente: toothNumber, idsegmento: 3, idestado: 'DS'},
+        4: {iddiente: toothNumber, idsegmento: 4, idestado: 'DS'},
+        5: {iddiente: toothNumber, idsegmento: 5, idestado: 'DS'}
       };
 
     if (initOdontograma && initOdontograma.detalleodontogramas.length > 0) {

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './Odontograma.css';
 import EstadoDiente from "./EstadoDiente";
+import showMessage from "../../../util/UtilMessage";
 
 const Segmento = ({ d, idsegmento, onClick, detalleOdonto }) => {
   const fillColor = detalleOdonto?.idestado === 'CR' ? 'red' : (detalleOdonto?.idestado === 'OB' ? 'blue' : 'white');
@@ -47,12 +48,12 @@ const Diente = ({ toothNumber, onClick, initSegmentos }) => {
   const [selectedSegments, setSelectedSegments] = useState([false, false, false, false]);
   const [isCircleSelected, setIsCircleSelected] = useState(false);
   const [segmentos, setSegmentos] = useState({
-    0: {iddiente: toothNumber, idsegmento: 0, idestado: ''},
-    1: {iddiente: toothNumber, idsegmento: 1, idestado: ''},
-    2: {iddiente: toothNumber, idsegmento: 2, idestado: ''},
-    3: {iddiente: toothNumber, idsegmento: 3, idestado: ''},
-    4: {iddiente: toothNumber, idsegmento: 4, idestado: ''},
-    5: {iddiente: toothNumber, idsegmento: 5, idestado: ''}});
+    0: {iddiente: toothNumber, idsegmento: 0, idestado: 'DS'},
+    1: {iddiente: toothNumber, idsegmento: 1, idestado: 'DS'},
+    2: {iddiente: toothNumber, idsegmento: 2, idestado: 'DS'},
+    3: {iddiente: toothNumber, idsegmento: 3, idestado: 'DS'},
+    4: {iddiente: toothNumber, idsegmento: 4, idestado: 'DS'},
+    5: {iddiente: toothNumber, idsegmento: 5, idestado: 'DS'}});
   const [currentSegment, setCurrentSegment] = useState(null);
   const dropdownRef = useRef(null);
 
@@ -65,8 +66,21 @@ const Diente = ({ toothNumber, onClick, initSegmentos }) => {
     const estado = event.target.value;
     let indexSegmento = currentSegment;
     console.log('value 1:', estado);
-    console.log('value 2:', segmentos);
+    console.log('value 2:', indexSegmento);
     if (indexSegmento !== null) {
+      const segmentosArray = Object.values(segmentos);
+      const hasCR = segmentosArray.some(segmento => segmento.idestado === 'CR');
+      const hasOB = segmentosArray.some(segmento => segmento.idestado === 'OB');
+      const hasSpecialState = segmentosArray.some(segmento => ['NE', 'CT', 'EX', 'SE', 'EI', 'PE', 'CC'].includes(segmento.idestado));
+
+      if ((hasCR || hasOB) &&(['NE', 'CT', 'EX', 'SE', 'EI', 'PE', 'CC'].includes(estado))) {
+        showMessage('error', 'El estado actual del diente no permite cambiar a ' + estado + ', debe cambiar a diente sano y luego realizar el cambio al estado deseado');
+        return;
+      } else if (hasSpecialState && (estado === 'CR' || estado === 'OB')) {
+        showMessage('error', 'El estado actual del diente no permite cambiar a ' + estado + ', debe cambiar a estado Diente sano y luego realizar el cambio al estado deseado');
+        return;
+      }
+
       if (['NE', 'CT', 'EX', 'SE', 'EI', 'PE', 'CC'].includes(estado)) {
         setSegmentos((prev) => {
           const updatedSegmentos = {
@@ -77,6 +91,15 @@ const Diente = ({ toothNumber, onClick, initSegmentos }) => {
             },
           };
           onClick(5, updatedSegmentos);
+          return updatedSegmentos;
+        });
+      } else if (estado === 'DS') {
+        setSegmentos((prev) => {
+          const updatedSegmentos = Object.keys(prev).reduce((acc, key) => {
+            acc[key] = { ...prev[key], idestado: 'DS' };
+            return acc;
+          }, {});
+          onClick(indexSegmento, updatedSegmentos);
           return updatedSegmentos;
         });
       } else {
