@@ -73,6 +73,7 @@ const Login = (props) => {
                 localStorage.setItem('menuUser', responseValidateRole);
                 navigate('/inicio');
                 localStorage.setItem('username', usuarioDto.codigo);
+                console.log('username: ', usuarioDto.codigo);
                 props.onLoggedIn();
               }).catch(error => {
                 showMessage('error', 'Error al validar el rol del usuario');

@@ -11,8 +11,7 @@ import Habitos from "./Habitos";
 import SignosVitales from "./SignosVitales";
 import AnalisisFuncional from "./AnalisisFuncional";
 import ExamenEstomatologico from "./ExamenEstomatologico";
-import Odontograma from "./Odontograma/Odontograma";
-import MedicalIcon from "../../resource/MedicalIcon.png";
+import Diente from "../../resource/diente.png";
 import {Tooltip} from "react-tooltip";
 
 const MedicalRecord = () => {
@@ -130,13 +129,22 @@ const handleInputChange = (event) => {
         <form onSubmit={handleSubmit} className="needs-validation" noValidate>
           <ReadOnlyPaciente idPatient={formPatient.idPaciente}/>
           <div className="espacio"/>
-          <img src={MedicalIcon} alt="Historia Clinica"
-               style={{marginRight: '5px', width: '35px', height: '35px', cursor: 'pointer'}}
-               onClick={(e) => {
-                 e.stopPropagation();
-                 handleMedicalRecordClick(formMedicalHistory.idHistoriaClinica);
-               }}
-               data-tooltip-id="tooltip" data-tooltip-content="Ver Historia Clinica"/>
+          <div style={{
+            position: 'fixed',
+            left: '90vw',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            cursor: 'pointer',
+            zIndex: 1000,
+          }}>
+            <img src={Diente} alt="Odontograma"
+                 style={{width: '100%', height: '100%'}}
+                 onClick={(e) => {
+                   e.stopPropagation();
+                   handleMedicalRecordClick(formMedicalHistory.idHistoriaClinica);
+                 }}
+                 data-tooltip-id="tooltip" data-tooltip-content="Ver Odontograma"/>
+          </div>
           <Tooltip id="tooltip"/>
           <div className="espacio"/>
           <TextArea label="Motivo consulta"
@@ -180,7 +188,7 @@ const handleInputChange = (event) => {
           <div className="espacio"/>
           <ExamenEstomatologico formMedicalHistory={formMedicalHistory}/>
           <div className="espacio"/>
-          {/*<Odontograma formMedicalHistory={formMedicalHistory}/>*/}
+
           <div className="espacio"/>
           <button type="submit" className="btn btn-primary">Guardar</button>
         </form>

@@ -22,7 +22,7 @@ public class OdontogramaRequest {
     private LocalDateTime fecha;
 
     @NotNull
-    private Integer idusuariocreacion;
+    private String idusuariocreacion;
 
     @NotNull
     private LocalDateTime fechacreacion;

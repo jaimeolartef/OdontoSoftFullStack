@@ -20,7 +20,7 @@ public class DetalleOdontogramaRequest {
     private Integer iddiente;
 
     @NotNull
-    private Integer idestado;
+    private String idestado;
 
     @NotNull
     private Integer idtratamiento;

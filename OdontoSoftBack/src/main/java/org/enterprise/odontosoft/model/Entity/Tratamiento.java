@@ -28,7 +28,4 @@ public class Tratamiento {
     @Column(name = "descripcion", nullable = false, length = 50)
     private String descripcion;
 
-    @OneToMany(mappedBy = "idtratamiento")
-    private Set<DetalleOdontograma> detalleodontogramas = new LinkedHashSet<>();
-
 }

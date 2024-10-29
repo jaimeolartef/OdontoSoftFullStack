@@ -37,11 +37,6 @@ public class DetalleOdontograma {
     private EstadoDiente idestado;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "idtratamiento", nullable = false)
-    private Tratamiento idtratamiento;
-
-    @NotNull
     @Column(name = "fechatratamiento", nullable = false)
     private LocalDateTime fechatratamiento;
 

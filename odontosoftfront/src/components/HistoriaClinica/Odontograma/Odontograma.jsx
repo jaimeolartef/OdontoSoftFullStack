@@ -5,6 +5,7 @@ import Diente from './Diente';
 import {useLocation} from "react-router-dom";
 import axios from "axios";
 import config from "../../../config";
+import showMessage from "../../../util/UtilMessage";
 
 const Odontograma = () => {
   const location = useLocation();
@@ -41,6 +42,7 @@ const Odontograma = () => {
 
   const handleToothClick = (indexSegmento, segmentos) => {
     console.log('paso 3: por handleToothClick: ', segmentos);
+    let usuario = localStorage.getItem('username');
 
     Object.keys(segmentos).forEach(key => {
 
@@ -53,6 +55,7 @@ const Odontograma = () => {
           iddiente: segmentos[key].iddiente,
           idsegmento: segmentos[key].idsegmento,
           idestado: segmentos[key].idestado,
+          idusuariocreacion: usuario,
           fechacreacion: new Date().toISOString(),
           fechatratamiento: new Date().toISOString(),
           habilitado: true,
@@ -152,44 +155,72 @@ useEffect(() => {
     return null;
   };
 
+  const handleSubmit = (e) => {
+    console.log('paso 4: guardar:', initOdontograma);
+    e.preventDefault();
+    let token = localStorage.getItem('jsonwebtoken');
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    axios.post(`${config.baseURL}/odontograma/guardar`, initOdontograma, {
+      validateStatus: function (status) {
+        return status;
+      }
+    })
+      .then(response => {
+        if (response.status === 200) {
+          showMessage('success', 'El odontograma se guardo con éxito');
+        } else {
+          showMessage('error', 'Error al guardar el odontograma');
+        }
+      })
+      .catch(error => {
+        showMessage('error', 'Error al guardar el odontograma');
+      });
+  }
+
   return (
     <div className="card">
       <div className="card-header">
         <h2>Odontograma</h2>
       </div>
       <div className="card-body">
-        <div className="odontograma-container">
-          <CondicionesDentales/>
-          <div className="espacio"/>
-          <div className="odontograma">
-            <div className="rowOdonto">
-              {Array.from({length: 8}, (_, i) => renderTooth(i, 18 - i))}
-              <div className="vertical-line"></div>
-              {Array.from({length: 8}, (_, i) => renderTooth(i + 8, 21 + i))}
+        <form onSubmit={handleSubmit} >
+          <div className="odontograma-container">
+            <CondicionesDentales/>
+            <div className="espacio"/>
+            <div className="odontograma">
+              <div className="rowOdonto">
+                {Array.from({length: 8}, (_, i) => renderTooth(i, 18 - i))}
+                <div className="vertical-line"></div>
+                {Array.from({length: 8}, (_, i) => renderTooth(i + 8, 21 + i))}
+              </div>
+              <div className="rowOdonto">
+                {Array.from({length: 8}, (_, i) => renderTooth(i + 16, 48 - i))}
+                <div className="vertical-line"></div>
+                {Array.from({length: 8}, (_, i) => renderTooth(i + 24, 31 + i))}
+              </div>
             </div>
-            <div className="rowOdonto">
-              {Array.from({length: 8}, (_, i) => renderTooth(i + 16, 48 - i))}
-              <div className="vertical-line"></div>
-              {Array.from({length: 8}, (_, i) => renderTooth(i + 24, 31 + i))}
+            <div className="espacio"/>
+            <div id="kids" className="odontograma">
+              <div className="rowOdonto">
+                {Array.from({length: 5}, (_, i) => renderTooth(i, 55 - i))}
+                <div className="vertical-line"></div>
+                {Array.from({length: 5}, (_, i) => renderTooth(i + 5, 61 + i))}
+              </div>
+              <div className="rowOdonto">
+                {Array.from({length: 5}, (_, i) => renderTooth(i + 10, 85 - i))}
+                <div className="vertical-line"></div>
+                {Array.from({length: 5}, (_, i) => renderTooth(i + 15, 71 + i))}
+              </div>
             </div>
+            <div className="espacio"/>
+            <button type="submit" className="btn btn-primary">Guardar</button>
+            <div className="espacio"/>
+            <div className="espacio"/>
           </div>
-          <div className="espacio"/>
-          <div id="kids" className="odontograma">
-            <div className="rowOdonto">
-              {Array.from({length: 5}, (_, i) => renderTooth(i, 55 - i))}
-              <div className="vertical-line"></div>
-              {Array.from({length: 5}, (_, i) => renderTooth(i + 5, 61 + i))}
-            </div>
-            <div className="rowOdonto">
-              {Array.from({length: 5}, (_, i) => renderTooth(i + 10, 85 - i))}
-              <div className="vertical-line"></div>
-              {Array.from({length: 5}, (_, i) => renderTooth(i + 15, 71 + i))}
-            </div>
-          </div>
-        </div>
+        </form>
       </div>
     </div>
-  );
+);
 };
 
 export default Odontograma;

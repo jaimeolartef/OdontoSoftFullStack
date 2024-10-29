@@ -202,6 +202,7 @@ create table analisisFuncional
     fonacion              boolean DEFAULT false NOT NULL,
     respiracion           boolean DEFAULT false NOT NULL,
     idUsuarioCreacion     int                   NOT NULL,
+    idUsuarioCreacion     int                   NOT NULL,
     fechaCreacion         date                  NOT NULL,
     idUsuarioModificacion int,
     fechaModificacion     date,
@@ -288,7 +289,6 @@ CREATE TABLE detalleOdontograma
     idDiente              INT                NOT NULL,
     idsegmento integer default 5 not null,
     idEstado              INT                NOT NULL,
-    idTratamiento         INT                NOT NULL,
     fechaTratamiento      DATE               NOT NULL,
     idUsuarioCreacion     int                NOT NULL,
     fechaCreacion         date               NOT NULL,
@@ -298,7 +298,6 @@ CREATE TABLE detalleOdontograma
     FOREIGN KEY (idOdontograma) REFERENCES odontograma (id),
     FOREIGN KEY (idDiente) REFERENCES diente (id),
     FOREIGN KEY (idEstado) REFERENCES estadoDiente (id),
-    FOREIGN KEY (idTratamiento) REFERENCES Tratamiento (id),
     foreign key (idUsuarioCreacion) references usuario (id),
     foreign key (idUsuarioModificacion) references usuario (id)
 );

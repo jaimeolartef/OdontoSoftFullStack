@@ -18,14 +18,12 @@ public class OdontogramaMapper {
             .id(odontogramaRequest.getId())
             .idhistoriaclinica(HistoriaClinica.builder().id(odontogramaRequest.getIdhistoriaclinica()).build())
             .fecha(odontogramaRequest.getFecha())
-            .idusuariocreacion(Usuario.builder().id(odontogramaRequest.getIdusuariocreacion()).build())
+            .idusuariocreacion(Usuario.builder().codigo(odontogramaRequest.getIdusuariocreacion()).build())
             .fechacreacion(odontogramaRequest.getFechacreacion())
             .idusuariomodificacion(Objects.nonNull(odontogramaRequest.getIdusuariomodificacion()) ? Usuario.builder().id(odontogramaRequest.getIdusuariomodificacion()).build() : null)
             .fechamodificacion(odontogramaRequest.getFechamodificacion())
             .habilitado(odontogramaRequest.getHabilitado())
-            .detalleodontogramas(odontogramaRequest.getDetalleodontogramas().stream()
-                .map(DetalleOdontogramaMapper::toEntity)
-                .collect(Collectors.toSet())).build();
+            .build();
     }
 
 
