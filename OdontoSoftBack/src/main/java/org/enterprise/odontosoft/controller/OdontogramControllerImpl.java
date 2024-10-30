@@ -22,6 +22,7 @@ import org.springframework.stereotype.Controller;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -65,9 +66,11 @@ public class OdontogramControllerImpl implements OdontogramController {
 				.map(DetalleOdontogramaMapper::toEntity)
 				.collect(Collectors.toList());
 			odontograma.setDetalleodontogramas(null);
+			odontograma.setIdusuariocreacion(Usuario.builder().id(usuarioDao.findByCodigo(odontograma.getIdusuariocreacion().getCodigo()).getId()).build());
+			odontograma.setIdusuariomodificacion(Usuario.builder().id(usuarioDao.findByCodigo(odontograma.getIdusuariomodificacion().getCodigo()).getId()).build());
 			odontograma = odontogramaDao.save(odontograma);
 			saveDetalleOdontograma(detalleOdontograma, odontograma.getId());
-			responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(OdontogramaMapper.toResponse(odontograma));
+			responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(null);
 		} catch (Exception e) {
 			responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 			logger.error("Error saving odontogram.", e);
@@ -82,6 +85,9 @@ public class OdontogramControllerImpl implements OdontogramController {
 			if (Objects.nonNull(detalle.getIdestado()) && Objects.nonNull(detalle.getIdestado().getCodigo())) {
 				detalle.setIdestado(EstadoDiente.builder().id(estadoDienteDao.findByCodigo(detalle.getIdestado().getCodigo()).orElse(null).getId()).build());
 				detalle.setIdusuariocreacion(Usuario.builder().id(usuarioDao.findByCodigo(detalle.getIdusuariocreacion().getCodigo()).getId()).build());
+				if (Objects.nonNull(detalle.getIdusuariomodificacion())) {
+					detalle.setIdusuariomodificacion(Usuario.builder().id(usuarioDao.findByCodigo(detalle.getIdusuariomodificacion().getCodigo()).getId()).build());
+				}
 				detalle.setIdodontograma(Odontograma.builder().id(idOdontograma).build());
 				detalleOdontogramaDao.save(detalle);
 			} else if (Objects.nonNull(detalle.getId())) {

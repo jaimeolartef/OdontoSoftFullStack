@@ -29,12 +29,12 @@ public class DetalleOdontogramaRequest {
     private LocalDateTime fechatratamiento;
 
     @NotNull
-    private Integer idusuariocreacion;
+    private String idusuariocreacion;
 
     @NotNull
     private LocalDateTime fechacreacion;
 
-    private Integer idusuariomodificacion;
+    private String idusuariomodificacion;
 
     private LocalDateTime fechamodificacion;
 

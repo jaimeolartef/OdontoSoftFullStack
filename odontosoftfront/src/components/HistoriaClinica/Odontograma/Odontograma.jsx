@@ -32,7 +32,7 @@ const Odontograma = () => {
     id: data.id || '',
     idhistoriaclinica: data.idhistoriaclinica || '',
     fecha: data.fecha || '',
-    idusuariocreacion: data.idusuariocreacion || 1,
+    idusuariocreacion: data.idusuariocreacion || '',
     fechacreacion: data.fechacreacion || '',
     idusuariomodificacion: data.idusuariomodificacion || '',
     fechamodificacion: data.fechamodificacion || '',
@@ -63,6 +63,11 @@ const Odontograma = () => {
         });
         return;
       } else {
+        console.log('diente: ', segmentos[key].iddiente);
+        console.log('segmento: ', segmentos[key].idsegmento);
+        console.log('existingItemIndex: ', initOdontograma.detalleodontogramas.findIndex(
+          itemOdon => itemOdon.iddiente === segmentos[key].iddiente && itemOdon.idsegmento === segmentos[key].idsegmento
+        ));
           const existingItemIndex = initOdontograma.detalleodontogramas.findIndex(
             itemOdon => itemOdon.iddiente === segmentos[key].iddiente && itemOdon.idsegmento === segmentos[key].idsegmento
           );
@@ -74,6 +79,7 @@ const Odontograma = () => {
               iddiente: segmentos[key].iddiente,
               idsegmento: segmentos[key].idsegmento,
               idestado: segmentos[key].idestado,
+              idusuariocreacion: usuario,
               fechacreacion: new Date().toISOString(),
               fechatratamiento: new Date().toISOString(),
               habilitado: true,
@@ -85,11 +91,23 @@ const Odontograma = () => {
               ...initOdontograma.detalleodontogramas[existingItemIndex],
               idestado: segmentos[key].idestado === 'DS' ? '' : segmentos[key].idestado, // si esta vacio significa que se debe eliminar
               fechatratamiento: new Date().toISOString(),
+              idusuariomodificacion: usuario,
+              fechamodificacion: new Date().toISOString(),
+            };
+          } else if (existingItemIndex > -1) {
+            // Actualizar segmento existente
+            initOdontograma.detalleodontogramas[existingItemIndex] = {
+              ...initOdontograma.detalleodontogramas[existingItemIndex],
+              idestado: segmentos[key].idestado,
+              fechatratamiento: new Date().toISOString(),
+              idusuariomodificacion: usuario,
               fechamodificacion: new Date().toISOString(),
             };
           }
       }
     });
+    initOdontograma.idusuariomodificacion = usuario;
+    initOdontograma.fechamodificacion = new Date().toISOString();
     console.log('paso 3 initOdontograma: ', initOdontograma);
   }
 
@@ -166,7 +184,7 @@ useEffect(() => {
       }
     })
       .then(response => {
-        if (response.status === 200) {
+        if (response.status === 201) {
           showMessage('success', 'El odontograma se guardo con éxito');
         } else {
           showMessage('error', 'Error al guardar el odontograma');

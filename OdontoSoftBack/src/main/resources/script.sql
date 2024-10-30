@@ -728,3 +728,50 @@ VALUES (5, 'P.S', 'Pasaporte', true);
 
 
 
+INSERT INTO public.diente (id, dientenumero, descripcion)
+VALUES
+    (23, 23, 'diente 23'),
+    (24, 24, 'diente 24'),
+    (25, 25, 'diente 25'),
+    (26, 26, 'diente 26'),
+    (27, 27, 'diente 27'),
+    (28, 28, 'diente 28'),
+    (41, 41, 'diente 41'),
+    (42, 42, 'diente 42'),
+    (43, 43, 'diente 43'),
+    (44, 44, 'diente 44'),
+    (45, 45, 'diente 45'),
+    (46, 46, 'diente 46'),
+    (47, 47, 'diente 47'),
+    (48, 48, 'diente 48'),
+    (31, 31, 'diente 31'),
+    (32, 32, 'diente 32'),
+    (33, 33, 'diente 33'),
+    (34, 34, 'diente 34'),
+    (35, 35, 'diente 35'),
+    (36, 36, 'diente 36'),
+    (37, 37, 'diente 37'),
+    (38, 38, 'diente 38'),
+    (51, 51, 'diente 51'),
+    (52, 52, 'diente 52'),
+    (53, 53, 'diente 53'),
+    (54, 54, 'diente 54'),
+    (55, 55, 'diente 55'),
+    (61, 61, 'diente 61'),
+    (62, 62, 'diente 62'),
+    (63, 63, 'diente 63'),
+    (64, 64, 'diente 64'),
+    (65, 65, 'diente 65'),
+    (71, 71, 'diente 71'),
+    (72, 72, 'diente 72'),
+    (73, 73, 'diente 73'),
+    (74, 74, 'diente 74'),
+    (75, 75, 'diente 75'),
+    (81, 81, 'diente 81'),
+    (82, 82, 'diente 82'),
+    (83, 83, 'diente 83'),
+    (84, 84, 'diente 84'),
+    (85, 85, 'diente 85');
+
+
+
