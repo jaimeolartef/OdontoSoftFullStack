@@ -11,6 +11,7 @@ import Habitos from "./Habitos";
 import SignosVitales from "./SignosVitales";
 import AnalisisFuncional from "./AnalisisFuncional";
 import ExamenEstomatologico from "./ExamenEstomatologico";
+import Diagnosticos from "./Diagnosticos";
 import Diente from "../../resource/diente.png";
 import {Tooltip} from "react-tooltip";
 
@@ -42,7 +43,8 @@ const MedicalRecord = () => {
     analisisfuncionals: [],
     observacionanafunc: '',
     examenestomatologicos: [],
-    odontogramas: []
+    odontogramas: [],
+    diagnosticos: []
   });
 
   const handleSubmit = (e) => {
@@ -64,7 +66,8 @@ const MedicalRecord = () => {
       analisisfuncionals: data.analisisfuncionals || [],
       observacionanafunc: data.observacionanafunc || '',
       examenestomatologicos: data.examenestomatologicos || [],
-      odontogramas: data.odontogramas || []
+      odontogramas: data.odontogramas || [],
+      diagnosticos: data.diagnosticos || []
     };
     return mappedData;
   };
@@ -188,7 +191,7 @@ const handleInputChange = (event) => {
           <div className="espacio"/>
           <ExamenEstomatologico formMedicalHistory={formMedicalHistory}/>
           <div className="espacio"/>
-
+          <Diagnosticos formMedicalHistory={formMedicalHistory}/>
           <div className="espacio"/>
           <button type="submit" className="btn btn-primary">Guardar</button>
         </form>

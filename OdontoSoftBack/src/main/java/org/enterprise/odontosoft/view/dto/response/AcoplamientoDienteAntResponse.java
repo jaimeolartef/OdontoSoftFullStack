@@ -2,11 +2,13 @@ package org.enterprise.odontosoft.view.dto.response;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+@Data
 @Builder
 @Getter
 @Setter

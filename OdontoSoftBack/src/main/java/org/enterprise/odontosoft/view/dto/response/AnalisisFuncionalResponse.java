@@ -1,12 +1,14 @@
 package org.enterprise.odontosoft.view.dto.response;
 
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.enterprise.odontosoft.model.Entity.Usuario;
 
 import java.time.LocalDateTime;
 
+@Data
 @Builder
 @Setter
 @Getter

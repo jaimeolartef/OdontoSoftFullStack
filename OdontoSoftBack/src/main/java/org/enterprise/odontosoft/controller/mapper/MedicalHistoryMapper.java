@@ -11,8 +11,6 @@ import java.util.Objects;
 @UtilityClass
 public class MedicalHistoryMapper {
     public static HistoriaClinica toEntity(HistoriaClinicaRequest historiaClinicaRequest) {
-        //se debe homologar el estado del diente con la BD
-        // se debe homologar el diente con la BD
         return HistoriaClinica.builder()
                 .id(historiaClinicaRequest.getId())
                 .idpaciente(Paciente.builder()
