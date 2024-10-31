@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from "axios";
 import config from "../../config";
+import showMessage from "../../util/UtilMessage";
 
 const Diagnosticos = ({ formMedicalHistory }) => {
     const [TipoDiagnostico, setTipoDiagnostico] = useState([{
@@ -11,6 +12,8 @@ const Diagnosticos = ({ formMedicalHistory }) => {
     }]);
 
     const [diagnosticos, setDiagnosticos] = useState(formMedicalHistory.diagnosticos);
+    const [selectedDiagnostico, setSelectedDiagnostico] = useState('');
+    const usuario = localStorage.getItem('username');
 
     useEffect(() => {
         const fetchTipoDiagnostico = async () => {
@@ -30,9 +33,38 @@ const Diagnosticos = ({ formMedicalHistory }) => {
     }, [formMedicalHistory]);
 
     const handleCheckboxChange = (index) => {
-        const newDiagnosticos = [...diagnosticos];
+        const newDiagnosticos = [...formMedicalHistory.diagnosticos];
         newDiagnosticos[index].definitivo = !newDiagnosticos[index].definitivo;
         setDiagnosticos(newDiagnosticos);
+    };
+
+    const handleDiagnosticoChange = (event) => {
+        const selectedValue = event.target.value;
+        setSelectedDiagnostico(selectedValue);
+        console.log('Diagnósticos:', TipoDiagnostico);
+        console.log('Diagnóstico seleccionado:', selectedValue);
+        let diagnosSelec = selectedValue.split(' - ');
+        const diagSelected = TipoDiagnostico.findIndex(diagnostico => diagnostico.codigo === diagnosSelec[0]);
+        console.log('Diagnóstico seleccionado:', diagSelected);
+        if (diagSelected > -1) {
+            const existingItemIndex = formMedicalHistory.diagnosticos.findIndex(diagnostico => diagnostico.codtipodiagnostico === diagnosSelec[0]);
+            if (existingItemIndex === -1) {
+                formMedicalHistory.diagnosticos.push({
+                    idhistoriaclinica: formMedicalHistory.idHistoriaClinica,
+                    idtipodiagnostico: TipoDiagnostico[diagSelected].id,
+                    codtipodiagnostico: TipoDiagnostico[diagSelected].codigo,
+                    descripciontipodiagnostico: TipoDiagnostico[diagSelected].descripcion,
+                    idusuariocreacion: usuario,
+                    fechacreacion: new Date().toISOString(),
+                    definitivo: false,
+                    habilitado: true,
+                });
+                setDiagnosticos([...formMedicalHistory.diagnosticos]); // Actualiza el estado
+            } else {
+                showMessage('warning', 'El diagnóstico ya existe en la lista.');
+            }
+        }
+        setSelectedDiagnostico(''); // Limpia el valor del input
     };
 
     return (
@@ -43,14 +75,21 @@ const Diagnosticos = ({ formMedicalHistory }) => {
             <div className="card-body">
                 <div className="form-group">
                     <label htmlFor="diagnostico">Diagnóstico</label>
-                    <input className="form-control" list="datalistOptions" id="exampleDataList"
-                           placeholder="Buscar diagnostico..."/>
+                    <input
+                      className="form-control"
+                      list="datalistOptions"
+                      id="exampleDataList"
+                      placeholder="Buscar diagnostico..."
+                      value={selectedDiagnostico}
+                      onChange={handleDiagnosticoChange}
+                    />
                     <datalist id="datalistOptions">
-                        {TipoDiagnostico.map((tipo, index) => (
-                          <option key={tipo.id} name={tipo.descripcion} value={`${tipo.codigo} - ${tipo.descripcion}`} />
+                        {TipoDiagnostico.map((tipo) => (
+                          <option key={tipo.id} value={`${tipo.codigo} - ${tipo.descripcion}`}/>
                         ))}
                     </datalist>
                 </div>
+                <div className="espacio"/>
                 <div className="form-group">
                     <table className="table">
                         <thead>
@@ -58,31 +97,32 @@ const Diagnosticos = ({ formMedicalHistory }) => {
                             <th>Código</th>
                             <th>Diagnóstico</th>
                             <th>Confirmado</th>
-                                <th>Acciones</th>
-                            </tr>
+                            <th>Acciones</th>
+                        </tr>
                         </thead>
                         <tbody>
-                            {formMedicalHistory.diagnosticos.length === 0 ? (
-                                <p>No hay diagnósticos disponibles.</p>
-                            ) : (
-                                formMedicalHistory.diagnosticos.map((diagnostico, index) => (
-                                  console.log('diagnostico:', diagnostico),
-                                    <tr key={diagnostico.id}>
-                                        <td><label>{diagnostico.codtipodiagnostico}</label></td>
-                                        <td>{diagnostico.descripciontipodiagnostico}</td>
-                                        <td>
-                                            <input
-                                                type="checkbox"
-                                                checked={diagnostico.definitivo}
-                                                onChange={() => handleCheckboxChange(index)}
-                                            />
-                                        </td>
-                                        <td>
-                                            <button className="btn btn-danger">Eliminar</button>
-                                        </td>
-                                    </tr>
-                                ))
-                            )}
+                        {formMedicalHistory.diagnosticos.length === 0 ? (
+                          <tr>
+                              <td colSpan="4"><p>No hay diagnósticos disponibles.</p></td>
+                          </tr>
+                        ) : (
+                          formMedicalHistory.diagnosticos.map((diagnostico, index) => (
+                            <tr key={diagnostico.codigo}>
+                                <td><label>{diagnostico.codtipodiagnostico}</label></td>
+                                <td>{diagnostico.descripciontipodiagnostico}</td>
+                                <td>
+                                    <input
+                                      type="checkbox"
+                                      checked={diagnostico.definitivo}
+                                      onChange={() => handleCheckboxChange(index)}
+                                    />
+                                </td>
+                                <td>
+                                    <button className="btn btn-danger">Eliminar</button>
+                                </td>
+                            </tr>
+                          ))
+                        )}
                         </tbody>
                     </table>
                 </div>
