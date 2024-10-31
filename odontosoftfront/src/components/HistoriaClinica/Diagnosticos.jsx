@@ -3,23 +3,21 @@ import axios from "axios";
 import config from "../../config";
 
 const Diagnosticos = ({ formMedicalHistory }) => {
-    const [TipoDiagnostico, setTipoDiagnostico] = useState({
+    const [TipoDiagnostico, setTipoDiagnostico] = useState([{
         id: 0,
         codigo: '',
         descripcion: '',
         habilitado: true
-    });
+    }]);
 
     const [diagnosticos, setDiagnosticos] = useState(formMedicalHistory.diagnosticos);
 
     useEffect(() => {
-        console.log('paso 1: cargo el tipos diagnosticos: ');
         const fetchTipoDiagnostico = async () => {
             let token = localStorage.getItem('jsonwebtoken');
             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
             try {
                 const response = await axios.get(`${config.baseURL}/tipodiagnostico/consultar`);
-                console.log('tipo diagnostico consultar:', response.data);
                 if (response.status === 200) {
                     setTipoDiagnostico(response.data);
                 }
@@ -28,7 +26,6 @@ const Diagnosticos = ({ formMedicalHistory }) => {
             }
         }
 
-        console.log('paso 1: por useEffect:', formMedicalHistory);
         fetchTipoDiagnostico();
     }, [formMedicalHistory]);
 
@@ -46,15 +43,21 @@ const Diagnosticos = ({ formMedicalHistory }) => {
             <div className="card-body">
                 <div className="form-group">
                     <label htmlFor="diagnostico">Diagnóstico</label>
-                    <input type="text" id="diagnostico" className="form-control" />
+                    <input className="form-control" list="datalistOptions" id="exampleDataList"
+                           placeholder="Buscar diagnostico..."/>
+                    <datalist id="datalistOptions">
+                        {TipoDiagnostico.map((tipo, index) => (
+                          <option key={tipo.id} name={tipo.descripcion} value={`${tipo.codigo} - ${tipo.descripcion}`} />
+                        ))}
+                    </datalist>
                 </div>
                 <div className="form-group">
                     <table className="table">
                         <thead>
-                            <tr>
-                                <th>Código</th>
-                                <th>Diagnóstico</th>
-                                <th>Confirmado</th>
+                        <tr>
+                            <th>Código</th>
+                            <th>Diagnóstico</th>
+                            <th>Confirmado</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
