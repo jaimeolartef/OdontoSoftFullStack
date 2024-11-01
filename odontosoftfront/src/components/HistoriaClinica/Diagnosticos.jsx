@@ -36,16 +36,15 @@ const Diagnosticos = ({ formMedicalHistory }) => {
         const newDiagnosticos = [...formMedicalHistory.diagnosticos];
         newDiagnosticos[index].definitivo = !newDiagnosticos[index].definitivo;
         setDiagnosticos(newDiagnosticos);
+        console.log('Diagnósticos:', formMedicalHistory);
     };
 
     const handleDiagnosticoChange = (event) => {
+        console.log('Diagnósticos:', event);
         const selectedValue = event.target.value;
         setSelectedDiagnostico(selectedValue);
-        console.log('Diagnósticos:', TipoDiagnostico);
-        console.log('Diagnóstico seleccionado:', selectedValue);
         let diagnosSelec = selectedValue.split(' - ');
         const diagSelected = TipoDiagnostico.findIndex(diagnostico => diagnostico.codigo === diagnosSelec[0]);
-        console.log('Diagnóstico seleccionado:', diagSelected);
         if (diagSelected > -1) {
             const existingItemIndex = formMedicalHistory.diagnosticos.findIndex(diagnostico => diagnostico.codtipodiagnostico === diagnosSelec[0]);
             if (existingItemIndex === -1) {
@@ -64,70 +63,76 @@ const Diagnosticos = ({ formMedicalHistory }) => {
                 showMessage('warning', 'El diagnóstico ya existe en la lista.');
             }
         }
+        console.log('Diagnósticos:', formMedicalHistory);
         setSelectedDiagnostico(''); // Limpia el valor del input
     };
 
+    const handleSearchChange = (event) => {
+        setSelectedDiagnostico(event.target.value);
+    }
+
     return (
-        <div className="card">
-            <div className="card-header">
-                <h2>Diagnósticos</h2>
-            </div>
-            <div className="card-body">
-                <div className="form-group">
-                    <label htmlFor="diagnostico">Diagnóstico</label>
-                    <input
-                      className="form-control"
-                      list="datalistOptions"
-                      id="exampleDataList"
-                      placeholder="Buscar diagnostico..."
-                      value={selectedDiagnostico}
-                      onChange={handleDiagnosticoChange}
-                    />
-                    <datalist id="datalistOptions">
-                        {TipoDiagnostico.map((tipo) => (
-                          <option key={tipo.id} value={`${tipo.codigo} - ${tipo.descripcion}`}/>
-                        ))}
-                    </datalist>
-                </div>
-                <div className="espacio"/>
-                <div className="form-group">
-                    <table className="table">
-                        <thead>
+      <div className="card">
+          <div className="card-header">
+              <h2>Diagnósticos</h2>
+          </div>
+          <div className="card-body">
+              <div className="form-group">
+                  <label htmlFor="diagnostico">Diagnóstico</label>
+                  <input
+                    className="form-control"
+                    list="datalistOptions"
+                    id="exampleDataList"
+                    placeholder="Buscar diagnostico..."
+                    value={selectedDiagnostico}
+                    onBlur={handleSearchChange}
+                    onInput={handleDiagnosticoChange} // Ejecuta el método al seleccionar una opción
+                  />
+                  <datalist id="datalistOptions">
+                      {TipoDiagnostico.map((tipo) => (
+                        <option key={tipo.id} value={`${tipo.codigo} - ${tipo.descripcion}`}/>
+                      ))}
+                  </datalist>
+              </div>
+              <div className="espacio"/>
+              <div className="form-group">
+                  <table className="table">
+                      <thead>
+                      <tr>
+                          <th>Código</th>
+                          <th>Diagnóstico</th>
+                          <th>Confirmado</th>
+                          <th>Acciones</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      {formMedicalHistory.diagnosticos.length === 0 ? (
                         <tr>
-                            <th>Código</th>
-                            <th>Diagnóstico</th>
-                            <th>Confirmado</th>
-                            <th>Acciones</th>
+                            <td colSpan="4"><p>No hay diagnósticos disponibles.</p></td>
                         </tr>
-                        </thead>
-                        <tbody>
-                        {formMedicalHistory.diagnosticos.length === 0 ? (
-                          <tr>
-                              <td colSpan="4"><p>No hay diagnósticos disponibles.</p></td>
+                      ) : (
+                        formMedicalHistory.diagnosticos.map((diagnostico, index) => (
+                          <tr key={diagnostico.codigo}>
+                              <td><label>{diagnostico.codtipodiagnostico}</label></td>
+                              <td>{diagnostico.descripciontipodiagnostico}</td>
+                              <td>
+                                  <input
+                                    type="checkbox"
+                                    checked={diagnostico.definitivo}
+                                    onChange={() => handleCheckboxChange(index)}
+                                  />
+                              </td>
+                              <td>
+                                  <button className="btn btn-danger">Eliminar</button>
+                              </td>
                           </tr>
-                        ) : (
-                          formMedicalHistory.diagnosticos.map((diagnostico, index) => (
-                            <tr key={diagnostico.codigo}>
-                                <td><label>{diagnostico.codtipodiagnostico}</label></td>
-                                <td>{diagnostico.descripciontipodiagnostico}</td>
-                                <td>
-                                    <input
-                                      type="checkbox"
-                                      checked={diagnostico.definitivo}
-                                      onChange={() => handleCheckboxChange(index)}
-                                    />
-                                </td>
-                                <td>
-                                    <button className="btn btn-danger">Eliminar</button>
-                                </td>
-                            </tr>
-                          ))
-                        )}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+                        ))
+                      )}
+                      </tbody>
+                  </table>
+              </div>
+          </div>
+      </div>
     );
 };
 

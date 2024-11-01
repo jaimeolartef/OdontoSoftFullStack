@@ -18,7 +18,7 @@ import java.util.List;
 @Controller
 public class AnalysisControllerImpl implements AnalysisController {
 
-    private static final Logger logger = LoggerFactory.getLogger(MedicalHistoryControllerControllerImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(AnalysisControllerImpl.class);
 
     private final TipoDiagnosticoDao tipoDiagnosticoDao;
 
