@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import axios from "axios";
 import config from "../../config";
 import showMessage from "../../util/UtilMessage";
 
-const AyudaDiagnostica = ({ formMedicalHistory }) => {
+const AyudaDiagnostica = ({formMedicalHistory}) => {
   const [TipoAyudaDiagnostica, setTipoAyudaDiagnostica] = useState([{
     id: 0,
     codigo: '',
@@ -32,7 +32,6 @@ const AyudaDiagnostica = ({ formMedicalHistory }) => {
     fetchTipoAyudaDiagnostico();
   }, [formMedicalHistory]);
 
-  //TODO falta revisar de aqui para abajo
 
   const handleAyudaDiagnosticoChange = (event) => {
     console.log('Diagnósticos:', event);
@@ -43,47 +42,47 @@ const AyudaDiagnostica = ({ formMedicalHistory }) => {
     if (diagSelected > -1) { //TODO falta traer desde el back el codigo y la descripcion del tipo de ayuda diagnostica
       const existingItemIndex = formMedicalHistory.ayudadiagnosticas.findIndex(ayudaDiag => ayudaDiag.codtipodiagnostico === ayudaDiagnosSelec[0]);
       if (existingItemIndex === -1) {
-        formMedicalHistory.diagnosticos.push({
+        formMedicalHistory.ayudadiagnosticas.push({
           idhistoriaclinica: formMedicalHistory.idHistoriaClinica,
-          idtipodiagnostico: TipoDiagnostico[diagSelected].id,
-          codtipodiagnostico: TipoDiagnostico[diagSelected].codigo,
-          descripciontipodiagnostico: TipoDiagnostico[diagSelected].descripcion,
+          idtipodiagnostico: TipoAyudaDiagnostica[diagSelected].id,
+          codtipodiagnostico: TipoAyudaDiagnostica[diagSelected].codigo,
+          descripciontipodiagnostico: TipoAyudaDiagnostica[diagSelected].descripcion,
           idusuariocreacion: usuario,
           fechacreacion: new Date().toISOString(),
           definitivo: false,
           habilitado: true,
         });
-        setDiagnosticos([...formMedicalHistory.diagnosticos]); // Actualiza el estado
+        setAyudaDiagnostica([...formMedicalHistory.ayudadiagnosticas]); // Actualiza el estado
       } else {
-        showMessage('warning', 'El diagnóstico ya existe en la lista.');
+        showMessage('warning', 'El tipo diagnóstico ya existe en la lista.');
       }
     }
     console.log('Diagnósticos:', formMedicalHistory);
-    setSelectedDiagnostico(''); // Limpia el valor del input
+    setAyudaDiagnostica(''); // Limpia el valor del input
   };
 
   const handleSearchChange = (event) => {
-    setSelectedDiagnostico(event.target.value);
+    setSelectedAyudaDiagnostico(event.target.value);
   }
 
   return (
     <div className="card">
       <div className="card-header">
-        <h2>Diagnósticos</h2>
+        <h2>Ayudas Diagnósticos</h2>
       </div>
       <div className="card-body">
         <div className="form-group">
-          <label htmlFor="diagnostico">Diagnóstico</label>
+          <label htmlFor="Ayudadiagnostico">Ayuda Diagnóstico</label>
           <input
             className="form-control"
-            list="datalistOptions"
-            id="exampleDataList"
+            list="ayudaDiaglistOptions"
+            id="ayudaDiagList"
             placeholder="Buscar diagnostico..."
             value={selectedAyudaDiagnostico}
             onBlur={handleSearchChange}
             onInput={handleAyudaDiagnosticoChange}
           />
-          <datalist id="datalistOptions">
+          <datalist id="ayudaDiaglistOptions">
             {TipoAyudaDiagnostica.map((tipo) => (
               <option key={tipo.id} value={`${tipo.codigo} - ${tipo.descripcion}`}/>
             ))}
@@ -96,17 +95,16 @@ const AyudaDiagnostica = ({ formMedicalHistory }) => {
             <tr>
               <th>Código</th>
               <th>Diagnóstico</th>
-              <th>Confirmado</th>
               <th>Acciones</th>
             </tr>
             </thead>
             <tbody>
-            {formMedicalHistory.diagnosticos.length === 0 ? (
+            {formMedicalHistory.ayudadiagnosticas.length === 0 ? (
               <tr>
-                <td colSpan="4"><p>No hay diagnósticos disponibles.</p></td>
+                <td colSpan="4"><p>No hay ayudas diagnósticos disponibles.</p></td>
               </tr>
             ) : (
-              formMedicalHistory.diagnosticos.map((diagnostico, index) => (
+              formMedicalHistory.ayudadiagnosticas.map((diagnostico, index) => (
                 <tr key={diagnostico.codigo}>
                   <td><label>{diagnostico.codtipodiagnostico}</label></td>
                   <td>{diagnostico.descripciontipodiagnostico}</td>
@@ -124,4 +122,4 @@ const AyudaDiagnostica = ({ formMedicalHistory }) => {
   );
 };
 
-export default Diagnosticos;
+export default AyudaDiagnostica;

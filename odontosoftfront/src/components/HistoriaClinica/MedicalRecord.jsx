@@ -13,6 +13,7 @@ import AnalisisFuncional from "./AnalisisFuncional";
 import ExamenEstomatologico from "./ExamenEstomatologico";
 import Diagnosticos from "./Diagnosticos";
 import Diente from "../../resource/diente.png";
+import AyudasDiagnostico from "./AyudaDiagnostica";
 import {Tooltip} from "react-tooltip";
 
 const MedicalRecord = () => {
@@ -44,7 +45,8 @@ const MedicalRecord = () => {
     observacionanafunc: '',
     examenestomatologicos: [],
     odontogramas: [],
-    diagnosticos: []
+    diagnosticos: [],
+    ayudadiagnosticas: []
   });
 
   const handleSubmit = (e) => {
@@ -193,6 +195,7 @@ const handleInputChange = (event) => {
           <div className="espacio"/>
           <Diagnosticos formMedicalHistory={formMedicalHistory}/>
           <div className="espacio"/>
+          <AyudasDiagnostico formMedicalHistory={formMedicalHistory}/>
           <button type="submit" className="btn btn-primary">Guardar</button>
         </form>
       </div>
