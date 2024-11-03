@@ -3,7 +3,7 @@ import axios from "axios";
 import config from "../../config";
 import showMessage from "../../util/UtilMessage";
 
-const Diagnosticos = ({ formMedicalHistory }) => {
+const Diagnosticos = ({ formMedicalHistory, setFormMedicalHistory }) => {
     const [TipoDiagnostico, setTipoDiagnostico] = useState([{
         id: 0,
         codigo: '',
@@ -11,7 +11,6 @@ const Diagnosticos = ({ formMedicalHistory }) => {
         habilitado: true
     }]);
 
-    const [diagnosticos, setDiagnosticos] = useState(formMedicalHistory.diagnosticos);
     const [selectedDiagnostico, setSelectedDiagnostico] = useState('');
     const usuario = localStorage.getItem('username');
 
@@ -35,12 +34,13 @@ const Diagnosticos = ({ formMedicalHistory }) => {
     const handleCheckboxChange = (index) => {
         const newDiagnosticos = [...formMedicalHistory.diagnosticos];
         newDiagnosticos[index].definitivo = !newDiagnosticos[index].definitivo;
-        setDiagnosticos(newDiagnosticos);
-        console.log('Diagnósticos:', formMedicalHistory);
+        setFormMedicalHistory(prev => ({
+            ...prev,
+            diagnosticos: newDiagnosticos
+        }));
     };
 
     const handleDiagnosticoChange = (event) => {
-        console.log('Diagnósticos:', event);
         const selectedValue = event.target.value;
         setSelectedDiagnostico(selectedValue);
         let diagnosSelec = selectedValue.split(' - ');
@@ -48,22 +48,27 @@ const Diagnosticos = ({ formMedicalHistory }) => {
         if (diagSelected > -1) {
             const existingItemIndex = formMedicalHistory.diagnosticos.findIndex(diagnostico => diagnostico.codtipodiagnostico === diagnosSelec[0]);
             if (existingItemIndex === -1) {
-                formMedicalHistory.diagnosticos.push({
-                    idhistoriaclinica: formMedicalHistory.idHistoriaClinica,
-                    idtipodiagnostico: TipoDiagnostico[diagSelected].id,
-                    codtipodiagnostico: TipoDiagnostico[diagSelected].codigo,
-                    descripciontipodiagnostico: TipoDiagnostico[diagSelected].descripcion,
-                    idusuariocreacion: usuario,
-                    fechacreacion: new Date().toISOString(),
-                    definitivo: false,
-                    habilitado: true,
-                });
-                setDiagnosticos([...formMedicalHistory.diagnosticos]); // Actualiza el estado
+                const newDiagnosticos = [
+                    ...formMedicalHistory.diagnosticos,
+                    {
+                        idhistoriaclinica: formMedicalHistory.idHistoriaClinica,
+                        idtipodiagnostico: TipoDiagnostico[diagSelected].id,
+                        codtipodiagnostico: TipoDiagnostico[diagSelected].codigo,
+                        descripciontipodiagnostico: TipoDiagnostico[diagSelected].descripcion,
+                        idusuariocreacion: usuario,
+                        fechacreacion: new Date().toISOString(),
+                        definitivo: false,
+                        habilitado: true,
+                    }
+                ];
+                setFormMedicalHistory(prev => ({
+                    ...prev,
+                    diagnosticos: newDiagnosticos
+                }));
             } else {
                 showMessage('warning', 'El diagnóstico ya existe en la lista.');
             }
         }
-        console.log('Diagnósticos:', formMedicalHistory);
         setSelectedDiagnostico(''); // Limpia el valor del input
     };
 

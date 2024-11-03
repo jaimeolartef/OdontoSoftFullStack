@@ -21,10 +21,10 @@ public class AyudaDiagnosticaResponse {
     private Integer idtipoayudadiag;
 
     @NotNull
-    private String codTipoAyudaDiag;
+    private String codtipoayudadiag;
 
     @NotNull
-    private String descripcionTipoAyudaDiag;
+    private String descripciontipoayudadiag;
 
     @NotNull
     private Integer idusuariocreacion;

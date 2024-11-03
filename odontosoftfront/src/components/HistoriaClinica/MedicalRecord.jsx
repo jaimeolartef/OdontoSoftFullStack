@@ -69,7 +69,8 @@ const MedicalRecord = () => {
       observacionanafunc: data.observacionanafunc || '',
       examenestomatologicos: data.examenestomatologicos || [],
       odontogramas: data.odontogramas || [],
-      diagnosticos: data.diagnosticos || []
+      diagnosticos: data.diagnosticos || [],
+      ayudadiagnosticas: data.ayudadiagnosticas || []
     };
     return mappedData;
   };

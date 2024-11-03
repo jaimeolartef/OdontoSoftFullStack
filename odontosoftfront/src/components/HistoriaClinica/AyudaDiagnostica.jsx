@@ -29,6 +29,7 @@ const AyudaDiagnostica = ({formMedicalHistory}) => {
       }
     }
 
+    console.log('historia clinica paciente:', formMedicalHistory);
     fetchTipoAyudaDiagnostico();
   }, [formMedicalHistory]);
 
@@ -39,14 +40,14 @@ const AyudaDiagnostica = ({formMedicalHistory}) => {
     setSelectedAyudaDiagnostico(selectedValue);
     let ayudaDiagnosSelec = selectedValue.split(' - ');
     const diagSelected = TipoAyudaDiagnostica.findIndex(ayudaDiag => ayudaDiag.codigo === ayudaDiagnosSelec[0]);
-    if (diagSelected > -1) { //TODO falta traer desde el back el codigo y la descripcion del tipo de ayuda diagnostica
+    if (diagSelected > -1) {
       const existingItemIndex = formMedicalHistory.ayudadiagnosticas.findIndex(ayudaDiag => ayudaDiag.codtipodiagnostico === ayudaDiagnosSelec[0]);
       if (existingItemIndex === -1) {
         formMedicalHistory.ayudadiagnosticas.push({
           idhistoriaclinica: formMedicalHistory.idHistoriaClinica,
-          idtipodiagnostico: TipoAyudaDiagnostica[diagSelected].id,
-          codtipodiagnostico: TipoAyudaDiagnostica[diagSelected].codigo,
-          descripciontipodiagnostico: TipoAyudaDiagnostica[diagSelected].descripcion,
+          idtipoayudadiag: TipoAyudaDiagnostica[diagSelected].id,
+          codtipoayudadiag: TipoAyudaDiagnostica[diagSelected].codigo,
+          descripciontipoayudadiag: TipoAyudaDiagnostica[diagSelected].descripcion,
           idusuariocreacion: usuario,
           fechacreacion: new Date().toISOString(),
           definitivo: false,
@@ -105,9 +106,9 @@ const AyudaDiagnostica = ({formMedicalHistory}) => {
               </tr>
             ) : (
               formMedicalHistory.ayudadiagnosticas.map((diagnostico, index) => (
-                <tr key={diagnostico.codigo}>
-                  <td><label>{diagnostico.codtipodiagnostico}</label></td>
-                  <td>{diagnostico.descripciontipodiagnostico}</td>
+                <tr key={index}>
+                  <td><label>{diagnostico.codtipoayudadiag}</label></td>
+                  <td>{diagnostico.descripciontipoayudadiag}</td>
                   <td>
                     <button className="btn btn-danger">Eliminar</button>
                   </td>
