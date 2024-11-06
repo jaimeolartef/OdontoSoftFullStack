@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import axios from "axios";
 import config from "../../config";
 import showMessage from "../../util/UtilMessage";
+import EliminarIcon from "../../resource/Eliminar.png";
+import { Tooltip } from "react-tooltip";
 
 const Diagnosticos = ({ formMedicalHistory, setFormMedicalHistory }) => {
     const [TipoDiagnostico, setTipoDiagnostico] = useState([{
@@ -76,6 +78,15 @@ const Diagnosticos = ({ formMedicalHistory, setFormMedicalHistory }) => {
         setSelectedDiagnostico(event.target.value);
     }
 
+    const handleDelete = (index) => {
+        const newDiagnosticos = [...formMedicalHistory.diagnosticos];
+        newDiagnosticos.splice(index, 1);
+        setFormMedicalHistory(prev => ({
+            ...prev,
+            diagnosticos: newDiagnosticos
+        }));
+    };
+
     return (
       <div className="card">
           <div className="card-header">
@@ -117,9 +128,9 @@ const Diagnosticos = ({ formMedicalHistory, setFormMedicalHistory }) => {
                         </tr>
                       ) : (
                         formMedicalHistory.diagnosticos.map((diagnostico, index) => (
-                          <tr key={diagnostico.codigo}>
+                          <tr key={index}>
                               <td><label>{diagnostico.codtipodiagnostico}</label></td>
-                              <td>{diagnostico.descripciontipodiagnostico}</td>
+                              <td style={{width: '50%'}}>{diagnostico.descripciontipodiagnostico}</td>
                               <td>
                                   <input
                                     type="checkbox"
@@ -128,7 +139,11 @@ const Diagnosticos = ({ formMedicalHistory, setFormMedicalHistory }) => {
                                   />
                               </td>
                               <td>
-                                  <button className="btn btn-danger">Eliminar</button>
+                                  <img src={EliminarIcon} alt="Eliminar"
+                                       style={{marginRight: '5px', width: '35px', height: '35px', cursor: 'pointer'}}
+                                       onClick={() => handleDelete(index)}
+                                       data-tooltip-id="editTooltip" data-tooltip-content="Eliminar"/>
+                                  <Tooltip id="editTooltip"/>
                               </td>
                           </tr>
                         ))

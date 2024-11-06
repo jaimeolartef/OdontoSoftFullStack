@@ -2,8 +2,10 @@ import React, {useEffect, useState} from 'react';
 import axios from "axios";
 import config from "../../config";
 import showMessage from "../../util/UtilMessage";
+import {Tooltip} from "react-tooltip";
+import EliminarIcon from "../../resource/Eliminar.png";
 
-const AyudaDiagnostica = ({formMedicalHistory}) => {
+const AyudaDiagnostica = ({formMedicalHistory, setFormMedicalHistory}) => {
   const [TipoAyudaDiagnostica, setTipoAyudaDiagnostica] = useState([{
     id: 0,
     codigo: '',
@@ -41,7 +43,7 @@ const AyudaDiagnostica = ({formMedicalHistory}) => {
     let ayudaDiagnosSelec = selectedValue.split(' - ');
     const diagSelected = TipoAyudaDiagnostica.findIndex(ayudaDiag => ayudaDiag.codigo === ayudaDiagnosSelec[0]);
     if (diagSelected > -1) {
-      const existingItemIndex = formMedicalHistory.ayudadiagnosticas.findIndex(ayudaDiag => ayudaDiag.codtipodiagnostico === ayudaDiagnosSelec[0]);
+      const existingItemIndex = formMedicalHistory.ayudadiagnosticas.findIndex(ayudaDiag => ayudaDiag.codtipoayudadiag === ayudaDiagnosSelec[0]);
       if (existingItemIndex === -1) {
         formMedicalHistory.ayudadiagnosticas.push({
           idhistoriaclinica: formMedicalHistory.idHistoriaClinica,
@@ -59,12 +61,21 @@ const AyudaDiagnostica = ({formMedicalHistory}) => {
       }
     }
     console.log('Diagnósticos:', formMedicalHistory);
-    setAyudaDiagnostica(''); // Limpia el valor del input
+    setSelectedAyudaDiagnostico('');
   };
 
   const handleSearchChange = (event) => {
     setSelectedAyudaDiagnostico(event.target.value);
   }
+
+  const handleDelete = (index) => {
+    const newAyudaDiagnostica = [...formMedicalHistory.ayudadiagnosticas];
+    newAyudaDiagnostica.splice(index, 1);
+    setFormMedicalHistory(prev => ({
+      ...prev,
+      ayudadiagnosticas: newAyudaDiagnostica
+    }));
+  };
 
   return (
     <div className="card">
@@ -108,9 +119,13 @@ const AyudaDiagnostica = ({formMedicalHistory}) => {
               formMedicalHistory.ayudadiagnosticas.map((diagnostico, index) => (
                 <tr key={index}>
                   <td><label>{diagnostico.codtipoayudadiag}</label></td>
-                  <td>{diagnostico.descripciontipoayudadiag}</td>
+                  <td style={{width: '50%'}}>{diagnostico.descripciontipoayudadiag}</td>
                   <td>
-                    <button className="btn btn-danger">Eliminar</button>
+                    <img src={EliminarIcon} alt="Eliminar"
+                         style={{marginRight: '5px', width: '35px', height: '35px', cursor: 'pointer'}}
+                         onClick={() => handleDelete(index)}
+                         data-tooltip-id="editTooltip" data-tooltip-content="Eliminar"/>
+                    <Tooltip id="editTooltip"/>
                   </td>
                 </tr>
               ))

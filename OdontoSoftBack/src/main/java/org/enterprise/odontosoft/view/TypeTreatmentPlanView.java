@@ -2,7 +2,6 @@ package org.enterprise.odontosoft.view;
 
 import lombok.AllArgsConstructor;
 import org.enterprise.odontosoft.controller.TypeTreatmentPlanController;
-import org.enterprise.odontosoft.view.dto.response.PacienteResponse;
 import org.enterprise.odontosoft.view.dto.response.TipoTratamientoResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

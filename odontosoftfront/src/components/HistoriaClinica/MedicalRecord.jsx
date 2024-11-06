@@ -1,6 +1,6 @@
 import ReadOnlyPaciente from "../HistoriaClinica/ReadOnlyPaciente";
 import TextArea from "./TextArea";
-import React, {useEffect, useState, useMemo} from "react"; // Importa useMemo
+import React, {useEffect, useState, useMemo} from "react";
 import {useLocation, useNavigate} from "react-router-dom";
 import axios from "axios";
 import Logo from "../../resource/LogoNegro.png";
@@ -20,7 +20,6 @@ const MedicalRecord = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Utiliza useMemo para memorizar el objeto patient
   const patient = useMemo(() => {
     return location.state?.patient || {};
   }, [location.state]);
@@ -77,7 +76,6 @@ const MedicalRecord = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      // Sets the form patient data using the patient information from the location state
       setFormPatient(prev => ({
         ...prev,
         idHistoriaClinica: patient.idHistoriaClinica || '',
@@ -85,45 +83,29 @@ const MedicalRecord = () => {
       }));
     };
     fetchData();
-  }, []);
+  }, [patient]);
 
   useEffect(() => {
-    console.log('Formulario paciente:', formPatient);
     const fetchData = async () => {
-      // Fetches the medical history data for the specific patient
-      const response = await axios.get(`${config.baseURL}/historiaClinica/consultar/` + patient.idHistoriaClinica);
-      // Maps and sets the medical history data
-      setFormMedicalHistory(mapMedicalHistory(response.data));
+      if (formPatient.idPaciente) {
+        const response = await axios.get(`${config.baseURL}/historiaClinica/consultar/` + patient.idHistoriaClinica);
+        setFormMedicalHistory(mapMedicalHistory(response.data));
+      }
     };
     fetchData();
   }, [formPatient.idPaciente]);
-
-
 
   const handleMedicalRecordClick = (idHistoriaClinica) => {
     navigate('/odontograma', { state: { idHistoriaClinica: idHistoriaClinica } });
   };
 
-
-  /**
- * Handles input changes for form fields.
- *
- * This function updates the `formMedicalHistory` state with the new value
- * of the input field that triggered the event. It uses the `name` attribute
- * of the input field to determine which property of the state to update.
- *
- * @param {Object} event - The event object from the input field.
- * @param {Object} event.target - The target element of the event.
- * @param {string} event.target.name - The name of the input field.
- * @param {string} event.target.value - The new value of the input field.
- */
-const handleInputChange = (event) => {
-  const { name, value } = event.target;
-  setFormMedicalHistory(prev => ({
-    ...prev,
-    [name]: value
-  }));
-};
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setFormMedicalHistory(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
   return (
     <div className="d-flex justify-content-center align-items-center">
@@ -155,32 +137,32 @@ const handleInputChange = (event) => {
           <div className="espacio"/>
           <TextArea label="Motivo consulta"
                     name="motivoConsulta"
-                    value={formMedicalHistory.motivoConsulta}
+                    value={formMedicalHistory.motivoConsulta || ''}
                     onChange={handleInputChange}/>
           <TextArea label="Enfermedad actual"
                     name="enfermedadActual"
-                    value={formMedicalHistory.enfermedadActual}
+                    value={formMedicalHistory.enfermedadActual || ''}
                     onChange={handleInputChange}/>
           <div className="espacio"/>
           <Antecedentes formMedicalHistory={formMedicalHistory}/>
           <div className="espacio"/>
           <TextArea label="Observación antecedentes"
                     name="observacionAntec"
-                    value={formMedicalHistory.observacionAntec}
+                    value={formMedicalHistory.observacionAntec || ''}
                     onChange={handleInputChange}/>
           <div className="espacio"/>
           <AntecedentesOdont formMedicalHistory={formMedicalHistory}/>
           <div className="espacio"/>
           <TextArea label="Observación antecedentes odontológicos"
                     name="observacionantecodon"
-                    value={formMedicalHistory.observacionantecodon}
+                    value={formMedicalHistory.observacionantecodon || ''}
                     onChange={handleInputChange}/>
           <div className="espacio"/>
           <Habitos formMedicalHistory={formMedicalHistory}/>
           <div className="espacio"/>
           <TextArea label="Observación"
                     name="observacion"
-                    value={formMedicalHistory.observacion}
+                    value={formMedicalHistory.observacion || ''}
                     onChange={handleInputChange}/>
           <div className="espacio"/>
           <SignosVitales formMedicalHistory={formMedicalHistory}/>
@@ -189,14 +171,15 @@ const handleInputChange = (event) => {
           <div className="espacio"/>
           <TextArea label="Observación"
                     name="observacionanafunc"
-                    value={formMedicalHistory.observacionanafunc}
+                    value={formMedicalHistory.observacionanafunc || ''}
                     onChange={handleInputChange}/>
           <div className="espacio"/>
           <ExamenEstomatologico formMedicalHistory={formMedicalHistory}/>
           <div className="espacio"/>
-          <Diagnosticos formMedicalHistory={formMedicalHistory}/>
+          <Diagnosticos formMedicalHistory={formMedicalHistory} setFormMedicalHistory={setFormMedicalHistory}/>
           <div className="espacio"/>
-          <AyudasDiagnostico formMedicalHistory={formMedicalHistory}/>
+          <AyudasDiagnostico formMedicalHistory={formMedicalHistory} setFormMedicalHistory={setFormMedicalHistory}/>
+          <div className="espacio"/>
           <button type="submit" className="btn btn-primary">Guardar</button>
         </form>
       </div>
