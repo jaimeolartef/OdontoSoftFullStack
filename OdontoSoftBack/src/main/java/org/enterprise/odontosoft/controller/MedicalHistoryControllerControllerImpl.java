@@ -145,6 +145,7 @@ public class MedicalHistoryControllerControllerImpl implements MedicalHistoryCon
         ResponseEntity<HistoriaClinicaResponse> responseEntity = null;
         try {
             HistoriaClinica historiaClinica = historiaClinicaDao.findById(id).orElse(null);
+            historiaClinica.setSignovitals(signoVitalDao.findByIdhistoriaclinica(id));
             if (historiaClinica == null) {
                 responseEntity = ResponseEntity.status(HttpStatus.NOT_FOUND).body(new HistoriaClinicaResponse(String.valueOf(HttpStatus.NOT_FOUND.value()), "No se encontró la historia clínica"));
                 return responseEntity;

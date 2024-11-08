@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 
 const SignosVitales = ({ formMedicalHistory }) => {
+
+  const usuario = localStorage.getItem('username');
   const [signos, setSignos] = useState({
     pulso: '',
     temperatura: '',
@@ -12,13 +14,17 @@ const SignosVitales = ({ formMedicalHistory }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    let fecha = new Date().toISOString();
     setSignos(prev => ({
       ...prev,
-      [name]: value
+      [name]: value,
+      idusuariocreacion: usuario,
+      fechacreacion: fecha,
+      idusuariomodificacion: signos.id ? usuario : '',
+      fechamodificacion: signos.id ? fecha : ''
     }));
-   formMedicalHistory.signovitals = formMedicalHistory.signovitals.map(item =>
-      item.id === signos.id ? { ...item, [name]: value } : item
-    );
+    console.log('Signos:', signos);
+    formMedicalHistory.signovitals = [signos];
   };
 
   const mapSignos = (data) => ({
@@ -34,8 +40,21 @@ const SignosVitales = ({ formMedicalHistory }) => {
   useEffect(() => {
     if (Array.isArray(formMedicalHistory.signovitals)) {
       const signosVitales = formMedicalHistory.signovitals.map(mapSignos);
-      if (signosVitales.length) {
+      console.log('Signos vitales:', signosVitales.length);
+      let fecha = new Date().toISOString();
+      if (signosVitales.length > 0) {
         setSignos(signosVitales[0]);
+      } else {
+        setSignos({
+          pulso: '',
+          temperatura: '',
+          presionarterial: '',
+          frecuenciarespiratoria: '',
+          peso: '',
+          talla: '',
+          idusuariocreacion: usuario,
+          fechacreacion: fecha
+        });
       }
     }
   }, [formMedicalHistory]);

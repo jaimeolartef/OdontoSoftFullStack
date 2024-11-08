@@ -3,7 +3,6 @@ package org.enterprise.odontosoft.view.dto.request;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-import org.enterprise.odontosoft.model.Entity.AnalisisFuncional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

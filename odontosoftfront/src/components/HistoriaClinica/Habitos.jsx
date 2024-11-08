@@ -5,35 +5,59 @@ import axios from "axios";
 const Habitos = ({formMedicalHistory}) => {
 
   const [habitosPaciente, setHabitosPaciente] = useState([]);
+  const usuario = localStorage.getItem('username');
 
   const mapHabitos = (data) => ({
     id: data.id || '',
     descripcion: data.descripcion || '',
-    opciones: data.opciones || '',
+    opciones: data.opciones || false,
     habilitado: data.habilitado || false,
   });
 
   const handleHabitosChange = (habito, value) => {
+    console.log('habito:', habito);
+    console.log('value:', value);
     setHabitosPaciente(prev => {
       return prev.map(item =>
         item.id === habito.id ? {...item, opciones: value} : item
       );
     });
+    let fechacreacion = new Date().toISOString();
     formMedicalHistory.habitopacientes = formMedicalHistory.habitopacientes.map(item =>
-      item.id === habito.id ? {...item, opciones: value} : item
+      item.idhabito === habito.id ? {
+        ...item,
+        opciones: value,
+        idusuariocreacion: usuario,
+        fechacreacion: fechacreacion,
+        idusuariomodificacion: item.id ? usuario : '',
+        fechamodificacion: item.id ? fechacreacion : ''
+      } : item
     );
-    if (!formMedicalHistory.habitopacientes.some(item => item.id === habito.id)) {
-      formMedicalHistory.habitopacientes.push({id: habito.id, idhistoriaclinica: formMedicalHistory.idHistoriaClinica, idhabito: habito.id, opciones: value});
-    }
+    console.log('formMedicalHistory.habitopacientes:', formMedicalHistory.habitopacientes);
+    console.log('habitosPaciente:', habitosPaciente);
   };
 
   useEffect(() => {
     const fetchHabitos = async () => {
       const habitosResponse = await axios.get(`${config.baseURL}/habitshistory/getall`);
+      let fecha = new Date().toISOString();
       if (Array.isArray(habitosResponse.data)) {
         const habitos = habitosResponse.data.map(mapHabitos);
         habitos.forEach(habito => {
-          habito.opciones = formMedicalHistory.habitopacientes.find(item => item.id == habito.id)?.opciones || '';
+          console.log('habitos:', formMedicalHistory.habitopacientes);
+          let existItem = formMedicalHistory.habitopacientes.findIndex(item => item.idhabito == habito.id);
+          if (existItem === -1) {
+            formMedicalHistory.habitopacientes.push({
+              idhabito: habito.id,
+              idhistoriaclinica: formMedicalHistory.idHistoriaClinica,
+              idusuariocreacion: usuario,
+              fechacreacion: fecha,
+              opciones: false
+            });
+          } else {
+            console.log('habito:', habito);
+            habito.opciones = formMedicalHistory.habitopacientes.find(item => item.id == habito.id)?.opciones || false;
+          }
         });
         setHabitosPaciente(habitos);
       }

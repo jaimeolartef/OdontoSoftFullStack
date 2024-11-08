@@ -47,7 +47,7 @@ public class MedicalHistoryMapper {
                 .ultimomedicotratante(historiaClinica.getUltimomedicotratante())
                 .observacionantec(historiaClinica.getObservacionantec())
                 .observacionantecodon(historiaClinica.getObservacionantecodon())
-                .observacion(Objects.nonNull(historiaClinica.getObservacion()) || StringUtils.isBlank(historiaClinica.getObservacion())
+                .observacion(StringUtils.isBlank(historiaClinica.getObservacion())
                         ? getObservaciones()
                         : historiaClinica.getObservacion())
                 .observacionanafunc(historiaClinica.getObservacionanafunc())

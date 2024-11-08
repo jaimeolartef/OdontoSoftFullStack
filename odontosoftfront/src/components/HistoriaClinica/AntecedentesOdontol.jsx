@@ -5,6 +5,7 @@ import config from "../../config";
 const Antecedentes = ({formMedicalHistory}) => {
 
   const [antecedentesOdont, setAntecedentesOdont] = useState([]);
+  const usuario = localStorage.getItem('username');
 
   const mapAntecedenteOdont = (data) => ({
     id: data.id || '',
@@ -23,7 +24,16 @@ const Antecedentes = ({formMedicalHistory}) => {
           const antecedentes = antecedentsResponse.data.map(mapAntecedenteOdont);
           const antecedentesOdont = antecedentes.filter(item => item.odontologico);
           antecedentesOdont.forEach(antecedente => {
-            antecedente.seleccionado = formMedicalHistory.antecedentepacientes.find(item => item.idantecedente == antecedente.id)?.opciones || '';
+            let existItem = formMedicalHistory.antecedentepacientes.findIndex(item => item.idantecedente == antecedente.id);
+            if (existItem === -1) {
+              formMedicalHistory.antecedentepacientes.push({
+                idantecedente: antecedente.id,
+                idhistoriaclinica: formMedicalHistory.idHistoriaClinica,
+                opciones: ''
+              });
+            } else {
+              antecedente.seleccionado = formMedicalHistory.antecedentepacientes.find(item => item.idantecedente == antecedente.id)?.opciones || '';
+            }
           });
           setAntecedentesOdont(antecedentesOdont);
         }
@@ -47,8 +57,16 @@ const Antecedentes = ({formMedicalHistory}) => {
         itemO.id === antecedenteOdont.id ? {...itemO, seleccionado: value} : itemO
       );
     });
+    let fechacreacion = new Date().toISOString();
     formMedicalHistory.antecedentepacientes = formMedicalHistory.antecedentepacientes.map(item =>
-      item.idantecedente == antecedenteOdont.id ? {...item, opciones: value} : item
+      item.idantecedente == antecedenteOdont.id ? {
+        ...item,
+        opciones: value,
+        idusuariocreacion: usuario,
+        fechacreacion: fechacreacion,
+        idusuariomodificacion: item.id ? usuario : '',
+        fechamodificacion: item.id ? fechacreacion : ''
+      } : item
     );
   };
 
