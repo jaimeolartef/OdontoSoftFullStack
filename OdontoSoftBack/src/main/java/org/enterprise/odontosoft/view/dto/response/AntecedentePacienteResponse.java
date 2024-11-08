@@ -16,9 +16,9 @@ public class AntecedentePacienteResponse {
     private Integer idhistoriaclinica;
     private Integer idantecedente;
     private String opciones;
-    private Integer idusuariocreacion;
+    private String idusuariocreacion;
     private LocalDateTime fechacreacion;
-    private Integer idusuariomodificacion;
+    private String idusuariomodificacion;
     private LocalDateTime fechamodificacion;
     private Boolean habilitado;
 }

@@ -24,12 +24,12 @@ public class DiagnosticoRequest {
     private Integer idtipodiagnostico;
 
     @NotNull
-    private Integer idusuariocreacion;
+    private String idusuariocreacion;
 
     @NotNull
     private LocalDateTime fechacreacion;
 
-    private Integer idusuariomodificacion;
+    private String idusuariomodificacion;
 
     private LocalDateTime fechamodificacion;
 

@@ -30,12 +30,12 @@ public class SignoVitalResponse {
     private Double frecuenciarespiratoria;
 
     @NotNull
-    private Integer idusuariocreacion;
+    private String idusuariocreacion;
 
     @NotNull
     private LocalDateTime fechacreacion;
 
-    private Integer idusuariomodificacion;
+    private String idusuariomodificacion;
 
     private LocalDateTime fechamodificacion;
 

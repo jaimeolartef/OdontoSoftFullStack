@@ -37,9 +37,9 @@ public class ExamenEstomatologicoMapper {
                 .glandulassalivaresmenor(request.getGlandulassalivaresmenor())
                 .maxilarsuperior(request.getMaxilarsuperior())
                 .maxilarinferior(request.getMaxilarinferior())
-                .idusuariocreacion(Usuario.builder().id(request.getIdusuariocreacion()).build())
+                .idusuariocreacion(Usuario.builder().codigo(request.getIdusuariocreacion()).build())
                 .fechacreacion(request.getFechacreacion())
-                .idusuariomodificacion(Objects.nonNull(request.getIdusuariomodificacion()) ? Usuario.builder().id(request.getIdusuariomodificacion()).build() : null)
+                .idusuariomodificacion(Objects.nonNull(request.getIdusuariomodificacion()) ? Usuario.builder().codigo(request.getIdusuariomodificacion()).build() : null)
                 .fechamodificacion(request.getFechamodificacion())
                 .habilitado(request.getHabilitado())
                 .build();
@@ -70,9 +70,9 @@ public class ExamenEstomatologicoMapper {
             .glandulassalivaresmenor(examenEstomatologico.getGlandulassalivaresmenor())
             .maxilarsuperior(examenEstomatologico.getMaxilarsuperior())
             .maxilarinferior(examenEstomatologico.getMaxilarinferior())
-            .idusuariocreacion(examenEstomatologico.getIdusuariocreacion().getId())
+            .idusuariocreacion(examenEstomatologico.getIdusuariocreacion().getCodigo())
             .fechacreacion(examenEstomatologico.getFechacreacion())
-            .idusuariomodificacion(Objects.nonNull(examenEstomatologico.getIdusuariomodificacion()) ? examenEstomatologico.getIdusuariomodificacion().getId() : null)
+            .idusuariomodificacion(Objects.nonNull(examenEstomatologico.getIdusuariomodificacion()) ? examenEstomatologico.getIdusuariomodificacion().getCodigo() : null)
             .fechamodificacion(examenEstomatologico.getFechamodificacion())
             .habilitado(examenEstomatologico.getHabilitado())
             .build();

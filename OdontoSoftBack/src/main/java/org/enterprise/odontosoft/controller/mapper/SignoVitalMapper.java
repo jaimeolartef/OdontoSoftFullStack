@@ -22,9 +22,9 @@ public class SignoVitalMapper {
                 .pulso(signoVital.getPulso())
                 .presionarterial(signoVital.getPresionarterial())
                 .frecuenciarespiratoria(signoVital.getFrecuenciarespiratoria())
-                .idusuariocreacion(Usuario.builder().id(signoVital.getIdusuariocreacion()).build())
+                .idusuariocreacion(Usuario.builder().codigo(signoVital.getIdusuariocreacion()).build())
                 .fechacreacion(signoVital.getFechacreacion())
-                .idusuariomodificacion(Objects.nonNull(signoVital.getIdusuariomodificacion()) ? Usuario.builder().id(signoVital.getIdusuariomodificacion()).build() : null)
+                .idusuariomodificacion(Objects.nonNull(signoVital.getIdusuariomodificacion()) ? Usuario.builder().codigo(signoVital.getIdusuariomodificacion()).build() : null)
                 .fechamodificacion(signoVital.getFechamodificacion())
                 .habilitado(signoVital.getHabilitado())
                 .build();
@@ -40,9 +40,9 @@ public class SignoVitalMapper {
                 .pulso(signoVital.getPulso())
                 .presionarterial(signoVital.getPresionarterial())
                 .frecuenciarespiratoria(signoVital.getFrecuenciarespiratoria())
-                .idusuariocreacion(signoVital.getIdusuariocreacion().getId())
+                .idusuariocreacion(signoVital.getIdusuariocreacion().getCodigo())
                 .fechacreacion(signoVital.getFechacreacion())
-                .idusuariomodificacion(Objects.nonNull(signoVital.getIdusuariomodificacion()) ? signoVital.getIdusuariomodificacion().getId() : null)
+                .idusuariomodificacion(Objects.nonNull(signoVital.getIdusuariomodificacion()) ? signoVital.getIdusuariomodificacion().getCodigo() : null)
                 .fechamodificacion(signoVital.getFechamodificacion())
                 .habilitado(signoVital.getHabilitado())
                 .build();

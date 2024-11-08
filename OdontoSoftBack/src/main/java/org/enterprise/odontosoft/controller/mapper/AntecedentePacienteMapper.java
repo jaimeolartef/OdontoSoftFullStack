@@ -1,6 +1,7 @@
 package org.enterprise.odontosoft.controller.mapper;
 
 import lombok.experimental.UtilityClass;
+import org.apache.logging.log4j.util.Strings;
 import org.enterprise.odontosoft.model.Entity.Antecedente;
 import org.enterprise.odontosoft.model.Entity.AntecedentePaciente;
 import org.enterprise.odontosoft.model.Entity.HistoriaClinica;
@@ -19,10 +20,10 @@ public class AntecedentePacienteMapper {
                 .idhistoriaclinica(HistoriaClinica.builder().id(antecedentePaciente.getIdhistoriaclinica()).build())
                 .idantecedente(Antecedente.builder().id(antecedentePaciente.getIdantecedente()).build())
                 .opciones(antecedentePaciente.getOpciones())
-                .idusuariocreacion(Usuario.builder().id(antecedentePaciente.getIdusuariocreacion()).build())
+                .idusuariocreacion(Usuario.builder().codigo(antecedentePaciente.getIdusuariocreacion()).build())
                 .fechacreacion(antecedentePaciente.getFechacreacion())
-                .idusuariomodificacion(Objects.nonNull(antecedentePaciente.getIdusuariomodificacion()) ? Usuario.builder().id(antecedentePaciente.getIdusuariomodificacion()).build() : null)
-                .fechamodificacion(antecedentePaciente.getFechamodificacion())
+                .idusuariomodificacion(Objects.nonNull(antecedentePaciente.getIdusuariomodificacion()) & Strings.isNotEmpty(antecedentePaciente.getIdusuariomodificacion()) ? Usuario.builder().codigo(antecedentePaciente.getIdusuariomodificacion()).build() : null)
+                .fechamodificacion(Objects.nonNull(antecedentePaciente.getIdusuariomodificacion()) & Strings.isNotEmpty(antecedentePaciente.getIdusuariomodificacion()) ? antecedentePaciente.getFechamodificacion() : null)
                 .habilitado(antecedentePaciente.getHabilitado())
                 .build();
     }
@@ -33,9 +34,9 @@ public class AntecedentePacienteMapper {
                 .idhistoriaclinica(antecedentePaciente.getIdhistoriaclinica().getId())
                 .idantecedente(antecedentePaciente.getIdantecedente().getId())
                 .opciones(antecedentePaciente.getOpciones())
-                .idusuariocreacion(Objects.nonNull(antecedentePaciente.getIdusuariocreacion()) ? antecedentePaciente.getIdusuariocreacion().getId() : null)
+                .idusuariocreacion(Objects.nonNull(antecedentePaciente.getIdusuariocreacion()) ? antecedentePaciente.getIdusuariocreacion().getCodigo() : null)
                 .fechacreacion(antecedentePaciente.getFechacreacion())
-                .idusuariomodificacion(Objects.nonNull(antecedentePaciente.getIdusuariomodificacion()) ? antecedentePaciente.getIdusuariomodificacion().getId() : null)
+                .idusuariomodificacion(Objects.nonNull(antecedentePaciente.getIdusuariomodificacion()) ? antecedentePaciente.getIdusuariomodificacion().getCodigo() : null)
                 .fechamodificacion(antecedentePaciente.getFechamodificacion())
                 .habilitado(antecedentePaciente.getHabilitado())
                 .build();

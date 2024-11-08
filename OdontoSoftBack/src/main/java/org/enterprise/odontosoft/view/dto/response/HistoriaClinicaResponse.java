@@ -20,7 +20,7 @@ public class HistoriaClinicaResponse extends MensajeValidation {
     }
 
     private Integer id;
-    private String idpaciente;
+    private Integer idpaciente;
 
     private String motivoconsulta;
     private String enfermedadactual;

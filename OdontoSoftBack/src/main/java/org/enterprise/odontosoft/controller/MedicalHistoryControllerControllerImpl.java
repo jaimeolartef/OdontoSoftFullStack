@@ -1,9 +1,10 @@
 package org.enterprise.odontosoft.controller;
 
 import lombok.AllArgsConstructor;
+import org.apache.logging.log4j.util.Strings;
 import org.enterprise.odontosoft.controller.mapper.*;
 import org.enterprise.odontosoft.model.Dao.*;
-import org.enterprise.odontosoft.model.Entity.HistoriaClinica;
+import org.enterprise.odontosoft.model.Entity.*;
 import org.enterprise.odontosoft.view.dto.request.HistoriaClinicaRequest;
 import org.enterprise.odontosoft.view.dto.response.HistoriaClinicaResponse;
 import org.slf4j.Logger;
@@ -34,6 +35,7 @@ public class MedicalHistoryControllerControllerImpl implements MedicalHistoryCon
     private final PlanTratamientoDao planTratamientoDao;
     private final SignoVitalDao signoVitalDao;
     private final DetalleOdontogramaDao detalleOdontogramaDao;
+    private final UsuarioDao usuarioDao;
 
     private static final Logger logger = LoggerFactory.getLogger(MedicalHistoryControllerControllerImpl.class);
 
@@ -41,12 +43,12 @@ public class MedicalHistoryControllerControllerImpl implements MedicalHistoryCon
     public ResponseEntity<HistoriaClinicaResponse> createMedicalHistory(HistoriaClinicaRequest historiaClinicaRequest) {
         ResponseEntity<HistoriaClinicaResponse> responseEntity = null;
         try {
-            List<HistoriaClinica> historiaClinicas = historiaClinicaDao.findByPacienteId(historiaClinicaRequest.getIdpaciente());
-            if (!historiaClinicas.isEmpty()) {
-                responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new HistoriaClinicaResponse(String.valueOf(HttpStatus.BAD_REQUEST.value()), "Ya existe una historia clínica para el paciente proporcionado"));
-                return responseEntity;
+            HistoriaClinica historiaClinica = MedicalHistoryMapper.toEntity(historiaClinicaRequest);
+            historiaClinica.setIdusuariocreacion(Usuario.builder().id(usuarioDao.findByCodigo(historiaClinicaRequest.getIdusuariocreacion()).getId()).build());
+            if (Strings.isNotBlank(historiaClinicaRequest.getIdusuariomodificacion())){
+                historiaClinica.setIdusuariomodificacion(Usuario.builder().id(usuarioDao.findByCodigo(historiaClinicaRequest.getIdusuariomodificacion()).getId()).build());
             }
-            HistoriaClinica historiaClinica = historiaClinicaDao.save(MedicalHistoryMapper.toEntity(historiaClinicaRequest));
+            historiaClinica = historiaClinicaDao.save(historiaClinica);
             historiaClinicaRequest.setId(historiaClinica.getId());
             saveDetailsMedicalHistory(historiaClinicaRequest);
             responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(MedicalHistoryMapper.toDtoLigth(historiaClinica));
@@ -60,106 +62,76 @@ public class MedicalHistoryControllerControllerImpl implements MedicalHistoryCon
 
     public void saveDetailsMedicalHistory(HistoriaClinicaRequest historiaClinicaRequest) {
     try {
-        // Guardar acoplamientodienteants
-        historiaClinicaRequest.getAcoplamientodienteants().forEach(acoplamiento -> {
-            acoplamiento.setIdhistoriaclinica(historiaClinicaRequest.getId());
-            acoplamiento.setHabilitado(true);
-            acoplamientoDienteAntDao.save(AcoplamientoDienteAntMapper.toEntity(acoplamiento));
-        });
-
-        // Guardar analisisoclusions
-        historiaClinicaRequest.getAnalisisoclusions().forEach(analisis -> {
-            analisis.setIdhistoriaclinica(historiaClinicaRequest.getId());
-            analisis.setHabilitado(true);
-            analisisOclusionDao.save(AnalisisOclusionMapper.toEntity(analisis));
-        });
 
         // Guardar antecedentepacientes
         historiaClinicaRequest.getAntecedentepacientes().forEach(antecedente -> {
             antecedente.setIdhistoriaclinica(historiaClinicaRequest.getId());
             antecedente.setHabilitado(true);
-            antecedentePacienteDao.save(AntecedentePacienteMapper.toEntity(antecedente));
+            AntecedentePaciente antecedentePaciente = AntecedentePacienteMapper.toEntity(antecedente);
+            antecedentePaciente.setIdusuariocreacion(Usuario.builder().id(usuarioDao.findByCodigo(antecedente.getIdusuariocreacion()).getId()).build());
+            if (Strings.isNotBlank(antecedente.getIdusuariomodificacion())){
+                antecedentePaciente.setIdusuariomodificacion(Usuario.builder().id(usuarioDao.findByCodigo(antecedente.getIdusuariomodificacion()).getId()).build());
+            }
+            antecedentePacienteDao.save(antecedentePaciente);
         });
 
         // Guardar ayudadiagnosticas
         historiaClinicaRequest.getAyudadiagnosticas().forEach(ayuda -> {
             ayuda.setIdhistoriaclinica(historiaClinicaRequest.getId());
-            ayudaDiagnosticaDao.save(AyudaDiagnosticaMapper.toEntity(ayuda));
-        });
-
-        // Guardar contactooclusalesmovs
-        historiaClinicaRequest.getContactooclusalesmovs().forEach(contacto -> {
-            contacto.setIdhistoriaclinica(historiaClinicaRequest.getId());
-            contacto.setHabilitado(true);
-            contactoOclusalMovDao.save(ContactoOclusalesMovMapper.toEntity(contacto));
+            AyudaDiagnostica ayudaDiagnostica = AyudaDiagnosticaMapper.toEntity(ayuda);
+            ayudaDiagnostica.setIdusuariocreacion(Usuario.builder().id(usuarioDao.findByCodigo(ayuda.getIdusuariocreacion()).getId()).build());
+            if (Strings.isNotBlank(ayuda.getIdusuariomodificacion())){
+                ayudaDiagnostica.setIdusuariomodificacion(Usuario.builder().id(usuarioDao.findByCodigo(ayuda.getIdusuariomodificacion()).getId()).build());
+            }
+            ayudaDiagnosticaDao.save(ayudaDiagnostica);
         });
 
         // Guardar diagnosticos
         historiaClinicaRequest.getDiagnosticos().forEach(diagnostico -> {
             diagnostico.setIdhistoriaclinica(historiaClinicaRequest.getId());
             diagnostico.setHabilitado(true);
-            diagnosticoDao.save(DiagnosticoMapper.toEntity(diagnostico));
-        });
-
-        // Guardar examendentals
-        historiaClinicaRequest.getExamendentals().forEach(examen -> {
-            examen.setIdhistoriaclinica(historiaClinicaRequest.getId());
-            examen.setHabilitado(true);
-            examenDentalDao.save(ExamenDentalMapper.toEntity(examen));
+            Diagnostico diagnosticoEntity = DiagnosticoMapper.toEntity(diagnostico);
+            diagnosticoEntity.setIdusuariocreacion(Usuario.builder().id(usuarioDao.findByCodigo(diagnostico.getIdusuariocreacion()).getId()).build());
+            if (Strings.isNotBlank(diagnostico.getIdusuariomodificacion())){
+                diagnosticoEntity.setIdusuariomodificacion(Usuario.builder().id(usuarioDao.findByCodigo(diagnostico.getIdusuariomodificacion()).getId()).build());
+            }
+            diagnosticoDao.save(diagnosticoEntity);
         });
 
         // Guardar examenestomatologicos
         historiaClinicaRequest.getExamenestomatologicos().forEach(examen -> {
             examen.setIdhistoriaclinica(historiaClinicaRequest.getId());
             examen.setHabilitado(true);
-            examenEstomatologicoDao.save(ExamenEstomatologicoMapper.toEntity(examen));
-        });
-
-        // Guardar examenperiodontals
-        historiaClinicaRequest.getExamenperiodontals().forEach(examen -> {
-            examen.setIdhistoriaclinica(historiaClinicaRequest.getId());
-            examen.setHabilitado(true);
-            examenPeriodontalDao.save(ExamenPeriodontalMapper.toEntity(examen));
+            ExamenEstomatologico examenEstomatologico = ExamenEstomatologicoMapper.toEntity(examen);
+            examenEstomatologico.setIdusuariocreacion(Usuario.builder().id(usuarioDao.findByCodigo(examen.getIdusuariocreacion()).getId()).build());
+            if (Strings.isNotBlank(examen.getIdusuariomodificacion())){
+                examenEstomatologico.setIdusuariomodificacion(Usuario.builder().id(usuarioDao.findByCodigo(examen.getIdusuariomodificacion()).getId()).build());
+            }
+            examenEstomatologicoDao.save(examenEstomatologico);
         });
 
         // Guardar habitopacientes
         historiaClinicaRequest.getHabitopacientes().forEach(habito -> {
             habito.setIdhistoriaclinica(historiaClinicaRequest.getId());
             habito.setHabilitado(true);
-            habitoPacienteDao.save(HabitoPacienteMapper.toEntity(habito));
-        });
-
-        // Guardar historiacaries
-        historiaClinicaRequest.getHistoriacaries().forEach(historia -> {
-            historia.setIdhistoriaclinica(historiaClinicaRequest.getId());
-            historia.setHabilitado(true);
-            historiaCariesDao.save(HistoriAcariesMapper.toEntity(historia));
-        });
-
-        // Guardar odontogramas
-        historiaClinicaRequest.getOdontogramas().forEach(odontograma -> {
-            odontograma.setIdhistoriaclinica(historiaClinicaRequest.getId());
-            odontograma.setHabilitado(true);
-            Integer id = odontogramaDao.save(OdontogramaMapper.toEntity(odontograma)).getId();
-            odontograma.getDetalleodontogramas().forEach(detalle -> {
-                detalle.setIdodontograma(id);
-                detalleOdontogramaDao.save(DetalleOdontogramaMapper.toEntity(detalle));
-            });
-        });
-
-
-
-        // Guardar plantratamientos
-        historiaClinicaRequest.getPlantratamientos().forEach(plan -> {
-            plan.setIdhistoriaclinica(historiaClinicaRequest.getId());
-            planTratamientoDao.save(PlanTratamientoMapper.toEntity(plan));
+            HabitoPaciente habitoPaciente = HabitoPacienteMapper.toEntity(habito);
+            habitoPaciente.setIdusuariocreacion(Usuario.builder().id(usuarioDao.findByCodigo(habito.getIdusuariocreacion()).getId()).build());
+            if (Strings.isNotBlank(habito.getIdusuariomodificacion())){
+                habitoPaciente.setIdusuariomodificacion(Usuario.builder().id(usuarioDao.findByCodigo(habito.getIdusuariomodificacion()).getId()).build());
+            }
+            habitoPacienteDao.save(habitoPaciente);
         });
 
         // Guardar signovitals
         historiaClinicaRequest.getSignovitals().forEach(signo -> {
             signo.setIdhistoriaclinica(historiaClinicaRequest.getId());
             signo.setHabilitado(true);
-            signoVitalDao.save(SignoVitalMapper.toEntity(signo));
+            SignoVital signoVital = SignoVitalMapper.toEntity(signo);
+            signoVital.setIdusuariocreacion(Usuario.builder().id(usuarioDao.findByCodigo(signo.getIdusuariocreacion()).getId()).build());
+            if (Strings.isNotBlank(signo.getIdusuariomodificacion())){
+                signoVital.setIdusuariomodificacion(Usuario.builder().id(usuarioDao.findByCodigo(signo.getIdusuariomodificacion()).getId()).build());
+            }
+            signoVitalDao.save(signoVital);
         });
 
     } catch (Exception e) {

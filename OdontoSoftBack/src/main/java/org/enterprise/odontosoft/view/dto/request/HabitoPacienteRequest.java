@@ -24,12 +24,12 @@ public class HabitoPacienteRequest {
     private Boolean opciones;
 
     @NotNull
-    private Integer idusuariocreacion;
+    private String idusuariocreacion;
 
     @NotNull
     private LocalDateTime fechacreacion;
 
-    private Integer idusuariomodificacion;
+    private String idusuariomodificacion;
 
     private LocalDateTime fechamodificacion;
 

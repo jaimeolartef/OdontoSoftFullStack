@@ -19,9 +19,9 @@ public class DiagnosticoMapper {
                 .idhistoriaclinica(HistoriaClinica.builder().id(diagnosticoRequest.getIdhistoriaclinica()).build())
                 .idtipodiagnostico(TipoDiagnostico.builder().id(diagnosticoRequest.getIdtipodiagnostico()).build())
                 .definitivo(diagnosticoRequest.getDefinitivo())
-                .idusuariocreacion(Usuario.builder().id(diagnosticoRequest.getIdusuariocreacion()).build())
+                .idusuariocreacion(Usuario.builder().codigo(diagnosticoRequest.getIdusuariocreacion()).build())
                 .fechacreacion(diagnosticoRequest.getFechacreacion())
-                .idusuariomodificacion(Objects.nonNull(diagnosticoRequest.getIdusuariomodificacion()) ? Usuario.builder().id(diagnosticoRequest.getIdusuariomodificacion()).build() : null)
+                .idusuariomodificacion(Objects.nonNull(diagnosticoRequest.getIdusuariomodificacion()) ? Usuario.builder().codigo(diagnosticoRequest.getIdusuariomodificacion()).build() : null)
                 .fechamodificacion(diagnosticoRequest.getFechamodificacion())
                 .habilitado(diagnosticoRequest.getHabilitado())
                 .build();
@@ -35,9 +35,9 @@ public class DiagnosticoMapper {
                 .codtipodiagnostico(diagnostico.getIdtipodiagnostico().getCodigo())
                 .descripciontipodiagnostico(diagnostico.getIdtipodiagnostico().getDescripcion())
                 .definitivo(diagnostico.getDefinitivo())
-                .idusuariocreacion(diagnostico.getIdusuariocreacion().getId())
+                .idusuariocreacion(diagnostico.getIdusuariocreacion().getCodigo())
                 .fechacreacion(diagnostico.getFechacreacion())
-                .idusuariomodificacion(Objects.nonNull(diagnostico.getIdusuariomodificacion()) ? diagnostico.getIdusuariomodificacion().getId() : null)
+                .idusuariomodificacion(Objects.nonNull(diagnostico.getIdusuariomodificacion()) ? diagnostico.getIdusuariomodificacion().getCodigo() : null)
                 .fechamodificacion(diagnostico.getFechamodificacion())
                 .habilitado(diagnostico.getHabilitado())
                 .build();

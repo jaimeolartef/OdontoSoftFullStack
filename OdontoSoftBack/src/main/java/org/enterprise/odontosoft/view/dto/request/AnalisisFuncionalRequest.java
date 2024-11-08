@@ -18,9 +18,9 @@ public class AnalisisFuncionalRequest {
 	private Boolean deglucion;
 	private Boolean fonacion;
 	private Boolean respiracion;
-	private Usuario idusuariocreacion;
+	private String idusuariocreacion;
 	private LocalDateTime fechacreacion;
-	private Usuario idusuariomodificacion;
+	private String idusuariomodificacion;
 	private LocalDateTime fechamodificacion;
 	private Boolean habilitado;
 }

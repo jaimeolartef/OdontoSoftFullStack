@@ -19,12 +19,12 @@ public class AyudaDiagnosticaRequest {
     private Integer idtipoayudadiag;
 
     @NotNull
-    private Integer idusuariocreacion;
+    private String idusuariocreacion;
 
     @NotNull
     private LocalDateTime fechacreacion;
 
-    private Integer idusuariomodificacion;
+    private String idusuariomodificacion;
 
     private LocalDateTime fechamodificacion;
 }

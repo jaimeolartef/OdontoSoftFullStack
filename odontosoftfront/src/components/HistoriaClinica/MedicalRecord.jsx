@@ -15,6 +15,7 @@ import Diagnosticos from "./Diagnosticos";
 import Diente from "../../resource/diente.png";
 import AyudasDiagnostico from "./AyudaDiagnostica";
 import {Tooltip} from "react-tooltip";
+import showMessage from "../../util/UtilMessage";
 
 const MedicalRecord = () => {
   const location = useLocation();
@@ -36,20 +37,51 @@ const MedicalRecord = () => {
     enfermedadActual: '',
     observacionAntec: '',
     observacionantecodon: '',
+    observacionanafunc: '',
+    idusuariocreacion: '',
+    fechacreacion: '',
+    observacion: '',
+    atmmusculatura: true,
+    habilitado: true,
     antecedentepacientes: [],
     habitopacientes: [],
-    observacion: '',
     signovitals: [],
     analisisfuncionals: [],
-    observacionanafunc: '',
     examenestomatologicos: [],
-    odontogramas: [],
     diagnosticos: [],
     ayudadiagnosticas: []
   });
 
   const handleSubmit = (e) => {
+    console.log('paso ultimo paso guardar:', formMedicalHistory);
+    let usuario = localStorage.getItem('username');
     e.preventDefault();
+    if (formMedicalHistory.idHistoriaClinica) {
+      console.log('entro en modificar:');
+      formMedicalHistory.idusuariomodificacion = usuario;
+      formMedicalHistory.fechamodificacion = new Date().toISOString();
+    } else {
+      console.log('entro en guardar:');
+      formMedicalHistory.idusuariocreacion = usuario;
+      formMedicalHistory.fechacreacion = new Date().toISOString();
+    }
+    let token = localStorage.getItem('jsonwebtoken');
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    axios.post(`${config.baseURL}/historiaClinica/crear`, formMedicalHistory, {
+      validateStatus: function (status) {
+        return status;
+      }
+    })
+      .then(response => {
+        if (response.status === 201) {
+          showMessage('success', 'La historia clínica se guardo con éxito');
+        } else {
+          showMessage('error', 'Error al guardar la historia clínica');
+        }
+      })
+      .catch(error => {
+        showMessage('error', 'Error al guardar la historia clínica');
+      });
   }
 
   const mapMedicalHistory = (data) => {
@@ -60,12 +92,16 @@ const MedicalRecord = () => {
       enfermedadActual: data.enfermedadactual || '',
       observacionAntec: data.observacionantec || '',
       observacionantecodon: data.observacionantecodon || '',
+      observacion: data.observacion || '',
+      observacionanafunc: data.observacionanafunc || '',
+      idusuariocreacion: data.idusuariocreacion || '',
+      fechacreacion: data.fechacreacion || '',
+      atmmusculatura: data.atmmusculatura || true,
+      habilitado: data.habilitado || true,
       antecedentepacientes: data.antecedentepacientes || [],
       habitopacientes: data.habitopacientes || [],
-      observacion: data.observacion || '',
       signovitals: data.signovitals || [],
       analisisfuncionals: data.analisisfuncionals || [],
-      observacionanafunc: data.observacionanafunc || '',
       examenestomatologicos: data.examenestomatologicos || [],
       odontogramas: data.odontogramas || [],
       diagnosticos: data.diagnosticos || [],

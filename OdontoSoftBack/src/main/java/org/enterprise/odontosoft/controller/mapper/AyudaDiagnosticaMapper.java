@@ -18,9 +18,9 @@ public class AyudaDiagnosticaMapper {
                 .id(ayudaDiagnosticaRequest.getId())
                 .idhistoriaclinica(HistoriaClinica.builder().id(ayudaDiagnosticaRequest.getIdhistoriaclinica()).build())
                  .idtipoayudadiag(TipoAyudaDiag.builder().id(ayudaDiagnosticaRequest.getIdtipoayudadiag()).build())
-                .idusuariocreacion(Usuario.builder().id(ayudaDiagnosticaRequest.getIdusuariocreacion()).build())
+                .idusuariocreacion(Usuario.builder().codigo(ayudaDiagnosticaRequest.getIdusuariocreacion()).build())
                 .fechacreacion(ayudaDiagnosticaRequest.getFechacreacion())
-                .idusuariomodificacion(Objects.nonNull(ayudaDiagnosticaRequest.getIdusuariomodificacion()) ? Usuario.builder().id(ayudaDiagnosticaRequest.getIdusuariomodificacion()).build(): null)
+                .idusuariomodificacion(Objects.nonNull(ayudaDiagnosticaRequest.getIdusuariomodificacion()) ? Usuario.builder().codigo(ayudaDiagnosticaRequest.getIdusuariomodificacion()).build(): null)
                 .fechamodificacion(ayudaDiagnosticaRequest.getFechamodificacion())
                 .build();
     }
@@ -32,9 +32,9 @@ public class AyudaDiagnosticaMapper {
                 .idtipoayudadiag(ayudaDiagnostica.getIdtipoayudadiag().getId())
                 .codtipoayudadiag(ayudaDiagnostica.getIdtipoayudadiag().getCodigo())
                 .descripciontipoayudadiag(ayudaDiagnostica.getIdtipoayudadiag().getDescripcion())
-                .idusuariocreacion(ayudaDiagnostica.getIdusuariocreacion().getId())
+                .idusuariocreacion(ayudaDiagnostica.getIdusuariocreacion().getCodigo())
                 .fechacreacion(ayudaDiagnostica.getFechacreacion())
-                .idusuariomodificacion(Objects.nonNull(ayudaDiagnostica.getIdusuariomodificacion()) ? ayudaDiagnostica.getIdusuariomodificacion().getId() : null)
+                .idusuariomodificacion(Objects.nonNull(ayudaDiagnostica.getIdusuariomodificacion()) ? ayudaDiagnostica.getIdusuariomodificacion().getCodigo() : null)
                 .fechamodificacion(ayudaDiagnostica.getFechamodificacion())
                 .build();
     }

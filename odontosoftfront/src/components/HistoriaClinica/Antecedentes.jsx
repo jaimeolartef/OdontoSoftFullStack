@@ -4,8 +4,11 @@ import config from "../../config";
 
 const Antecedentes = ({formMedicalHistory}) => {
 
+  const usuario = localStorage.getItem('username');
+
   useEffect(() => {
     // Este useEffect se ejecutará después del primer useEffect
+    console.log('formMedicalHistory:', formMedicalHistory);
     const fetchHistoria = async () => {
       try {
         const antecedentsResponse = await axios.get(`${config.baseURL}/precedenthistory/get`);
@@ -14,7 +17,17 @@ const Antecedentes = ({formMedicalHistory}) => {
 
           const antecedentesMed = antecedentes.filter(item => !item.odontologico);
           antecedentesMed.forEach(antecedente => {
-            antecedente.seleccionado = formMedicalHistory.antecedentepacientes.find(item => item.idantecedente == antecedente.id)?.opciones || '';
+            let existItem = formMedicalHistory.antecedentepacientes.findIndex(item => item.idantecedente == antecedente.id);
+            if (existItem === -1) {
+              formMedicalHistory.antecedentepacientes.push({
+                idantecedente: antecedente.id,
+                idhistoriaclinica: formMedicalHistory.idHistoriaClinica,
+                opciones: ''
+              });
+            } else {
+              antecedente.seleccionado = formMedicalHistory.antecedentepacientes.find(item => item.idantecedente == antecedente.id)?.opciones || '';
+            }
+
           });
           setAntecedentesMedicos(antecedentesMed);
         }
@@ -43,8 +56,16 @@ const Antecedentes = ({formMedicalHistory}) => {
     });
     console.log('antecedente:', antecedente);
     console.log('formMedicalHistory:', formMedicalHistory.antecedentepacientes);
+    let fechacreacion = new Date().toISOString();
     formMedicalHistory.antecedentepacientes = formMedicalHistory.antecedentepacientes.map(item =>
-      item.idantecedente == antecedente.id ? {...item, opciones: value} : item
+      item.idantecedente == antecedente.id ? {
+        ...item,
+        opciones: value,
+        idusuariocreacion: usuario,
+        fechacreacion: fechacreacion,
+        idusuariomodificacion: item.id ? usuario : '',
+        fechamodificacion: item.id ? fechacreacion : ''
+      } : item
     );
   };
 

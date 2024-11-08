@@ -19,9 +19,9 @@ public class HabitoPacienteMapper {
                  .idhistoriaclinica(HistoriaClinica.builder().id(habitoPacienteRequest.getIdhistoriaclinica()).build())
                 .idhabito(Habito.builder().id(habitoPacienteRequest.getIdhabito()).build())
                 .opciones(habitoPacienteRequest.getOpciones())
-                .idusuariocreacion(Usuario.builder().id(habitoPacienteRequest.getIdusuariocreacion()).build())
+                .idusuariocreacion(Usuario.builder().codigo(habitoPacienteRequest.getIdusuariocreacion()).build())
                 .fechacreacion(habitoPacienteRequest.getFechacreacion())
-                .idusuariomodificacion(Objects.nonNull(habitoPacienteRequest.getIdusuariomodificacion()) ? Usuario.builder().id(habitoPacienteRequest.getIdusuariomodificacion()).build() : null)
+                .idusuariomodificacion(Objects.nonNull(habitoPacienteRequest.getIdusuariomodificacion()) ? Usuario.builder().codigo(habitoPacienteRequest.getIdusuariomodificacion()).build() : null)
                 .fechamodificacion(habitoPacienteRequest.getFechamodificacion())
                 .habilitado(habitoPacienteRequest.getHabilitado())
                 .build();
@@ -33,9 +33,9 @@ public class HabitoPacienteMapper {
                 .idhistoriaclinica(habitoPaciente.getIdhistoriaclinica().getId())
                 .idhabito(habitoPaciente.getIdhabito().getId())
                 .opciones(habitoPaciente.getOpciones())
-                .idusuariocreacion(habitoPaciente.getIdusuariocreacion().getId())
+                .idusuariocreacion(habitoPaciente.getIdusuariocreacion().getCodigo())
                 .fechacreacion(habitoPaciente.getFechacreacion())
-                .idusuariomodificacion(Objects.nonNull(habitoPaciente.getIdusuariomodificacion()) ? habitoPaciente.getIdusuariomodificacion().getId() : null)
+                .idusuariomodificacion(Objects.nonNull(habitoPaciente.getIdusuariomodificacion()) ? habitoPaciente.getIdusuariomodificacion().getCodigo() : null)
                 .fechamodificacion(habitoPaciente.getFechamodificacion())
                 .habilitado(habitoPaciente.getHabilitado())
                 .build();
