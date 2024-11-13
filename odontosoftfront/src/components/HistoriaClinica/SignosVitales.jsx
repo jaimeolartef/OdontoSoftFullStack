@@ -1,62 +1,54 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 
-const SignosVitales = ({ formMedicalHistory }) => {
-
+const SignosVitales = ({ formMedicalHistory, setFormMedicalHistory }) => {
   const usuario = localStorage.getItem('username');
-  const [signos, setSignos] = useState({
-    pulso: '',
-    temperatura: '',
-    presionarterial: '',
-    frecuenciarespiratoria: '',
-    peso: '',
-    talla: ''
-  });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    let fecha = new Date().toISOString();
-    setSignos(prev => ({
-      ...prev,
-      [name]: value,
-      idusuariocreacion: usuario,
-      fechacreacion: fecha,
-      idusuariomodificacion: signos.id ? usuario : '',
-      fechamodificacion: signos.id ? fecha : ''
-    }));
-    console.log('Signos:', signos);
-    formMedicalHistory.signovitals = [signos];
-  };
-
-  const mapSignos = (data) => ({
-    id: data.id || '',
-    pulso: data.pulso || '',
-    temperatura: data.temperatura || '',
-    presionarterial: data.presionarterial || '',
-    frecuenciarespiratoria: data.frecuenciarespiratoria || '',
-    peso: data.peso || '',
-    talla: data.talla || ''
-  });
+    const handleChange = (e) => {
+      const { name, value } = e.target;
+      let fecha = new Date().toISOString();
+      setFormMedicalHistory(prev => {
+        const updatedSignovitals = prev.signovitals.map((item, index) => {
+          if (index === 0) { // Assuming you want to update the first item in the list
+            return {
+              ...item,
+              [name]: value,
+              idusuariocreacion: item.idusuariocreacion || usuario,
+              fechacreacion: item.fechacreacion || fecha,
+              idusuariomodificacion: item.id ? usuario : '',
+              fechamodificacion: item.id ? fecha : ''
+            };
+          }
+          return item;
+        });
+        return {
+          ...prev,
+          signovitals: updatedSignovitals
+        };
+      });
+    };
 
   useEffect(() => {
-    if (Array.isArray(formMedicalHistory.signovitals)) {
-      const signosVitales = formMedicalHistory.signovitals.map(mapSignos);
-      console.log('Signos vitales:', signosVitales.length);
-      let fecha = new Date().toISOString();
-      if (signosVitales.length > 0) {
-        setSignos(signosVitales[0]);
-      } else {
-        setSignos({
-          pulso: '',
-          temperatura: '',
-          presionarterial: '',
-          frecuenciarespiratoria: '',
-          peso: '',
-          talla: '',
-          idusuariocreacion: usuario,
-          fechacreacion: fecha
-        });
+    const fetchSignosVitales = async () => {
+      console.log('Primer paso cargar Signos Vitales:', formMedicalHistory.signovitals);
+      if (!formMedicalHistory.signovitals || Object.keys(formMedicalHistory.signovitals).length === 0) {
+        let fecha = new Date().toISOString();
+        setFormMedicalHistory(prev => ({
+          ...prev,
+          signovitals: {
+            pulso: '',
+            temperatura: '',
+            presionarterial: '',
+            frecuenciarespiratoria: '',
+            peso: '',
+            talla: '',
+            idusuariocreacion: usuario,
+            fechacreacion: fecha
+          }
+        }));
       }
     }
+
+    fetchSignosVitales();
   }, [formMedicalHistory]);
 
   return (
@@ -70,7 +62,7 @@ const SignosVitales = ({ formMedicalHistory }) => {
           <input
             type="text"
             name="peso"
-            value={signos.peso}
+            value={formMedicalHistory.signovitals[0]?.peso || ''}
             onChange={handleChange}
           />
         </div>
@@ -79,7 +71,7 @@ const SignosVitales = ({ formMedicalHistory }) => {
           <input
             type="text"
             name="talla"
-            value={signos.talla}
+            value={formMedicalHistory.signovitals[0]?.talla || ''}
             onChange={handleChange}
           />
         </div>
@@ -88,7 +80,7 @@ const SignosVitales = ({ formMedicalHistory }) => {
           <input
             type="text"
             name="pulso"
-            value={signos.pulso}
+            value={formMedicalHistory.signovitals[0]?.pulso || ''}
             onChange={handleChange}
           />
         </div>
@@ -97,15 +89,16 @@ const SignosVitales = ({ formMedicalHistory }) => {
           <input
             type="text"
             name="temperatura"
-            value={signos.temperatura}
-            onChange={handleChange}/>
+            value={formMedicalHistory.signovitals[0]?.temperatura || ''}
+            onChange={handleChange}
+          />
         </div>
         <div>
           <label>Presión Arterial (mmHg):</label>
           <input
             type="text"
             name="presionarterial"
-            value={signos.presionarterial}
+            value={formMedicalHistory.signovitals[0]?.presionarterial || ''}
             onChange={handleChange}
           />
         </div>
@@ -114,7 +107,7 @@ const SignosVitales = ({ formMedicalHistory }) => {
           <input
             type="text"
             name="frecuenciarespiratoria"
-            value={signos.frecuenciarespiratoria}
+            value={formMedicalHistory.signovitals[0]?.frecuenciarespiratoria || ''}
             onChange={handleChange}
           />
         </div>

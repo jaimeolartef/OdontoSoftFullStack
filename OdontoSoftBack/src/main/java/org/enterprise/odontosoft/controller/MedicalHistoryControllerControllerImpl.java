@@ -1,5 +1,6 @@
 package org.enterprise.odontosoft.controller;
 
+import io.micrometer.common.util.StringUtils;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
 import org.enterprise.odontosoft.controller.mapper.*;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
+import java.util.Objects;
 
 @AllArgsConstructor
 @Controller
@@ -126,6 +128,10 @@ public class MedicalHistoryControllerControllerImpl implements MedicalHistoryCon
         historiaClinicaRequest.getSignovitals().forEach(signo -> {
             signo.setIdhistoriaclinica(historiaClinicaRequest.getId());
             signo.setHabilitado(true);
+            if (StringUtils.isBlank(signo.getIdusuariomodificacion()) || Objects.isNull(signo.getIdusuariomodificacion())){
+                signo.setIdusuariomodificacion(null);
+                signo.setFechamodificacion(null);
+            }
             SignoVital signoVital = SignoVitalMapper.toEntity(signo);
             signoVital.setIdusuariocreacion(Usuario.builder().id(usuarioDao.findByCodigo(signo.getIdusuariocreacion()).getId()).build());
             if (Strings.isNotBlank(signo.getIdusuariomodificacion())){
