@@ -1,44 +1,51 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 
-const AnalisisFuncional = ({ formMedicalHistory }) => {
-  const [analisisFunc, setAnalisisFunc] = useState({
-    id: '',
-    masticacion: false,
-    deglucion: false,
-    fonacion: false,
-    respiracion: false,
-    habilitado: false
-  });
-
-  useEffect(() => {
-    if (Array.isArray(formMedicalHistory.analisisfuncionals)) {
-      const analisisFunc = formMedicalHistory.analisisfuncionals.map(mapAnalisisFunc);
-      if (analisisFunc.length) {
-        setAnalisisFunc(analisisFunc[0]);
-      }
-    }
-  }, [formMedicalHistory]);
-
-  const mapAnalisisFunc = (data) => ({
-    id: data.id || '',
-    masticacion: data.masticacion || false,
-    deglucion: data.deglucion || false,
-    fonacion: data.fonacion || false,
-    respiracion: data.respiracion || false,
-    habilitado: data.habilitado || false
-  });
+const AnalisisFuncional = ({ formMedicalHistory, setFormMedicalHistory }) => {
+  const usuario = localStorage.getItem('username');
 
   const handleChange = (e) => {
     const { name, type, value, checked } = e.target;
     const newValue = type === 'checkbox' ? checked : value;
-    setAnalisisFunc(prev => ({
-      ...prev,
-      [name]: newValue
-    }));
-    formMedicalHistory.analisisfuncionals = formMedicalHistory.analisisfuncionals.map(item =>
-      item.id === analisisFunc.id ? { ...item, [name]: newValue } : item
-    );
+    let fecha = new Date().toISOString();
+    setFormMedicalHistory(prev => {
+      const updatedAnalisisFunc = prev.analisisfuncionals.map((item, index) => {
+        if (index === 0) { // Assuming you want to update the first item in the list
+          return {
+            ...item,
+            [name]: newValue,
+            idusuariocreacion: item.idusuariocreacion || usuario,
+            fechacreacion: item.fechacreacion || fecha,
+            idusuariomodificacion: item.id ? usuario : '',
+            fechamodificacion: item.id ? fecha : ''
+          };
+        }
+        return item;
+      });
+      return {
+        ...prev,
+        analisisfuncionals: updatedAnalisisFunc
+      };
+    });
   };
+
+  useEffect(() => {
+    let fecha = new Date().toISOString();
+    if (!formMedicalHistory.analisisfuncionals || formMedicalHistory.analisisfuncionals.length === 0) {
+      setFormMedicalHistory(prev => ({
+        ...prev,
+        analisisfuncionals: [{
+          id: '',
+          masticacion: false,
+          deglucion: false,
+          fonacion: false,
+          respiracion: false,
+          habilitado: false,
+          idusuariocreacion: usuario,
+          fechacreacion: fecha
+        }]
+      }));
+    }
+  }, [formMedicalHistory]);
 
   return (
     <div className="card">
@@ -51,7 +58,7 @@ const AnalisisFuncional = ({ formMedicalHistory }) => {
                  className="form-check-input"
                  type="checkbox"
                  name="masticacion"
-                 checked={analisisFunc.masticacion}
+                 checked={formMedicalHistory.analisisfuncionals[0]?.masticacion || false}
                  onChange={handleChange}/>
           <label className="form-check-label" htmlFor="masticacion">Masticación</label>
         </div>
@@ -61,7 +68,7 @@ const AnalisisFuncional = ({ formMedicalHistory }) => {
             className="form-check-input"
             name="deglucion"
             id="deglucion"
-            checked={analisisFunc.deglucion}
+            checked={formMedicalHistory.analisisfuncionals[0]?.deglucion || false}
             onChange={handleChange}/>
           <label className="form-check-label" htmlFor="deglucion">Deglución</label>
         </div>
@@ -70,7 +77,7 @@ const AnalisisFuncional = ({ formMedicalHistory }) => {
             type="checkbox"
             name="fonacion"
             id="fonacion"
-            checked={analisisFunc.fonacion}
+            checked={formMedicalHistory.analisisfuncionals[0]?.fonacion || false}
             onChange={handleChange}/>
           <label className="form-check-label" htmlFor="fonacion">Fonación</label>
         </div>
@@ -79,7 +86,7 @@ const AnalisisFuncional = ({ formMedicalHistory }) => {
             type="checkbox"
             name="respiracion"
             id="respiracion"
-            checked={analisisFunc.respiracion}
+            checked={formMedicalHistory.analisisfuncionals[0]?.respiracion || false}
             onChange={handleChange}/>
           <label className="form-check-label" htmlFor="respiracion">Respiración</label>
         </div>

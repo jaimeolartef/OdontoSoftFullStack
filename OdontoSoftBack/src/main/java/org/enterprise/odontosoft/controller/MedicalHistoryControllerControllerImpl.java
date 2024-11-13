@@ -38,6 +38,7 @@ public class MedicalHistoryControllerControllerImpl implements MedicalHistoryCon
     private final SignoVitalDao signoVitalDao;
     private final DetalleOdontogramaDao detalleOdontogramaDao;
     private final UsuarioDao usuarioDao;
+    private final AnalisisFuncionalDao analisisFuncionalDao;
 
     private static final Logger logger = LoggerFactory.getLogger(MedicalHistoryControllerControllerImpl.class);
 
@@ -138,6 +139,21 @@ public class MedicalHistoryControllerControllerImpl implements MedicalHistoryCon
                 signoVital.setIdusuariomodificacion(Usuario.builder().id(usuarioDao.findByCodigo(signo.getIdusuariomodificacion()).getId()).build());
             }
             signoVitalDao.save(signoVital);
+        });
+
+        historiaClinicaRequest.getAnalisisfuncionals().forEach(analisisFunc -> {
+            analisisFunc.setIdhistoriaclinica(historiaClinicaRequest.getId());
+            analisisFunc.setHabilitado(true);
+            if (StringUtils.isBlank(analisisFunc.getIdusuariomodificacion()) || Objects.isNull(analisisFunc.getIdusuariomodificacion())){
+                analisisFunc.setIdusuariomodificacion(null);
+                analisisFunc.setFechamodificacion(null);
+            }
+            AnalisisFuncional analisisFuncional = AnalisisFuncionalMapper.toEntity(analisisFunc);
+            analisisFuncional.setIdusuariocreacion(Usuario.builder().id(usuarioDao.findByCodigo(analisisFunc.getIdusuariocreacion()).getId()).build());
+            if (Strings.isNotBlank(analisisFunc.getIdusuariomodificacion())){
+                analisisFuncional.setIdusuariomodificacion(Usuario.builder().id(usuarioDao.findByCodigo(analisisFunc.getIdusuariomodificacion()).getId()).build());
+            }
+            analisisFuncionalDao.save(analisisFuncional);
         });
 
     } catch (Exception e) {

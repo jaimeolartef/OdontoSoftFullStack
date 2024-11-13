@@ -203,7 +203,7 @@ const MedicalRecord = () => {
           <div className="espacio"/>
           <SignosVitales formMedicalHistory={formMedicalHistory} setFormMedicalHistory={setFormMedicalHistory}/>
           <div className="espacio"/>
-          <AnalisisFuncional formMedicalHistory={formMedicalHistory}/>
+          <AnalisisFuncional formMedicalHistory={formMedicalHistory} setFormMedicalHistory={setFormMedicalHistory}/>
           <div className="espacio"/>
           <TextArea label="Observación"
                     name="observacionanafunc"
