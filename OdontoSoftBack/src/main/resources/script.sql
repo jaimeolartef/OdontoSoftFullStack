@@ -1,3 +1,4 @@
+
 create database odontosoft;
 
 create table tipoDocumento
@@ -202,7 +203,6 @@ create table analisisFuncional
     fonacion              boolean DEFAULT false NOT NULL,
     respiracion           boolean DEFAULT false NOT NULL,
     idUsuarioCreacion     int                   NOT NULL,
-    idUsuarioCreacion     int                   NOT NULL,
     fechaCreacion         date                  NOT NULL,
     idUsuarioModificacion int,
     fechaModificacion     date,
@@ -340,7 +340,7 @@ CREATE TABLE alteracionDental
     idTipoAlteracion INTEGER not null,
     descripcion      VARCHAR(500),
     foreign key (idExamenDental) references examenDental (id),
-    foreign key (idTipoAlteracion) references tipoAlteracion (id),
+    foreign key (idTipoAlteracion) references tipoAlteracion (id)
 );
 
 -- tabla para visualizar los cuadrantes en el odontograma
@@ -715,16 +715,16 @@ VALUES (DEFAULT, 2::integer, 2::integer, true);
 INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado)
 VALUES (DEFAULT, 1::integer, 9::integer, true);
 
-INSERT INTO public.tipodocumento(id, codigo, nombre, habilitado)
-VALUES (1, 'C.C.', 'Cédula de Ciudadanía', true);
-INSERT INTO public.tipodocumento(id, codigo, nombre, habilitado)
-VALUES (2, 'C.E.', 'Cédula de Extranjerí', true);
-INSERT INTO public.tipodocumento (id, codigo, nombre, habilitado)
-VALUES (3, 'T.I.', 'Tarjeta de Identidad', true);
-INSERT INTO public.tipodocumento (id, codigo, nombre, habilitado)
-VALUES (4, 'R.C.', 'Registro Civil', true);
-INSERT INTO public.tipodocumento (id, codigo, nombre, habilitado)
-VALUES (5, 'P.S', 'Pasaporte', true);
+INSERT INTO public.tipodocumento(id, codigo, nombre)
+VALUES (1, 'C.C.', 'Cédula de Ciudadanía');
+INSERT INTO public.tipodocumento(id, codigo, nombre)
+VALUES (2, 'C.E.', 'Cédula de Extranjerí');
+INSERT INTO public.tipodocumento (id, codigo, nombre)
+VALUES (3, 'T.I.', 'Tarjeta de Identidad');
+INSERT INTO public.tipodocumento (id, codigo, nombre)
+VALUES (4, 'R.C.', 'Registro Civil');
+INSERT INTO public.tipodocumento (id, codigo, nombre)
+VALUES (5, 'P.S', 'Pasaporte');
 
 
 
