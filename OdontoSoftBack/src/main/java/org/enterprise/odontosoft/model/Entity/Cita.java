@@ -35,4 +35,17 @@ public class Cita {
   @Column(name = "habilitado")
   private Boolean habilitado;
 
+  @Column(name = "estado")
+  private String estado;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "idMedico")
+  private Medico idMedico;
+
+  @Column(name = "fechaNotificacion")
+  private LocalDate fechaNotificacion;
+
+  @Column(name = "motivoCancelacion")
+  private String motivoCancelacion;
+
 }
