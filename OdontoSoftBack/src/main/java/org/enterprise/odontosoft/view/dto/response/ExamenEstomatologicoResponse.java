@@ -38,7 +38,7 @@ public class ExamenEstomatologicoResponse {
     private Boolean surcosvestibulares;
 
     @NotNull
-    private Boolean carrilos;
+    private Boolean carrillos;
 
     @NotNull
     private Boolean procesosalveolares;
@@ -71,7 +71,7 @@ public class ExamenEstomatologicoResponse {
     private Boolean glandulassubmaxilares;
 
     @NotNull
-    private Boolean glandulassalivaresmenor;
+    private Boolean glandulassalivaresmenores;
 
     @NotNull
     private Boolean maxilarsuperior;

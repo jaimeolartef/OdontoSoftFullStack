@@ -210,7 +210,7 @@ const MedicalRecord = () => {
                     value={formMedicalHistory.observacionanafunc || ''}
                     onChange={handleInputChange}/>
           <div className="espacio"/>
-          <ExamenEstomatologico formMedicalHistory={formMedicalHistory}/>
+          <ExamenEstomatologico formMedicalHistory={formMedicalHistory} setFormMedicalHistory={setFormMedicalHistory}/>
           <div className="espacio"/>
           <Diagnosticos formMedicalHistory={formMedicalHistory} setFormMedicalHistory={setFormMedicalHistory}/>
           <div className="espacio"/>

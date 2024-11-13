@@ -105,6 +105,10 @@ public class MedicalHistoryControllerControllerImpl implements MedicalHistoryCon
         historiaClinicaRequest.getExamenestomatologicos().forEach(examen -> {
             examen.setIdhistoriaclinica(historiaClinicaRequest.getId());
             examen.setHabilitado(true);
+            if (StringUtils.isBlank(examen.getIdusuariomodificacion()) || Objects.isNull(examen.getIdusuariomodificacion())){
+                examen.setIdusuariomodificacion(null);
+                examen.setFechamodificacion(null);
+            }
             ExamenEstomatologico examenEstomatologico = ExamenEstomatologicoMapper.toEntity(examen);
             examenEstomatologico.setIdusuariocreacion(Usuario.builder().id(usuarioDao.findByCodigo(examen.getIdusuariocreacion()).getId()).build());
             if (Strings.isNotBlank(examen.getIdusuariomodificacion())){
@@ -141,6 +145,7 @@ public class MedicalHistoryControllerControllerImpl implements MedicalHistoryCon
             signoVitalDao.save(signoVital);
         });
 
+        //Guardar Analisis Funcional
         historiaClinicaRequest.getAnalisisfuncionals().forEach(analisisFunc -> {
             analisisFunc.setIdhistoriaclinica(historiaClinicaRequest.getId());
             analisisFunc.setHabilitado(true);
@@ -155,6 +160,7 @@ public class MedicalHistoryControllerControllerImpl implements MedicalHistoryCon
             }
             analisisFuncionalDao.save(analisisFuncional);
         });
+
 
     } catch (Exception e) {
         logger.error("Error al guardar los detalles de la historia clínica.", e);

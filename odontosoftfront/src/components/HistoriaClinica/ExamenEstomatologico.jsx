@@ -1,29 +1,64 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 
-const ExamenEstomatologico = ({ formMedicalHistory }) => {
-  const [examenEstom, setExamenEstom] = useState({
-    id: '',
-    labiosuperior: false,
-    labioinferior: false,
-    comisura: false,
-    menton: false,
-    frenillos: false,
-    surcosvestibulares: false,
-    carrillos: false,
-    procesosalveolares: false,
-    regionfaringea: false,
-    paladarblando: false,
-    paladarduro: false,
-    pisoboca: false,
-    dorsolengua: false,
-    vientrelengua: false,
-    glandulasparotidas: false,
-    glandulassublinguales: false,
-    glandulassubmaxilares: false,
-    glandulassalivaresmenores: false,
-    maxilarsuperior: false,
-    maxilarinferior: false
-  });
+const ExamenEstomatologico = ({ formMedicalHistory, setFormMedicalHistory }) => {
+  const usuario = localStorage.getItem('username');
+  const handleChange = (e) => {
+    const { name, checked } = e.target;
+    let fecha = new Date().toISOString();
+    setFormMedicalHistory(prev => {
+      const updatedExamenEstom = prev.examenestomatologicos.map((item, index) => {
+        if (index === 0) { // Assuming you want to update the first item in the list
+          return {
+            ...item,
+            [name]: checked,
+            idusuariocreacion: item.idusuariocreacion || usuario,
+            fechacreacion: item.fechacreacion || fecha,
+            idusuariomodificacion: item.id ? usuario : '',
+            fechamodificacion: item.id ? fecha : ''
+          };
+        }
+        return item;
+      });
+      return {
+        ...prev,
+        examenestomatologicos: updatedExamenEstom
+      };
+    });
+  };
+
+  useEffect(() => {
+    let fecha = new Date().toISOString();
+    if (!formMedicalHistory.examenestomatologicos || formMedicalHistory.examenestomatologicos.length === 0) {
+      setFormMedicalHistory(prev => ({
+        ...prev,
+        examenestomatologicos: [{
+          id: '',
+          labiosuperior: false,
+          labioinferior: false,
+          comisura: false,
+          menton: false,
+          frenillos: false,
+          surcosvestibulares: false,
+          carrillos: false,
+          procesosalveolares: false,
+          regionfaringea: false,
+          paladarblando: false,
+          paladarduro: false,
+          pisoboca: false,
+          dorsolengua: false,
+          vientrelengua: false,
+          glandulasparotidas: false,
+          glandulassublinguales: false,
+          glandulassubmaxilares: false,
+          glandulassalivaresmenores: false,
+          maxilarsuperior: false,
+          maxilarinferior: false,
+          idusuariocreacion: usuario,
+          fechacreacion: fecha
+        }]
+      }));
+    }
+  }, [formMedicalHistory, setFormMedicalHistory]);
 
   const items = [
     {id: 1, name: 'Labio superior', value: 'labiosuperior'},
@@ -48,50 +83,6 @@ const ExamenEstomatologico = ({ formMedicalHistory }) => {
     {id: 20, name: 'Maxilar inferior', value: 'maxilarinferior'}
   ];
 
-  const mapExamenEstomatologico = (data) => ({
-    id: data.id || '',
-    labiosuperior: data.labiosuperior || false,
-    labioinferior: data.labioinferior || false,
-    comisura: data.comisura || false,
-    menton: data.menton || false,
-    frenillos: data.frenillos || false,
-    surcosvestibulares: data.surcosvestibulares || false,
-    carrillos: data.carrillos || false,
-    procesosalveolares: data.procesosalveolares || false,
-    regionfaringea: data.regionfaringea || false,
-    paladarblando: data.paladarblando || false,
-    paladarduro: data.paladarduro || false,
-    pisoboca: data.pisoboca || false,
-    dorsolengua: data.dorsolengua || false,
-    vientrelengua: data.vientrelengua || false,
-    glandulasparotidas: data.glandulasparotidas || false,
-    glandulassublinguales: data.glandulassublinguales || false,
-    glandulassubmaxilares: data.glandulassubmaxilares || false,
-    glandulassalivaresmenores: data.glandulassalivaresmenores || false,
-    maxilarsuperior: data.maxilarsuperior || false,
-    maxilarinferior: data.maxilarinferior || false
-  });
-
-  useEffect(() => {
-    if (Array.isArray(formMedicalHistory.examenestomatologicos)) {
-      const examenEstom = formMedicalHistory.examenestomatologicos.map(mapExamenEstomatologico);
-      if (examenEstom.length) {
-        setExamenEstom(examenEstom[0]);
-      }
-    }
-  }, [formMedicalHistory]);
-
-  const handleChange = (e) => {
-    const { name, checked } = e.target;
-    setExamenEstom(prev => ({
-      ...prev,
-      [name]: checked
-    }));
-    formMedicalHistory.examenestomatologicos = formMedicalHistory.examenestomatologicos.map(item =>
-      item.id === examenEstom.id ? { ...item, [name]: checked } : item
-    );
-  }
-
   return (
     <div className="card">
       <div className="card-header">
@@ -111,7 +102,7 @@ const ExamenEstomatologico = ({ formMedicalHistory }) => {
               <td>{item.name}</td>
               <td><input type="checkbox"
                          name={item.value}
-                         checked={examenEstom[item.value]}
+                         checked={formMedicalHistory.examenestomatologicos[0]?.[item.value] || false}
                          onChange={handleChange}
                          className="form-check-input"/></td>
             </tr>

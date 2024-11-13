@@ -21,9 +21,9 @@ public class ExamenEstomatologico {
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idhistoriaclinica")
-    private HistoriaClinica idhistoriaclinica;
+    @NotNull
+    @Column(name = "idhistoriaclinica", nullable = false)
+    private Integer idhistoriaclinica;
 
     @NotNull
     @ColumnDefault("false")
@@ -58,7 +58,7 @@ public class ExamenEstomatologico {
     @NotNull
     @ColumnDefault("false")
     @Column(name = "carrilos", nullable = false)
-    private Boolean carrilos = false;
+    private Boolean carrillos = false;
 
     @NotNull
     @ColumnDefault("false")
