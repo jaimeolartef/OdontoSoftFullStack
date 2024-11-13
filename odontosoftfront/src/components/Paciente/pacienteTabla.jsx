@@ -55,7 +55,7 @@ const PacienteTabla = ({ data, formData }) => {
               <td data-label="Teléfono">{paciente.telefono}</td>
               <td data-label="Habilitado">{paciente.habilitado === 'true' ? 'Sí' : 'No'}</td>
               <td data-label="Acciones">
-                {paciente.idHistoriaClinica  !== null && (
+                {paciente.idHistoriaClinica  !== null && paciente.habilitado === 'true' && (
                   <>
                     <img src={MedicalIcon} alt="Historia Clinica"
                          style={{marginRight: '5px', width: '35px', height: '35px', cursor: 'pointer'}}
@@ -63,7 +63,19 @@ const PacienteTabla = ({ data, formData }) => {
                            e.stopPropagation();
                            handleMedicalRecordClick(paciente);
                          }}
-                         data-tooltip-id="tooltip" data-tooltip-content="Ver Historia Clinica"/>
+                         data-tooltip-id="tooltip" data-tooltip-content="Editar Historia Clinica"/>
+                    <Tooltip id="tooltip"/>
+                  </>
+                )}
+                {paciente.idHistoriaClinica  === null && paciente.habilitado === 'true' && (
+                  <>
+                    <img src={MedicalIcon} alt="Historia Clinica"
+                         style={{marginRight: '5px', width: '35px', height: '35px', cursor: 'pointer', filter: 'grayscale(100%)'}}
+                         onClick={(e) => {
+                           e.stopPropagation();
+                           handleMedicalRecordClick(paciente);
+                         }}
+                         data-tooltip-id="tooltip" data-tooltip-content="Crear Nueva Historia Clinica"/>
                     <Tooltip id="tooltip"/>
                   </>
                 )}

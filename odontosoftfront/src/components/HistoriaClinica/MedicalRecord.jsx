@@ -194,7 +194,8 @@ const MedicalRecord = () => {
                     value={formMedicalHistory.observacionantecodon || ''}
                     onChange={handleInputChange}/>
           <div className="espacio"/>
-          <Habitos formMedicalHistory={formMedicalHistory}/>
+          {/*TODO: Esta cargando siempre en false y validar registrar paciente al crear nuevo*/}
+          <Habitos formMedicalHistory={formMedicalHistory} setFormMedicalHistory={setFormMedicalHistory}/>
           <div className="espacio"/>
           <TextArea label="Observación"
                     name="observacion"
