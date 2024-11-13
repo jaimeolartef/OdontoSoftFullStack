@@ -80,6 +80,17 @@ create table paciente
     foreign key (idTipoDocumento) references tipoDocumento (id)
 );
 
+create table medico
+(
+    idMedico Serial,
+    nombre   varchar(50),
+    especialidad varchar(50),
+    horarioLaboral TIME,
+    consultorio INT,
+    primary key (idMedico)
+);
+
+
 create table cita
 (
     id         SERIAL,
@@ -87,9 +98,33 @@ create table cita
     horaInicio TIME,
     horaFin    TIME,
     idPaciente INT,
+    estado    VARCHAR(20),
+    idMedico   INT,
+    fechaNotificacion DATE,
+    motivoCancelacion VARCHAR(100),
     primary key (id),
     foreign key (idPaciente) references paciente (id),
+    foreign key (idMedico) references medico (idMedico),
     habilitado bool DEFAULT false NOT NULL
+);
+
+create table consultorio
+(
+    idConsultorio Serial,
+    nombre varchar(50),
+    primary key (idConsultorio)
+);
+
+create table disponibilidad
+(
+    idDisponibilidad Serial,
+    idMedico INT,
+    diaSemana INT,
+    horaInicio TIME,
+    horaFin TIME,
+    idConsultorio INT,
+    primary key (idDisponibilidad),
+    foreign key (idMedico) references medico (idMedico)
 );
 
 create table historiaClinica
