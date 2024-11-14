@@ -1,64 +1,64 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import config from "../../config";
 import axios from "axios";
 
-const Habitos = ({ formMedicalHistory, setFormMedicalHistory }) => {
+const Habitos = ({formMedicalHistory, setFormMedicalHistory}) => {
   const [habitos, setHabitos] = useState([]);
   const usuario = localStorage.getItem('username');
 
-  const handleHabitosChange = (habito, value) => {
-    let fechacreacion = new Date().toISOString();
-    setFormMedicalHistory(prev => {
-      const updatedHabitos = prev.habitopacientes.map(item =>
-        item.idhabito === habito.id ? {
-          ...item,
-          opciones: value,
-          idusuariocreacion: item.idusuariocreacion || usuario,
-          fechacreacion: item.fechacreacion || fechacreacion,
-          idusuariomodificacion: item.id ? usuario : '',
-          fechamodificacion: item.id ? fechacreacion : ''
-        } : item
-      );
-      return {
-        ...prev,
-        habitopacientes: updatedHabitos
-      };
-    });
-  };
+  const mapHabito = (data) => ({
+    id: data.id || '',
+    descripcion: data.descripcion || '',
+    opciones: data.opciones || false,
+    habilitado: data.habilitado || false,
+    seleccionado: data.seleccionado || false
+  });
 
   useEffect(() => {
     const fetchHabitos = async () => {
-      const habitosResponse = await axios.get(`${config.baseURL}/habitshistory/getall`);
-      if (Array.isArray(habitosResponse.data)) {
-        setHabitos(habitosResponse.data);
+      try {
+        const habitosResponse = await axios.get(`${config.baseURL}/habitshistory/getall`);
+        if (Array.isArray(habitosResponse.data)) {
+          const habitos = habitosResponse.data.map(mapHabito);
+          habitos.forEach(habito => {
+            let existItem = formMedicalHistory.habitopacientes.findIndex(item => item.idhabito === habito.id);
+            if (existItem === -1) {
+              formMedicalHistory.habitopacientes.push({
+                idhabito: habito.id,
+                idhistoriaclinica: formMedicalHistory.idHistoriaClinica,
+                opciones: false
+              });
+            } else {
+              habito.seleccionado = formMedicalHistory.habitopacientes.find(item => item.idhabito === habito.id)?.opciones || false;
+            }
+          });
+          setHabitos(habitos);
+        }
+      } catch (error) {
+        console.error('Error fetching habits:', error);
       }
     };
     fetchHabitos();
-  }, []);
+  }, [formMedicalHistory.idHistoriaClinica]);
 
-  // TODO: validar este metodo
-  // TODO: la pantalla de registrar paciente no esta registrando
-  useEffect(() => {
-    let fecha = new Date().toISOString();
-    habitos.forEach(habito => {
-      let existItem = formMedicalHistory.habitopacientes.findIndex(item => item.idhabito === habito.id);
-      if (existItem === -1) {
-        formMedicalHistory.habitopacientes.push({
-          idhabito: habito.id,
-          idhistoriaclinica: formMedicalHistory.idHistoriaClinica,
-          idusuariocreacion: usuario,
-          fechacreacion: fecha,
-          opciones: false
-        });
-      } else {
-        habito.opciones = formMedicalHistory.habitopacientes.find(item => item.idhabito === habito.id)?.opciones || false;
-      }
+  const handleHabitosChange = (habito, value) => {
+    setHabitos(prevH => {
+      return prevH.map(itemH =>
+        itemH.id === habito.id ? {...itemH, seleccionado: value} : itemH
+      );
     });
-    setFormMedicalHistory(prev => ({
-      ...prev,
-      habitopacientes: [...formMedicalHistory.habitopacientes]
-    }));
-  }, [habitos]);
+    let fechacreacion = new Date().toISOString();
+    formMedicalHistory.habitopacientes = formMedicalHistory.habitopacientes.map(item =>
+      item.idhabito === habito.id ? {
+        ...item,
+        opciones: value,
+        idusuariocreacion: usuario,
+        fechacreacion: fechacreacion,
+        idusuariomodificacion: item.id ? usuario : '',
+        fechamodificacion: item.id ? fechacreacion : ''
+      } : item
+    );
+  };
 
   return (
     <div className="card">
@@ -66,9 +66,9 @@ const Habitos = ({ formMedicalHistory, setFormMedicalHistory }) => {
         <h2>Hábitos</h2>
       </div>
       <div className="card-body">
-        {formMedicalHistory.habitopacientes.map((habitoPac, index) => (
-          <div key={habitoPac.idhabito} className="antecedente-item mb-3">
-            <label className="form-label">{habitoPac.descripcion}</label>
+        {habitos.map((habito, index) => (
+          <div key={habito.id} className="antecedente-item mb-3">
+            <label className="form-label">{habito.descripcion}</label>
             <div className="options d-flex">
               {[true, false].map(option => (
                 <div key={option} className="form-check form-check-inline">
@@ -77,13 +77,13 @@ const Habitos = ({ formMedicalHistory, setFormMedicalHistory }) => {
                       className="form-check-input"
                       type="radio"
                       value={option}
-                      onChange={() => handleHabitosChange(habitoPac, option)}
-                      checked={habitoPac.opciones === option}
-                      style={{ width: '20px', height: '20px' }}
+                      onChange={() => handleHabitosChange(habito, option)}
+                      checked={habito.seleccionado === option}
+                      style={{width: '20px', height: '20px'}}
                     />
                   </div>
                   <div>
-                    <label className="form-check-label" style={{ marginLeft: '10px' }}>{option ? 'SI' : 'NO'}</label>
+                    <label className="form-check-label" style={{marginLeft: '10px'}}>{option ? 'SI' : 'NO'}</label>
                   </div>
                 </div>
               ))}
