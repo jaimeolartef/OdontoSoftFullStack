@@ -14,7 +14,6 @@ public class SignoVitalRequest {
 
     private Integer id;
 
-    @NotNull
     private Integer idhistoriaclinica;
 
     private Double peso;
@@ -29,16 +28,13 @@ public class SignoVitalRequest {
 
     private Double frecuenciarespiratoria;
 
-    @NotNull
     private String idusuariocreacion;
 
-    @NotNull
     private LocalDateTime fechacreacion;
 
     private String idusuariomodificacion;
 
     private LocalDateTime fechamodificacion;
 
-    @NotNull
     private Boolean habilitado;
 }

@@ -26,7 +26,9 @@ const Habitos = ({formMedicalHistory, setFormMedicalHistory}) => {
               formMedicalHistory.habitopacientes.push({
                 idhabito: habito.id,
                 idhistoriaclinica: formMedicalHistory.idHistoriaClinica,
-                opciones: false
+                opciones: false,
+                idusuariocreacion: usuario,
+                fechacreacion: new Date().toISOString()
               });
             } else {
               habito.seleccionado = formMedicalHistory.habitopacientes.find(item => item.idhabito === habito.id)?.opciones || false;

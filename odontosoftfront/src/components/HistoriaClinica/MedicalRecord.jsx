@@ -65,6 +65,9 @@ const MedicalRecord = () => {
       formMedicalHistory.idusuariocreacion = usuario;
       formMedicalHistory.fechacreacion = new Date().toISOString();
     }
+    if (formMedicalHistory.signovitals.idHistoriaClinica === undefined) {
+      formMedicalHistory.signovitals = [];
+    }
     let token = localStorage.getItem('jsonwebtoken');
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     axios.post(`${config.baseURL}/historiaClinica/crear`, formMedicalHistory, {
@@ -123,9 +126,11 @@ const MedicalRecord = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (formPatient.idPaciente) {
+      if (formPatient.idPaciente && formPatient.idHistoriaClinica) {
         const response = await axios.get(`${config.baseURL}/historiaClinica/consultar/` + patient.idHistoriaClinica);
         setFormMedicalHistory(mapMedicalHistory(response.data));
+      } else {
+        setFormMedicalHistory(mapMedicalHistory({idpaciente: formPatient.idPaciente}));
       }
     };
     fetchData();
