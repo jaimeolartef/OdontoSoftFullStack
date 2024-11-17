@@ -103,7 +103,7 @@ const ConsultarPaciente = () => {
           </div>
         </form>
         <br />
-        {responseData.length > 0 && <PacienteTabla data={responseData} formData={formData} />}
+        <PacienteTabla data={responseData} formData={formData} />
         <br />
       </div>
     </div>

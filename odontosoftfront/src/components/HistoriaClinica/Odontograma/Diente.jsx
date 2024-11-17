@@ -73,7 +73,7 @@ const Diente = ({ toothNumber, onClick, initSegmentos }) => {
       const hasOB = segmentosArray.some(segmento => segmento.idestado === 'OB');
       const hasSpecialState = segmentosArray.some(segmento => ['NE', 'CT', 'EX', 'SE', 'EI', 'PE', 'CC'].includes(segmento.idestado));
 
-      if ((hasCR || hasOB) &&(['NE', 'CT', 'EX', 'SE', 'EI', 'PE', 'CC'].includes(estado))) {
+      if ((hasCR || hasOB) && (['NE', 'CT', 'EX', 'SE', 'EI', 'PE', 'CC'].includes(estado))) {
         showMessage('error', 'El estado actual del diente no permite cambiar a ' + estado + ', debe cambiar a diente sano y luego realizar el cambio al estado deseado');
         return;
       } else if (hasSpecialState && (estado === 'CR' || estado === 'OB')) {
@@ -96,13 +96,13 @@ const Diente = ({ toothNumber, onClick, initSegmentos }) => {
       } else if (estado === 'DS') {
         setSegmentos((prev) => {
           const updatedSegmentos = Object.keys(prev).reduce((acc, key) => {
-            acc[key] = { ...prev[key], idestado: 'DS' };
+            acc[key] = {...prev[key], idestado: 'DS'};
             return acc;
           }, {});
           onClick(indexSegmento, updatedSegmentos);
           return updatedSegmentos;
         });
-      } else {
+      } else if (estado === 'CR' || estado === 'OB') {
         setSegmentos((prev) => {
           const updatedSegmentos = {
             ...prev,

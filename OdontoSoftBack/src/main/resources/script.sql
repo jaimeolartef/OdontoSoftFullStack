@@ -1,6 +1,8 @@
 
 create database odontosoft;
 
+\c odontosoft;
+
 create table tipoDocumento
 (
     id     serial,
@@ -765,6 +767,16 @@ VALUES (5, 'P.S', 'Pasaporte');
 
 INSERT INTO public.diente (id, dientenumero, descripcion)
 VALUES
+    (11, 11, 'diente 11'),
+    (12, 12, 'diente 12'),
+    (13, 13, 'diente 13'),
+    (14, 14, 'diente 14'),
+    (15, 15, 'diente 15'),
+    (16, 16, 'diente 16'),
+    (17, 17, 'diente 17'),
+    (18, 18, 'diente 18'),
+    (21, 21, 'diente 21'),
+    (22, 22, 'diente 22'),
     (23, 23, 'diente 23'),
     (24, 24, 'diente 24'),
     (25, 25, 'diente 25'),
@@ -807,6 +819,73 @@ VALUES
     (83, 83, 'diente 83'),
     (84, 84, 'diente 84'),
     (85, 85, 'diente 85');
+
+
+
+-- Auto-generated SQL script #202411161920
+INSERT INTO public.estadodiente (descripcion,codigo)
+VALUES ('Diente sano','DS');
+INSERT INTO public.estadodiente (descripcion,codigo)
+VALUES ('Caries o recurrencia','CR');
+INSERT INTO public.estadodiente (descripcion,codigo)
+VALUES ('Obturado','OB');
+INSERT INTO public.estadodiente (descripcion,codigo)
+VALUES ('Corona completa','CC');
+INSERT INTO public.estadodiente (descripcion,codigo)
+VALUES ('Prótesis existente','PE');
+INSERT INTO public.estadodiente (descripcion,codigo)
+VALUES ('Extracción Indicada','EI');
+INSERT INTO public.estadodiente (descripcion,codigo)
+VALUES ('Sin erupcionar','SE');
+INSERT INTO public.estadodiente (descripcion,codigo)
+VALUES ('Extraído','EX');
+INSERT INTO public.estadodiente (descripcion,codigo)
+VALUES ('Necesita endodoncia','NE');
+INSERT INTO public.estadodiente (descripcion,codigo)
+VALUES ('Con tratamiento de conductos','CT');
+
+INSERT INTO public.antecedente
+(id, descripcion, odontologico, habilitado)
+VALUES(1, 'antecedente 1', false, true);
+INSERT INTO public.antecedente
+(id, descripcion, odontologico, habilitado)
+VALUES(2, 'antecedente 2', false, true);
+INSERT INTO public.antecedente
+(id, descripcion, odontologico, habilitado)
+VALUES(3, 'antecedente odontologico 2', true, true);
+INSERT INTO public.antecedente
+(id, descripcion, odontologico, habilitado)
+VALUES(4, 'antecedente odontologico 2', true, true);
+
+INSERT INTO public.habito
+(id, descripcion, habilitado)
+VALUES(1, 'Habitos 1', true);
+INSERT INTO public.habito
+(id, descripcion, habilitado)
+VALUES(2, 'Habitos 2', true);
+INSERT INTO public.habito
+(id, descripcion, habilitado)
+VALUES(3, 'Habitos 3', true);
+INSERT INTO public.habito
+(id, descripcion, habilitado)
+VALUES(4, 'Habitos 4', true);
+
+-- Auto-generated SQL script #202411161949
+INSERT INTO public.tipodiagnostico (codigo,descripcion,habilitado)
+VALUES ('DIAG 1','Diagnostico 1',true);
+INSERT INTO public.tipodiagnostico (codigo,descripcion,habilitado)
+VALUES ('DIAG 2','Diagnostico 2',true);
+INSERT INTO public.tipodiagnostico (codigo,descripcion,habilitado)
+VALUES ('DIAG 3','Diagnostico 3',true);
+INSERT INTO public.tipodiagnostico (codigo,descripcion,habilitado)
+VALUES ('DIAG 4','Diagnostico 4',true);
+
+-- Auto-generated SQL script #202411161951
+INSERT INTO public.tipoayudadiag (codigo,descripcion,habilitado)
+VALUES ('AYUDIAG','Ayuda Diagnistica',true);
+INSERT INTO public.tipoayudadiag (codigo,descripcion,habilitado)
+VALUES ('AYUDIAG 2','Ayuda Diagnistica 2',true);
+
 
 
 

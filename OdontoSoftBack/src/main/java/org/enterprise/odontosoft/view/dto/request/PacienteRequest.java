@@ -2,6 +2,8 @@ package org.enterprise.odontosoft.view.dto.request;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -26,5 +28,9 @@ public class PacienteRequest {
     private String nombreacompanante;
     private String parentescoacompanante;
     private String telefonoacompanante;
+    private String idusuariocreacion;
+    private LocalDateTime fechacreacion;
+    private String idusuariomodificacion;
+    private LocalDateTime fechamodificacion;
     private String habilitado;
 }

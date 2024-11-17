@@ -6,6 +6,7 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -91,7 +92,21 @@ public class Paciente {
   private String telefonoacompanante;
 
   @Column(name = "habilitado")
-    private boolean habilitado;
+  private boolean habilitado;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "idusuariocreacion")
+  private Usuario idusuariocreacion;
+
+  @Column(name = "fechacreacion")
+  private LocalDateTime fechacreacion;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "idusuariomodificacion")
+  private Usuario idusuariomodificacion;
+
+  @Column(name = "fechamodificacion")
+  private LocalDateTime fechamodificacion;
 
   @OneToMany(mappedBy = "idpaciente")
   private Set<Cita> citas = new LinkedHashSet<>();

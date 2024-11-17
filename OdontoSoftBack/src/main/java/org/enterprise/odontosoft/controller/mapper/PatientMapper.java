@@ -7,6 +7,7 @@ import lombok.experimental.UtilityClass;
 import org.enterprise.odontosoft.controller.Enum.TipoDocumentoEnum;
 import org.enterprise.odontosoft.model.Entity.Paciente;
 import org.enterprise.odontosoft.model.Entity.Tipodocumento;
+import org.enterprise.odontosoft.model.Entity.Usuario;
 import org.enterprise.odontosoft.util.UtilDate;
 import org.enterprise.odontosoft.view.dto.request.PacienteRequest;
 import org.enterprise.odontosoft.view.dto.response.PacienteResponse;
@@ -36,6 +37,10 @@ public class PatientMapper {
             .nombreacompanante(pacienteRequest.getNombreacompanante())
             .parentescoacompanante(pacienteRequest.getParentescoacompanante())
             .telefonoacompanante(pacienteRequest.getTelefonoacompanante())
+            .idusuariocreacion(Usuario.builder().codigo(pacienteRequest.getIdusuariocreacion()).build())
+            .fechacreacion(pacienteRequest.getFechacreacion())
+            .idusuariomodificacion(Usuario.builder().codigo(pacienteRequest.getIdusuariomodificacion()).build())
+            .fechamodificacion(Objects.nonNull(pacienteRequest.getFechamodificacion()) ? pacienteRequest.getFechamodificacion() : null)
             .habilitado(Objects.equals(pacienteRequest.getHabilitado(), "true"))
             .build();
     }

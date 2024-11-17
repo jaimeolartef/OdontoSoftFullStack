@@ -46,50 +46,62 @@ const PacienteTabla = ({ data, formData }) => {
           </tr>
           </thead>
           <tbody>
-          {currentItems.map((paciente, index) => (
-            <tr key={index}>
-              <td data-label="Documento">{paciente.documento}</td>
-              <td data-label="Nombre">{paciente.primernombre} {paciente.segundonombre}</td>
-              <td data-label="Primer Apellido">{paciente.primerapellido}</td>
-              <td data-label="Segundo Apellido">{paciente.segundoapellido}</td>
-              <td data-label="Teléfono">{paciente.telefono}</td>
-              <td data-label="Habilitado">{paciente.habilitado === 'true' ? 'Sí' : 'No'}</td>
-              <td data-label="Acciones">
-                {paciente.idHistoriaClinica  !== null && paciente.habilitado === 'true' && (
-                  <>
-                    <img src={MedicalIcon} alt="Historia Clinica"
-                         style={{marginRight: '5px', width: '35px', height: '35px', cursor: 'pointer'}}
-                         onClick={(e) => {
-                           e.stopPropagation();
-                           handleMedicalRecordClick(paciente);
-                         }}
-                         data-tooltip-id="tooltip" data-tooltip-content="Editar Historia Clinica"/>
-                    <Tooltip id="tooltip"/>
-                  </>
-                )}
-                {paciente.idHistoriaClinica  === null && paciente.habilitado === 'true' && (
-                  <>
-                    <img src={MedicalIcon} alt="Historia Clinica"
-                         style={{marginRight: '5px', width: '35px', height: '35px', cursor: 'pointer', filter: 'grayscale(100%)'}}
-                         onClick={(e) => {
-                           e.stopPropagation();
-                           handleMedicalRecordClick(paciente);
-                         }}
-                         data-tooltip-id="tooltip" data-tooltip-content="Crear Nueva Historia Clinica"/>
-                    <Tooltip id="tooltip"/>
-                  </>
-                )}
-                <img src={EditIcon} alt="Editar Paciente"
-                     style={{marginRight: '5px', width: '35px', height: '35px', cursor: 'pointer'}}
-                     onClick={(e) => {
-                       e.stopPropagation();
-                       handleEditClick(paciente);
-                     }}
-                     data-tooltip-id="editTooltip" data-tooltip-content="Editar Paciente"/>
-                <Tooltip id="editTooltip"/>
-              </td>
+          {currentItems.length > 0 ? (
+            currentItems.map((paciente, index) => (
+              <tr key={index}>
+                <td data-label="Documento">{paciente.documento}</td>
+                <td data-label="Nombre">{paciente.primernombre} {paciente.segundonombre}</td>
+                <td data-label="Primer Apellido">{paciente.primerapellido}</td>
+                <td data-label="Segundo Apellido">{paciente.segundoapellido}</td>
+                <td data-label="Teléfono">{paciente.telefono}</td>
+                <td data-label="Habilitado">{paciente.habilitado === 'true' ? 'Sí' : 'No'}</td>
+                <td data-label="Acciones">
+                  {paciente.idHistoriaClinica !== null && paciente.habilitado === 'true' && (
+                    <>
+                      <img src={MedicalIcon} alt="Historia Clinica"
+                           style={{marginRight: '5px', width: '35px', height: '35px', cursor: 'pointer'}}
+                           onClick={(e) => {
+                             e.stopPropagation();
+                             handleMedicalRecordClick(paciente);
+                           }}
+                           data-tooltip-id="tooltip" data-tooltip-content="Editar Historia Clinica"/>
+                      <Tooltip id="tooltip"/>
+                    </>
+                  )}
+                  {paciente.idHistoriaClinica === null && paciente.habilitado === 'true' && (
+                    <>
+                      <img src={MedicalIcon} alt="Historia Clinica"
+                           style={{
+                             marginRight: '5px',
+                             width: '35px',
+                             height: '35px',
+                             cursor: 'pointer',
+                             filter: 'grayscale(100%)'
+                           }}
+                           onClick={(e) => {
+                             e.stopPropagation();
+                             handleMedicalRecordClick(paciente);
+                           }}
+                           data-tooltip-id="tooltip" data-tooltip-content="Crear Nueva Historia Clinica"/>
+                      <Tooltip id="tooltip"/>
+                    </>
+                  )}
+                  <img src={EditIcon} alt="Editar Paciente"
+                       style={{marginRight: '5px', width: '35px', height: '35px', cursor: 'pointer'}}
+                       onClick={(e) => {
+                         e.stopPropagation();
+                         handleEditClick(paciente);
+                       }}
+                       data-tooltip-id="editTooltip" data-tooltip-content="Editar Paciente"/>
+                  <Tooltip id="editTooltip"/>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="7" className="text-center">No se encontró ningún registro</td>
             </tr>
-          ))}
+          )}
           </tbody>
         </table>
       </div>

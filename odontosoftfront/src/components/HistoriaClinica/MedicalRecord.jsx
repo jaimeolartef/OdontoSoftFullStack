@@ -77,6 +77,8 @@ const MedicalRecord = () => {
     })
       .then(response => {
         if (response.status === 201) {
+          navigate(-1);
+          console.log('response:', formMedicalHistory.idHistoriaClinica);
           showMessage('success', 'La historia clínica se guardo con éxito');
         } else {
           showMessage('error', 'Error al guardar la historia clínica');
@@ -114,6 +116,7 @@ const MedicalRecord = () => {
   };
 
   useEffect(() => {
+    console.log('paso 1:', patient);
     const fetchData = async () => {
       setFormPatient(prev => ({
         ...prev,
@@ -169,6 +172,10 @@ const MedicalRecord = () => {
             <img src={Diente} alt="Odontograma"
                  style={{width: '100%', height: '100%'}}
                  onClick={(e) => {
+                   if (!formMedicalHistory.idHistoriaClinica) {
+                      showMessage('warning', 'Debe guardar la historia clínica antes de ver el odontograma');
+                      return;
+                   }
                    e.stopPropagation();
                    handleMedicalRecordClick(formMedicalHistory.idHistoriaClinica);
                  }}
@@ -199,7 +206,6 @@ const MedicalRecord = () => {
                     value={formMedicalHistory.observacionantecodon || ''}
                     onChange={handleInputChange}/>
           <div className="espacio"/>
-          {/*TODO: Esta cargando siempre en false y validar registrar paciente al crear nuevo*/}
           <Habitos formMedicalHistory={formMedicalHistory} setFormMedicalHistory={setFormMedicalHistory}/>
           <div className="espacio"/>
           <TextArea label="Observación"

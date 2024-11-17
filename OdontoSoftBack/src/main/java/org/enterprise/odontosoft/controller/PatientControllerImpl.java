@@ -3,10 +3,13 @@ package org.enterprise.odontosoft.controller;
 import java.util.List;
 import java.util.Objects;
 
+import lombok.AllArgsConstructor;
 import org.enterprise.odontosoft.controller.Enum.TipoDocumentoEnum;
 import org.enterprise.odontosoft.controller.mapper.PatientMapper;
 import org.enterprise.odontosoft.model.Dao.PatientDao;
+import org.enterprise.odontosoft.model.Dao.UsuarioDao;
 import org.enterprise.odontosoft.model.Entity.Paciente;
+import org.enterprise.odontosoft.model.Entity.Usuario;
 import org.enterprise.odontosoft.view.dto.request.PacienteRequest;
 import org.enterprise.odontosoft.view.dto.response.PacienteResponse;
 import org.springframework.http.HttpStatus;
@@ -17,15 +20,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
+@AllArgsConstructor
 @Controller
 public class PatientControllerImpl implements PatientController {
     private final PatientDao patientDao;
+    private final UsuarioDao usuarioDao;
     private static final Logger logger = LoggerFactory.getLogger(PatientControllerImpl.class);
-
-
-    public PatientControllerImpl(PatientDao patientDao) {
-        this.patientDao = patientDao;
-    }
 
     @Override
     public ResponseEntity<PacienteResponse> createPatient(PacienteRequest pacienteRequest) {
@@ -36,7 +36,14 @@ public class PatientControllerImpl implements PatientController {
                 responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new PacienteResponse(String.valueOf(HttpStatus.BAD_REQUEST.value()), "Ya existe un paciente con el número y tipo de documento proporcionado"));
                 return responseEntity;
             }
-            Paciente paciente = patientDao.save(PatientMapper.toEntity(pacienteRequest));
+            Paciente paciente = PatientMapper.toEntity(pacienteRequest);
+            paciente.setIdusuariocreacion(Usuario.builder().id(usuarioDao.findByCodigo(pacienteRequest.getIdusuariocreacion()).getId()).build());
+            if (Objects.nonNull(pacienteRequest.getFechamodificacion())) {
+                paciente.setIdusuariomodificacion(Usuario.builder().id(usuarioDao.findByCodigo(pacienteRequest.getIdusuariomodificacion()).getId()).build());
+            } else {
+                paciente.setIdusuariomodificacion(null);
+            }
+            patientDao.save(paciente);
             responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(PatientMapper.toDto(paciente));
         } catch (Exception e) {
             responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

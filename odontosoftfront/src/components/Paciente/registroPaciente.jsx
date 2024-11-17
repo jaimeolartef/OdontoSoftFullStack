@@ -8,6 +8,8 @@ import config from '../../config';
 import showMessage from "../../util/UtilMessage";
 
 const RegistroPaciente = () => {
+  const usuario = localStorage.getItem('username');
+
   const [formData, setFormData] = useState({
     idtipodocumento: '',
     documento: '',
@@ -29,6 +31,8 @@ const RegistroPaciente = () => {
     parentescoacompanante: '',
     codigoValidacion: '',
     mensajeValidacion: '',
+    idusuariocreacion: '',
+    fechacreacion: '',
     habilitado: true
   });
 
@@ -68,26 +72,42 @@ const RegistroPaciente = () => {
     setFormData(initialFormData);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('Form Data Submitted:', formData);
     let token = localStorage.getItem('jsonwebtoken');
+
+    const responseValidate = await axios.get(`${config.baseURL}/pacientes/consultar`, {
+      params: { documento: formData.documento },
+      validateStatus: function (status) {
+        return status;
+      }
+    });
+
+    if (responseValidate.status === 200 && responseValidate.data.length > 0) {
+      showMessage('warning', 'Otro paciente ya se encuentra registrado con el número de documento ' + formData.documento);
+      return;
+
+    }
+
     console.log('Token: ', token);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      axios.post(`${config.baseURL}/pacientes/crear`, formData,{
-        validateStatus: function (status) {
-          return status;
+    formData.idusuariocreacion = usuario;
+    formData.fechacreacion = new Date().toISOString();
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    axios.post(`${config.baseURL}/pacientes/crear`, formData, {
+      validateStatus: function (status) {
+        return status;
+      }
+    })
+      .then(response => {
+        console.log('Response: ', response.data);
+        if (response.status === 201) {
+          showMessage('success', 'Paciente registrado con éxito');
+          resetForm();
+        } else if (response.status === 400 && response.data.codigoValidacion === '400') {
+          showMessage('error', response.data.mensajeValidacion);
         }
       })
-        .then(response => {
-          console.log('Response: ', response.data);
-          if (response.status === 201) {
-            showMessage('success','Paciente registrado con éxito');
-            resetForm();
-          }  else if (response.status === 400 && response.data.codigoValidacion === '400') {
-            showMessage('error',response.data.mensajeValidacion);
-          }
-        })
   };
 
   useEffect(() => {

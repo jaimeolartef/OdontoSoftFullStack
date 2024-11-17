@@ -1,6 +1,7 @@
 package org.enterprise.odontosoft.controller;
 
 import lombok.AllArgsConstructor;
+import org.apache.logging.log4j.util.Strings;
 import org.enterprise.odontosoft.controller.mapper.DetalleOdontogramaMapper;
 import org.enterprise.odontosoft.controller.mapper.OdontogramaMapper;
 import org.enterprise.odontosoft.model.Dao.DetalleOdontogramaDao;
@@ -45,7 +46,7 @@ public class OdontogramControllerImpl implements OdontogramController {
 		try {
 			Odontograma odontograma = odontogramaDao.findByIdhistoriaclinica(idHistoriaClinica).orElse(null);
 			if (odontograma == null) {
-				responseEntity = ResponseEntity.status(HttpStatus.NOT_FOUND).body(new OdontogramaResponse(String.valueOf(HttpStatus.NOT_FOUND.value()), "No se encontró el odontograma"));
+				responseEntity = ResponseEntity.status(HttpStatus.NO_CONTENT).body(new OdontogramaResponse(String.valueOf(HttpStatus.NO_CONTENT.value()), "No se encontró el odontograma"));
 				return responseEntity;
 			}
 			responseEntity = ResponseEntity.status(HttpStatus.OK).body(OdontogramaMapper.toResponse(odontograma));
@@ -82,7 +83,7 @@ public class OdontogramControllerImpl implements OdontogramController {
 	private void saveDetalleOdontograma(List<DetalleOdontograma> detalleOdontograma, int idOdontograma) {
 		List<DetalleOdontograma> detalleEliminar = new ArrayList<>();
 		detalleOdontograma.forEach(detalle -> {
-			if (Objects.nonNull(detalle.getIdestado()) && Objects.nonNull(detalle.getIdestado().getCodigo())) {
+			if (Objects.nonNull(detalle.getIdestado()) && Strings.isNotBlank(detalle.getIdestado().getCodigo()) && Objects.nonNull(detalle.getIdestado().getCodigo())) {
 				detalle.setIdestado(EstadoDiente.builder().id(estadoDienteDao.findByCodigo(detalle.getIdestado().getCodigo()).orElse(null).getId()).build());
 				detalle.setIdusuariocreacion(Usuario.builder().id(usuarioDao.findByCodigo(detalle.getIdusuariocreacion().getCodigo()).getId()).build());
 				if (Objects.nonNull(detalle.getIdusuariomodificacion())) {
