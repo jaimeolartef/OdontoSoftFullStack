@@ -57,17 +57,14 @@ const MedicalRecord = () => {
     let usuario = localStorage.getItem('username');
     e.preventDefault();
     if (formMedicalHistory.idHistoriaClinica) {
-      console.log('entro en modificar:');
       formMedicalHistory.idusuariomodificacion = usuario;
       formMedicalHistory.fechamodificacion = new Date().toISOString();
     } else {
-      console.log('entro en guardar:');
       formMedicalHistory.idusuariocreacion = usuario;
       formMedicalHistory.fechacreacion = new Date().toISOString();
     }
-    if (formMedicalHistory.signovitals.idHistoriaClinica === undefined) {
-      formMedicalHistory.signovitals = [];
-    }
+    console.log('formMedicalHistory ultimo paso:', formMedicalHistory);
+    
     let token = localStorage.getItem('jsonwebtoken');
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     axios.post(`${config.baseURL}/historiaClinica/crear`, formMedicalHistory, {

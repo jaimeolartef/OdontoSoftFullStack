@@ -15,7 +15,8 @@ const SignosVitales = ({ formMedicalHistory, setFormMedicalHistory }) => {
               idusuariocreacion: item.idusuariocreacion || usuario,
               fechacreacion: item.fechacreacion || fecha,
               idusuariomodificacion: item.id ? usuario : '',
-              fechamodificacion: item.id ? fecha : ''
+              fechamodificacion: item.id ? fecha : '',
+              idHistoriaClinica: item.idHistoriaClinica ? formMedicalHistory.idHistoriaClinica : ''
             };
           }
           return item;
@@ -30,11 +31,11 @@ const SignosVitales = ({ formMedicalHistory, setFormMedicalHistory }) => {
   useEffect(() => {
     const fetchSignosVitales = async () => {
       console.log('Primer paso cargar Signos Vitales:', formMedicalHistory.signovitals);
-      if (!formMedicalHistory.signovitals || Object.keys(formMedicalHistory.signovitals).length === 0) {
+      if (!formMedicalHistory.signovitals || formMedicalHistory.signovitals.length === 0) {
         let fecha = new Date().toISOString();
         setFormMedicalHistory(prev => ({
           ...prev,
-          signovitals: {
+          signovitals: [{
             pulso: '',
             temperatura: '',
             presionarterial: '',
@@ -43,7 +44,7 @@ const SignosVitales = ({ formMedicalHistory, setFormMedicalHistory }) => {
             talla: '',
             idusuariocreacion: usuario,
             fechacreacion: fecha
-          }
+          }]
         }));
       }
     }

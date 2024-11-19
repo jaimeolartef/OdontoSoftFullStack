@@ -131,20 +131,22 @@ public class MedicalHistoryControllerControllerImpl implements MedicalHistoryCon
 
         // Guardar signovitals
         historiaClinicaRequest.getSignovitals().forEach(signo -> {
-            if (Objects.nonNull(signo.getIdhistoriaclinica())) {
+            if (Objects.isNull(signo.getIdhistoriaclinica())) {
                 signo.setIdhistoriaclinica(historiaClinicaRequest.getId());
-                signo.setHabilitado(true);
-                if (StringUtils.isBlank(signo.getIdusuariomodificacion()) || Objects.isNull(signo.getIdusuariomodificacion())) {
-                    signo.setIdusuariomodificacion(null);
-                    signo.setFechamodificacion(null);
-                }
-                SignoVital signoVital = SignoVitalMapper.toEntity(signo);
-                signoVital.setIdusuariocreacion(Usuario.builder().id(usuarioDao.findByCodigo(signo.getIdusuariocreacion()).getId()).build());
-                if (Strings.isNotBlank(signo.getIdusuariomodificacion())) {
-                    signoVital.setIdusuariomodificacion(Usuario.builder().id(usuarioDao.findByCodigo(signo.getIdusuariomodificacion()).getId()).build());
-                }
-                signoVitalDao.save(signoVital);
             }
+
+            signo.setIdhistoriaclinica(historiaClinicaRequest.getId());
+            signo.setHabilitado(true);
+            if (StringUtils.isBlank(signo.getIdusuariomodificacion()) || Objects.isNull(signo.getIdusuariomodificacion())) {
+                signo.setIdusuariomodificacion(null);
+                signo.setFechamodificacion(null);
+            }
+            SignoVital signoVital = SignoVitalMapper.toEntity(signo);
+            signoVital.setIdusuariocreacion(Usuario.builder().id(usuarioDao.findByCodigo(signo.getIdusuariocreacion()).getId()).build());
+            if (Strings.isNotBlank(signo.getIdusuariomodificacion())) {
+                signoVital.setIdusuariomodificacion(Usuario.builder().id(usuarioDao.findByCodigo(signo.getIdusuariomodificacion()).getId()).build());
+            }
+            signoVitalDao.save(signoVital);
         });
 
         //Guardar Analisis Funcional
