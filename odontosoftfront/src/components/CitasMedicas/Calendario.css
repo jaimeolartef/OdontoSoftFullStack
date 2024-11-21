@@ -1,0 +1,51 @@
+body {
+  font-family: Arial, sans-serif;
+}
+
+.calendar {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.header {
+  text-align: center;
+}
+
+.month {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.content-type, .platforms {
+  margin: 20px 0;
+}
+
+.days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+}
+
+.day {
+  border: 1px solid #ccc;
+  padding: 10px;
+  min-height: 100px;
+}
+
+.event {
+  background-color: #f0f0f0;
+  margin: 5px 0;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.platforms-list {
+  display: flex;
+  gap: 10px;
+}
+
+.platform {
+  color: white;
+  padding: 5px;
+}

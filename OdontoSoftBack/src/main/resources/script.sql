@@ -87,8 +87,7 @@ create table medico
     idMedico Serial,
     nombre   varchar(50),
     especialidad varchar(50),
-    horarioLaboral TIME,
-    consultorio INT,
+    matricula varchar,
     primary key (idMedico)
 );
 
@@ -885,6 +884,9 @@ INSERT INTO public.tipoayudadiag (codigo,descripcion,habilitado)
 VALUES ('AYUDIAG','Ayuda Diagnistica',true);
 INSERT INTO public.tipoayudadiag (codigo,descripcion,habilitado)
 VALUES ('AYUDIAG 2','Ayuda Diagnistica 2',true);
+
+
+
 
 
 

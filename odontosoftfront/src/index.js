@@ -16,6 +16,7 @@ import ConsultarPac from "./components/Paciente/consultarPaciente";
 import ModificarPac from "./components/Paciente/modificarPaciente";
 import HistoriaPac from "../src/components/HistoriaClinica/MedicalRecord";
 import Odontograma from "./components/HistoriaClinica/Odontograma/Odontograma";
+import CitaMedica from "./components/CitasMedicas/CitaMedica";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -45,6 +46,7 @@ root.render(
             <Route exact path = "/modificarPac" Component = {requireAuth(ModificarPac)} />
             <Route exact path = "/historiaPac" Component = {requireAuth(HistoriaPac)} />
             <Route exact path = "/odontograma" Component = {requireAuth(Odontograma)} />
+            <Route exact path = "/citaMedica" Component = {requireAuth(CitaMedica)} />
           </Routes>
         </NavBar>
       </Provider>
