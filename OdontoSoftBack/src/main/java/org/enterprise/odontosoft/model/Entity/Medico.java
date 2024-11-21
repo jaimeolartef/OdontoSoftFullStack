@@ -16,7 +16,7 @@ public class Medico {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @ColumnDefault("nextval('medico_id_seq'::regclass)")
-  @Column(name = "idMedico", nullable = false)
+  @Column(name = "idmedico", nullable = false)
   private Integer idMedico;
 
   @Column(name = "nombre", length = 50)
@@ -25,10 +25,7 @@ public class Medico {
   @Column(name = "especialidad", length = 50)
   private String especialidad;
 
-  @Column(name = "horarioLaboral")
-  private LocalTime horarioLaboral;
-
-  @Column(name = "consultorio")
-  private Integer consultorio;
+  @Column(name = "matricula")
+  private String matricula;
 
 }

@@ -1,6 +1,7 @@
 package org.enterprise.odontosoft.controller;
 
 import lombok.AllArgsConstructor;
+import org.enterprise.odontosoft.controller.mapper.DoctorMapper;
 import org.enterprise.odontosoft.model.Dao.MedicoDao;
 import org.enterprise.odontosoft.model.Entity.Medico;
 import org.enterprise.odontosoft.view.dto.response.DoctorResponse;
@@ -18,12 +19,7 @@ public class DoctorControllerImpl implements DoctorController {
 	public List<DoctorResponse> getAllDoctors() {
     List<Medico> medicos = (List<Medico>) medicoDao.findAll();
     return medicos.stream()
-                  .map(medico -> DoctorResponse.builder()
-											   .idMedico(medico.getIdMedico())
-											   .nombre(medico.getNombre())
-											   .especialidad(medico.getEspecialidad())
-											   .matricula(medico.getMatricula())
-											   .build())
+                  .map(medico -> DoctorMapper.toDoctorResponse(medico))
                   .collect(Collectors.toList());
 }
 

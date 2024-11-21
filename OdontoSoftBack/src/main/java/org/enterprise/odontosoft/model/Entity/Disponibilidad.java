@@ -16,21 +16,21 @@ public class Disponibilidad {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @ColumnDefault("nextval('disponibilidad_id_seq'::regclass)")
-  @Column(name = "idDisponibilidad", nullable = false)
+  @Column(name = "iddisponibilidad", nullable = false)
   private Integer idDisponibilidad;
 
-  @Column(name = "idMedico")
+  @Column(name = "idmedico")
   private Integer idMedico;
 
-  @Column(name = "diaSemana")
+  @Column(name = "diasemana")
   private Integer diaSemana;
 
-  @Column(name = "horaInicio")
+  @Column(name = "horainicio")
   private LocalTime horaInicio;
 
-  @Column(name = "horaFin")
+  @Column(name = "horafin")
   private LocalTime horaFin;
 
-  @Column(name = "idConsultorio")
+  @Column(name = "idconsultorio")
   private Integer idConsultorio;
 }
