@@ -1,4 +1,5 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
+import axios from "axios";
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import {format} from 'date-fns';
@@ -6,6 +7,7 @@ import Logo from "../../resource/LogoNegro.png";
 import Calendar from 'react-calendar';
 import styled from 'styled-components';
 import Calendario from './Calendario';
+import config from "../../config";
 
 const StyledCalendar = styled(Calendar);
 
@@ -17,7 +19,41 @@ const CitaMedica = () => {
   const [hora, setHora] = useState('');
   const [motivo, setMotivo] = useState('');
   const [paciente, setPaciente] = useState('');
-  const [odontologo, setOdontologo] = useState('');
+  const [selectedOdontologo, setSelectedOdontologo] = useState('');
+  const [odontologo, setOdontologo] = useState([
+    {
+      idMedico: 0,
+      nombre: ''
+    }
+  ]);
+
+  useEffect(() => {
+    const fetchOdontologos = async () => {
+      let token = localStorage.getItem('jsonwebtoken');
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      try {
+        const response = await axios.get(`${config.baseURL}/doctor/consultar`);
+        if (response.status === 200) {
+          setOdontologo(response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching patient data:', error);
+      }
+
+    }
+
+    fetchOdontologos();
+  }, []);
+
+  const handleSearchChangeOdont = (event) => {
+    setSelectedOdontologo(event.target.value);
+  }
+
+  const handleOdontologoChange = (event) => {
+    const selectedValue = event.target.value;
+    setSelectedOdontologo(selectedValue);
+    console.log('Selected:', selectedValue);
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -41,18 +77,31 @@ const CitaMedica = () => {
             </div>
             <div className="card-body">
               <form onSubmit={handleSubmit}>
+                <div className="form-group">
+                    <label htmlFor="odontologo">Odontologo</label>
+                    <input
+                      className="form-control"
+                      list="datalistodontologo"
+                      id="dataListOdonto"
+                      placeholder="Buscar Odontologo..."
+                      value={selectedOdontologo}
+                      onBlur={handleSearchChangeOdont}
+                      onInput={handleOdontologoChange}
+                    />
+                    <datalist id="datalistodontologo">
+                      {odontologo.map((odontologo) => (
+                        <option key={odontologo.idMedico} value={odontologo.nombre}/>
+                      ))}
+                    </datalist>
+                </div>
+                <div className="espacio"/>
                 <div className="calendar-container">
-                  <Calendario />
+                  <Calendario/>
                 </div>
                 <div className="form-group">
                   <label>Paciente</label>
                   <input type="text" className="form-control" value={paciente}
                          onChange={(e) => setPaciente(e.target.value)}/>
-                </div>
-                <div className="form-group">
-                  <label>Odontologo</label>
-                  <input type="text" className="form-control" value={odontologo}
-                         onChange={(e) => setOdontologo(e.target.value)}/>
                 </div>
                 <div className="form-group">
                   <label>Fecha</label>
@@ -66,6 +115,7 @@ const CitaMedica = () => {
                   <label>Motivo</label>
                   <textarea className="form-control" value={motivo} onChange={(e) => setMotivo(e.target.value)}/>
                 </div>
+                <div className="espacio"/>
                 <button type="submit" className="btn btn-primary">Guardar</button>
               </form>
             </div>
