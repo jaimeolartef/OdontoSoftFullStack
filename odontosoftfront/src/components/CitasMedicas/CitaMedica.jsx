@@ -35,7 +35,6 @@ const CitaMedica = () => {
           <img src={Logo} alt="Logo" className="mb-3" style={{maxWidth: '140px'}}/>
           <h1>Asignación de Citas</h1>
         </header>
-        <form onSubmit={handleSubmit} className="needs-validation" noValidate>
           <div className="card">
             <div className="card-header">
               <h2>Agendar Cita Medica</h2>
@@ -71,7 +70,6 @@ const CitaMedica = () => {
               </form>
             </div>
           </div>
-        </form>
       </div>
     </div>
   );

@@ -3,34 +3,53 @@ body {
 }
 
 .calendar {
-  max-width: 800px;
+  width: 300px;
   margin: 0 auto;
-  padding: 20px;
+  font-family: Arial, sans-serif;
 }
 
 .header {
-  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
 }
 
-.month {
-  font-size: 24px;
+.weekdays {
+  display: flex;
+  justify-content: space-between;
+  background-color: #f0f0f0;
+  padding: 5px 0;
+}
+
+.weekday {
+  width: 14.28%;
+  text-align: center;
   font-weight: bold;
 }
 
-.content-type, .platforms {
-  margin: 20px 0;
-}
-
 .days {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 10px;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .day {
-  border: 1px solid #ccc;
-  padding: 10px;
-  min-height: 100px;
+  width: 14.28%;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.day.selected {
+  background-color: red;
+  color: white;
+}
+
+.day.today {
+  border: 2px solid #000;
+  border-radius: 50%;
 }
 
 .event {
@@ -48,4 +67,8 @@ body {
 .platform {
   color: white;
   padding: 5px;
+}
+
+.button {
+  margin: 5px 0;
 }
