@@ -99,7 +99,6 @@ create table cita
     horaInicio TIME,
     horaFin    TIME,
     idPaciente INT,
-    estado    VARCHAR(20),
     idMedico   INT,
     fechaNotificacion DATE,
     motivoCancelacion VARCHAR(100),

@@ -116,6 +116,7 @@ const CitaMedica = () => {
               <div className="calendar-container">
                 <Calendario availability={availability}/>
               </div>
+              <div className="espacio"/>
               <div className="form-group">
                 <label>Paciente</label>
                 <input type="text" className="form-control" value={paciente || ''}
