@@ -26,6 +26,7 @@ const CitaMedica = () => {
       nombre: ''
     }
   ]);
+  const [availability, setAvailability] = useState([]);
 
   useEffect(() => {
     const fetchOdontologos = async () => {
@@ -41,7 +42,6 @@ const CitaMedica = () => {
       }
 
     }
-
     fetchOdontologos();
   }, []);
 
@@ -49,10 +49,28 @@ const CitaMedica = () => {
     setSelectedOdontologo(event.target.value);
   }
 
-  const handleOdontologoChange = (event) => {
+  const handleOdontologoChange = async (event) => {
     const selectedValue = event.target.value;
     setSelectedOdontologo(selectedValue);
-    console.log('Selected:', selectedValue);
+    let odontoSelec = selectedValue.split(' - ');
+    const odontoSelected = odontologo.findIndex(odontologo => odontologo.idMedico == odontoSelec[0]);
+    console.log('odonto:', odontoSelec[0]);
+    console.log('odontologo:', odontologo);
+    console.log('OdontoSelec:', odontoSelected);
+    if (odontoSelected > -1) {
+      let token = localStorage.getItem('jsonwebtoken');
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      try {
+        const response = await axios.get(`${config.baseURL}/availability/doctor/${odontoSelec[0]}`);
+        if (response.status === 200) {
+          let availab = response.data;
+          setAvailability(availab);
+
+        }
+      } catch (error) {
+        console.error('Error fetching patient data:', error);
+      }
+    }
   }
 
   const handleSubmit = (e) => {
@@ -71,55 +89,55 @@ const CitaMedica = () => {
           <img src={Logo} alt="Logo" className="mb-3" style={{maxWidth: '140px'}}/>
           <h1>Asignación de Citas</h1>
         </header>
-          <div className="card">
-            <div className="card-header">
-              <h2>Agendar Cita Medica</h2>
-            </div>
-            <div className="card-body">
-              <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label htmlFor="odontologo">Odontologo</label>
-                    <input
-                      className="form-control"
-                      list="datalistodontologo"
-                      id="dataListOdonto"
-                      placeholder="Buscar Odontologo..."
-                      value={selectedOdontologo}
-                      onBlur={handleSearchChangeOdont}
-                      onInput={handleOdontologoChange}
-                    />
-                    <datalist id="datalistodontologo">
-                      {odontologo.map((odontologo) => (
-                        <option key={odontologo.idMedico} value={odontologo.nombre}/>
-                      ))}
-                    </datalist>
-                </div>
-                <div className="espacio"/>
-                <div className="calendar-container">
-                  <Calendario/>
-                </div>
-                <div className="form-group">
-                  <label>Paciente</label>
-                  <input type="text" className="form-control" value={paciente}
-                         onChange={(e) => setPaciente(e.target.value)}/>
-                </div>
-                <div className="form-group">
-                  <label>Fecha</label>
-                  <DatePicker selected={startDate} onChange={date => setStartDate(date)}/>
-                </div>
-                <div className="form-group">
-                  <label>Hora</label>
-                  <input type="time" className="form-control" value={hora} onChange={(e) => setHora(e.target.value)}/>
-                </div>
-                <div className="form-group">
-                  <label>Motivo</label>
-                  <textarea className="form-control" value={motivo} onChange={(e) => setMotivo(e.target.value)}/>
-                </div>
-                <div className="espacio"/>
-                <button type="submit" className="btn btn-primary">Guardar</button>
-              </form>
-            </div>
+        <div className="card">
+          <div className="card-header">
+            <h2>Agendar Cita Medica</h2>
           </div>
+          <div className="card-body">
+            <form onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label htmlFor="odontologo">Odontologo</label>
+                <input
+                  className="form-control"
+                  list="datalistodontologo"
+                  id="dataListOdonto"
+                  placeholder="Buscar Odontologo..."
+                  value={selectedOdontologo || ''}
+                  onBlur={handleSearchChangeOdont}
+                  onInput={handleOdontologoChange}
+                />
+                <datalist id="datalistodontologo">
+                  {odontologo.map((odontologo) => (
+                    <option key={odontologo.idMedico} value={`${odontologo.idMedico} - ${odontologo.nombre}`}/>
+                  ))}
+                </datalist>
+              </div>
+              <div className="espacio"/>
+              <div className="calendar-container">
+                <Calendario availability={availability}/>
+              </div>
+              <div className="form-group">
+                <label>Paciente</label>
+                <input type="text" className="form-control" value={paciente || ''}
+                       onChange={(e) => setPaciente(e.target.value)}/>
+              </div>
+              <div className="form-group">
+                <label>Fecha</label>
+                <DatePicker selected={startDate} onChange={date => setStartDate(date)}/>
+              </div>
+              <div className="form-group">
+                <label>Hora</label>
+                <input type="time" className="form-control" value={hora || ''} onChange={(e) => setHora(e.target.value)}/>
+              </div>
+              <div className="form-group">
+                <label>Motivo</label>
+                <textarea className="form-control" value={motivo || ''} onChange={(e) => setMotivo(e.target.value)}/>
+              </div>
+              <div className="espacio"/>
+              <button type="submit" className="btn btn-primary">Guardar</button>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
   );

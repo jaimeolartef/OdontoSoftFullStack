@@ -1,8 +1,8 @@
 import './Calendario.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
-const Calendar = () => {
+const Calendar = ({availability}) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState(null);
   const currentMonth = currentDate.getMonth();
@@ -33,23 +33,42 @@ const Calendar = () => {
     setCurrentDate(new Date());
   };
 
+  useEffect(() => {
+    toggleDaySelection(new Date().getDate());
+  }, []);
+
+  useEffect(() => {
+    console.log('Availability:', availability.length);
+    if (availability.length > 0) {
+      console.log('Availability:', availability);
+      availability.forEach(item => {
+        console.log(`ID Disponibilidad: ${item.idDisponibilidad}`);
+        console.log(`ID Medico: ${item.idMedico}`);
+        console.log(`Día Semana: ${item.diaSemana}`);
+        console.log(`Hora Inicio: ${item.horaInicio}`);
+        console.log(`Hora Fin: ${item.horaFin}`);
+        console.log(`ID Consultorio: ${item.idConsultorio}`);
+      });
+    }
+  }, [availability]);
+
   const startHour = 8; // Hora de inicio
   const endHour = 16; // Hora de fin
   const hours = Array.from({length: (endHour - startHour) * 2}, (_, i) => `${String(Math.floor(i / 2) + startHour).padStart(2, '0')}:${i % 2 === 0 ? '00' : '30'}`);
 
   return (
-    <div class="row g-3">
-      <div class="col">
-        <div class="row">
-          <div class="col">
+    <div className="row g-3">
+      <div className="col">
+        <div className="row">
+          <div className="col">
             <button className="button btn btn-sm" onClick={goToCurrentMonth}>Mes Actual</button>
           </div>
-          <div class="col">
-            <p class="fw-bolder">
+          <div className="col">
+            <p className="fw-bolder">
               {monthNames[currentMonth]} {currentYear}
             </p>
           </div>
-          <div class="col">
+          <div className="col">
             <button className="button btn btn-sm" onClick={goToNextMonth}>Siguiente Mes</button>
           </div>
         </div>
@@ -78,7 +97,7 @@ const Calendar = () => {
           })}
         </div>
       </div>
-      <div class="col">
+      <div className="col">
         {(
           <div className="dialog">
             <div className="dialog-content">
