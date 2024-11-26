@@ -1,6 +1,7 @@
 import './Calendario.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, {useEffect, useState} from 'react';
+import showMessage from "../../util/UtilMessage";
 
 const Calendar = ({availability}) => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -8,6 +9,10 @@ const Calendar = ({availability}) => {
   const currentMonth = currentDate.getMonth();
   const currentYear = currentDate.getFullYear();
   const today = new Date().getDate();
+  const startHour = 8; // Hora de inicio
+  const endHour = 16; // Hora de fin
+  const [availableHours, setAvailableHours] = useState([]);
+  const hours = Array.from({length: (endHour - startHour) * 2}, (_, i) => `${String(Math.floor(i / 2) + startHour).padStart(2, '0')}:${i % 2 === 0 ? '00' : '30'}`);
 
   const firstDayOfMonth = (new Date(currentYear, currentMonth, 1).getDay() + 6) % 7;
   const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
@@ -20,8 +25,32 @@ const Calendar = ({availability}) => {
 
   const dayNames = ['Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa', 'Do'];
 
-  const toggleDaySelection = (day) => {
+  const toggleDaySelection = (day, month, year) => {
+    if (availability.length === 0) {
+      showMessage('warning', 'Debe seleccionar un odontólogo para ver su disponibilidad');
+      return;
+    }
+
+    if (day < new Date().getDate() && month <= new Date().getMonth() && year <= new Date().getFullYear()) {
+      showMessage('warning', 'Debe seleccionar un día igual o posterior al día actual');
+      return;
+    }
+
     setSelectedDay(day);
+
+    let date = new Date(year, month, day);
+    let dayOfWeek = date.getDay();
+
+    const availableHours = availability
+      .filter(item => item.diaSemana === dayOfWeek)
+      .map(item => {
+        const start = parseInt(item.horaInicio.split(':')[0], 10);
+        const end = parseInt(item.horaFin.split(':')[0], 10);
+        return Array.from({ length: (end - start) * 2 }, (_, i) => `${String(start + Math.floor(i / 2)).padStart(2, '0')}:${i % 2 === 0 ? '00' : '30'}`);
+      })
+      .flat();
+
+    setAvailableHours(availableHours);
   };
 
 
@@ -33,28 +62,14 @@ const Calendar = ({availability}) => {
     setCurrentDate(new Date());
   };
 
+  const selectionInitToday = (day, month, year) => {
+    setSelectedDay(day);
+  };
+
   useEffect(() => {
-    toggleDaySelection(new Date().getDate());
+    selectionInitToday(new Date().getDate(), new Date().getMonth(), new Date().getFullYear());
   }, []);
 
-  useEffect(() => {
-    console.log('Availability:', availability.length);
-    if (availability.length > 0) {
-      console.log('Availability:', availability);
-      availability.forEach(item => {
-        console.log(`ID Disponibilidad: ${item.idDisponibilidad}`);
-        console.log(`ID Medico: ${item.idMedico}`);
-        console.log(`Día Semana: ${item.diaSemana}`);
-        console.log(`Hora Inicio: ${item.horaInicio}`);
-        console.log(`Hora Fin: ${item.horaFin}`);
-        console.log(`ID Consultorio: ${item.idConsultorio}`);
-      });
-    }
-  }, [availability]);
-
-  const startHour = 8; // Hora de inicio
-  const endHour = 16; // Hora de fin
-  const hours = Array.from({length: (endHour - startHour) * 2}, (_, i) => `${String(Math.floor(i / 2) + startHour).padStart(2, '0')}:${i % 2 === 0 ? '00' : '30'}`);
 
   return (
     <div className="row g-3">
@@ -89,7 +104,7 @@ const Calendar = ({availability}) => {
               <div
                 className={`day ${isToday ? 'today' : ''}`}
                 key={day}
-                onClick={() => toggleDaySelection(day)}
+                onClick={() => toggleDaySelection(day, currentMonth, currentYear)}
               >
                 {day}
               </div>
@@ -98,17 +113,25 @@ const Calendar = ({availability}) => {
         </div>
       </div>
       <div className="col">
-        {(
+        {selectedDay && (
           <div className="dialog">
             <div className="dialog-content">
               <h3>Horas del día {selectedDay}</h3>
               <table className="table">
                 <tbody>
-                {hours.map(hour => (
-                  <tr key={hour}>
-                    <td>{hour}</td>
+                {availableHours.length === 0 ? (
+                  <tr>
+                    <td>No hay horas disponibles</td>
                   </tr>
-                ))}
+                ) : (
+                  availableHours.map(hour => (
+                    <tr key={hour}>
+                      <td>
+                        <button className="btn btn-outline-primary btn-sm">{hour}</button>
+                      </td>
+                    </tr>
+                  ))
+                )}
                 </tbody>
               </table>
             </div>
