@@ -7,7 +7,9 @@ import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 @Builder
@@ -109,7 +111,7 @@ public class Paciente {
   private LocalDateTime fechamodificacion;
 
   @OneToMany(mappedBy = "idpaciente")
-  private Set<Cita> citas = new LinkedHashSet<>();
+  private List<Cita> citas = new ArrayList<>();
 
   @OneToMany(mappedBy = "idpaciente")
   private Set<HistoriaClinica> historiaclinicas = new LinkedHashSet<>();

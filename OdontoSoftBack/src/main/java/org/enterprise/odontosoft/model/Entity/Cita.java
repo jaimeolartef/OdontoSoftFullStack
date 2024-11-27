@@ -1,16 +1,19 @@
 package org.enterprise.odontosoft.model.Entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @Entity
+
 @Table(name = "cita")
 public class Cita {
   @Id
@@ -23,10 +26,10 @@ public class Cita {
   private LocalDate fecha;
 
   @Column(name = "horainicio")
-  private LocalTime horainicio;
+  private LocalTime horaInicio;
 
   @Column(name = "horafin")
-  private LocalTime horafin;
+  private LocalTime horaFin;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "idpaciente")
@@ -36,13 +39,13 @@ public class Cita {
   private Boolean habilitado;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "idMedico")
+  @JoinColumn(name = "idmedico")
   private Medico idMedico;
 
-  @Column(name = "fechaNotificacion")
+  @Column(name = "fechanotificacion")
   private LocalDate fechaNotificacion;
 
-  @Column(name = "motivoCancelacion")
+  @Column(name = "motivocancelacion")
   private String motivoCancelacion;
 
 }

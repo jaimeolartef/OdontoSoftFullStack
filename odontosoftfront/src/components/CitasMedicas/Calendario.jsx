@@ -3,20 +3,20 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import React, {useEffect, useState} from 'react';
 import showMessage from "../../util/UtilMessage";
 
-const Calendar = ({availability}) => {
+const Calendar = ({availability, citaMedicas}) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState(null);
+  const [selectedMonth, setSelectedMonth] = useState(null);
+  const [selectedYear, setSelectedYear] = useState(null);
   const currentMonth = currentDate.getMonth();
   const currentYear = currentDate.getFullYear();
   const today = new Date().getDate();
-  const startHour = 8; // Hora de inicio
-  const endHour = 16; // Hora de fin
   const [availableHours, setAvailableHours] = useState([]);
-  const hours = Array.from({length: (endHour - startHour) * 2}, (_, i) => `${String(Math.floor(i / 2) + startHour).padStart(2, '0')}:${i % 2 === 0 ? '00' : '30'}`);
-
   const firstDayOfMonth = (new Date(currentYear, currentMonth, 1).getDay() + 6) % 7;
   const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
   const days = Array.from({length: lastDayOfMonth}, (_, i) => i + 1);
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
+  const [cancelReason, setCancelReason] = useState('');
 
   const monthNames = [
     'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
@@ -37,19 +37,46 @@ const Calendar = ({availability}) => {
     }
 
     setSelectedDay(day);
+    setSelectedMonth(month);
+    setSelectedYear(year);
+    console.log('availability: ', availability);
 
     let date = new Date(year, month, day);
     let dayOfWeek = date.getDay();
 
+    let hourFinal = '';
     const availableHours = availability
       .filter(item => item.diaSemana === dayOfWeek)
       .map(item => {
         const start = parseInt(item.horaInicio.split(':')[0], 10);
         const end = parseInt(item.horaFin.split(':')[0], 10);
-        return Array.from({ length: (end - start) * 2 }, (_, i) => `${String(start + Math.floor(i / 2)).padStart(2, '0')}:${i % 2 === 0 ? '00' : '30'}`);
+        hourFinal = end;
+        return Array.from({length: (end - start) * 2}, (_, i) => `${String(start + Math.floor(i / 2)).padStart(2, '0')}:${i % 2 === 0 ? '00' : '30'}`);
       })
       .flat();
 
+    if (new Date().getHours() > hourFinal && day === new Date().getDate() && month === new Date().getMonth() && year === new Date().getFullYear()) {
+      showMessage('warning', 'El día de hoy ya no puede agendar citas');
+      return;
+    }
+
+    citaMedicas.forEach(citaMedica => {
+      let fechaCita = citaMedica.fecha.split('-');
+      let fecha = new Date(fechaCita[0], fechaCita[1] - 1, fechaCita[2]);
+      if (fecha.getDate() === day && fecha.getMonth() === month && fecha.getFullYear() === year) {
+        availableHours.forEach((hour, index) => {
+          if (hour === citaMedica.horainicio) {
+            if (hour === citaMedica.horainicio) {
+              availableHours[index] = `${hour} - ${citaMedica.idpaciente} - ${citaMedica.id}`;
+            }
+          }
+        });
+      }
+
+      console.log('citaMedica:', availableHours);
+    });
+
+    console.log('availableHours:', availableHours);
     setAvailableHours(availableHours);
   };
 
@@ -64,6 +91,46 @@ const Calendar = ({availability}) => {
 
   const selectionInitToday = (day, month, year) => {
     setSelectedDay(day);
+  };
+
+  const handleButtonClick = (time, label, cita) => {
+    console.log('time:', time);
+    console.log('label:', label);
+    console.log('cita:', cita);
+
+    if (cita) {
+
+      citaMedicas.forEach((citaMedica, index) => {
+        if (citaMedica.id == cita) {
+          citaMedicas[index].habilitado = false;
+        }
+      });
+    } else {
+      console.log('cita para agendar');
+    }
+  };
+
+  const handleCancelClick = (cita) => {
+    setSelectedCita(cita);
+    setShowCancelDialog(true);
+  };
+
+  const handleCancelConfirm = () => {
+    if (selectedCita) {
+      citaMedicas.forEach((citaMedica, index) => {
+        if (citaMedica.id == selectedCita) {
+          citaMedicas[index].habilitado = false;
+          citaMedicas[index].cancelReason = cancelReason;
+        }
+      });
+    }
+    setShowCancelDialog(false);
+    setCancelReason('');
+  };
+
+  const handleCancelClose = () => {
+    setShowCancelDialog(false);
+    setCancelReason('');
   };
 
   useEffect(() => {
@@ -104,8 +171,7 @@ const Calendar = ({availability}) => {
               <div
                 className={`day ${isToday ? 'today' : ''}`}
                 key={day}
-                onClick={() => toggleDaySelection(day, currentMonth, currentYear)}
-              >
+                onClick={() => toggleDaySelection(day, currentMonth, currentYear)}>
                 {day}
               </div>
             );
@@ -124,13 +190,19 @@ const Calendar = ({availability}) => {
                     <td>No hay horas disponibles</td>
                   </tr>
                 ) : (
-                  availableHours.map(hour => (
-                    <tr key={hour}>
-                      <td>
-                        <button className="btn btn-outline-primary btn-sm">{hour}</button>
-                      </td>
-                    </tr>
-                  ))
+                  availableHours.map(hour => {
+                    const [time, label, cita] = hour.split(' - ');
+                    return (
+                      <tr key={hour}>
+                        <td>
+                          <button className={`btn btn-sm ${label ? 'btn-outline-danger' : 'btn-outline-primary'}`} onClick={() => handleButtonClick(time, label, cita)}>
+                            {time}
+                          </button>
+                          {label && <span className="label ms-2">{label}</span>}
+                        </td>
+                      </tr>
+                    );
+                  })
                 )}
                 </tbody>
               </table>
@@ -138,6 +210,29 @@ const Calendar = ({availability}) => {
           </div>
         )}
       </div>
+      <Modal show={showCancelDialog} onHide={handleCancelClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Cancel Appointment</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="form-group">
+            <label>Reason for Cancellation</label>
+            <textarea
+              className="form-control"
+              value={cancelReason}
+              onChange={(e) => setCancelReason(e.target.value)}
+            />
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCancelClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleCancelConfirm}>
+            Confirm
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

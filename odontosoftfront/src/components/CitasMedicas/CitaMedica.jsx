@@ -27,6 +27,7 @@ const CitaMedica = () => {
     }
   ]);
   const [availability, setAvailability] = useState([]);
+  const [citasMedicas, setCitasMedicas] = useState([]);
 
   useEffect(() => {
     const fetchOdontologos = async () => {
@@ -65,13 +66,28 @@ const CitaMedica = () => {
         if (response.status === 200) {
           let availab = response.data;
           setAvailability(availab);
-
+          await fetchCitas(odontoSelec[0]);
         }
       } catch (error) {
         console.error('Error fetching patient data:', error);
       }
     }
   }
+
+  const fetchCitas = async (idMedico) => {
+    let token = localStorage.getItem('jsonwebtoken');
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    try {
+      const response = await axios.get(`${config.baseURL}/appointment/doctor/${idMedico}`);
+      if (response.status === 200) {
+        setCitasMedicas(response.data);
+        console.log('Citas:', response.data);
+      }
+    } catch (error) {
+      console.error('Error fetching citas:', error);
+    }
+  };
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -114,7 +130,7 @@ const CitaMedica = () => {
               </div>
               <div className="espacio"/>
               <div className="calendar-container">
-                <Calendario availability={availability}/>
+                <Calendario availability={availability} citaMedicas={citasMedicas}/>
               </div>
               <div className="espacio"/>
               <div className="form-group">

@@ -11,11 +11,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/availability")
-public class availabilityView {
+public class AvailabilityView {
 
 	private final AvailabilityController availabilityController;
 
-	public availabilityView(AvailabilityController availabilityController) {
+	public AvailabilityView(AvailabilityController availabilityController) {
 		this.availabilityController = availabilityController;
 	}
 

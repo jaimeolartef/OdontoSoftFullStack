@@ -1,7 +1,13 @@
 package org.enterprise.odontosoft.model.Dao;
 
 import org.enterprise.odontosoft.model.Entity.Cita;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.List;
+
 public interface CitaDao extends CrudRepository<Cita, Integer> {
+
+	@Query("SELECT c FROM Cita c WHERE c.idMedico.idMedico = :idMedico")
+	List<Cita> findByIdMedico(Integer idMedico);
 }
