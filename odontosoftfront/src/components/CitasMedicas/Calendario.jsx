@@ -1,9 +1,10 @@
 import './Calendario.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import showMessage from "../../util/UtilMessage";
+import { Modal, Button } from 'react-bootstrap';
 
-const Calendar = ({availability, citaMedicas}) => {
+const Calendar = ({ availability, citaMedicas }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState(null);
@@ -14,9 +15,10 @@ const Calendar = ({availability, citaMedicas}) => {
   const [availableHours, setAvailableHours] = useState([]);
   const firstDayOfMonth = (new Date(currentYear, currentMonth, 1).getDay() + 6) % 7;
   const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-  const days = Array.from({length: lastDayOfMonth}, (_, i) => i + 1);
+  const days = Array.from({ length: lastDayOfMonth }, (_, i) => i + 1);
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [cancelReason, setCancelReason] = useState('');
+  const [selectedCita, setSelectedCita] = useState(null);
 
   const monthNames = [
     'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
@@ -39,7 +41,6 @@ const Calendar = ({availability, citaMedicas}) => {
     setSelectedDay(day);
     setSelectedMonth(month);
     setSelectedYear(year);
-    console.log('availability: ', availability);
 
     let date = new Date(year, month, day);
     let dayOfWeek = date.getDay();
@@ -51,12 +52,13 @@ const Calendar = ({availability, citaMedicas}) => {
         const start = parseInt(item.horaInicio.split(':')[0], 10);
         const end = parseInt(item.horaFin.split(':')[0], 10);
         hourFinal = end;
-        return Array.from({length: (end - start) * 2}, (_, i) => `${String(start + Math.floor(i / 2)).padStart(2, '0')}:${i % 2 === 0 ? '00' : '30'}`);
+        return Array.from({ length: (end - start) * 2 }, (_, i) => `${String(start + Math.floor(i / 2)).padStart(2, '0')}:${i % 2 === 0 ? '00' : '30'}`);
       })
       .flat();
 
     if (new Date().getHours() > hourFinal && day === new Date().getDate() && month === new Date().getMonth() && year === new Date().getFullYear()) {
       showMessage('warning', 'El día de hoy ya no puede agendar citas');
+      setAvailableHours([]);
       return;
     }
 
@@ -72,14 +74,10 @@ const Calendar = ({availability, citaMedicas}) => {
           }
         });
       }
-
-      console.log('citaMedica:', availableHours);
     });
 
-    console.log('availableHours:', availableHours);
     setAvailableHours(availableHours);
   };
-
 
   const goToNextMonth = () => {
     setCurrentDate(new Date(currentYear, currentMonth + 1, 1));
@@ -91,20 +89,13 @@ const Calendar = ({availability, citaMedicas}) => {
 
   const selectionInitToday = (day, month, year) => {
     setSelectedDay(day);
+    setSelectedMonth(month);
+    setSelectedYear(year);
   };
 
   const handleButtonClick = (time, label, cita) => {
-    console.log('time:', time);
-    console.log('label:', label);
-    console.log('cita:', cita);
-
     if (cita) {
-
-      citaMedicas.forEach((citaMedica, index) => {
-        if (citaMedica.id == cita) {
-          citaMedicas[index].habilitado = false;
-        }
-      });
+      handleCancelClick(cita);
     } else {
       console.log('cita para agendar');
     }
@@ -137,7 +128,6 @@ const Calendar = ({availability, citaMedicas}) => {
     selectionInitToday(new Date().getDate(), new Date().getMonth(), new Date().getFullYear());
   }, []);
 
-
   return (
     <div className="row g-3">
       <div className="col">
@@ -162,14 +152,16 @@ const Calendar = ({availability, citaMedicas}) => {
           ))}
         </div>
         <div className="days">
-          {Array.from({length: firstDayOfMonth}, (_, i) => (
+          {Array.from({ length: firstDayOfMonth }, (_, i) => (
             <div className="day empty" key={`empty-${i}`}></div>
           ))}
           {days.map(day => {
             const isToday = day === today && currentMonth === new Date().getMonth() && currentYear === new Date().getFullYear();
+            const isSelected = day === selectedDay && currentMonth === selectedMonth && currentYear === selectedYear;
+            console.log('isSelected:', isSelected);
             return (
               <div
-                className={`day ${isToday ? 'today' : ''}`}
+                className={`day ${isSelected  ? 'selected-day' : ''}`}
                 key={day}
                 onClick={() => toggleDaySelection(day, currentMonth, currentYear)}>
                 {day}
@@ -212,25 +204,30 @@ const Calendar = ({availability, citaMedicas}) => {
       </div>
       <Modal show={showCancelDialog} onHide={handleCancelClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Cancel Appointment</Modal.Title>
+          <Modal.Title>Cancelar cita odontológica</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div className="form-group">
-            <label>Reason for Cancellation</label>
+            <label>Razón de la cancelación</label>
             <textarea
               className="form-control"
               value={cancelReason}
-              onChange={(e) => setCancelReason(e.target.value)}
-            />
+              onChange={(e) => setCancelReason(e.target.value)}/>
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleCancelClose}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={handleCancelConfirm}>
-            Confirm
-          </Button>
+          <div className="row g-3 align-items-center">
+            <div className="col-auto">
+              <button type="button" className="btn btn-primary" style={{ width: '90px' }} onClick={handleCancelClose}>
+                Cancelar
+              </button>
+            </div>
+            <div className="col-auto">
+              <button type="button" class="btn btn-secondary" style={{ width: '90px' }} onClick={handleCancelConfirm}>
+                Aceptar
+              </button>
+            </div>
+          </div>
         </Modal.Footer>
       </Modal>
     </div>

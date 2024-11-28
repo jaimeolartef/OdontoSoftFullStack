@@ -130,7 +130,7 @@ const CitaMedica = () => {
               </div>
               <div className="espacio"/>
               <div className="calendar-container">
-                <Calendario availability={availability} citaMedicas={citasMedicas}/>
+                <Calendario availability={availability} citaMedicas={citasMedicas} />
               </div>
               <div className="espacio"/>
               <div className="form-group">

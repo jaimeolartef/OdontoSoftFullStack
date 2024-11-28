@@ -49,15 +49,18 @@ body {
   cursor: pointer;
 }
 
+.selected-day {
+  border: 2px solid #000;
+  border-radius: 50%;
+  background-color: rgba(0, 123, 255, 0.1);
+  color: #000;
+}
+
 .day.selected {
   background-color: red;
   color: white;
 }
 
-.day.today {
-  border: 2px solid #000;
-  border-radius: 50%;
-}
 
 .event {
   background-color: #f0f0f0;
