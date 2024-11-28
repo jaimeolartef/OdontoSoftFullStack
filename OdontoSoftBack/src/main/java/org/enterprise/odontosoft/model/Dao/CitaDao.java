@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface CitaDao extends CrudRepository<Cita, Integer> {
 
-	@Query("SELECT c FROM Cita c WHERE c.idMedico.idMedico = :idMedico")
+	@Query("SELECT c FROM Cita c WHERE c.idMedico.idMedico = :idMedico and c.habilitado = true")
 	List<Cita> findByIdMedico(Integer idMedico);
 }

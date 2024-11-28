@@ -17,8 +17,10 @@ public class CitaResponse {
 	private String horainicio;
 	private String horafin;
 	private String idpaciente;
+	private String nombrePaciente;
 	private Boolean habilitado;
 	private String idMedico;
+	private String nombreMedico;
 	private LocalDate fechaNotificacion;
 	private String motivoCancelacion;
 

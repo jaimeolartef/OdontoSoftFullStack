@@ -3,6 +3,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useEffect, useState } from 'react';
 import showMessage from "../../util/UtilMessage";
 import { Modal, Button } from 'react-bootstrap';
+import axios from "axios";
+import config from "../../config";
 
 const Calendar = ({ availability, citaMedicas }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -69,7 +71,7 @@ const Calendar = ({ availability, citaMedicas }) => {
         availableHours.forEach((hour, index) => {
           if (hour === citaMedica.horainicio) {
             if (hour === citaMedica.horainicio) {
-              availableHours[index] = `${hour} - ${citaMedica.idpaciente} - ${citaMedica.id}`;
+              availableHours[index] = `${hour} - ${citaMedica.nombrePaciente} - ${citaMedica.id}`;
             }
           }
         });
@@ -108,16 +110,31 @@ const Calendar = ({ availability, citaMedicas }) => {
 
   const handleCancelConfirm = () => {
     if (selectedCita) {
-      citaMedicas.forEach((citaMedica, index) => {
-        if (citaMedica.id == selectedCita) {
-          citaMedicas[index].habilitado = false;
-          citaMedicas[index].cancelReason = cancelReason;
-        }
-      });
+      let citaCancelada = citaMedicas.find(citaMedica => citaMedica.id == selectedCita);
+      citaCancelada.habilitado = false;
+      citaCancelada.motivoCancelacion = cancelReason;
+      fetchCitaCancelada(citaCancelada).then(r => console.log('Cita cancelada:', r));
     }
+    console.log('Cita cancelada:', selectedCita);
     setShowCancelDialog(false);
     setCancelReason('');
   };
+
+  const fetchCitaCancelada = async (citaCancelada) => {
+    let token = localStorage.getItem('jsonwebtoken');
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    try {
+      const response = await axios.put(`${config.baseURL}/appointment/update`, citaCancelada);
+      if (response.status === 200) {
+        console.log('Cita cancelada:', citaCancelada);
+        showMessage('success', 'La historia clínica se guardo con éxito');
+        //TODO DEBO RECARGAR LAS CITAS DEL DIA SELECCIONADO
+      }
+    } catch (error) {
+      console.error('Error fetching patient data:', error);
+    }
+
+  }
 
   const handleCancelClose = () => {
     setShowCancelDialog(false);
@@ -223,7 +240,7 @@ const Calendar = ({ availability, citaMedicas }) => {
               </button>
             </div>
             <div className="col-auto">
-              <button type="button" class="btn btn-secondary" style={{ width: '90px' }} onClick={handleCancelConfirm}>
+              <button type="button" className="btn btn-secondary" style={{ width: '90px' }} onClick={handleCancelConfirm}>
                 Aceptar
               </button>
             </div>
