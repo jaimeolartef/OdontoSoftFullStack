@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import org.enterprise.odontosoft.controller.mapper.CitaMapper;
 import org.enterprise.odontosoft.model.Dao.CitaDao;
 import org.enterprise.odontosoft.model.Entity.Cita;
+import org.enterprise.odontosoft.util.UtilDate;
 import org.enterprise.odontosoft.view.dto.request.CitaRequest;
 import org.enterprise.odontosoft.view.dto.response.CitaResponse;
 import org.slf4j.Logger;
@@ -23,8 +24,8 @@ public class AppointmentControllerImpl implements AppointmentController {
 	private static final Logger logger = LoggerFactory.getLogger(AppointmentControllerImpl.class);
 
 	@Override
-	public List<CitaResponse> findByMedico(Integer idMedico) {
-		List<Cita> citas = citaDao.findByIdMedico(idMedico);
+	public List<CitaResponse> findByMedico(Integer idMedico, String fechaDia) {
+		List<Cita> citas = citaDao.findByIdMedico(idMedico, UtilDate.convertToLocalDate(fechaDia));
 		return citas.stream()
 				.map(cita -> CitaMapper.toCitaResponse(cita))
 				.collect(Collectors.toList());

@@ -6,7 +6,7 @@ import { Modal, Button } from 'react-bootstrap';
 import axios from "axios";
 import config from "../../config";
 
-const Calendar = ({ availability, citaMedicas }) => {
+const Calendar = ({ availability }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState(null);
@@ -21,6 +21,7 @@ const Calendar = ({ availability, citaMedicas }) => {
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [cancelReason, setCancelReason] = useState('');
   const [selectedCita, setSelectedCita] = useState(null);
+  const [citasMedicas, setCitasMedicas] = useState([]);
 
   const monthNames = [
     'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
@@ -29,7 +30,7 @@ const Calendar = ({ availability, citaMedicas }) => {
 
   const dayNames = ['Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa', 'Do'];
 
-  const toggleDaySelection = (day, month, year) => {
+  const toggleDaySelection = async (day, month, year) => {
     if (availability.length === 0) {
       showMessage('warning', 'Debe seleccionar un odontólogo para ver su disponibilidad');
       return;
@@ -39,6 +40,7 @@ const Calendar = ({ availability, citaMedicas }) => {
       showMessage('warning', 'Debe seleccionar un día igual o posterior al día actual');
       return;
     }
+    //TODO: VVALIDAR QUE EL LA RAZON DE CANCELACION NO ESTE VACIA, REALIZAR MAS PRUEBAS DE CANCELACION
 
     setSelectedDay(day);
     setSelectedMonth(month);
@@ -64,7 +66,10 @@ const Calendar = ({ availability, citaMedicas }) => {
       return;
     }
 
-    citaMedicas.forEach(citaMedica => {
+
+    let listCita = await fetchCitas(day, month, year);
+
+    listCita.forEach(citaMedica => {
       let fechaCita = citaMedica.fecha.split('-');
       let fecha = new Date(fechaCita[0], fechaCita[1] - 1, fechaCita[2]);
       if (fecha.getDate() === day && fecha.getMonth() === month && fecha.getFullYear() === year) {
@@ -79,6 +84,22 @@ const Calendar = ({ availability, citaMedicas }) => {
     });
 
     setAvailableHours(availableHours);
+  };
+
+  const fetchCitas = async (day, month, year) => {
+    let token = localStorage.getItem('jsonwebtoken');
+    let odontoSelec = odontologoSelect();
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    try {
+      const response = await axios.get(`${config.baseURL}/appointment/doctor?idOdontologo=${odontoSelec}&fechaDia=${year + "-" + (month + 1) + "-" + (day < 10 ? '0' + day : day)}`);
+      if (response.status === 200) {
+        console.log('Citas:', response.data);
+        setCitasMedicas(response.data);
+        return response.data;
+      }
+    } catch (error) {
+      console.error('Error fetching citas:', error);
+    }
   };
 
   const goToNextMonth = () => {
@@ -110,7 +131,7 @@ const Calendar = ({ availability, citaMedicas }) => {
 
   const handleCancelConfirm = () => {
     if (selectedCita) {
-      let citaCancelada = citaMedicas.find(citaMedica => citaMedica.id == selectedCita);
+      let citaCancelada = citasMedicas.find(citaMedica => citaMedica.id == selectedCita);
       citaCancelada.habilitado = false;
       citaCancelada.motivoCancelacion = cancelReason;
       fetchCitaCancelada(citaCancelada).then(r => console.log('Cita cancelada:', r));
@@ -128,12 +149,18 @@ const Calendar = ({ availability, citaMedicas }) => {
       if (response.status === 200) {
         console.log('Cita cancelada:', citaCancelada);
         showMessage('success', 'La historia clínica se guardo con éxito');
-        //TODO DEBO RECARGAR LAS CITAS DEL DIA SELECCIONADO
+        fetchCitas(selectedDay, selectedMonth, selectedYear);
+        toggleDaySelection(selectedDay, selectedMonth, selectedYear);
       }
     } catch (error) {
       console.error('Error fetching patient data:', error);
     }
+  }
 
+  const odontologoSelect = () => {
+    const odontologoInput = document.getElementById('dataListOdonto');
+    const odontologoValue = odontologoInput.value;
+    return odontologoValue.split('-')[0];
   }
 
   const handleCancelClose = () => {
@@ -229,18 +256,19 @@ const Calendar = ({ availability, citaMedicas }) => {
             <textarea
               className="form-control"
               value={cancelReason}
-              onChange={(e) => setCancelReason(e.target.value)}/>
+              onChange={(e) => setCancelReason(e.target.value)}
+              required/>
           </div>
         </Modal.Body>
         <Modal.Footer>
           <div className="row g-3 align-items-center">
             <div className="col-auto">
-              <button type="button" className="btn btn-primary" style={{ width: '90px' }} onClick={handleCancelClose}>
+              <button type="button" className="btn btn-secondary" style={{ width: '90px' }} onClick={handleCancelClose}>
                 Cancelar
               </button>
             </div>
             <div className="col-auto">
-              <button type="button" className="btn btn-secondary" style={{ width: '90px' }} onClick={handleCancelConfirm}>
+              <button type="button" className="btn btn-primary" style={{ width: '90px' }} onClick={handleCancelConfirm}>
                 Aceptar
               </button>
             </div>

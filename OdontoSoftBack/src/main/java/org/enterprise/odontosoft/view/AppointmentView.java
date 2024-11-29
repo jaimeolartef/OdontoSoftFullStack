@@ -10,6 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/appointment")
+@CrossOrigin(originPatterns = "http://localhost:*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT})
 public class AppointmentView {
 
 	private final AppointmentController appointmentController;
@@ -18,10 +19,10 @@ public class AppointmentView {
 		this.appointmentController = appointmentController;
 	}
 
-	@GetMapping("/doctor/{idDoctor}")
-	public ResponseEntity<List<CitaResponse>> findByMedico(@PathVariable Integer idDoctor) {
+	@GetMapping("/doctor")
+	public ResponseEntity<List<CitaResponse>> findByMedico(@RequestParam Integer idOdontologo, @RequestParam String fechaDia) {
 		try {
-			return ResponseEntity.ok(appointmentController.findByMedico(idDoctor));
+			return ResponseEntity.ok(appointmentController.findByMedico(idOdontologo, fechaDia));
 		} catch (Exception e) {
 			return ResponseEntity.status(500).build();
 		}

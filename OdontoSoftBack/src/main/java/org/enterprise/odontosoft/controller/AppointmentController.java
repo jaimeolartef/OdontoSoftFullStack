@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface AppointmentController {
 
-	List<CitaResponse> findByMedico(Integer idMedico);
+	List<CitaResponse> findByMedico(Integer idMedico, String fechaDia);
 
 	CitaResponse updateAppointment(CitaRequest citaRequest);
 }
