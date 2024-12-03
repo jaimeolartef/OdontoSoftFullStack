@@ -109,4 +109,18 @@ public class PatientControllerImpl implements PatientController {
 
         return responseEntity;
     }
+
+    @Override
+    public ResponseEntity<List<PacienteResponse>> getAllPatients() {
+        ResponseEntity<List<PacienteResponse>> responseEntity;
+        try {
+            List<Paciente> pacientes = (List<Paciente>) patientDao.findAll();
+            List<PacienteResponse> pacientesDto = PatientMapper.toDto(pacientes);
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(pacientesDto);
+        } catch (Exception e) {
+            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            logger.error("Error getting all patients", e);
+        }
+        return responseEntity;
+    }
 }

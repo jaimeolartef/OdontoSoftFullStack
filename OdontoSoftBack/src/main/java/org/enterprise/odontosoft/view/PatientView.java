@@ -39,4 +39,9 @@ public class PatientView {
         return patientController.updatePatient(paciente);
     }
 
+    @GetMapping("/listar")
+    public ResponseEntity<List<PacienteResponse>> getAllPatients() {
+        return patientController.getAllPatients();
+    }
+
 }

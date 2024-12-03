@@ -36,4 +36,13 @@ public class AppointmentView {
 			return ResponseEntity.status(500).build();
 		}
 	}
+
+	@PostMapping("/create")
+	public ResponseEntity<CitaResponse> createAppointment(@RequestBody CitaRequest citaRequest) {
+		try {
+			return ResponseEntity.ok(appointmentController.updateAppointment(citaRequest));
+		} catch (Exception e) {
+			return ResponseEntity.status(500).build();
+		}
+	}
 }

@@ -15,4 +15,6 @@ public interface PatientController {
     ResponseEntity<PacienteResponse> getPatientById(Integer id);
 
     ResponseEntity<PacienteResponse> updatePatient(PacienteRequest pacienteRequest);
+
+    ResponseEntity<List<PacienteResponse>> getAllPatients();
 }

@@ -32,7 +32,7 @@ public class CitaMapper {
 	public static Cita toCita(CitaRequest citaRequest) {
 		return Cita.builder()
 			.id(citaRequest.getId())
-			.fecha(LocalDate.parse(citaRequest.getFecha()))
+			.fecha(UtilDate.convertToLocalDate(citaRequest.getFecha()))
 			.idMedico(Medico.builder().idMedico(citaRequest.getIdMedico()).build())
 			.horaInicio(UtilDate.convertToLocalTime(citaRequest.getHorainicio()))
 			.horaFin(UtilDate.convertToLocalTime(citaRequest.getHorafin()))

@@ -1,12 +1,12 @@
 import './Calendario.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import showMessage from "../../util/UtilMessage";
 import { Modal, Button } from 'react-bootstrap';
 import axios from "axios";
 import config from "../../config";
 
-const Calendar = ({ availability }) => {
+const Calendar = ({ availability, patient }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState(null);
@@ -36,11 +36,15 @@ const Calendar = ({ availability }) => {
       return;
     }
 
+    if (patient.length === 0) {
+      showMessage('warning', 'Debe seleccionar un paciente para agendar la cita');
+      return;
+    }
+
     if (day < new Date().getDate() && month <= new Date().getMonth() && year <= new Date().getFullYear()) {
       showMessage('warning', 'Debe seleccionar un día igual o posterior al día actual');
       return;
     }
-    //TODO: VVALIDAR QUE EL LA RAZON DE CANCELACION NO ESTE VACIA, REALIZAR MAS PRUEBAS DE CANCELACION
 
     setSelectedDay(day);
     setSelectedMonth(month);
@@ -90,8 +94,10 @@ const Calendar = ({ availability }) => {
     let token = localStorage.getItem('jsonwebtoken');
     let odontoSelec = odontologoSelect();
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    let monthFormated = (month + 1) < 10 ? '0' + (month + 1) : month + 1;
+    let dayFormated = (day < 10 ? '0' + day : day);
     try {
-      const response = await axios.get(`${config.baseURL}/appointment/doctor?idOdontologo=${odontoSelec}&fechaDia=${year + "-" + (month + 1) + "-" + (day < 10 ? '0' + day : day)}`);
+      const response = await axios.get(`${config.baseURL}/appointment/doctor?idOdontologo=${odontoSelec}&fechaDia=${year + "-" + monthFormated + "-" + dayFormated}`);
       if (response.status === 200) {
         console.log('Citas:', response.data);
         setCitasMedicas(response.data);
@@ -120,7 +126,11 @@ const Calendar = ({ availability }) => {
     if (cita) {
       handleCancelClick(cita);
     } else {
+      console.log('time ', time);
+      console.log('label ', label);
+      console.log('cita ', cita);
       console.log('cita para agendar');
+      handleAgendarCita(time);
     }
   };
 
@@ -129,7 +139,62 @@ const Calendar = ({ availability }) => {
     setShowCancelDialog(true);
   };
 
+  const handleAgendarCita = async (time) => {
+    let odontoSelec = odontologoSelect();
+    let idpaciente = pacienteSelect();
+
+    if (odontoSelec.length <= 0) {
+      showMessage('warning', 'Debe seleccionar un odontólogo para agendar la cita');
+      return;
+    }
+
+    let token = localStorage.getItem('jsonwebtoken');
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+
+    let day = selectedDay < 10 ? '0' + selectedDay : selectedDay;
+    let month = selectedMonth < 10 ? '0' + (selectedMonth + 1) : selectedMonth + 1;
+    let fechaFormateada = `${selectedYear}-${month}-${day}`;
+    console.log('Patient: ',patient);
+    let citaMedica = {
+      idMedico: odontoSelec[0],
+      id: null,
+      idpaciente: idpaciente,
+      fecha: fechaFormateada,
+      fechaNotificacion: calculateDateNotif(fechaFormateada),
+      horainicio: time,
+      horafin: time,
+      habilitado: true
+    };
+
+    try {
+      const response = await axios.post(`${config.baseURL}/appointment/create`, citaMedica);
+      if (response.status === 200) {
+        showMessage('success', 'La cita fue agendada con éxito');
+        fetchCitas(selectedDay, selectedMonth, selectedYear);
+        toggleDaySelection(selectedDay, selectedMonth, selectedYear);
+      }
+    } catch (error) {
+      console.error('Error fetching patient data:', error);
+    }
+
+    console.log('Cita medica:', citaMedica);
+  }
+
+  const calculateDateNotif = (fecha) => {
+    let fechaNotif = new Date(fecha);
+    fechaNotif.setDate(fechaNotif.getDate() - 1);
+    return fechaNotif.toISOString();
+  }
+
   const handleCancelConfirm = () => {
+    if (!cancelReason.trim() || /^[^a-zA-Z0-9]+$/.test(cancelReason)) {
+      showMessage('warning', 'Debe ingresar un motivo de cancelación válido');
+      setShowCancelDialog(true);
+      return;
+    }
+
+
     if (selectedCita) {
       let citaCancelada = citasMedicas.find(citaMedica => citaMedica.id == selectedCita);
       citaCancelada.habilitado = false;
@@ -148,7 +213,7 @@ const Calendar = ({ availability }) => {
       const response = await axios.put(`${config.baseURL}/appointment/update`, citaCancelada);
       if (response.status === 200) {
         console.log('Cita cancelada:', citaCancelada);
-        showMessage('success', 'La historia clínica se guardo con éxito');
+        showMessage('success', 'La cita se canceló con éxito');
         fetchCitas(selectedDay, selectedMonth, selectedYear);
         toggleDaySelection(selectedDay, selectedMonth, selectedYear);
       }
@@ -160,7 +225,17 @@ const Calendar = ({ availability }) => {
   const odontologoSelect = () => {
     const odontologoInput = document.getElementById('dataListOdonto');
     const odontologoValue = odontologoInput.value;
+
+    if (!odontologoValue.length > 0) {
+      showMessage('warning', 'Debe seleccionar un odontólogo');
+      return null;
+    }
+
     return odontologoValue.split('-')[0];
+  }
+
+  const pacienteSelect = () => {
+    return patient.split(' - ')[0];
   }
 
   const handleCancelClose = () => {
