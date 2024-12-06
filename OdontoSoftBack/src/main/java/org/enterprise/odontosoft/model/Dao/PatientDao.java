@@ -13,9 +13,6 @@ public interface PatientDao  extends CrudRepository<Paciente, Integer>  {
     @Query("SELECT p FROM Paciente p WHERE p.documento = :document")
     List<Paciente> findByDocument(String document);
 
-    @Query("SELECT p FROM Paciente p WHERE p.documento = :document AND p.idtipodocumento.id = :idtipodocumento")
-    List<Paciente> findByDocumentAndAndIdtipodocumento(String document, Integer idtipodocumento);
-
     @Query("SELECT p FROM Paciente p WHERE LOWER(p.primernombre) LIKE LOWER(CONCAT('%', :nombre, '%')) OR LOWER(p.segundonombre) LIKE LOWER(CONCAT('%', :nombre, '%')) OR LOWER(p.primerapellido) LIKE LOWER(CONCAT('%', :nombre, '%')) OR LOWER(p.segundoapellido) LIKE LOWER(CONCAT('%', :nombre, '%'))")
     List<Paciente> findByName(String nombre);
 }

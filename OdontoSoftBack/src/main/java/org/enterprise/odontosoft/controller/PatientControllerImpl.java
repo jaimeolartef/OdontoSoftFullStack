@@ -31,9 +31,9 @@ public class PatientControllerImpl implements PatientController {
     public ResponseEntity<PacienteResponse> createPatient(PacienteRequest pacienteRequest) {
         ResponseEntity<PacienteResponse> responseEntity;
         try {
-            List<Paciente> pacientes = patientDao.findByDocumentAndAndIdtipodocumento(pacienteRequest.getDocumento(), TipoDocumentoEnum.getBySigla(pacienteRequest.getIdtipodocumento()).getId());
+            List<Paciente> pacientes = patientDao.findByDocument(pacienteRequest.getDocumento());
             if (!pacientes.isEmpty()) {
-                responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new PacienteResponse(String.valueOf(HttpStatus.BAD_REQUEST.value()), "Ya existe un paciente con el número y tipo de documento proporcionado"));
+                responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new PacienteResponse(String.valueOf(HttpStatus.BAD_REQUEST.value()), "Ya existe un paciente con el número de documento proporcionado"));
                 return responseEntity;
             }
             Paciente paciente = PatientMapper.toEntity(pacienteRequest);

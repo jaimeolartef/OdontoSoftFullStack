@@ -2,8 +2,10 @@ package org.enterprise.odontosoft.controller;
 
 import jakarta.validation.Valid;
 import org.enterprise.odontosoft.model.Dao.MenuDao;
+import org.enterprise.odontosoft.model.Dao.PatientDao;
 import org.enterprise.odontosoft.model.Dao.UsuarioDao;
 import org.enterprise.odontosoft.model.Entity.Menu;
+import org.enterprise.odontosoft.model.Entity.Paciente;
 import org.enterprise.odontosoft.model.Entity.Rol;
 import org.enterprise.odontosoft.model.Entity.Usuario;
 import org.enterprise.odontosoft.view.dto.*;
@@ -28,17 +30,19 @@ public class UserControllerImpl implements UserController {
   private final MenuDao menuDao;
   private MessageDigest passwordEncoder;
   private MenuDto menuPadreDto;
+  private final PatientDao patientDao;
 
-  public UserControllerImpl(UsuarioDao usuarioDao, MenuDao menuDao, AuthenticationManager authenticationManager) {
+  public UserControllerImpl(UsuarioDao usuarioDao, MenuDao menuDao, AuthenticationManager authenticationManager, PatientDao patientDao) {
     this.usuarioDao = usuarioDao;
     this.menuDao = menuDao;
+	this.patientDao = patientDao;
   }
 
   @Override
   public ResponseEntity<CredencialDto> login(@Valid @RequestBody CredencialDto credencial) {
     ResponseEntity<CredencialDto> responseEntity;
     Usuario usuario = usuarioDao.findByCodigo(credencial.getUsuario());
-    if (credencial.getClave().equals(usuario.getClave())) {
+    if (Objects.nonNull(usuario) && credencial.getClave().equals(usuario.getClave())) {
       String token = UtilSecurity.generateToken(credencial.getUsuario());
       responseEntity = ResponseEntity.status(HttpStatus.OK).body(CredencialDto.builder().usuario(credencial.getUsuario()).token(token).build());
       return responseEntity;
@@ -76,6 +80,16 @@ public class UserControllerImpl implements UserController {
     ResponseEntity<PermisosDto> responseEntity;
     PermisosDto permisosDto = new PermisosDto();
     permisosDto.setMenus(new ArrayList<>());
+
+    Usuario usuario = usuarioDao.findByCodigo(usuarioDto.getCodigo());
+    permisosDto.setRol(usuario.getIdRol().getDescripcion());
+    if (usuario.getIdRol().getDescripcion().equals("Paciente")) {
+      List<Paciente> pacientes = patientDao.findByDocument(usuarioDto.getCodigo());
+
+        if (!pacientes.isEmpty()) {
+            permisosDto.setIdPatient(pacientes.get(0).getId());
+        }
+    }
 
     List<Menu> menus = menuDao.findByCodigoUsuario(usuarioDto.getCodigo());
     if (!menus.isEmpty()) {

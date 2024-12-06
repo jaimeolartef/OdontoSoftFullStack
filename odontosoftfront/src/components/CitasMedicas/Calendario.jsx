@@ -6,7 +6,7 @@ import { Modal, Button } from 'react-bootstrap';
 import axios from "axios";
 import config from "../../config";
 
-const Calendar = ({ availability, patient }) => {
+const Calendar = ({ availability, patient, Rol }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState(null);
@@ -80,7 +80,7 @@ const Calendar = ({ availability, patient }) => {
         availableHours.forEach((hour, index) => {
           if (hour === citaMedica.horainicio) {
             if (hour === citaMedica.horainicio) {
-              availableHours[index] = `${hour} - ${citaMedica.nombrePaciente} - ${citaMedica.id}`;
+              availableHours[index] = `${hour} - ${citaMedica.nombrePaciente} - ${citaMedica.id} - ${citaMedica.idpaciente}`;
             }
           }
         });
@@ -99,7 +99,6 @@ const Calendar = ({ availability, patient }) => {
     try {
       const response = await axios.get(`${config.baseURL}/appointment/doctor?idOdontologo=${odontoSelec}&fechaDia=${year + "-" + monthFormated + "-" + dayFormated}`);
       if (response.status === 200) {
-        console.log('Citas:', response.data);
         setCitasMedicas(response.data);
         return response.data;
       }
@@ -143,14 +142,18 @@ const Calendar = ({ availability, patient }) => {
     let odontoSelec = odontologoSelect();
     let idpaciente = pacienteSelect();
 
-    if (odontoSelec.length <= 0) {
+    if (odontoSelec != null && odontoSelec.length <= 0) {
       showMessage('warning', 'Debe seleccionar un odontólogo para agendar la cita');
+      return;
+    }
+
+    if (idpaciente != null && idpaciente.length <= 0) {
+      showMessage('warning', 'Debe seleccionar un paciente para agendar la cita');
       return;
     }
 
     let token = localStorage.getItem('jsonwebtoken');
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-
 
     let day = selectedDay < 10 ? '0' + selectedDay : selectedDay;
     let month = selectedMonth < 10 ? '0' + (selectedMonth + 1) : selectedMonth + 1;
@@ -275,9 +278,7 @@ const Calendar = ({ availability, patient }) => {
             <div className="day empty" key={`empty-${i}`}></div>
           ))}
           {days.map(day => {
-            const isToday = day === today && currentMonth === new Date().getMonth() && currentYear === new Date().getFullYear();
             const isSelected = day === selectedDay && currentMonth === selectedMonth && currentYear === selectedYear;
-            console.log('isSelected:', isSelected);
             return (
               <div
                 className={`day ${isSelected  ? 'selected-day' : ''}`}
@@ -302,17 +303,48 @@ const Calendar = ({ availability, patient }) => {
                   </tr>
                 ) : (
                   availableHours.map(hour => {
-                    const [time, label, cita] = hour.split(' - ');
-                    return (
-                      <tr key={hour}>
-                        <td>
-                          <button className={`btn btn-sm ${label ? 'btn-outline-danger' : 'btn-outline-primary'}`} onClick={() => handleButtonClick(time, label, cita)}>
-                            {time}
-                          </button>
-                          {label && <span className="label ms-2">{label}</span>}
-                        </td>
-                      </tr>
-                    );
+                    const [time, label, cita, idpaciente] = hour.split(' - ');
+                    let idpacienteSel = pacienteSelect();
+
+                    if (Rol !== 'Paciente' || !label) {
+                      return (
+                        <tr key={hour}>
+                          <td>
+                            <button className={`btn btn-sm ${label ? 'btn-outline-danger' : 'btn-outline-primary'}`} onClick={() => handleButtonClick(time, label, cita)}>
+                              {time}
+                            </button>
+                            {label && <span className="label ms-2">{label}</span>}
+                          </td>
+                        </tr>
+                      );
+                    } else {
+                      if (idpaciente === idpacienteSel) {
+                        return (
+                          <tr key={hour}>
+                            <td>
+                              <button className={`btn btn-sm ${label ? 'btn-outline-danger' : 'btn-outline-primary'}`}
+                                      onClick={() => handleButtonClick(time, label, cita)}>
+                                {time}
+                              </button>
+                              {label && <span className="label ms-2">{label}</span>}
+                            </td>
+                          </tr>
+                        );
+                      } else {
+                        return (
+                          <tr key={hour}>
+                            <td>
+                              <button className={`btn btn-sm btn-outline`}
+                                      disabled={true}
+                                      onClick={() => handleButtonClick(time, label, cita)}>
+                                {time}
+                              </button>
+                              {label && <span className="label ms-2">Horario no disponible</span>}
+                            </td>
+                          </tr>
+                        );
+                      }
+                    }
                   })
                 )}
                 </tbody>

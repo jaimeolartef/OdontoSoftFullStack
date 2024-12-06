@@ -6,7 +6,7 @@ import Logo from '../../resource/LogoNegro.png';
 import axios from "axios";
 import config from '../../config';
 import showMessage from "../../util/UtilMessage";
-
+//OJO: al registrar un paciente crear el usuario para ingresar al sistema y enviar credenciales al correo
 const RegistroPaciente = () => {
   const usuario = localStorage.getItem('username');
 

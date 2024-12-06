@@ -7,10 +7,7 @@ import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Builder
 @NoArgsConstructor
@@ -117,6 +114,6 @@ public class Paciente {
   private Set<HistoriaClinica> historiaclinicas = new LinkedHashSet<>();
 
   public String getNombreCompleto() {
-    return String.join(" ", primernombre, segundonombre, primerapellido, segundoapellido).trim();
+    return String.join(" ", primernombre, Objects.isNull(segundonombre) ? "" : segundonombre, primerapellido, Objects.isNull(segundoapellido) ? "" : segundonombre).trim();
   }
 }

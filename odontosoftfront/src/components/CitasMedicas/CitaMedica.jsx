@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import axios from "axios";
-import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { format } from 'date-fns';
 import Logo from "../../resource/LogoNegro.png";
@@ -28,10 +27,12 @@ const CitaMedica = () => {
     }
   ]);
   const [availability, setAvailability] = useState([]);
+  const [calendarKey, setCalendarKey] = useState(0); // Estado para controlar la clave del componente Calendario
   const location = useLocation();
   const patient = useMemo(() => {
     return location.state?.patient || {};
   }, [location.state]);
+  const Rol = localStorage.getItem('Rol');
 
   useEffect(() => {
     const fetchOdontologos = async () => {
@@ -50,7 +51,11 @@ const CitaMedica = () => {
   }, []);
 
   useEffect(() => {
-    const fetchPacientes = async () => {
+    fetchPacientes();
+  }, []);
+
+  const fetchPacientes = async () => {
+    if (Rol != 'Paciente') {
       let token = localStorage.getItem('jsonwebtoken');
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       try {
@@ -65,7 +70,7 @@ const CitaMedica = () => {
             if (index === -1) {
               pacientes.push({
                 idPaciente: paciente.id,
-                nombre: paciente.primernombre.trim() + ' ' + paciente.segundonombre.trim() + ' ' + paciente.primerapellido.trim() + ' ' + paciente.segundoapellido.trim()
+                nombre: paciente.primernombre.trim() + ' ' + (paciente.segundonombre == null ? '': paciente.segundonombre.trim()) + ' ' + paciente.primerapellido.trim() + ' ' + (paciente.segundoapellido == null ? '': paciente.segundoapellido.trim())
               });
             }
           });
@@ -73,9 +78,20 @@ const CitaMedica = () => {
       } catch (error) {
         console.error('Error fetching patient data:', error);
       }
+    } else {
+      let token = localStorage.getItem('jsonwebtoken');
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      try {
+        const response = await axios.get(`${config.baseURL}/pacientes/consultar/${localStorage.getItem('idPaciente')}`);
+        if (response.status === 200) {
+          setSelectedPaciente(response.data.id + ' - ' + (response.data.segundonombre == null ? '': response.data.segundonombre) + ' ' + response.data.primerapellido.trim() + ' ' + (response.data.segundoapellido == null ? '': response.data.segundoapellido.trim()));
+        }
+      } catch (error) {
+        console.error('Error fetching patient data:', error);
+      }
     }
-    fetchPacientes();
-  }, [odontologo]);
+
+  }
 
   const handleSearchChangeOdont = (event) => {
     setSelectedOdontologo(event.target.value);
@@ -98,6 +114,7 @@ const CitaMedica = () => {
         if (response.status === 200) {
           let availab = response.data;
           setAvailability(availab);
+          setCalendarKey(prevKey => prevKey + 1); // Cambiar la clave del componente Calendario
         }
       } catch (error) {
         console.error('Error fetching patient data:', error);
@@ -124,6 +141,16 @@ const CitaMedica = () => {
     console.log('Motivo:', motivo);
   }
 
+  const handleClearOdontologo = () => {
+    setSelectedOdontologo('');
+    setAvailability([]);
+    setCalendarKey(prevKey => prevKey + 1); // Cambiar la clave del componente Calendario
+  };
+
+  const handleClearPaciente = () => {
+    setSelectedPaciente('');
+  }
+
   return (
     <div className="d-flex justify-content-center align-items-center">
       <div className="card p-4" style={{ width: '1500px' }}>
@@ -139,45 +166,55 @@ const CitaMedica = () => {
             <form onSubmit={handleSubmit}>
               <div className="form-group">
                 <label htmlFor="odontologo">Odontologo</label>
-                <input
-                  className="form-control"
-                  list="datalistodontologo"
-                  id="dataListOdonto"
-                  placeholder="Buscar odontologo..."
-                  value={selectedOdontologo || ''}
-                  onBlur={handleSearchChangeOdont}
-                  onInput={handleOdontologoChange}
-                  onChange={handleSearchChangeOdont}
-                />
+                <div className="input-group">
+                  <input className="form-control"
+                    list="datalistodontologo"
+                    id="dataListOdonto"
+                    placeholder="Buscar odontologo..."
+                    value={selectedOdontologo || ''}
+                    onBlur={handleSearchChangeOdont}
+                    onInput={handleOdontologoChange}
+                    onChange={handleSearchChangeOdont}
+                    autoComplete="off"/>
+                  <button type="button" className="btn btn-outline-secondary" onClick={handleClearOdontologo}>
+                    Limpiar
+                  </button>
+                </div>
                 <datalist id="datalistodontologo">
                   {odontologo.map((odontologo) => (
-                    <option key={odontologo.idMedico} value={`${odontologo.idMedico} - ${odontologo.nombre}`} />
+                    <option key={odontologo.idMedico} value={`${odontologo.idMedico} - ${odontologo.nombre}`}/>
                   ))}
                 </datalist>
               </div>
-              <div className="espacio" />
+              <div className="espacio"/>
+              {Rol != 'Paciente' && (
               <div className="form-group">
                 <label htmlFor="paciente">Paciente</label>
-                <input
-                  className="form-control"
-                  list="datalistpaciente"
-                  id="dataListPacien"
-                  placeholder="Buscar paciente..."
-                  value={selectedPaciente || ''}
-                  onBlur={handleSearchChangePac}
-                  onChange={handlePacienteChange}
-                />
+                <div className="input-group">
+                  <input className="form-control"
+                    list="datalistpaciente"
+                    id="dataListPacien"
+                    placeholder="Buscar paciente..."
+                    value={selectedPaciente || ''}
+                    onBlur={handleSearchChangePac}
+                    onChange={handlePacienteChange}
+                    autoComplete="off"/>
+                  <button type="button" className="btn btn-outline-secondary" onClick={handleClearPaciente}>
+                    Limpiar
+                  </button>
+                </div>
                 <datalist id="datalistpaciente">
                   {pacientes.map((paci) => (
-                    <option key={paci.idPaciente} value={`${paci.idPaciente} - ${paci.nombre}`} />
+                    <option key={paci.idPaciente} value={`${paci.idPaciente} - ${paci.nombre}`}/>
                   ))}
                 </datalist>
               </div>
-              <div className="espacio" />
+              )}
+              <div className="espacio"/>
               <div className="calendar-container">
-                <Calendario availability={availability} patient={selectedPaciente} />
+                <Calendario key={calendarKey} availability={availability} patient={selectedPaciente} setAvailability={setAvailability} Rol={Rol}/>
               </div>
-              <div className="espacio" />
+              <div className="espacio"/>
             </form>
           </div>
         </div>
