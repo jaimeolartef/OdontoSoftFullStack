@@ -8,6 +8,7 @@ import org.enterprise.odontosoft.model.Entity.Menu;
 import org.enterprise.odontosoft.model.Entity.Paciente;
 import org.enterprise.odontosoft.model.Entity.Rol;
 import org.enterprise.odontosoft.model.Entity.Usuario;
+import org.enterprise.odontosoft.model.Service.EmailService;
 import org.enterprise.odontosoft.view.dto.*;
 import org.enterprise.odontosoft.view.security.UtilSecurity;
 import org.springframework.http.HttpStatus;
@@ -26,16 +27,19 @@ import java.util.Objects;
 @Controller
 public class UserControllerImpl implements UserController {
 
+  private final EmailService emailService;
+
   private final UsuarioDao usuarioDao;
   private final MenuDao menuDao;
   private MessageDigest passwordEncoder;
   private MenuDto menuPadreDto;
   private final PatientDao patientDao;
 
-  public UserControllerImpl(UsuarioDao usuarioDao, MenuDao menuDao, AuthenticationManager authenticationManager, PatientDao patientDao) {
+  public UserControllerImpl(UsuarioDao usuarioDao, MenuDao menuDao, AuthenticationManager authenticationManager, EmailService emailService, PatientDao patientDao) {
     this.usuarioDao = usuarioDao;
     this.menuDao = menuDao;
-	this.patientDao = patientDao;
+	  this.emailService = emailService;
+	  this.patientDao = patientDao;
   }
 
   @Override
@@ -53,24 +57,29 @@ public class UserControllerImpl implements UserController {
   }
 
   @Override
-  public ResponseEntity<Void> signup(UsuarioDto usuarioDto) {
-    ResponseEntity<Void> responseEntity;
+  public ResponseEntity<String> signup(UsuarioDto usuarioDto) {
+    ResponseEntity<String> responseEntity;
     Usuario usuario = usuarioDao.findByCodigo(usuarioDto.getCodigo());
     if (usuario == null) {
-        Rol rol = new Rol();
-        rol.setId(usuarioDto.getIdRol());
-        usuario = Usuario.builder()
+      Rol rol = new Rol();
+      rol.setId(usuarioDto.getIdRol());
+      usuario = Usuario.builder()
           .codigo(usuarioDto.getCodigo())
           .nombre(usuarioDto.getNombre())
           .clave(UtilSecurity.encriptar(usuarioDto.getClave()))
           .habilitado(Boolean.TRUE)
           .idRol(rol)
           .build();
-        usuarioDao.save(usuario);
-        responseEntity = ResponseEntity.status(HttpStatus.CREATED).build();
+      usuarioDao.save(usuario);
+
+      // Enviar correo electrónico
+      String subject = "Usuario creado con éxito";
+      String text = "Hola " + usuarioDto.getNombre() + ",\n\nTu usuario ha sido creado exitosamente.\nEl usuario es tu número de documento y la clave es " + usuarioDto.getClave() + ".\n\nSaludos,\nEquipo de Soporte.";
+      emailService.sendUserCreationEmail(usuarioDto.getCorreo(), subject, text);
+
+      responseEntity = ResponseEntity.status(HttpStatus.CREATED).body("Usuario creado con éxito");
     } else {
-      responseEntity = ResponseEntity.status(HttpStatus.CONFLICT).build();
-      return responseEntity;
+      responseEntity = ResponseEntity.status(HttpStatus.CONFLICT).body("El usuario ya existe con el codigo " + usuarioDto.getCodigo());
     }
     return responseEntity;
   }

@@ -25,7 +25,7 @@ public class UserView {
   }
 
   @PostMapping("user/signup")
-  public ResponseEntity<Void> signup(@Valid @RequestBody UsuarioDto usuarioDto) {
+  public ResponseEntity<String> signup(@Valid @RequestBody UsuarioDto usuarioDto) {
     return userController.signup(usuarioDto);
   }
 

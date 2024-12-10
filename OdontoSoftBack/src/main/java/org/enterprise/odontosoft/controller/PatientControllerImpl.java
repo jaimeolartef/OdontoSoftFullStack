@@ -54,7 +54,7 @@ public class PatientControllerImpl implements PatientController {
     }
 
     @Override
-    public ResponseEntity<List<PacienteResponse>> getPatient(String documento, String nombre) {
+    public ResponseEntity<List<PacienteResponse>> getPatient(String documento, String nombre, String correo) {
         ResponseEntity<List<PacienteResponse>> responseEntity;
         try {
             List<Paciente> pacientes;
@@ -63,6 +63,8 @@ public class PatientControllerImpl implements PatientController {
                 pacientes = patientDao.findByDocument(documento);
             } else if (Objects.nonNull(nombre) && StringUtils.hasText(nombre)) {
                 pacientes = patientDao.findByName(nombre);
+            } else if (Objects.nonNull(correo) && StringUtils.hasText(correo)) {
+                pacientes = patientDao.findByCorreo(correo);
             } else {
                 responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
                 return responseEntity;

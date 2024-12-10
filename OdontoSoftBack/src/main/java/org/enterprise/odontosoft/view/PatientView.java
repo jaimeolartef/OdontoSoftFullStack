@@ -1,6 +1,7 @@
 package org.enterprise.odontosoft.view;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.enterprise.odontosoft.controller.PatientController;
 import org.enterprise.odontosoft.view.dto.request.PacienteRequest;
@@ -25,8 +26,10 @@ public class PatientView {
     }
 
     @GetMapping("/consultar")
-    public ResponseEntity<List<PacienteResponse>> getPatient(@RequestParam String documento, @RequestParam String nombre) {
-        return patientController.getPatient(documento.trim(), nombre.trim());
+    public ResponseEntity<List<PacienteResponse>> getPatient(@RequestParam(required = false) String documento, @RequestParam(required = false) String nombre, @RequestParam(required = false) String correo) {
+        return patientController.getPatient(Objects.nonNull(documento) ? documento.trim() : null,
+            Objects.nonNull(nombre) ? nombre.trim() : null,
+            Objects.nonNull(correo) ? correo.trim() : null);
     }
 
     @GetMapping("/consultar/{id}")

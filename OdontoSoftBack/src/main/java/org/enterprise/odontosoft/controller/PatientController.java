@@ -10,7 +10,7 @@ public interface PatientController {
 
     ResponseEntity<PacienteResponse> createPatient(PacienteRequest pacienteRequest);
 
-    ResponseEntity<List<PacienteResponse>> getPatient(String documento, String nombre);
+    ResponseEntity<List<PacienteResponse>> getPatient(String documento, String nombre, String correo);
 
     ResponseEntity<PacienteResponse> getPatientById(Integer id);
 

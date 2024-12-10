@@ -87,7 +87,18 @@ const RegistroPaciente = () => {
     if (responseValidate.status === 200 && responseValidate.data.length > 0) {
       showMessage('warning', 'Otro paciente ya se encuentra registrado con el número de documento ' + formData.documento);
       return;
+    }
 
+    const responseValidateCorreo = await axios.get(`${config.baseURL}/pacientes/consultar`, {
+      params: { correo: formData.correo },
+      validateStatus: function (status) {
+        return status;
+      }
+    });
+
+    if (responseValidateCorreo.status === 200 && responseValidateCorreo.data.length > 0) {
+      showMessage('warning', 'Otro paciente ya se encuentra registrado con correo electrónico ' + formData.correo);
+      return;
     }
 
     console.log('Token: ', token);
@@ -102,6 +113,19 @@ const RegistroPaciente = () => {
       .then(response => {
         console.log('Response: ', response.data);
         if (response.status === 201) {
+          let nombreCompleto = formData.primernombre + ' ' +
+            (formData.segundonombre ? formData.segundonombre : '')
+            + ' ' +formData.primerapellido + ' ' +
+            (formData.segundoapellido ? formData.segundoapellido : '');
+          const usuario = {
+            nombre: nombreCompleto,
+            correo: formData.correo,
+            clave: Math.random().toString(36).slice(-8),
+            habilitado: true,
+            codigo: formData.documento,
+            idRol: 2
+          };
+          registrarUsuario(usuario);
           showMessage('success', 'Paciente registrado con éxito');
           resetForm();
         } else if (response.status === 400 && response.data.codigoValidacion === '400') {
@@ -109,6 +133,23 @@ const RegistroPaciente = () => {
         }
       })
   };
+
+  const registrarUsuario = async (usuario) => {
+    let token = localStorage.getItem('jsonwebtoken');
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+    axios.post(`${config.baseURL}/user/signup`, usuario, {
+      validateStatus: function (status) {
+        return status;
+      }
+    })
+      .then(response => {
+        console.log('Response: ', response.data);
+        if (response.status === 400 && response.data.codigoValidacion === '400') {
+          showMessage('error', response.data.mensajeValidacion);
+        }
+      })
+  }
 
   useEffect(() => {
     // Example starter JavaScript for disabling form submissions if there are invalid fields

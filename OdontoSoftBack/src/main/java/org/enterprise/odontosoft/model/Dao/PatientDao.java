@@ -15,4 +15,6 @@ public interface PatientDao  extends CrudRepository<Paciente, Integer>  {
 
     @Query("SELECT p FROM Paciente p WHERE LOWER(p.primernombre) LIKE LOWER(CONCAT('%', :nombre, '%')) OR LOWER(p.segundonombre) LIKE LOWER(CONCAT('%', :nombre, '%')) OR LOWER(p.primerapellido) LIKE LOWER(CONCAT('%', :nombre, '%')) OR LOWER(p.segundoapellido) LIKE LOWER(CONCAT('%', :nombre, '%'))")
     List<Paciente> findByName(String nombre);
+
+    List<Paciente> findByCorreo(String email);
 }

@@ -1,5 +1,6 @@
 package org.enterprise.odontosoft.view.dto;
 
+import jakarta.validation.constraints.Email;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,5 +15,8 @@ public class UsuarioDto {
     private String codigo;
     private Integer idRol;
     private String token;
+
+    @Email(message = "Correo electrónico no válido")
+    private String correo;
 
 }

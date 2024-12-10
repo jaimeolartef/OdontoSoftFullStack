@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 public interface UserController {
   ResponseEntity<CredencialDto> login(CredencialDto credencial);
 
-  ResponseEntity<Void> signup(UsuarioDto usuarioDto);
+  ResponseEntity<String> signup(UsuarioDto usuarioDto);
 
   ResponseEntity<PermisosDto> validateRole(UsuarioDto usuarioDto);
 
