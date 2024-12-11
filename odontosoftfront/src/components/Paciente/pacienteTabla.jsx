@@ -1,3 +1,4 @@
+// pacienteTabla.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -6,7 +7,7 @@ import MedicalIcon from '../../resource/MedicalIcon.png';
 import EditIcon from '../../resource/EditIcon.png';
 import { Tooltip } from 'react-tooltip';
 
-const PacienteTabla = ({ data, formData }) => {
+const PacienteTabla = ({ data, formData, permisosPaciente, permisosHistoria }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const navigate = useNavigate();
@@ -29,6 +30,10 @@ const PacienteTabla = ({ data, formData }) => {
   const handleMedicalRecordClick = (paciente) => {
     navigate('/historiaPac', { state: { patient: paciente } });
   };
+
+  const handleMedicalRecordReadClick = (paciente) => {
+    alert('Consultar Historia Clinica');
+  }
 
   return (
     <div className="table-container">
@@ -56,7 +61,19 @@ const PacienteTabla = ({ data, formData }) => {
                 <td data-label="Teléfono">{paciente.telefono}</td>
                 <td data-label="Habilitado">{paciente.habilitado === 'true' ? 'Sí' : 'No'}</td>
                 <td data-label="Acciones">
-                  {paciente.idHistoriaClinica !== null && paciente.habilitado === 'true' && (
+                  {permisosHistoria.length > 0 && permisosHistoria[0].consultar && (paciente.idHistoriaClinica !== null && paciente.habilitado === 'true') && (
+                    <>
+                      <img src={MedicalIcon} alt="Historia Clinica"
+                           style={{marginRight: '5px', width: '35px', height: '35px', cursor: 'pointer',filter: 'grayscale(100%)'}}
+                           onClick={(e) => {
+                             e.stopPropagation();
+                             handleMedicalRecordReadClick(paciente);
+                           }}
+                           data-tooltip-id="tooltip" data-tooltip-content="Consultar Historia Clinica"/>
+                      <Tooltip id="tooltip"/>
+                    </>
+                  )}
+                  {permisosHistoria.length > 0 && permisosHistoria[0].editar && (paciente.idHistoriaClinica !== null && paciente.habilitado === 'true') && (
                     <>
                       <img src={MedicalIcon} alt="Historia Clinica"
                            style={{marginRight: '5px', width: '35px', height: '35px', cursor: 'pointer'}}
@@ -68,7 +85,7 @@ const PacienteTabla = ({ data, formData }) => {
                       <Tooltip id="tooltip"/>
                     </>
                   )}
-                  {paciente.idHistoriaClinica === null && paciente.habilitado === 'true' && (
+                  {permisosHistoria.length > 0 && permisosHistoria[0].crear && (paciente.idHistoriaClinica === null && paciente.habilitado === 'true') && (
                     <>
                       <img src={MedicalIcon} alt="Historia Clinica"
                            style={{
@@ -86,14 +103,18 @@ const PacienteTabla = ({ data, formData }) => {
                       <Tooltip id="tooltip"/>
                     </>
                   )}
-                  <img src={EditIcon} alt="Editar Paciente"
-                       style={{marginRight: '5px', width: '35px', height: '35px', cursor: 'pointer'}}
-                       onClick={(e) => {
-                         e.stopPropagation();
-                         handleEditClick(paciente);
-                       }}
-                       data-tooltip-id="editTooltip" data-tooltip-content="Editar Paciente"/>
-                  <Tooltip id="editTooltip"/>
+                  {permisosPaciente.length > 0 && permisosPaciente[0].editar && (
+                    <>
+                      <img src={EditIcon} alt="Editar Paciente"
+                           style={{marginRight: '5px', width: '35px', height: '35px', cursor: 'pointer'}}
+                           onClick={(e) => {
+                             e.stopPropagation();
+                             handleEditClick(paciente);
+                           }}
+                           data-tooltip-id="editTooltip" data-tooltip-content="Editar Paciente"/>
+                      <Tooltip id="editTooltip"/>
+                    </>
+                  )}
                 </td>
               </tr>
             ))
@@ -121,7 +142,7 @@ const PacienteTabla = ({ data, formData }) => {
               </button>
             </li>
           ))}
-          <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`} style={{width: '110px'}}>
+          <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`} style={{width: '120px'}}>
             <button className="page-link" onClick={() => handlePageChange(currentPage + 1)}
                     disabled={currentPage === totalPages}>
               Siguiente

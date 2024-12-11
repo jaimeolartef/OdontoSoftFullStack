@@ -3,6 +3,7 @@ package org.enterprise.odontosoft.controller;
 import jakarta.validation.Valid;
 import org.enterprise.odontosoft.model.Dao.MenuDao;
 import org.enterprise.odontosoft.model.Dao.PatientDao;
+import org.enterprise.odontosoft.model.Dao.PermisoMenuDao;
 import org.enterprise.odontosoft.model.Dao.UsuarioDao;
 import org.enterprise.odontosoft.model.Entity.Menu;
 import org.enterprise.odontosoft.model.Entity.Paciente;
@@ -31,14 +32,16 @@ public class UserControllerImpl implements UserController {
 
   private final UsuarioDao usuarioDao;
   private final MenuDao menuDao;
+  private final PermisoMenuDao permisoMenuDao;
   private MessageDigest passwordEncoder;
   private MenuDto menuPadreDto;
   private final PatientDao patientDao;
 
-  public UserControllerImpl(UsuarioDao usuarioDao, MenuDao menuDao, AuthenticationManager authenticationManager, EmailService emailService, PatientDao patientDao) {
+  public UserControllerImpl(UsuarioDao usuarioDao, MenuDao menuDao, AuthenticationManager authenticationManager, EmailService emailService, PermisoMenuDao permisoMenuDao, PatientDao patientDao) {
     this.usuarioDao = usuarioDao;
     this.menuDao = menuDao;
 	  this.emailService = emailService;
+	  this.permisoMenuDao = permisoMenuDao;
 	  this.patientDao = patientDao;
   }
 
@@ -92,6 +95,7 @@ public class UserControllerImpl implements UserController {
 
     Usuario usuario = usuarioDao.findByCodigo(usuarioDto.getCodigo());
     permisosDto.setRol(usuario.getIdRol().getDescripcion());
+    permisosDto.setNombreUsuario(usuario.getNombre());
     if (usuario.getIdRol().getDescripcion().equals("Paciente")) {
       List<Paciente> pacientes = patientDao.findByDocument(usuarioDto.getCodigo());
 
@@ -110,10 +114,21 @@ public class UserControllerImpl implements UserController {
               .build();
           menus.forEach(menuDto -> {
             if (menu.getId().equals(menuDto.getIdMenuPadre())) {
-              menuPadreDto.getMenuHijo().add(MenuDto.builder()
-                .nombreMenu(menuDto.getDescripcion())
-                .url(menuDto.getUrl())
-                .build());
+              MenuDto menuHijoDto = MenuDto.builder()
+                  .nombreMenu(menuDto.getDescripcion())
+                  .url(menuDto.getUrl())
+                  .build();
+
+              permisoMenuDao.findByIdRolAndIdMenu(usuario.getIdRol().getId(), menuDto.getId()).forEach(permisoMenu -> {
+                if (permisoMenu.getHabilitado()) {
+                    menuHijoDto.setCrear(permisoMenu.getCrear());
+                    menuHijoDto.setEditar(permisoMenu.getEditar());
+                    menuHijoDto.setEliminar(permisoMenu.getEliminar());
+                    menuHijoDto.setConsultar(permisoMenu.getConsultar());
+				}
+              });
+
+              menuPadreDto.getMenuHijo().add(menuHijoDto);
             }
           });
           if (!permisosDto.getMenus().contains(menuPadreDto)) {

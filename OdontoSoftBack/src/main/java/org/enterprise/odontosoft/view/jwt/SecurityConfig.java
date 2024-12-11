@@ -46,7 +46,6 @@ public class SecurityConfig {
 //        Set permissions on endpoints
       .authorizeRequests(auth -> auth
 //            our public endpoints
-        .requestMatchers(HttpMethod.POST, "user/signup").permitAll()
         .requestMatchers(HttpMethod.POST, "/user/login").permitAll()
         //.requestMatchers(HttpMethod.GET, "/authentication-docs/**").permitAll()
 //            our private endpoints

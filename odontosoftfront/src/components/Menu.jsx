@@ -12,9 +12,11 @@ function Menu(props) {
     return (
       <NavDropdown title={menu.nombreMenu} id={`dropdown-${menu.id}`}>
         {menu.menuHijo && menu.menuHijo.map((subMenu, index) => (
-          <NavDropdown.Item key={index} as={Link} to={subMenu.url}>
-            {subMenu.nombreMenu}
-          </NavDropdown.Item>
+          subMenu.nombreMenu != 'Historia Clinica' && (
+            <NavDropdown.Item key={index} as={Link} to={subMenu.url}>
+              {subMenu.nombreMenu}
+            </NavDropdown.Item>
+          )
         ))}
       </NavDropdown>
     );

@@ -30,4 +30,20 @@ public class PermisoMenu {
   @Column(name = "habilitado")
   private Boolean habilitado;
 
+  @NotNull
+  @Column(name = "crear")
+  private Boolean crear;
+
+  @NotNull
+    @Column(name = "editar")
+    private Boolean editar;
+
+    @NotNull
+    @Column(name = "eliminar")
+    private Boolean eliminar;
+
+    @NotNull
+    @Column(name = "consultar")
+    private Boolean consultar;
+
 }

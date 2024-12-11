@@ -11,11 +11,14 @@ import showMessage from "../../util/UtilMessage";
 
 const ConsultarPaciente = () => {
   const location = useLocation();
+  const [permisosHistoria, setPermisosHistoria] = useState([]);
+  const [permisosPaciente, setPermisosPaciente] = useState([]);
   const { redireccionadoModificar } = location.state || {};
   const [formData, setFormData] = useState({
     documento: '',
     nombre: ''
   });
+  const rol = localStorage.getItem('Rol');
 
   const [responseData, setResponseData] = useState([]);
 
@@ -29,7 +32,60 @@ const ConsultarPaciente = () => {
     } else if (localStorage.getItem('consultarPacienteFormData')) {
       localStorage.removeItem('consultarPacienteFormData');
     }
+
+    console.log('historia', permisosHistoria);
+    console.log('paciente', permisosPaciente);
   }, []);
+
+  useEffect(() => {
+    if (rol === 'Paciente') {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        documento: localStorage.getItem('documento')
+      }));
+    }
+  }, [rol]);
+
+  useEffect(() => {
+    if (rol === 'Paciente' && formData.documento) {
+      handleSubmit(new Event('submit'));
+    }
+  }, [formData.documento]);
+
+  useEffect(() => {
+    if (permisosHistoria.length === 0 && permisosPaciente.length === 0) {
+      let menuUser = JSON.parse(localStorage.getItem('menuUser'));
+      if (menuUser) {
+        const newPermisosHistoria = [];
+        const newPermisosPaciente = [];
+        menuUser.forEach((item) => {
+          if (item.nombreMenu === 'Pacientes') {
+            item.menuHijo.forEach((itemHijo) => {
+              if (itemHijo.nombreMenu === 'Historia Clinica') {
+                newPermisosHistoria.push({
+                  pantalla: itemHijo.nombreMenu.trim(),
+                  consultar: itemHijo.consultar,
+                  editar: itemHijo.editar,
+                  eliminar: itemHijo.eliminar,
+                  crear: itemHijo.crear
+                });
+              } else if (itemHijo.nombreMenu === 'Registrar paciente') {
+                newPermisosPaciente.push({
+                  pantalla: itemHijo.nombreMenu.trim(),
+                  consultar: itemHijo.consultar,
+                  editar: itemHijo.editar,
+                  eliminar: itemHijo.eliminar,
+                  crear: itemHijo.crear
+                });
+              }
+            });
+          }
+        });
+        setPermisosHistoria(newPermisosHistoria);
+        setPermisosPaciente(newPermisosPaciente);
+      }
+    }
+  }, [rol]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -90,11 +146,11 @@ const ConsultarPaciente = () => {
           <section className="mb-4">
             <h3>Información Personal</h3>
             <div className="form-floating mb-3">
-              <input type="text" className="form-control" name="documento" value={formData.documento} onChange={handleChange} placeholder="Documento de Identidad" />
+              <input type="text" className="form-control" name="documento" value={formData.documento} onChange={handleChange} placeholder="Documento de Identidad" disabled={rol === 'Paciente'} />
               <label>Documento de Identidad</label>
             </div>
             <div className="form-floating mb-3">
-              <input type="text" className="form-control" name="nombre" value={formData.nombre} onChange={handleChange} placeholder="Nombre" />
+              <input type="text" className="form-control" name="nombre" value={formData.nombre} onChange={handleChange} placeholder="Nombre" disabled={rol === 'Paciente'} />
               <label>Nombre</label>
             </div>
           </section>
@@ -103,7 +159,7 @@ const ConsultarPaciente = () => {
           </div>
         </form>
         <br />
-        <PacienteTabla data={responseData} formData={formData} />
+        <PacienteTabla data={responseData} formData={formData} permisosPaciente={permisosPaciente} permisosHistoria={permisosHistoria} />
         <br />
       </div>
     </div>

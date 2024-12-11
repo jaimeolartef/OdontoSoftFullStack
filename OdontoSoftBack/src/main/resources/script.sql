@@ -36,6 +36,11 @@ CREATE TABLE permiso_menu
     id_rol     int                NOT NULL,
     id_menu    int                NOT NULL,
     habilitado bool DEFAULT false NOT NULL,
+    crear bool DEFAULT false not null,
+    consultar bool DEFAULT false not null,
+    eliminar bool DEFAULT false not null,
+    editar bool default false not null,
+    paciente bool,
     CONSTRAINT permiso_menu_pkey PRIMARY KEY (id),
     CONSTRAINT permiso_menu_id_menu FOREIGN KEY (id_menu) REFERENCES menu (id),
     CONSTRAINT permiso_menu_id_rol FOREIGN KEY (id_rol) REFERENCES menu (id)
@@ -705,9 +710,14 @@ INSERT INTO public.rol (id, descripcion, habilitado)
 VALUES (DEFAULT, 'Administrador'::varchar(200), true::boolean);
 INSERT INTO public.rol (id, descripcion, habilitado)
 VALUES (DEFAULT, 'Paciente'::varchar(200), true::boolean);
+insert into public.rol (id, descripcion, habilitado)
+values (DEFAULT, 'Medico', true);
+
 
 INSERT INTO public.usuario (id, nombre, clave, id_rol, habilitado, codigo)
 VALUES (DEFAULT, 'jaime.olarte'::varchar(50), '1234'::text, 1::integer, true::boolean, 'jaime.olarte'::varchar(20));
+insert into public.usuario (id, nombre, clave, id_rol, habilitado, codigo) values (2, 'Juan Perez', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', 3, true, '12345678');
+
 
 INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado)
 VALUES (DEFAULT, 'Pacientes'::varchar(50), null, null, true::boolean);
@@ -728,27 +738,34 @@ INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado)
 VALUES (DEFAULT, 'Usuarios'::varchar(50), 3::integer, '/usuario', true::boolean);
 INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado)
 VALUES (DEFAULT, 'Consultar '::varchar(50), 1::integer, '/consultarPac', true::boolean);
+INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado)
+VALUES (DEFAULT, 'Historia Clinica'::varchar(50), 1::integer, NULL, true::boolean);
 
-INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado)
-VALUES (DEFAULT, 1::integer, 1::integer, true);
-INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado)
-VALUES (DEFAULT, 1::integer, 2::integer, true);
-INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado)
-VALUES (DEFAULT, 1::integer, 3::integer, true);
-INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado)
-VALUES (DEFAULT, 1::integer, 4::integer, true);
-INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado)
-VALUES (DEFAULT, 1::integer, 5::integer, true);
-INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado)
-VALUES (DEFAULT, 1::integer, 6::integer, true);
-INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado)
-VALUES (DEFAULT, 1::integer, 7::integer, true);
-INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado)
-VALUES (DEFAULT, 1::integer, 8::integer, true);
-INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado)
-VALUES (DEFAULT, 2::integer, 2::integer, true);
-INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado)
-VALUES (DEFAULT, 1::integer, 9::integer, true);
+insert into public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar)
+values  (1, 1, 1, true, false, false, false, false),
+        (2, 1, 2, true, false, false, false, false),
+        (3, 1, 3, false, true, true, true, true),
+        (4, 1, 4, true, true, true, true, true),
+        (5, 1, 5, true, true, true, true, true),
+        (7, 1, 7, false, true, true, true, true),
+        (8, 1, 8, false, true, true, true, true),
+        (9, 2, 2, true, false, false, false, false),
+        (10, 1, 9, true, true, true, true, true),
+        (11, 2, 5, true, false, false, false, false),
+        (12,2, 1, true, false, false, false, false),
+        (13, 2, 9, true, false, false, false, false),
+        (14, 1, 10, true, true, true, false, true);
+
+insert into public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar)
+values (15, 3, 1, true, false, false, false, false);
+insert into public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar)
+values (16, 3, 9, true, false, true, false, false);
+insert into public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar)
+values (17, 3, 10, true, true, true, false, true);
+insert into public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar)
+values (18, 2, 10, true, false, true, false, false);
+
+
 
 INSERT INTO public.tipodocumento(id, codigo, nombre)
 VALUES (1, 'C.C.', 'Cédula de Ciudadanía');

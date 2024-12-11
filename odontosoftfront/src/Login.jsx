@@ -77,6 +77,23 @@ const Login = (props) => {
                 localStorage.setItem('idPaciente', responseMenu.data.idPatient);
                 console.log('idPaciente: ', responseMenu.data.idPatient);
                 localStorage.setItem('Rol', responseMenu.data.rol);
+
+                if (responseMenu.data.idPatient) {
+                  axios.get(`${config.baseURL}/pacientes/consultar/${responseMenu.data.idPatient}`)
+                    .then(response => {
+                      console.log('usuario: ', response.data);
+                      localStorage.setItem('documento', response.data.documento);
+                      localStorage.setItem('nombre', response.data.primernombre +  (response.data.segundonombre ? ' ' + response.data.segundonombre : '') + ' ' + response.data.primerapellido + (response.data.segundoapellido ? ' ' + response.data.segundoapellido : ''));
+                    })
+                    .catch(error => {
+                      console.error('Error fetching patient data:', error);
+                    });
+                }
+
+                //TODO: FALTA CONSULTAR CUANDO EL USUARIO ES MEDICO U OTRO TIPO DE USUARIO
+                //TODO: FALTA AGREGAR EL CERRAR SESSION
+                //TODO: FALTA CREAR UNA PANTALLA DE HISTORIA CLINICA DE SOLO LECTURA
+
                 props.onLoggedIn();
               }).catch(error => {
                 showMessage('error', 'Error al validar el rol del usuario');
@@ -91,6 +108,18 @@ const Login = (props) => {
       showMessage('error', 'Error ' + error);
     }
   };
+
+  const consultarPaciente = (idPaciente) => {
+    let paciente = axios.get(`${config.baseURL}/pacientes/consultar/${idPaciente}`)
+      .then(response => {
+        console.log('patient data:', response.data);
+        return response.data;
+      })
+      .catch(error => {
+        console.error('Error fetching patient data:', error);
+      });
+  return paciente;
+}
 
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
