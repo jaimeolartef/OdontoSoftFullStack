@@ -3,6 +3,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import usuario from '../resource/usuario.png';
 
 function Menu(props) {
   let data = localStorage.getItem('menuUser');
@@ -11,7 +12,7 @@ function Menu(props) {
 
   const renderSubMenu = (menu) => {
     return (
-      <NavDropdown title={menu.nombreMenu} id={`dropdown-${menu.id}`}>
+      <NavDropdown style={{marginLeft: '20px'}} title={menu.nombreMenu} id={`dropdown-${menu.id}`}>
         {menu.menuHijo && menu.menuHijo.map((subMenu, index) => (
           subMenu.nombreMenu != 'Historia Clinica' && (
             <NavDropdown.Item key={index} as={Link} to={subMenu.url}>
@@ -21,6 +22,11 @@ function Menu(props) {
         ))}
       </NavDropdown>
     );
+  };
+
+  const handleLogout = () => {
+    localStorage.clear();
+    window.location.reload();
   };
 
   return (
@@ -38,13 +44,14 @@ function Menu(props) {
           ))}
         </Nav>
       </Navbar.Collapse>
-      <Navbar.Collapse className="justify-content-end">
+
+      {props.isLoggedIn && (<Navbar.Collapse className="justify-content-end">
         <Nav>
-          <NavDropdown title={nombre} id="basic-nav-dropdown">
-            <NavDropdown.Item as={Link} to="/login" onClick={() => localStorage.clear()}>Cerrar Sesión</NavDropdown.Item>
+          <NavDropdown title={<><img src={usuario} alt="Usuario" style={{ width: '30px', marginRight: '30px' }} />{nombre}</>}  id="basic-nav-dropdown">
+            <NavDropdown.Item as={Link} to="/login" onClick={handleLogout}>Cerrar Sesión</NavDropdown.Item>
           </NavDropdown>
         </Nav>
-      </Navbar.Collapse>
+      </Navbar.Collapse>)}
     </Navbar>
   );
 }

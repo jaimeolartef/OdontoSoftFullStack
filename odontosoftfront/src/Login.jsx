@@ -89,9 +89,6 @@ const Login = (props) => {
                   localStorage.setItem('nombre', responseMenu.data.nombreUsuario);
                 }
 
-                //TODO: FALTA CONSULTAR CUANDO EL USUARIO ES MEDICO U OTRO TIPO DE USUARIO
-                //TODO: FALTA AGREGAR EL CERRAR SESSION
-
                 props.onLoggedIn();
               }).catch(error => {
                 showMessage('error', 'Error al validar el rol del usuario');
