@@ -242,14 +242,20 @@ const Odontograma = () => {
               </div>
             </div>
             <div className="espacio"/>
-            <button type="submit" className="btn btn-primary" disabled={readOnly}>Guardar</button>
+            <div className="d-flex justify-content-between">
+              <button type="submit" className="btn btn-primary" disabled={readOnly}>Guardar</button>
+              <div style={{width: '30px'}}/>
+              <button type="button" className="btn btn-secondary"
+                      onClick={() => navigate(-1, {state: location.state})}>Cancelar
+              </button>
+            </div>
             <div className="espacio"/>
             <div className="espacio"/>
           </div>
         </form>
       </div>
     </div>
-  );
+);
 };
 
 export default Odontograma;

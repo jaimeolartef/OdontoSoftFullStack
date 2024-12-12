@@ -16,7 +16,7 @@ const Inicio = () => {
   }, []);
 
   return (
-    <div className="parent" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+    <div className="parent" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '90vh' }}>
       <div className="container">
         <form>
           <img src={Logo} alt="Logo" />

@@ -6,9 +6,10 @@ import Logo from '../../resource/LogoNegro.png';
 import axios from "axios";
 import config from '../../config';
 import showMessage from "../../util/UtilMessage";
-//OJO: al registrar un paciente crear el usuario para ingresar al sistema y enviar credenciales al correo
+import {useNavigate} from "react-router-dom";
 const RegistroPaciente = () => {
   const usuario = localStorage.getItem('username');
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     idtipodocumento: '',
@@ -345,8 +346,11 @@ const RegistroPaciente = () => {
               </div>
             </section>
           )}
-          <div className="d-grid">
+          <div className="d-flex justify-content-between">
             <button type="submit" className="btn btn-primary">Guardar</button>
+            <button type="button" className="btn btn-secondary"
+                    onClick={() => navigate('/inicio')}>Cancelar
+            </button>
           </div>
         </form>
       </div>

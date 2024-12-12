@@ -170,8 +170,8 @@ const MedicalRecord = () => {
                  style={{width: '100%', height: '100%'}}
                  onClick={(e) => {
                    if (!formMedicalHistory.idHistoriaClinica) {
-                      showMessage('warning', 'Debe guardar la historia clínica antes de ver el odontograma');
-                      return;
+                     showMessage('warning', 'Debe guardar la historia clínica antes de ver el odontograma');
+                     return;
                    }
                    e.stopPropagation();
                    handleMedicalRecordClick(formMedicalHistory.idHistoriaClinica);
@@ -215,9 +215,11 @@ const MedicalRecord = () => {
                     onChange={handleInputChange}
                     readOnly={readOnly}/>
           <div className="espacio"/>
-          <SignosVitales formMedicalHistory={formMedicalHistory} setFormMedicalHistory={setFormMedicalHistory} readOnly={readOnly}/>
+          <SignosVitales formMedicalHistory={formMedicalHistory} setFormMedicalHistory={setFormMedicalHistory}
+                         readOnly={readOnly}/>
           <div className="espacio"/>
-          <AnalisisFuncional formMedicalHistory={formMedicalHistory} setFormMedicalHistory={setFormMedicalHistory} readOnly={readOnly}/>
+          <AnalisisFuncional formMedicalHistory={formMedicalHistory} setFormMedicalHistory={setFormMedicalHistory}
+                             readOnly={readOnly}/>
           <div className="espacio"/>
           <TextArea label="Observación"
                     name="observacionanafunc"
@@ -225,13 +227,19 @@ const MedicalRecord = () => {
                     onChange={handleInputChange}
                     readOnly={readOnly}/>
           <div className="espacio"/>
-          <ExamenEstomatologico formMedicalHistory={formMedicalHistory} setFormMedicalHistory={setFormMedicalHistory} readOnly={readOnly}/>
+          <ExamenEstomatologico formMedicalHistory={formMedicalHistory} setFormMedicalHistory={setFormMedicalHistory}
+                                readOnly={readOnly}/>
           <div className="espacio"/>
-          <Diagnosticos formMedicalHistory={formMedicalHistory} setFormMedicalHistory={setFormMedicalHistory} readOnly={readOnly}/>
+          <Diagnosticos formMedicalHistory={formMedicalHistory} setFormMedicalHistory={setFormMedicalHistory}
+                        readOnly={readOnly}/>
           <div className="espacio"/>
-          <AyudasDiagnostico formMedicalHistory={formMedicalHistory} setFormMedicalHistory={setFormMedicalHistory} readOnly={readOnly}/>
+          <AyudasDiagnostico formMedicalHistory={formMedicalHistory} setFormMedicalHistory={setFormMedicalHistory}
+                             readOnly={readOnly}/>
           <div className="espacio"/>
-          {!readOnly && <button type="submit" className="btn btn-primary" disabled={readOnly}>Guardar</button>}
+          <div className="d-flex justify-content-between">
+            {!readOnly && <button type="submit" className="btn btn-primary" disabled={readOnly}>Guardar</button>}
+            <button type="button" className="btn btn-secondary" onClick={() => navigate(-1, { state: location.state })}>Cancelar</button>
+          </div>
         </form>
       </div>
     </div>

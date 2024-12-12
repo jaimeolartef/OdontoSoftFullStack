@@ -6,7 +6,7 @@ import '../../App.css';
 import axios from "axios";
 import config from "../../config";
 import PacienteTabla from "./pacienteTabla";
-import { useLocation } from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import showMessage from "../../util/UtilMessage";
 
 const ConsultarPaciente = () => {
@@ -14,6 +14,7 @@ const ConsultarPaciente = () => {
   const [permisosHistoria, setPermisosHistoria] = useState([]);
   const [permisosPaciente, setPermisosPaciente] = useState([]);
   const { redireccionadoModificar } = location.state || {};
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     documento: '',
     nombre: ''
@@ -134,20 +135,22 @@ const ConsultarPaciente = () => {
 
   return (
     <div className="d-flex justify-content-center align-items-center ">
-      <div className="card p-4" style={{ width: '1500px' }}>
+      <div className="card p-4" style={{width: '1500px'}}>
         <header className="text-center mb-4">
-          <img src={Logo} alt="Logo" className="mb-3" style={{ maxWidth: '140px' }} />
+          <img src={Logo} alt="Logo" className="mb-3" style={{maxWidth: '140px'}}/>
           <h1>Consultar Paciente</h1>
         </header>
         <form onSubmit={handleSubmit} className="needs-validation" noValidate>
           <section className="mb-4">
             <h3>Información Personal</h3>
             <div className="form-floating mb-3">
-              <input type="text" className="form-control" name="documento" value={formData.documento} onChange={handleChange} placeholder="Documento de Identidad" disabled={rol === 'Paciente'} />
+              <input type="text" className="form-control" name="documento" value={formData.documento}
+                     onChange={handleChange} placeholder="Documento de Identidad" disabled={rol === 'Paciente'}/>
               <label>Documento de Identidad</label>
             </div>
             <div className="form-floating mb-3">
-              <input type="text" className="form-control" name="nombre" value={formData.nombre} onChange={handleChange} placeholder="Nombre" disabled={rol === 'Paciente'} />
+              <input type="text" className="form-control" name="nombre" value={formData.nombre} onChange={handleChange}
+                     placeholder="Nombre" disabled={rol === 'Paciente'}/>
               <label>Nombre</label>
             </div>
           </section>
@@ -155,9 +158,13 @@ const ConsultarPaciente = () => {
             <button type="submit" className="btn btn-primary" disabled={rol === 'Paciente'}>Consultar</button>
           </div>
         </form>
-        <br />
-        <PacienteTabla data={responseData} formData={formData} permisosPaciente={permisosPaciente} permisosHistoria={permisosHistoria} />
-        <br />
+        <br/>
+        <PacienteTabla data={responseData} formData={formData} permisosPaciente={permisosPaciente}
+                       permisosHistoria={permisosHistoria}/>
+        <br/>
+        <button type="button" className="btn btn-secondary"
+                onClick={() => navigate('/inicio')}>Cancelar
+        </button>
       </div>
     </div>
   );

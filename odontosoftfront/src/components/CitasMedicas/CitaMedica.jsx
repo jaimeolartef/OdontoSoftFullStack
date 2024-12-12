@@ -1,11 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import axios from "axios";
 import 'react-datepicker/dist/react-datepicker.css';
-import { format } from 'date-fns';
 import Logo from "../../resource/LogoNegro.png";
 import Calendario from './Calendario';
 import config from "../../config";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const CitaMedica = () => {
   const [startDate, setStartDate] = useState(new Date());
@@ -14,6 +13,7 @@ const CitaMedica = () => {
   const [paciente, setPaciente] = useState('');
   const [selectedOdontologo, setSelectedOdontologo] = useState('');
   const [selectedPaciente, setSelectedPaciente] = useState('');
+  const navigate = useNavigate();
   const [odontologo, setOdontologo] = useState([
     {
       idMedico: 0,
@@ -163,14 +163,14 @@ const CitaMedica = () => {
                 <label htmlFor="odontologo">Odontologo</label>
                 <div className="input-group">
                   <input className="form-control"
-                    list="datalistodontologo"
-                    id="dataListOdonto"
-                    placeholder="Buscar odontologo..."
-                    value={selectedOdontologo || ''}
-                    onBlur={handleSearchChangeOdont}
-                    onInput={handleOdontologoChange}
-                    onChange={handleSearchChangeOdont}
-                    autoComplete="off"/>
+                         list="datalistodontologo"
+                         id="dataListOdonto"
+                         placeholder="Buscar odontologo..."
+                         value={selectedOdontologo || ''}
+                         onBlur={handleSearchChangeOdont}
+                         onInput={handleOdontologoChange}
+                         onChange={handleSearchChangeOdont}
+                         autoComplete="off"/>
                   <button type="button" className="btn btn-outline-secondary" onClick={handleClearOdontologo}>
                     Limpiar
                   </button>
@@ -183,33 +183,37 @@ const CitaMedica = () => {
               </div>
               <div className="espacio"/>
               {Rol != 'Paciente' && (
-              <div className="form-group">
-                <label htmlFor="paciente">Paciente</label>
-                <div className="input-group">
-                  <input className="form-control"
-                    list="datalistpaciente"
-                    id="dataListPacien"
-                    placeholder="Buscar paciente..."
-                    value={selectedPaciente || ''}
-                    onBlur={handleSearchChangePac}
-                    onChange={handlePacienteChange}
-                    autoComplete="off"/>
-                  <button type="button" className="btn btn-outline-secondary" onClick={handleClearPaciente}>
-                    Limpiar
-                  </button>
+                <div className="form-group">
+                  <label htmlFor="paciente">Paciente</label>
+                  <div className="input-group">
+                    <input className="form-control"
+                           list="datalistpaciente"
+                           id="dataListPacien"
+                           placeholder="Buscar paciente..."
+                           value={selectedPaciente || ''}
+                           onBlur={handleSearchChangePac}
+                           onChange={handlePacienteChange}
+                           autoComplete="off"/>
+                    <button type="button" className="btn btn-outline-secondary" onClick={handleClearPaciente}>
+                      Limpiar
+                    </button>
+                  </div>
+                  <datalist id="datalistpaciente">
+                    {pacientes.map((paci) => (
+                      <option key={paci.idPaciente} value={`${paci.idPaciente} - ${paci.nombre}`}/>
+                    ))}
+                  </datalist>
                 </div>
-                <datalist id="datalistpaciente">
-                  {pacientes.map((paci) => (
-                    <option key={paci.idPaciente} value={`${paci.idPaciente} - ${paci.nombre}`}/>
-                  ))}
-                </datalist>
-              </div>
               )}
               <div className="espacio"/>
               <div className="calendar-container">
-                <Calendario key={calendarKey} availability={availability} patient={selectedPaciente} setAvailability={setAvailability} Rol={Rol}/>
+                <Calendario key={calendarKey} availability={availability} patient={selectedPaciente}
+                            setAvailability={setAvailability} Rol={Rol}/>
               </div>
               <div className="espacio"/>
+              <button type="button" className="btn btn-secondary"
+                      onClick={() => navigate('/inicio')}>Cancelar
+              </button>
             </form>
           </div>
         </div>
