@@ -17,6 +17,9 @@ const Odontograma = () => {
     return location.state?.idHistoriaClinica || {};
   }, [location.state]);
 
+  let readOnly = useMemo(() => {
+    return location.state?.readOnly || false;
+  }, [location.state]);
 
   const [idOdontograma, setIdOdontograma] = useState('');
   const [initOdontograma, setInitOdontograma] = useState({
@@ -43,14 +46,9 @@ const Odontograma = () => {
   });
 
   const handleToothClick = (indexSegmento, segmentos) => {
-    console.log('paso 3: por handleToothClick: ', segmentos);
     let usuario = localStorage.getItem('username');
 
     Object.keys(segmentos).forEach(key => {
-
-      console.log('paso 3 indexSegmento: ', indexSegmento);
-      console.log('paso 3 segmento: ', segmentos[key]);
-
       if (initOdontograma.detalleodontogramas.length === 0) {
         initOdontograma.detalleodontogramas.push({
           id: '',
@@ -63,7 +61,6 @@ const Odontograma = () => {
           habilitado: true,
           idodontograma: idOdontograma,
         });
-        console.log('paso 3 initOdontograma: ', initOdontograma.detalleodontogramas);
         return;
       } else {
         const existingItemIndex = initOdontograma.detalleodontogramas.findIndex(
@@ -106,23 +103,18 @@ const Odontograma = () => {
     });
     initOdontograma.idusuariomodificacion = usuario;
     initOdontograma.fechamodificacion = new Date().toISOString();
-    console.log('paso 3 initOdontograma: ', initOdontograma);
   }
 
   useEffect(() => {
     const fetchOdontograma = async () => {
-      console.log('paso 0: por useEffect:', initOdontograma.id === '' || initOdontograma.id === 0);
       if (initOdontograma.id === '' || initOdontograma.id === 0) {
-        console.log('paso 0: cargo el odontograma: ', idHistoriaClinica);
         let token = localStorage.getItem('jsonwebtoken');
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         try {
           const response = await axios.get(`${config.baseURL}/odontograma/consultar/` + idHistoriaClinica);
           if (response.status === 201 || response.status === 200) {
-            console.log('odontograma consultar:', response.data);
             setInitOdontograma(mapFormOdontograma(response.data));
           } else if (response.status === 204) {
-            console.log('no se encontro odontograma:');
             setInitOdontograma(mapFormOdontograma({
                 idhistoriaclinica: idHistoriaClinica,
                 fecha: new Date().toISOString(),
@@ -139,10 +131,6 @@ const Odontograma = () => {
     fetchOdontograma();
   }, []);
 
-  useEffect(() => {
-    console.log('initOdontograma actualizado:', initOdontograma);
-    // Realiza cualquier acción que dependa del initOdontograma actualizado aquí
-  }, [initOdontograma]);
 
   const renderTooth = (index, toothNumber) => {
     const initSegmentos = {
@@ -154,7 +142,6 @@ const Odontograma = () => {
       5: {iddiente: toothNumber, idsegmento: 5, idestado: 'DS'}
     };
 
-    console.log('paso 1: por renderTooth:', initOdontograma.detalleodontogramas.length);
     if (initOdontograma && initOdontograma.detalleodontogramas.length > 0) {
       initOdontograma.detalleodontogramas
         .filter(item => item.iddiente === toothNumber)
@@ -169,7 +156,6 @@ const Odontograma = () => {
             }
           }
         }, []);
-      console.log('paso 1: por renderTooth:', initSegmentos);
 
       return (
         <div key={index} className="">
@@ -179,11 +165,10 @@ const Odontograma = () => {
         </div>
       );
     } else {
-      console.log('paso 1: por renderTooth:', initOdontograma);
       return (
         <div key={index} className="">
           <div style={{textAlign: 'center'}}>{toothNumber}</div>
-          <Diente toothNumber={toothNumber} onClick={handleToothClick}
+          <Diente toothNumber={toothNumber} onClick={handleToothClick} readOnly={readOnly}
                   initSegmentos={initSegmentos}/>
         </div>
       );
@@ -257,7 +242,7 @@ const Odontograma = () => {
               </div>
             </div>
             <div className="espacio"/>
-            <button type="submit" className="btn btn-primary">Guardar</button>
+            <button type="submit" className="btn btn-primary" disabled={readOnly}>Guardar</button>
             <div className="espacio"/>
             <div className="espacio"/>
           </div>

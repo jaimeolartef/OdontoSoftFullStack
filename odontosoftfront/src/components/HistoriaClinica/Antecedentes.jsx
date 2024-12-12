@@ -2,13 +2,12 @@ import React, {useEffect, useState} from 'react';
 import axios from "axios";
 import config from "../../config";
 
-const Antecedentes = ({formMedicalHistory}) => {
+const Antecedentes = ({formMedicalHistory, readOnly}) => {
 
   const usuario = localStorage.getItem('username');
 
   useEffect(() => {
     // Este useEffect se ejecutará después del primer useEffect
-    console.log('formMedicalHistory:', formMedicalHistory);
     const fetchHistoria = async () => {
       try {
         const antecedentsResponse = await axios.get(`${config.baseURL}/precedenthistory/get`);
@@ -54,8 +53,6 @@ const Antecedentes = ({formMedicalHistory}) => {
         item.id === antecedente.id ? {...item, seleccionado: value} : item
       );
     });
-    console.log('antecedente:', antecedente);
-    console.log('formMedicalHistory:', formMedicalHistory.antecedentepacientes);
     let fechacreacion = new Date().toISOString();
     formMedicalHistory.antecedentepacientes = formMedicalHistory.antecedentepacientes.map(item =>
       item.idantecedente == antecedente.id ? {
@@ -88,7 +85,8 @@ const Antecedentes = ({formMedicalHistory}) => {
                       value={option}
                       onChange={() => handleAntecedenteChange(antecedente, option)}
                       checked={antecedente.seleccionado === option}
-                      style={{width: '20px', height: '20px'}}/>
+                      style={{width: '20px', height: '20px'}}
+                      disabled={readOnly}/>
                   </div>
                   <div>
                     <label className="form-check-label" style={{marginLeft: '10px'}}>{option}</label>

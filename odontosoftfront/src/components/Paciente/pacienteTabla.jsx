@@ -32,7 +32,7 @@ const PacienteTabla = ({ data, formData, permisosPaciente, permisosHistoria }) =
   };
 
   const handleMedicalRecordReadClick = (paciente) => {
-    alert('Consultar Historia Clinica');
+    navigate('/historiaPac', { state: { patient: paciente, readOnly: true } });
   }
 
   return (

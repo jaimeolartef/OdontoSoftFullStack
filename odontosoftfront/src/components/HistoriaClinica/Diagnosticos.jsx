@@ -5,7 +5,7 @@ import showMessage from "../../util/UtilMessage";
 import EliminarIcon from "../../resource/Eliminar.png";
 import { Tooltip } from "react-tooltip";
 
-const Diagnosticos = ({ formMedicalHistory, setFormMedicalHistory }) => {
+const Diagnosticos = ({ formMedicalHistory, setFormMedicalHistory, readOnly }) => {
     const [TipoDiagnostico, setTipoDiagnostico] = useState([{
         id: 0,
         codigo: '',
@@ -95,7 +95,7 @@ const Diagnosticos = ({ formMedicalHistory, setFormMedicalHistory }) => {
           <div className="card-body">
               <div className="form-group">
                   <label htmlFor="diagnostico">Diagnóstico</label>
-                  <input
+                  <input disabled={readOnly}
                     className="form-control"
                     list="datalistOptions"
                     id="exampleDataList"
@@ -132,17 +132,19 @@ const Diagnosticos = ({ formMedicalHistory, setFormMedicalHistory }) => {
                               <td><label>{diagnostico.codtipodiagnostico}</label></td>
                               <td style={{width: '50%'}}>{diagnostico.descripciontipodiagnostico}</td>
                               <td>
-                                  <input
+                                  <input disabled={readOnly}
                                     type="checkbox"
                                     checked={diagnostico.definitivo}
                                     onChange={() => handleCheckboxChange(index)}
                                   />
                               </td>
                               <td>
-                                  <img src={EliminarIcon} alt="Eliminar"
-                                       style={{marginRight: '5px', width: '35px', height: '35px', cursor: 'pointer'}}
-                                       onClick={() => handleDelete(index)}
-                                       data-tooltip-id="editTooltip" data-tooltip-content="Eliminar"/>
+                                  {!readOnly && (
+                                      <img src={EliminarIcon} alt="Eliminar"
+                                           style={{marginRight: '5px', width: '35px', height: '35px', cursor: 'pointer'}}
+                                           onClick={() => handleDelete(index)}
+                                           data-tooltip-id="editTooltip" data-tooltip-content="Eliminar"/>
+                                    )}
                                   <Tooltip id="editTooltip"/>
                               </td>
                           </tr>

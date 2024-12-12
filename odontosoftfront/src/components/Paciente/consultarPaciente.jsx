@@ -32,9 +32,6 @@ const ConsultarPaciente = () => {
     } else if (localStorage.getItem('consultarPacienteFormData')) {
       localStorage.removeItem('consultarPacienteFormData');
     }
-
-    console.log('historia', permisosHistoria);
-    console.log('paciente', permisosPaciente);
   }, []);
 
   useEffect(() => {
@@ -155,7 +152,7 @@ const ConsultarPaciente = () => {
             </div>
           </section>
           <div className="d-grid">
-            <button type="submit" className="btn btn-primary">Consultar</button>
+            <button type="submit" className="btn btn-primary" disabled={rol === 'Paciente'}>Consultar</button>
           </div>
         </form>
         <br />

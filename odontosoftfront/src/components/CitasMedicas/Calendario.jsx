@@ -125,10 +125,6 @@ const Calendar = ({ availability, patient, Rol }) => {
     if (cita) {
       handleCancelClick(cita);
     } else {
-      console.log('time ', time);
-      console.log('label ', label);
-      console.log('cita ', cita);
-      console.log('cita para agendar');
       handleAgendarCita(time);
     }
   };
@@ -158,7 +154,6 @@ const Calendar = ({ availability, patient, Rol }) => {
     let day = selectedDay < 10 ? '0' + selectedDay : selectedDay;
     let month = selectedMonth < 10 ? '0' + (selectedMonth + 1) : selectedMonth + 1;
     let fechaFormateada = `${selectedYear}-${month}-${day}`;
-    console.log('Patient: ',patient);
     let citaMedica = {
       idMedico: odontoSelec[0],
       id: null,
@@ -180,8 +175,6 @@ const Calendar = ({ availability, patient, Rol }) => {
     } catch (error) {
       console.error('Error fetching patient data:', error);
     }
-
-    console.log('Cita medica:', citaMedica);
   }
 
   const calculateDateNotif = (fecha) => {
@@ -204,7 +197,6 @@ const Calendar = ({ availability, patient, Rol }) => {
       citaCancelada.motivoCancelacion = cancelReason;
       fetchCitaCancelada(citaCancelada).then(r => console.log('Cita cancelada:', r));
     }
-    console.log('Cita cancelada:', selectedCita);
     setShowCancelDialog(false);
     setCancelReason('');
   };
@@ -215,7 +207,6 @@ const Calendar = ({ availability, patient, Rol }) => {
     try {
       const response = await axios.put(`${config.baseURL}/appointment/update`, citaCancelada);
       if (response.status === 200) {
-        console.log('Cita cancelada:', citaCancelada);
         showMessage('success', 'La cita se canceló con éxito');
         fetchCitas(selectedDay, selectedMonth, selectedYear);
         toggleDaySelection(selectedDay, selectedMonth, selectedYear);

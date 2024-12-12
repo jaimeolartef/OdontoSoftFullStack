@@ -79,6 +79,8 @@ public class MedicalHistoryControllerControllerImpl implements MedicalHistoryCon
         });
 
         // Guardar ayudadiagnosticas
+        ayudaDiagnosticaDao.deleteByIdHistoriaClinica(historiaClinicaRequest.getId());
+
         historiaClinicaRequest.getAyudadiagnosticas().forEach(ayuda -> {
             ayuda.setIdhistoriaclinica(historiaClinicaRequest.getId());
             AyudaDiagnostica ayudaDiagnostica = AyudaDiagnosticaMapper.toEntity(ayuda);
@@ -90,6 +92,8 @@ public class MedicalHistoryControllerControllerImpl implements MedicalHistoryCon
         });
 
         // Guardar diagnosticos
+        diagnosticoDao.deleteByIdHistoriaClinica(historiaClinicaRequest.getId());
+
         historiaClinicaRequest.getDiagnosticos().forEach(diagnostico -> {
             diagnostico.setIdhistoriaclinica(historiaClinicaRequest.getId());
             diagnostico.setHabilitado(true);

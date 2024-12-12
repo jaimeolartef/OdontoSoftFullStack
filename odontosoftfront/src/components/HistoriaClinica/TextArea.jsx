@@ -10,7 +10,7 @@ import React, { useState, useRef, useEffect } from 'react';
  * @param {string} props.name - The name of the textarea.
  * @returns {JSX.Element} The rendered TextArea component.
  */
-const TextArea = ({ label, value, onChange, name }) => {
+const TextArea = ({ label, value, onChange, name, readOnly }) => {
   const textAreaRef = useRef(null);
 
   useEffect(() => {
@@ -34,6 +34,7 @@ const TextArea = ({ label, value, onChange, name }) => {
               name={name}
               placeholder={label}
               style={{ height: 'auto' }}
+              disabled={readOnly}
             />
             <label>{label}</label>
           </div>

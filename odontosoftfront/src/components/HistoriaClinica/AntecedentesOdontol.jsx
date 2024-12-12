@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import axios from "axios";
 import config from "../../config";
 
-const Antecedentes = ({formMedicalHistory}) => {
+const Antecedentes = ({formMedicalHistory, readOnly}) => {
 
   const [antecedentesOdont, setAntecedentesOdont] = useState([]);
   const usuario = localStorage.getItem('username');
@@ -83,7 +83,7 @@ const Antecedentes = ({formMedicalHistory}) => {
               {['SI', 'NO'].map(option => (
                 <div key={option} className="form-check form-check-inline">
                   <div>
-                    <input
+                    <input disabled={readOnly}
                       className="form-check-input"
                       type="radio"
                       value={option}

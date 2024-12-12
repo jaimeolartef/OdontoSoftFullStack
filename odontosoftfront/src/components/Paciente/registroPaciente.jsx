@@ -74,7 +74,6 @@ const RegistroPaciente = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form Data Submitted:', formData);
     let token = localStorage.getItem('jsonwebtoken');
 
     const responseValidate = await axios.get(`${config.baseURL}/pacientes/consultar`, {
@@ -101,7 +100,6 @@ const RegistroPaciente = () => {
       return;
     }
 
-    console.log('Token: ', token);
     formData.idusuariocreacion = usuario;
     formData.fechacreacion = new Date().toISOString();
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
@@ -111,7 +109,6 @@ const RegistroPaciente = () => {
       }
     })
       .then(response => {
-        console.log('Response: ', response.data);
         if (response.status === 201) {
           let nombreCompleto = formData.primernombre + ' ' +
             (formData.segundonombre ? formData.segundonombre : '')
@@ -144,7 +141,6 @@ const RegistroPaciente = () => {
       }
     })
       .then(response => {
-        console.log('Response: ', response.data);
         if (response.status === 400 && response.data.codigoValidacion === '400') {
           showMessage('error', response.data.mensajeValidacion);
         }

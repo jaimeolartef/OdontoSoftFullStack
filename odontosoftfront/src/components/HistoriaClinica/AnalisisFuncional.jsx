@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-const AnalisisFuncional = ({ formMedicalHistory, setFormMedicalHistory }) => {
+const AnalisisFuncional = ({ formMedicalHistory, setFormMedicalHistory, readOnly }) => {
   const usuario = localStorage.getItem('username');
 
   const handleChange = (e) => {
@@ -59,7 +59,8 @@ const AnalisisFuncional = ({ formMedicalHistory, setFormMedicalHistory }) => {
                  type="checkbox"
                  name="masticacion"
                  checked={formMedicalHistory.analisisfuncionals[0]?.masticacion || false}
-                 onChange={handleChange}/>
+                 onChange={handleChange}
+                  disabled={readOnly}/>
           <label className="form-check-label" htmlFor="masticacion">Masticación</label>
         </div>
         <div className="form-check">
@@ -69,6 +70,7 @@ const AnalisisFuncional = ({ formMedicalHistory, setFormMedicalHistory }) => {
             name="deglucion"
             id="deglucion"
             checked={formMedicalHistory.analisisfuncionals[0]?.deglucion || false}
+            disabled={readOnly}
             onChange={handleChange}/>
           <label className="form-check-label" htmlFor="deglucion">Deglución</label>
         </div>
@@ -78,6 +80,7 @@ const AnalisisFuncional = ({ formMedicalHistory, setFormMedicalHistory }) => {
             name="fonacion"
             id="fonacion"
             checked={formMedicalHistory.analisisfuncionals[0]?.fonacion || false}
+            disabled={readOnly}
             onChange={handleChange}/>
           <label className="form-check-label" htmlFor="fonacion">Fonación</label>
         </div>
@@ -87,6 +90,7 @@ const AnalisisFuncional = ({ formMedicalHistory, setFormMedicalHistory }) => {
             name="respiracion"
             id="respiracion"
             checked={formMedicalHistory.analisisfuncionals[0]?.respiracion || false}
+             disabled={readOnly}
             onChange={handleChange}/>
           <label className="form-check-label" htmlFor="respiracion">Respiración</label>
         </div>

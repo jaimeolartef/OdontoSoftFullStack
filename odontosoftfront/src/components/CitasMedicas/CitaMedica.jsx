@@ -134,11 +134,6 @@ const CitaMedica = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Paciente:', paciente);
-    console.log('Odontologo:', odontologo);
-    console.log('Fecha:', format(startDate, 'dd/MM/yyyy'));
-    console.log('Hora:', hora);
-    console.log('Motivo:', motivo);
   }
 
   const handleClearOdontologo = () => {

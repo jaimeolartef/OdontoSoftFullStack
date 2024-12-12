@@ -52,11 +52,9 @@ const ReadOnlyPaciente = ({ idPatient }) => {
   });
 
   useEffect(() => {
-    console.log('idPatient readonlypatient: ', idPatient);
     if (idPatient) {
       axios.get(`${config.baseURL}/pacientes/consultar/${idPatient}`)
         .then(response => {
-          console.log('patient data:', response.data);
           setFormPatient(mapPatientData(response.data));
         })
         .catch(error => {

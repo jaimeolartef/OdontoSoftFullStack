@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import config from "../../config";
 import axios from "axios";
 
-const Habitos = ({formMedicalHistory, setFormMedicalHistory}) => {
+const Habitos = ({formMedicalHistory, setFormMedicalHistory, readOnly}) => {
   const [habitos, setHabitos] = useState([]);
   const usuario = localStorage.getItem('username');
 
@@ -50,6 +50,7 @@ const Habitos = ({formMedicalHistory, setFormMedicalHistory}) => {
       );
     });
     let fechacreacion = new Date().toISOString();
+    console.log('Hábitos:', formMedicalHistory);
     formMedicalHistory.habitopacientes = formMedicalHistory.habitopacientes.map(item =>
       item.idhabito === habito.id ? {
         ...item,
@@ -75,7 +76,7 @@ const Habitos = ({formMedicalHistory, setFormMedicalHistory}) => {
               {[true, false].map(option => (
                 <div key={option} className="form-check form-check-inline">
                   <div>
-                    <input
+                    <input disabled={readOnly}
                       className="form-check-input"
                       type="radio"
                       value={option}

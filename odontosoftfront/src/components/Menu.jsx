@@ -6,6 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 function Menu(props) {
   let data = localStorage.getItem('menuUser');
+  let nombre = localStorage.getItem('nombre');
   let dataMenu = data ? JSON.parse(data) : [];
 
   const renderSubMenu = (menu) => {
@@ -23,6 +24,7 @@ function Menu(props) {
   };
 
   return (
+
     <Navbar bg="light" expand="lg">
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
@@ -34,6 +36,13 @@ function Menu(props) {
               )}
             </React.Fragment>
           ))}
+        </Nav>
+      </Navbar.Collapse>
+      <Navbar.Collapse className="justify-content-end">
+        <Nav>
+          <NavDropdown title={nombre} id="basic-nav-dropdown">
+            <NavDropdown.Item as={Link} to="/login" onClick={() => localStorage.clear()}>Cerrar Sesión</NavDropdown.Item>
+          </NavDropdown>
         </Nav>
       </Navbar.Collapse>
     </Navbar>

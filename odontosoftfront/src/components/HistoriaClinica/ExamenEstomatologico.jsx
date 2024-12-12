@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-const ExamenEstomatologico = ({ formMedicalHistory, setFormMedicalHistory }) => {
+const ExamenEstomatologico = ({ formMedicalHistory, setFormMedicalHistory, readOnly }) => {
   const usuario = localStorage.getItem('username');
   const handleChange = (e) => {
     const { name, checked } = e.target;
@@ -104,7 +104,8 @@ const ExamenEstomatologico = ({ formMedicalHistory, setFormMedicalHistory }) => 
                          name={item.value}
                          checked={formMedicalHistory.examenestomatologicos[0]?.[item.value] || false}
                          onChange={handleChange}
-                         className="form-check-input"/></td>
+                         className="form-check-input"
+                         disabled={readOnly}/></td>
             </tr>
           ))}
           </tbody>

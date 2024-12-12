@@ -9,7 +9,6 @@ export default function (ComposedComponent) {
 
     useEffect(() => {
       if(!props.isAuthenticated) {
-        console.log('No autenticado');
         navigate('/login');
       }
     }, [props.isAuthenticated, navigate]);

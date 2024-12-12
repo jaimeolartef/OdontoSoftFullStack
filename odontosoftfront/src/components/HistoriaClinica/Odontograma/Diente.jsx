@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import './Odontograma.css';
 import EstadoDiente from "./EstadoDiente";
 import showMessage from "../../../util/UtilMessage";
+import {none} from "list";
 
 const Segmento = ({ d, idsegmento, onClick, detalleOdonto }) => {
   const fillColor = detalleOdonto?.idestado === 'CR' ? 'red' : (detalleOdonto?.idestado === 'OB' ? 'blue' : 'white');
@@ -44,7 +45,7 @@ const Circle = ({ idsegmento, detalleOdonto, onClick }) => {
   );
 };
 
-const Diente = ({ toothNumber, onClick, initSegmentos }) => {
+const Diente = ({ toothNumber, onClick, initSegmentos, readOnly }) => {
   const [selectedSegments, setSelectedSegments] = useState([false, false, false, false]);
   const [isCircleSelected, setIsCircleSelected] = useState(false);
   const [segmentos, setSegmentos] = useState({
@@ -58,15 +59,12 @@ const Diente = ({ toothNumber, onClick, initSegmentos }) => {
   const dropdownRef = useRef(null);
 
   useEffect(() => {
-    console.log('initSegmentos 1:', initSegmentos);
     setSegmentos(initSegmentos);
   }, [initSegmentos]);
 
   const handleDropdownChange = (event) => {
     const estado = event.target.value;
     let indexSegmento = currentSegment;
-    console.log('value 1:', estado);
-    console.log('value 2:', indexSegmento);
     if (indexSegmento !== null) {
       const segmentosArray = Object.values(segmentos);
       const hasCR = segmentosArray.some(segmento => segmento.idestado === 'CR');
@@ -173,7 +171,7 @@ const Diente = ({ toothNumber, onClick, initSegmentos }) => {
 
   return (
     <div style={{ position: 'relative' }}>
-      <svg width="75" height="75" viewBox="0 0 200 200" style={{ transform: 'rotate(45deg)' }}>
+      <svg width="75" height="75" viewBox="0 0 200 200" style={{ transform: 'rotate(45deg)' }} >
         {segmentPaths.map((d, idsegmento) => (
           <Segmento
             key={idsegmento}
@@ -190,7 +188,7 @@ const Diente = ({ toothNumber, onClick, initSegmentos }) => {
         />
       </svg>
 
-      {currentSegment !== null && (
+      {currentSegment !== null && !readOnly && (
         <div className="optionTooth" ref={dropdownRef}>
           <label htmlFor="estado-select">Selecciona un estado:</label>
           <select id="estado-select" onChange={handleDropdownChange}>

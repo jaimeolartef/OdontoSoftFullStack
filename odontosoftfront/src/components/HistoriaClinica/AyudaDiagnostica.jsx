@@ -5,7 +5,7 @@ import showMessage from "../../util/UtilMessage";
 import {Tooltip} from "react-tooltip";
 import EliminarIcon from "../../resource/Eliminar.png";
 
-const AyudaDiagnostica = ({formMedicalHistory, setFormMedicalHistory}) => {
+const AyudaDiagnostica = ({formMedicalHistory, setFormMedicalHistory, readOnly}) => {
   const [TipoAyudaDiagnostica, setTipoAyudaDiagnostica] = useState([{
     id: 0,
     codigo: '',
@@ -30,14 +30,11 @@ const AyudaDiagnostica = ({formMedicalHistory, setFormMedicalHistory}) => {
         console.error('Error fetching patient data:', error);
       }
     }
-
-    console.log('historia clinica paciente:', formMedicalHistory);
     fetchTipoAyudaDiagnostico();
   }, [formMedicalHistory]);
 
 
   const handleAyudaDiagnosticoChange = (event) => {
-    console.log('Diagnósticos:', event);
     const selectedValue = event.target.value;
     setSelectedAyudaDiagnostico(selectedValue);
     let ayudaDiagnosSelec = selectedValue.split(' - ');
@@ -61,7 +58,6 @@ const AyudaDiagnostica = ({formMedicalHistory, setFormMedicalHistory}) => {
       }
     }
     console.log('Diagnósticos:', formMedicalHistory);
-    setSelectedAyudaDiagnostico('');
   };
 
   const handleSearchChange = (event) => {
@@ -85,7 +81,7 @@ const AyudaDiagnostica = ({formMedicalHistory, setFormMedicalHistory}) => {
       <div className="card-body">
         <div className="form-group">
           <label htmlFor="Ayudadiagnostico">Ayuda Diagnóstico</label>
-          <input
+          <input disabled={readOnly}
             className="form-control"
             list="ayudaDiaglistOptions"
             id="ayudaDiagList"
@@ -121,10 +117,12 @@ const AyudaDiagnostica = ({formMedicalHistory, setFormMedicalHistory}) => {
                   <td><label>{diagnostico.codtipoayudadiag}</label></td>
                   <td style={{width: '50%'}}>{diagnostico.descripciontipoayudadiag}</td>
                   <td>
+                    {!readOnly && (
                     <img src={EliminarIcon} alt="Eliminar"
                          style={{marginRight: '5px', width: '35px', height: '35px', cursor: 'pointer'}}
                          onClick={() => handleDelete(index)}
                          data-tooltip-id="editTooltip" data-tooltip-content="Eliminar"/>
+                    )}
                     <Tooltip id="editTooltip"/>
                   </td>
                 </tr>

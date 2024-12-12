@@ -25,6 +25,10 @@ const MedicalRecord = () => {
     return location.state?.patient || {};
   }, [location.state]);
 
+  let readOnly = useMemo(() => {
+    return location.state?.readOnly || false;
+  }, [location.state]);
+
   const [formPatient, setFormPatient] = useState({
     idHistoriaClinica: '',
     idPaciente: ''
@@ -53,7 +57,6 @@ const MedicalRecord = () => {
   });
 
   const handleSubmit = (e) => {
-    console.log('paso ultimo paso guardar:', formMedicalHistory);
     let usuario = localStorage.getItem('username');
     e.preventDefault();
     if (formMedicalHistory.idHistoriaClinica) {
@@ -63,7 +66,6 @@ const MedicalRecord = () => {
       formMedicalHistory.idusuariocreacion = usuario;
       formMedicalHistory.fechacreacion = new Date().toISOString();
     }
-    console.log('formMedicalHistory ultimo paso:', formMedicalHistory);
     
     let token = localStorage.getItem('jsonwebtoken');
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
@@ -75,7 +77,6 @@ const MedicalRecord = () => {
       .then(response => {
         if (response.status === 201) {
           navigate(-1);
-          console.log('response:', formMedicalHistory.idHistoriaClinica);
           showMessage('success', 'La historia clínica se guardo con éxito');
         } else {
           showMessage('error', 'Error al guardar la historia clínica');
@@ -113,7 +114,6 @@ const MedicalRecord = () => {
   };
 
   useEffect(() => {
-    console.log('paso 1:', patient);
     const fetchData = async () => {
       setFormPatient(prev => ({
         ...prev,
@@ -137,7 +137,7 @@ const MedicalRecord = () => {
   }, [formPatient.idPaciente]);
 
   const handleMedicalRecordClick = (idHistoriaClinica) => {
-    navigate('/odontograma', { state: { idHistoriaClinica: idHistoriaClinica } });
+    navigate('/odontograma', { state: { idHistoriaClinica: idHistoriaClinica, readOnly } });
   };
 
   const handleInputChange = (event) => {
@@ -183,49 +183,55 @@ const MedicalRecord = () => {
           <TextArea label="Motivo consulta"
                     name="motivoConsulta"
                     value={formMedicalHistory.motivoConsulta || ''}
-                    onChange={handleInputChange}/>
+                    onChange={handleInputChange}
+                    readOnly={readOnly}/>
           <TextArea label="Enfermedad actual"
                     name="enfermedadActual"
                     value={formMedicalHistory.enfermedadActual || ''}
-                    onChange={handleInputChange}/>
+                    onChange={handleInputChange}
+                    readOnly={readOnly}/>
           <div className="espacio"/>
-          <Antecedentes formMedicalHistory={formMedicalHistory}/>
+          <Antecedentes formMedicalHistory={formMedicalHistory} readOnly={readOnly}/>
           <div className="espacio"/>
           <TextArea label="Observación antecedentes"
                     name="observacionAntec"
                     value={formMedicalHistory.observacionAntec || ''}
-                    onChange={handleInputChange}/>
+                    onChange={handleInputChange}
+                    readOnly={readOnly}/>
           <div className="espacio"/>
-          <AntecedentesOdont formMedicalHistory={formMedicalHistory}/>
+          <AntecedentesOdont formMedicalHistory={formMedicalHistory} readOnly={readOnly}/>
           <div className="espacio"/>
           <TextArea label="Observación antecedentes odontológicos"
                     name="observacionantecodon"
                     value={formMedicalHistory.observacionantecodon || ''}
-                    onChange={handleInputChange}/>
+                    onChange={handleInputChange}
+                    readOnly={readOnly}/>
           <div className="espacio"/>
-          <Habitos formMedicalHistory={formMedicalHistory} setFormMedicalHistory={setFormMedicalHistory}/>
+          <Habitos formMedicalHistory={formMedicalHistory} readOnly={readOnly}/>
           <div className="espacio"/>
           <TextArea label="Observación"
                     name="observacion"
                     value={formMedicalHistory.observacion || ''}
-                    onChange={handleInputChange}/>
+                    onChange={handleInputChange}
+                    readOnly={readOnly}/>
           <div className="espacio"/>
-          <SignosVitales formMedicalHistory={formMedicalHistory} setFormMedicalHistory={setFormMedicalHistory}/>
+          <SignosVitales formMedicalHistory={formMedicalHistory} setFormMedicalHistory={setFormMedicalHistory} readOnly={readOnly}/>
           <div className="espacio"/>
-          <AnalisisFuncional formMedicalHistory={formMedicalHistory} setFormMedicalHistory={setFormMedicalHistory}/>
+          <AnalisisFuncional formMedicalHistory={formMedicalHistory} setFormMedicalHistory={setFormMedicalHistory} readOnly={readOnly}/>
           <div className="espacio"/>
           <TextArea label="Observación"
                     name="observacionanafunc"
                     value={formMedicalHistory.observacionanafunc || ''}
-                    onChange={handleInputChange}/>
+                    onChange={handleInputChange}
+                    readOnly={readOnly}/>
           <div className="espacio"/>
-          <ExamenEstomatologico formMedicalHistory={formMedicalHistory} setFormMedicalHistory={setFormMedicalHistory}/>
+          <ExamenEstomatologico formMedicalHistory={formMedicalHistory} setFormMedicalHistory={setFormMedicalHistory} readOnly={readOnly}/>
           <div className="espacio"/>
-          <Diagnosticos formMedicalHistory={formMedicalHistory} setFormMedicalHistory={setFormMedicalHistory}/>
+          <Diagnosticos formMedicalHistory={formMedicalHistory} setFormMedicalHistory={setFormMedicalHistory} readOnly={readOnly}/>
           <div className="espacio"/>
-          <AyudasDiagnostico formMedicalHistory={formMedicalHistory} setFormMedicalHistory={setFormMedicalHistory}/>
+          <AyudasDiagnostico formMedicalHistory={formMedicalHistory} setFormMedicalHistory={setFormMedicalHistory} readOnly={readOnly}/>
           <div className="espacio"/>
-          <button type="submit" className="btn btn-primary">Guardar</button>
+          {!readOnly && <button type="submit" className="btn btn-primary" disabled={readOnly}>Guardar</button>}
         </form>
       </div>
     </div>

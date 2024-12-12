@@ -46,7 +46,6 @@ function App() {
                 }).catch(error => {
                 showMessage('error','Error al validar el rol del usuario');
               })
-              console.log('Por el app');
               navigate('/inicio');
               localStorage.setItem('username', usuarioDto.codigo);
             }  else {

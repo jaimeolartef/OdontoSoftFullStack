@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-const SignosVitales = ({ formMedicalHistory, setFormMedicalHistory }) => {
+const SignosVitales = ({ formMedicalHistory, setFormMedicalHistory, readOnly }) => {
   const usuario = localStorage.getItem('username');
 
     const handleChange = (e) => {
@@ -30,7 +30,6 @@ const SignosVitales = ({ formMedicalHistory, setFormMedicalHistory }) => {
 
   useEffect(() => {
     const fetchSignosVitales = async () => {
-      console.log('Primer paso cargar Signos Vitales:', formMedicalHistory.signovitals);
       if (!formMedicalHistory.signovitals || formMedicalHistory.signovitals.length === 0) {
         let fecha = new Date().toISOString();
         setFormMedicalHistory(prev => ({
@@ -60,7 +59,7 @@ const SignosVitales = ({ formMedicalHistory, setFormMedicalHistory }) => {
       <div className="card-body">
         <div>
           <label>Peso (Kg):</label>
-          <input
+          <input disabled={readOnly}
             type="text"
             name="peso"
             value={formMedicalHistory.signovitals[0]?.peso || ''}
@@ -69,7 +68,7 @@ const SignosVitales = ({ formMedicalHistory, setFormMedicalHistory }) => {
         </div>
         <div>
           <label>Talla (m):</label>
-          <input
+          <input disabled={readOnly}
             type="text"
             name="talla"
             value={formMedicalHistory.signovitals[0]?.talla || ''}
@@ -78,7 +77,7 @@ const SignosVitales = ({ formMedicalHistory, setFormMedicalHistory }) => {
         </div>
         <div>
           <label>Pulso (Latidos por minuto):</label>
-          <input
+          <input disabled={readOnly}
             type="text"
             name="pulso"
             value={formMedicalHistory.signovitals[0]?.pulso || ''}
@@ -87,7 +86,7 @@ const SignosVitales = ({ formMedicalHistory, setFormMedicalHistory }) => {
         </div>
         <div>
           <label>Temperatura (°C):</label>
-          <input
+          <input disabled={readOnly}
             type="text"
             name="temperatura"
             value={formMedicalHistory.signovitals[0]?.temperatura || ''}
@@ -96,7 +95,7 @@ const SignosVitales = ({ formMedicalHistory, setFormMedicalHistory }) => {
         </div>
         <div>
           <label>Presión Arterial (mmHg):</label>
-          <input
+          <input disabled={readOnly}
             type="text"
             name="presionarterial"
             value={formMedicalHistory.signovitals[0]?.presionarterial || ''}
@@ -105,7 +104,7 @@ const SignosVitales = ({ formMedicalHistory, setFormMedicalHistory }) => {
         </div>
         <div>
           <label>Frecuencia Respiratoria (rpm):</label>
-          <input
+          <input disabled={readOnly}
             type="text"
             name="frecuenciarespiratoria"
             value={formMedicalHistory.signovitals[0]?.frecuenciarespiratoria || ''}
