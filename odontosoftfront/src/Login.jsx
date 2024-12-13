@@ -85,9 +85,9 @@ const Login = (props) => {
                     .catch(error => {
                       console.error('Error fetching patient data:', error);
                     });
-                } else {
-                  localStorage.setItem('nombre', responseMenu.data.nombreUsuario);
                 }
+                localStorage.setItem('nombre', responseMenu.data.nombreUsuario);
+
 
                 props.onLoggedIn();
               }).catch(error => {
