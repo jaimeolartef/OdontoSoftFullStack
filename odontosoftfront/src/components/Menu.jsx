@@ -47,7 +47,8 @@ function Menu(props) {
 
       {props.isLoggedIn && (<Navbar.Collapse className="justify-content-end">
         <Nav>
-          <NavDropdown title={<><img src={usuario} alt="Usuario" style={{ width: '30px', marginRight: '30px' }} />{nombre}</>}  id="basic-nav-dropdown">
+          <NavDropdown title={<><img src={usuario} alt="Usuario" style={{ width: '30px', marginRight: '55px' }} />{nombre}</>}  id="basic-nav-dropdown">
+            <NavDropdown.Item as={Link} to="/restaurarcontrasenia">Restaurar Contraseña</NavDropdown.Item>
             <NavDropdown.Item as={Link} to="/login" onClick={handleLogout}>Cerrar Sesión</NavDropdown.Item>
           </NavDropdown>
         </Nav>

@@ -1,9 +1,6 @@
 package org.enterprise.odontosoft.controller;
 
-import org.enterprise.odontosoft.view.dto.CredencialDto;
-import org.enterprise.odontosoft.view.dto.PermisosDto;
-import org.enterprise.odontosoft.view.dto.UsuarioDto;
-import org.enterprise.odontosoft.view.dto.UsuarioValidarDto;
+import org.enterprise.odontosoft.view.dto.*;
 import org.springframework.http.ResponseEntity;
 
 public interface UserController {
@@ -14,4 +11,6 @@ public interface UserController {
   ResponseEntity<PermisosDto> validateRole(UsuarioDto usuarioDto);
 
   ResponseEntity<Void> validateToken(UsuarioValidarDto usuarioValidarDto);
+
+    ResponseEntity<String> resetPassword(UsuarioPasswordDto usuarioPasswordDto);
 }

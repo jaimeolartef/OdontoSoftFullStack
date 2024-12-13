@@ -1,16 +1,14 @@
 package org.enterprise.odontosoft.view;
 
 import org.enterprise.odontosoft.controller.UserController;
-import org.enterprise.odontosoft.view.dto.CredencialDto;
-import org.enterprise.odontosoft.view.dto.PermisosDto;
-import org.enterprise.odontosoft.view.dto.UsuarioDto;
-import org.enterprise.odontosoft.view.dto.UsuarioValidarDto;
+import org.enterprise.odontosoft.view.dto.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
 @RestController
+@CrossOrigin(originPatterns = "http://localhost:*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT})
 public class UserView {
 
   private final UserController userController;
@@ -43,4 +41,9 @@ public class UserView {
   public ResponseEntity<PermisosDto> validateRole(@Valid @RequestBody UsuarioDto usuarioDto) {
     return userController.validateRole(usuarioDto);
   }
+
+  @PutMapping("user/resetpassword")
+    public ResponseEntity<String> resetPassword(@Valid @RequestBody UsuarioPasswordDto usuarioPasswordDto) {
+        return userController.resetPassword(usuarioPasswordDto);
+    }
 }

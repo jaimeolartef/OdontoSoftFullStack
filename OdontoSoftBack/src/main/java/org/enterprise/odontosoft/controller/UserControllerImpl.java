@@ -23,6 +23,7 @@ import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 
 @Controller
@@ -161,4 +162,19 @@ public class UserControllerImpl implements UserController {
     return responseEntity;
   }
 
+  @Override
+  public ResponseEntity<String> resetPassword(UsuarioPasswordDto usuarioPasswordDto) {
+    try {
+      Optional.of(usuarioDao.findByCodigo(usuarioPasswordDto.getUsuario())).
+          ifPresent(usuario -> {
+            if (usuario.getClave().equals(usuarioPasswordDto.getClave())) {
+              usuario.setClave(usuarioPasswordDto.getNuevaClave());
+              usuarioDao.save(usuario);
+            }
+          });
+      return ResponseEntity.status(HttpStatus.OK).body("Contraseña actualizada con éxito");
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al actualizar la contraseña");
+    }
+  }
 }
