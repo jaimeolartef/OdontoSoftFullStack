@@ -147,34 +147,32 @@ const Odontograma = () => {
         .filter(item => item.iddiente === toothNumber)
         .forEach(item => {
           if (item.iddiente === toothNumber) {
-            if (item.iddiente === toothNumber) {
-              if (['NE', 'CT', 'EX', 'SE', 'EI', 'PE', 'CC'].includes(item.idestado)) {
-                initSegmentos[5].idestado = item.idestado;
-              } else {
-                initSegmentos[item.idsegmento].idestado = item.idestado;
-              }
+            if (['NE', 'CT', 'EX', 'SE', 'EI', 'PE', 'CC'].includes(item.idestado)) {
+              initSegmentos[5].idestado = item.idestado;
+            } else {
+              initSegmentos[item.idsegmento].idestado = item.idestado;
             }
           }
-        }, []);
+        });
 
-      return (
-        <div key={index} className="">
-          <div style={{textAlign: 'center'}}>{toothNumber}</div>
-          <Diente toothNumber={toothNumber} onClick={handleToothClick}
-                  initSegmentos={initSegmentos}/>
-        </div>
-      );
-    } else {
-      return (
-        <div key={index} className="">
-          <div style={{textAlign: 'center'}}>{toothNumber}</div>
-          <Diente toothNumber={toothNumber} onClick={handleToothClick} readOnly={readOnly}
-                  initSegmentos={initSegmentos}/>
-        </div>
-      );
-    }
-    return null;
-  };
+    return (
+      <div key={index} className="">
+        <div style={{textAlign: 'center'}}>{toothNumber}</div>
+        <Diente toothNumber={toothNumber} onClick={handleToothClick}
+                initSegmentos={initSegmentos} readOnly={readOnly}/>
+      </div>
+    );
+  } else {
+    return (
+      <div key={index} className="">
+        <div style={{textAlign: 'center'}}>{toothNumber}</div>
+        <Diente toothNumber={toothNumber} onClick={handleToothClick} readOnly={readOnly}
+                initSegmentos={initSegmentos}/>
+      </div>
+    );
+  }
+  return null;
+};
 
   const handleSubmit = (e) => {
     e.preventDefault();

@@ -137,6 +137,7 @@ const MedicalRecord = () => {
   }, [formPatient.idPaciente]);
 
   const handleMedicalRecordClick = (idHistoriaClinica) => {
+    console.log('readOnly', readOnly);
     navigate('/odontograma', { state: { idHistoriaClinica: idHistoriaClinica, readOnly } });
   };
 
