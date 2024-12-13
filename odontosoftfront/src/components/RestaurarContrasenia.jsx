@@ -30,6 +30,12 @@ const RestaurarContrasenia = () => {
       return;
     }
 
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    if (!passwordRegex.test(passwordObj.nuevaClave)) {
+      showMessage('error', 'La clave debe contener letras, números y un mínimo de 8 caracteres.');
+      return;
+    }
+
     const hashClave = sha256(passwordObj.clave).toString();
     const hashClaveNueva = sha256(passwordObj.nuevaClave).toString();
     const hashClaveConfirmar = sha256(passwordObj.confirmarClave).toString();
@@ -104,7 +110,7 @@ const RestaurarContrasenia = () => {
             </div>
             <div className="d-grid">
               <button type="submit" className="btn btn-primary">
-                Enviar Enlace de Restablecimiento
+                Guardar
               </button>
             </div>
           </form>
