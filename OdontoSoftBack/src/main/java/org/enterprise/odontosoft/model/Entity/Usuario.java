@@ -17,39 +17,43 @@ import java.util.Set;
 @NoArgsConstructor
 @Table(name = "usuario")
 public class Usuario {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @ColumnDefault("nextval('usuario_id_seq'::regclass)")
-  @Column(name = "id", nullable = false)
-  private Integer id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@ColumnDefault("nextval('usuario_id_seq'::regclass)")
+	@Column(name = "id", nullable = false)
+	private Integer id;
 
-  @Size(max = 50)
-  @NotNull
-  @Column(name = "nombre", nullable = false, length = 50)
-  private String nombre;
+	@Size(max = 50)
+	@NotNull
+	@Column(name = "nombre", nullable = false, length = 50)
+	private String nombre;
 
-  @NotNull
-  @Column(name = "clave", nullable = false, length = Integer.MAX_VALUE)
-  private String clave;
+	@NotNull
+	@Column(name = "clave", nullable = false, length = Integer.MAX_VALUE)
+	private String clave;
 
-  @NotNull
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(name = "id_rol", nullable = false)
-  private Rol idRol;
+	@NotNull
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "id_rol", nullable = false)
+	private Rol idRol;
 
-  @NotNull
-  @ColumnDefault("false")
-  @Column(name = "habilitado", nullable = false)
-  private Boolean habilitado = false;
+	@NotNull
+	@ColumnDefault("false")
+	@Column(name = "habilitado", nullable = false)
+	private Boolean habilitado = false;
 
-  @Size(max = 20)
-  @Column(name = "codigo", length = 20)
-  private String codigo;
+	@Size(max = 20)
+	@Column(name = "codigo", length = 20)
+	private String codigo;
 
-  @OneToMany(mappedBy = "idusuariocreacion")
-  private Set<HistoriaClinica> historiaClinicasUsuario = new LinkedHashSet<>();
+	@Size(max = 200)
+	@Column(name = "correo", length = 200)
+	private String correo;
 
-  @OneToMany(mappedBy = "idusuariomodificacion")
-  private Set<HistoriaClinica> historiaClinicasUsuarioMod = new LinkedHashSet<>();
+	@OneToMany(mappedBy = "idusuariocreacion")
+	private Set<HistoriaClinica> historiaClinicasUsuario = new LinkedHashSet<>();
+
+	@OneToMany(mappedBy = "idusuariomodificacion")
+	private Set<HistoriaClinica> historiaClinicasUsuarioMod = new LinkedHashSet<>();
 
 }

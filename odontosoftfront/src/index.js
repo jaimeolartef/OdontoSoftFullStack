@@ -4,6 +4,7 @@ import './index.css';
 import { createStore } from 'redux'
 import reportWebVitals from './reportWebVitals';
 import Login from "./Login";
+import RecordarClave from "./ForgotPassword";
 import Inicio from "./components/Inicio";
 import RegistroPac from "./components/Paciente/registroPaciente";
 import {setAuthenticationHeader} from "./util/authenticate";
@@ -49,6 +50,7 @@ root.render(
             <Route exact path = "/odontograma" Component = {requireAuth(Odontograma)} />
             <Route exact path = "/citaMedica" Component = {requireAuth(CitaMedica)} />
             <Route exact path = "/restaurarcontrasenia" Component = {requireAuth(RestaurarContrasenia)} />
+            <Route exact path = "/recordarClave" Component = {RecordarClave} />
           </Routes>
         </NavBar>
       </Provider>

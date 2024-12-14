@@ -47,6 +47,7 @@ public class SecurityConfig {
       .authorizeRequests(auth -> auth
 //            our public endpoints
         .requestMatchers(HttpMethod.POST, "/user/login").permitAll()
+        .requestMatchers(HttpMethod.PUT, "/user/recordarContrasenia").permitAll()
         //.requestMatchers(HttpMethod.GET, "/authentication-docs/**").permitAll()
 //            our private endpoints
         .anyRequest().authenticated())

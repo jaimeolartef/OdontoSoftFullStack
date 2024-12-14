@@ -22,6 +22,11 @@ public class UserView {
     return userController.login(credencial);
   }
 
+  @PutMapping("user/recordarContrasenia")
+    public ResponseEntity<String> recordarContrasenia(@Valid @RequestBody UsuarioRecordarDto usuarioRecordarDto) {
+        return userController.recordarContrasenia(usuarioRecordarDto);
+    }
+
   @PostMapping("user/signup")
   public ResponseEntity<String> signup(@Valid @RequestBody UsuarioDto usuarioDto) {
     return userController.signup(usuarioDto);

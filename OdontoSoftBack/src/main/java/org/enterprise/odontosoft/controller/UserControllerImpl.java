@@ -17,9 +17,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
+import java.security.SecureRandom;
 
 import java.nio.file.AccessDeniedException;
-import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -29,16 +29,16 @@ import java.util.Optional;
 @Controller
 public class UserControllerImpl implements UserController {
 
+  private static final String MENSAJE_USUARIO = "Usuario creado con éxito";
   private final EmailService emailService;
 
   private final UsuarioDao usuarioDao;
   private final MenuDao menuDao;
   private final PermisoMenuDao permisoMenuDao;
-  private MessageDigest passwordEncoder;
   private MenuDto menuPadreDto;
   private final PatientDao patientDao;
 
-  public UserControllerImpl(UsuarioDao usuarioDao, MenuDao menuDao, AuthenticationManager authenticationManager, EmailService emailService, PermisoMenuDao permisoMenuDao, PatientDao patientDao) {
+  public UserControllerImpl(UsuarioDao usuarioDao, MenuDao menuDao, EmailService emailService, PermisoMenuDao permisoMenuDao, PatientDao patientDao) {
     this.usuarioDao = usuarioDao;
     this.menuDao = menuDao;
 	  this.emailService = emailService;
@@ -61,6 +61,36 @@ public class UserControllerImpl implements UserController {
   }
 
   @Override
+  public ResponseEntity<String> recordarContrasenia(UsuarioRecordarDto usuarioRecordarDto) {
+    ResponseEntity<String> responseEntity;
+    Usuario usuario = usuarioDao.findByEmail(usuarioRecordarDto.getEmail());
+
+    if (usuario != null) {
+      String newPassword = generateRandomString(8);
+      String subject = "Recuperación de contraseña";
+      String text = "Hola " + usuario.getNombre() + ",\n\nTu contraseña es " + newPassword + ".\n\nSaludos,\nEquipo de Soporte.";
+      usuario.setClave(UtilSecurity.encriptar(newPassword));
+      emailService.sendUserCreationEmail(usuario.getCorreo(), subject, text);
+      responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(MENSAJE_USUARIO);
+      usuarioDao.save(usuario);
+    } else {
+      responseEntity = ResponseEntity.status(HttpStatus.NOT_FOUND).body("El usuario no existe con el correo " + usuarioRecordarDto.getEmail());
+    }
+    return responseEntity;
+  }
+
+  public String generateRandomString(int length) {
+    String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    SecureRandom random = new SecureRandom();
+    StringBuilder sb = new StringBuilder(length);
+    for (int i = 0; i < length; i++) {
+      sb.append(characters.charAt(random.nextInt(characters.length())));
+    }
+    return sb.toString();
+  }
+
+
+  @Override
   public ResponseEntity<String> signup(UsuarioDto usuarioDto) {
     ResponseEntity<String> responseEntity;
     Usuario usuario = usuarioDao.findByCodigo(usuarioDto.getCodigo());
@@ -72,16 +102,16 @@ public class UserControllerImpl implements UserController {
           .nombre(usuarioDto.getNombre())
           .clave(UtilSecurity.encriptar(usuarioDto.getClave()))
           .habilitado(Boolean.TRUE)
+          .correo(usuarioDto.getCorreo())
           .idRol(rol)
           .build();
       usuarioDao.save(usuario);
 
       // Enviar correo electrónico
-      String subject = "Usuario creado con éxito";
       String text = "Hola " + usuarioDto.getNombre() + ",\n\nTu usuario ha sido creado exitosamente.\nEl usuario es tu número de documento y la clave es " + usuarioDto.getClave() + ".\n\nSaludos,\nEquipo de Soporte.";
-      emailService.sendUserCreationEmail(usuarioDto.getCorreo(), subject, text);
+      emailService.sendUserCreationEmail(usuarioDto.getCorreo(), MENSAJE_USUARIO, text);
 
-      responseEntity = ResponseEntity.status(HttpStatus.CREATED).body("Usuario creado con éxito");
+      responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(MENSAJE_USUARIO);
     } else {
       responseEntity = ResponseEntity.status(HttpStatus.CONFLICT).body("El usuario ya existe con el codigo " + usuarioDto.getCodigo());
     }

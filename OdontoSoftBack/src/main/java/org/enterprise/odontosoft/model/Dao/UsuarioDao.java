@@ -10,5 +10,8 @@ public interface UsuarioDao extends CrudRepository<Usuario, Integer> {
 
   @Query(value = "select u from Usuario u where u.codigo = ?1 and u.habilitado = true")
   public Usuario findByCodigo(String codigo);
+
+  @Query(value = "select u from Usuario u where u.correo = :email")
+  public Usuario findByEmail(String email);
 }
 

@@ -54,6 +54,7 @@ CREATE TABLE usuario
     id_rol     int                NOT NULL,
     habilitado bool DEFAULT false NOT NULL,
     codigo     varchar(20)        NULL,
+    correo varchar(200) NULL,
     CONSTRAINT usuario_pkey PRIMARY KEY (id),
     CONSTRAINT usuario_id_rol FOREIGN KEY (id_rol) REFERENCES rol (id)
 );

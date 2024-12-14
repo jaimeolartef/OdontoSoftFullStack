@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Login.css'; // Asegúrate de tener un archivo CSS para estilos adicionales
 import axios from "axios";
 import sha256 from 'crypto-js/sha256';
-import { connect } from "react-redux";
-import { useNavigate } from 'react-router-dom';
+import {connect} from "react-redux";
+import {useNavigate} from 'react-router-dom';
 import config from './config';
 import showMessage from "../src/util/UtilMessage";
+import { Link } from 'react-router-dom';
 
 const Login = (props) => {
   const [loginObj, setLoginObj] = useState({
-    usuario: '',
-    clave: '',
+    usuario: '', clave: '',
   });
 
   const [usuarioDto, setUsuarioDto] = useState({
@@ -19,8 +19,7 @@ const Login = (props) => {
   });
 
   const [validation, setValidation] = useState({
-    usuario: null,
-    clave: null,
+    usuario: null, clave: null,
   });
 
   const navigate = useNavigate();
@@ -48,10 +47,9 @@ const Login = (props) => {
   }, []);
 
   const handleInputChange = (event) => {
-    const { name, value } = event.target;
+    const {name, value} = event.target;
     setLoginObj((prevLoginObj) => ({
-      ...prevLoginObj,
-      [name]: value,
+      ...prevLoginObj, [name]: value,
     }));
   };
 
@@ -80,7 +78,7 @@ const Login = (props) => {
                   axios.get(`${config.baseURL}/pacientes/consultar/${responseMenu.data.idPatient}`)
                     .then(response => {
                       localStorage.setItem('documento', response.data.documento);
-                      localStorage.setItem('nombre', response.data.primernombre +  (response.data.segundonombre ? ' ' + response.data.segundonombre : '') + ' ' + response.data.primerapellido + (response.data.segundoapellido ? ' ' + response.data.segundoapellido : ''));
+                      localStorage.setItem('nombre', response.data.primernombre + (response.data.segundonombre ? ' ' + response.data.segundonombre : '') + ' ' + response.data.primerapellido + (response.data.segundoapellido ? ' ' + response.data.segundoapellido : ''));
                     })
                     .catch(error => {
                       console.error('Error fetching patient data:', error);
@@ -91,14 +89,14 @@ const Login = (props) => {
 
                 props.onLoggedIn();
               }).catch(error => {
-                showMessage('error', 'Error al validar el rol del usuario');
-              });
+              showMessage('error', 'Error al validar el rol del usuario');
+            });
           } else {
             showMessage('error', 'Error de autenticación, por favor validar sus credenciales');
           }
         }).catch(error => {
-          showMessage('error', 'Error de autenticación, por favor validar sus credenciales');
-        });
+        showMessage('error', 'Error de autenticación, por favor validar sus credenciales');
+      });
     } catch (error) {
       showMessage('error', 'Error ' + error);
     }
@@ -112,8 +110,8 @@ const Login = (props) => {
       .catch(error => {
         console.error('Error fetching patient data:', error);
       });
-  return paciente;
-}
+    return paciente;
+  }
 
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
@@ -121,9 +119,8 @@ const Login = (props) => {
     }
   };
 
-  return (
-    <div className="d-flex justify-content-center align-items-center min-vh-100">
-      <div className="card p-5 w-99" >
+  return (<div className="d-flex justify-content-center align-items-center min-vh-100">
+      <div className="card p-5 w-99">
         <h2 className="card-title text-center">Inicio de sesión</h2>
         <form className="row g-3 needs-validation" noValidate onSubmit={handleLogin}>
           <div className="form-floating mb-3">
@@ -147,15 +144,17 @@ const Login = (props) => {
               Iniciar Sesión
             </button>
           </div>
+          <div className="text-center mt-3">
+            <Link to="/recordarClave">¿Olvidaste tu contraseña?</Link>
+          </div>
         </form>
       </div>
-    </div>
-  );
+    </div>);
 };
 
 const mapDisPatchToProps = (dispatch) => {
   return {
-    onLoggedIn: () => dispatch({ type: 'ON_LOGGED_IN' })
+    onLoggedIn: () => dispatch({type: 'ON_LOGGED_IN'})
   }
 }
 
