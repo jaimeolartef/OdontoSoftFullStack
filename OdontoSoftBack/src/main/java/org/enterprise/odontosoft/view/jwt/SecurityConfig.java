@@ -11,12 +11,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
 
 @Configuration
 @EnableWebSecurity
@@ -44,13 +42,14 @@ public class SecurityConfig {
       .csrf(AbstractHttpConfigurer::disable)
       .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 //        Set permissions on endpoints
-      .authorizeRequests(auth -> auth
-//            our public endpoints
+      .authorizeHttpRequests(auth -> auth
+        // nuestros endpoints públicos
         .requestMatchers(HttpMethod.POST, "/user/login").permitAll()
         .requestMatchers(HttpMethod.PUT, "/user/recordarContrasenia").permitAll()
         //.requestMatchers(HttpMethod.GET, "/authentication-docs/**").permitAll()
-//            our private endpoints
-        .anyRequest().authenticated())
+        // nuestros endpoints privados
+        .anyRequest().authenticated()
+      )
       .authenticationManager(authenticationManager)
       .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
       .build();

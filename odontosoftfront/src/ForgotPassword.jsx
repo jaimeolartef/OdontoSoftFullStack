@@ -47,7 +47,7 @@ const ForgotPassword = () => {
           </div>
           <div className="d-flex justify-content-between">
             <button type="submit" className="btn btn-primary">
-              Enviar Enlace
+              Enviar nueva contraseña
             </button>
             <button type="button" className="btn btn-secondary" onClick={() => navigate('/inicio')}>
               Regresar al Inicio
