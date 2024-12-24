@@ -10,6 +10,7 @@ import showMessage from "../../util/UtilMessage";
 
 const ModificarPaciente = () => {
   const location = useLocation();
+  const usuario = localStorage.getItem('username');
   const navigate = useNavigate();
   const { id } = location.state || {};
   const [formData, setFormData] = useState({
@@ -85,6 +86,8 @@ const ModificarPaciente = () => {
   };
 
   const handleSubmit = (e) => {
+    formData.idusuariocreacion = usuario;
+    formData.fechacreacion = new Date().toISOString();
     e.preventDefault();
     let token = localStorage.getItem('jsonwebtoken');
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;

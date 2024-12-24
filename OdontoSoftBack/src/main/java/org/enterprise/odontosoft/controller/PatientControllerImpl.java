@@ -102,8 +102,15 @@ public class PatientControllerImpl implements PatientController {
     public ResponseEntity<PacienteResponse> updatePatient(PacienteRequest pacienteRequest) {
         ResponseEntity<PacienteResponse> responseEntity;
         try {
-            Paciente paciente = patientDao.save(PatientMapper.toEntity(pacienteRequest));
+            Paciente paciente = PatientMapper.toEntity(pacienteRequest);
+            paciente.setIdusuariocreacion(Usuario.builder().id(usuarioDao.findByCodigo(pacienteRequest.getIdusuariocreacion()).getId()).build());
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(PatientMapper.toDto(paciente));
+            if (Objects.nonNull(pacienteRequest.getFechamodificacion())) {
+                paciente.setIdusuariomodificacion(Usuario.builder().id(usuarioDao.findByCodigo(pacienteRequest.getIdusuariomodificacion()).getId()).build());
+            } else {
+                paciente.setIdusuariomodificacion(null);
+            }
+            patientDao.save(paciente);
         } catch (Exception e) {
             responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             logger.error("Error updating patient", e);

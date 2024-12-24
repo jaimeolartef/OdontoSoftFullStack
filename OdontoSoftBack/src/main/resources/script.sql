@@ -862,45 +862,45 @@ VALUES ('Con tratamiento de conductos','CT');
 
 INSERT INTO public.antecedente
 (id, descripcion, odontologico, habilitado)
-VALUES(1, 'antecedente 1', false, true);
+VALUES(1, 'Sistema hemolinfatico: Anemia, desórdenes sanguíneos o problemas de coagulación. ', false, true);
 INSERT INTO public.antecedente
 (id, descripcion, odontologico, habilitado)
-VALUES(2, 'antecedente 2', false, true);
+VALUES(2, 'Sistema nervioso: Dolores de cabeza, convulsiones, mareos, parálisis, trastornos mentales.', false, true);
 INSERT INTO public.antecedente
 (id, descripcion, odontologico, habilitado)
-VALUES(3, 'antecedente odontologico 2', true, true);
+VALUES(3, '¿Ha sido sometido a tratamientos odontológicos previos?', true, true);
 INSERT INTO public.antecedente
 (id, descripcion, odontologico, habilitado)
-VALUES(4, 'antecedente odontologico 2', true, true);
+VALUES(4, '¿Practica el cepillado diario?', true, true);
 
 INSERT INTO public.habito
 (id, descripcion, habilitado)
-VALUES(1, 'Habitos 1', true);
+VALUES(1, 'Bruxismo', true);
 INSERT INTO public.habito
 (id, descripcion, habilitado)
-VALUES(2, 'Habitos 2', true);
+VALUES(2, 'Alcohol', true);
 INSERT INTO public.habito
 (id, descripcion, habilitado)
-VALUES(3, 'Habitos 3', true);
+VALUES(3, 'Lengua protráctil', true);
 INSERT INTO public.habito
 (id, descripcion, habilitado)
-VALUES(4, 'Habitos 4', true);
+VALUES(4, 'Respiración bucal', true);
 
 -- Auto-generated SQL script #202411161949
 INSERT INTO public.tipodiagnostico (codigo,descripcion,habilitado)
-VALUES ('DIAG 1','Diagnostico 1',true);
+VALUES ('K02','Caries dentales',true);
 INSERT INTO public.tipodiagnostico (codigo,descripcion,habilitado)
-VALUES ('DIAG 2','Diagnostico 2',true);
+VALUES ('K05.3','Periodontitis crónica',true);
 INSERT INTO public.tipodiagnostico (codigo,descripcion,habilitado)
-VALUES ('DIAG 3','Diagnostico 3',true);
+VALUES ('K05.4','Periodontitis aguda',true);
 INSERT INTO public.tipodiagnostico (codigo,descripcion,habilitado)
-VALUES ('DIAG 4','Diagnostico 4',true);
+VALUES ('K07.6','Maloclusión dentaria',true);
 
--- Auto-generated SQL script #202411161951
-INSERT INTO public.tipoayudadiag (codigo,descripcion,habilitado)
-VALUES ('AYUDIAG','Ayuda Diagnistica',true);
-INSERT INTO public.tipoayudadiag (codigo,descripcion,habilitado)
-VALUES ('AYUDIAG 2','Ayuda Diagnistica 2',true);
+insert into public.tipoayudadiag (id, codigo, descripcion, habilitado)
+values  (1, 'S025', 'Radiografía de aleta', true),
+        (2, 'Z012', 'Radiografía Panorámica', true),
+        (3, 'S032', 'Radiografía Cefálica Lateral', true),
+        (4, 'S032', 'Radiografías Periapicales Serie Completa o Parcial:', true);
 
 
 
