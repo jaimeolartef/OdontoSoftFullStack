@@ -716,7 +716,7 @@ values (DEFAULT, 'Medico', true);
 
 
 INSERT INTO public.usuario (id, nombre, clave, id_rol, habilitado, codigo)
-VALUES (DEFAULT, 'jaime.olarte'::varchar(50), '1234'::text, 1::integer, true::boolean, 'jaime.olarte'::varchar(20));
+VALUES (DEFAULT, 'jaime.olarte'::varchar(50), 'daaad6e5604e8e17bd9f108d91e26afe6281dac8fda0091040a7a6d7bd9b43b5'::text, 1::integer, true::boolean, 'jaime.olarte'::varchar(20));
 insert into public.usuario (id, nombre, clave, id_rol, habilitado, codigo) values (2, 'Juan Perez', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', 3, true, '12345678');
 
 
