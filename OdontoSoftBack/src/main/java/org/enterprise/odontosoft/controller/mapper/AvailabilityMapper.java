@@ -11,8 +11,10 @@ public class AvailabilityMapper {
 		return DisponibilidadResponse.builder()
 				.idDisponibilidad(disponibilidad.getIdDisponibilidad())
 				.diaSemana(disponibilidad.getDiaSemana())
-				.horaInicio(disponibilidad.getHoraInicio())
-				.horaFin(disponibilidad.getHoraFin())
+				.horaInicioam(disponibilidad.getHoraInicio())
+				.horaFinam(disponibilidad.getHoraFin())
+				.horaIniciopm(disponibilidad.getHorainiciopm())
+				.horaFinpm(disponibilidad.getHorafinpm())
 				.idMedico(disponibilidad.getIdMedico())
 				.idConsultorio(disponibilidad.getIdConsultorio())
 				.build();

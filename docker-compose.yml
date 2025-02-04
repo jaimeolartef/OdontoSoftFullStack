@@ -25,7 +25,6 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/odontosoft
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: qwerty
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
     volumes:
       - ./odontosoftback:/app
     working_dir: /app

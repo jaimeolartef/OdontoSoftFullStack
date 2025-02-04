@@ -25,11 +25,17 @@ public class Disponibilidad {
   @Column(name = "diasemana")
   private Integer diaSemana;
 
-  @Column(name = "horainicio")
+  @Column(name = "horainicioam")
   private LocalTime horaInicio;
 
-  @Column(name = "horafin")
+  @Column(name = "horafinam")
   private LocalTime horaFin;
+
+  @Column(name = "horainiciopm")
+  private LocalTime horainiciopm;
+
+  @Column(name = "horafinpm")
+  private LocalTime horafinpm;
 
   @Column(name = "idconsultorio")
   private Integer idConsultorio;

@@ -19,6 +19,7 @@ import HistoriaPac from "../src/components/HistoriaClinica/MedicalRecord";
 import Odontograma from "./components/HistoriaClinica/Odontograma/Odontograma";
 import CitaMedica from "./components/CitasMedicas/CitaMedica";
 import RestaurarContrasenia from "./components/RestaurarContrasenia";
+import CargueCalendario from "./components/Calendario/carguecalendario";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -51,6 +52,7 @@ root.render(
             <Route exact path = "/citaMedica" Component = {requireAuth(CitaMedica)} />
             <Route exact path = "/restaurarcontrasenia" Component = {requireAuth(RestaurarContrasenia)} />
             <Route exact path = "/recordarClave" Component = {RecordarClave} />
+            <Route exact path = "/cargueCalendario" Component = {requireAuth(CargueCalendario)} />
           </Routes>
         </NavBar>
       </Provider>

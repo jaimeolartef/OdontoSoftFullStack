@@ -13,7 +13,6 @@ const Calendar = ({ availability, patient, Rol }) => {
   const [selectedYear, setSelectedYear] = useState(null);
   const currentMonth = currentDate.getMonth();
   const currentYear = currentDate.getFullYear();
-  const today = new Date().getDate();
   const [availableHours, setAvailableHours] = useState([]);
   const firstDayOfMonth = (new Date(currentYear, currentMonth, 1).getDay() + 6) % 7;
   const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
@@ -57,10 +56,15 @@ const Calendar = ({ availability, patient, Rol }) => {
     const availableHours = availability
       .filter(item => item.diaSemana === dayOfWeek)
       .map(item => {
-        const start = parseInt(item.horaInicio.split(':')[0], 10);
-        const end = parseInt(item.horaFin.split(':')[0], 10);
-        hourFinal = end;
-        return Array.from({ length: (end - start) * 2 }, (_, i) => `${String(start + Math.floor(i / 2)).padStart(2, '0')}:${i % 2 === 0 ? '00' : '30'}`);
+        const startAm = parseInt(item.horaInicioam.split(':')[0], 10);
+        const endAm = parseInt(item.horaFinam.split(':')[0], 10);
+        const startPm = parseInt(item.horaIniciopm.split(':')[0], 10);
+        const endPm = parseInt(item.horaFinpm.split(':')[0], 10);
+        hourFinal = endPm;
+        return [
+          ...Array.from({ length: (endAm - startAm) * 2 }, (_, i) => `${String(startAm + Math.floor(i / 2)).padStart(2, '0')}:${i % 2 === 0 ? '00' : '30'}`),
+          ...Array.from({ length: (endPm - startPm) * 2 }, (_, i) => `${String(startPm + Math.floor(i / 2)).padStart(2, '0')}:${i % 2 === 0 ? '00' : '30'}`)
+        ];
       })
       .flat();
 
@@ -69,7 +73,6 @@ const Calendar = ({ availability, patient, Rol }) => {
       setAvailableHours([]);
       return;
     }
-
 
     let listCita = await fetchCitas(day, month, year);
 

@@ -15,7 +15,9 @@ public class DisponibilidadResponse {
 	private Integer idDisponibilidad;
 	private Integer idMedico;
 	private Integer diaSemana;
-	private LocalTime horaInicio;
-	private LocalTime horaFin;
+	private LocalTime horaInicioam;
+	private LocalTime horaFinam;
+	private LocalTime horaIniciopm;
+	private LocalTime horaFinpm;
 	private Integer idConsultorio;
 }

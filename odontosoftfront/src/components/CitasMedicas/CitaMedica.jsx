@@ -7,9 +7,6 @@ import config from "../../config";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const CitaMedica = () => {
-  const [startDate, setStartDate] = useState(new Date());
-  const [hora, setHora] = useState('');
-  const [motivo, setMotivo] = useState('');
   const [paciente, setPaciente] = useState('');
   const [selectedOdontologo, setSelectedOdontologo] = useState('');
   const [selectedPaciente, setSelectedPaciente] = useState('');
@@ -90,7 +87,6 @@ const CitaMedica = () => {
         console.error('Error fetching patient data:', error);
       }
     }
-
   }
 
   const handleSearchChangeOdont = (event) => {
