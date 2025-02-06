@@ -5,6 +5,7 @@ import Logo from "../../resource/LogoNegro.png";
 import Calendario from './Calendario';
 import config from "../../config";
 import { useLocation, useNavigate } from "react-router-dom";
+import showMessage from "../../util/UtilMessage";
 
 const CitaMedica = () => {
   const [paciente, setPaciente] = useState('');
@@ -101,16 +102,22 @@ const CitaMedica = () => {
     const selectedValue = event.target.value;
     setSelectedOdontologo(selectedValue);
     let odontoSelec = selectedValue.split(' - ');
+    let month = new Date().getMonth() + 1;
+    let year = new Date().getFullYear();
     const odontoSelected = odontologo.findIndex(odontologo => odontologo.idMedico == odontoSelec[0]);
     if (odontoSelected > -1) {
       let token = localStorage.getItem('jsonwebtoken');
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       try {
-        const response = await axios.get(`${config.baseURL}/availability/doctor/${odontoSelec[0]}`);
+        const response = await axios.get(`${config.baseURL}/availability/doctor/${odontoSelec[0]}?month=${month}&year=${year}`);
         if (response.status === 200) {
           let availab = response.data;
-          setAvailability(availab);
-          setCalendarKey(prevKey => prevKey + 1); // Cambiar la clave del componente Calendario
+          if (availab.length === 0) {
+            showMessage('warning', 'La agenda no esta disponible para el mes seleccionado');
+          } else {
+            setAvailability(availab);
+            setCalendarKey(prevKey => prevKey + 1); // Cambiar la clave del componente Calendario
+          }
         }
       } catch (error) {
         console.error('Error fetching patient data:', error);

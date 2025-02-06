@@ -35,6 +35,12 @@ const Calendar = ({ availability, patient, Rol }) => {
       return;
     }
 
+    month = month + 1;
+
+    if (availability[0].mes !== month || availability[0].anio !== year) {
+      showMessage('warning', 'La disponibilidad del odontólogo no corresponde al mes seleccionado');
+    }
+
     if (patient.length === 0) {
       showMessage('warning', 'Debe seleccionar un paciente para agendar la cita');
       return;
@@ -112,10 +118,12 @@ const Calendar = ({ availability, patient, Rol }) => {
 
   const goToNextMonth = () => {
     setCurrentDate(new Date(currentYear, currentMonth + 1, 1));
+    setAvailableHours([]);
   };
 
   const goToCurrentMonth = () => {
     setCurrentDate(new Date());
+    setAvailableHours([]);
   };
 
   const selectionInitToday = (day, month, year) => {

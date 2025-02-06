@@ -17,6 +17,8 @@ public class AvailabilityMapper {
 				.horaFinpm(disponibilidad.getHorafinpm())
 				.idMedico(disponibilidad.getIdMedico())
 				.idConsultorio(disponibilidad.getIdConsultorio())
+				.mes(disponibilidad.getMes())
+				.anio(disponibilidad.getAnio())
 				.build();
 	}
 }

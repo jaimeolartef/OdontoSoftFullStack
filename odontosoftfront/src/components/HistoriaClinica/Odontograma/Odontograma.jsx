@@ -206,7 +206,7 @@ const Odontograma = () => {
 
   return (
     <div className="card">
-      <div className="card-header">
+      <div className="card-header text-center">
         <h2>Odontograma</h2>
       </div>
       <div className="card-body">
@@ -247,8 +247,7 @@ const Odontograma = () => {
                       onClick={() => navigate(-1, {state: location.state})}>Cancelar
               </button>
             </div>
-            <div className="espacio"/>
-            <div className="espacio"/>
+            <div className="espacio-2"/>
           </div>
         </form>
       </div>

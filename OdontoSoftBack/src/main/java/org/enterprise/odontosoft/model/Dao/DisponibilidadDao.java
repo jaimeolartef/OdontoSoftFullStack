@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface DisponibilidadDao extends CrudRepository<Disponibilidad, Integer> {
 
-	List<Disponibilidad> findByIdMedico(Integer idDoctor);
+	List<Disponibilidad> findByIdMedicoAndMesAndAnio(Integer idDoctor, Integer month, Integer year);
 }

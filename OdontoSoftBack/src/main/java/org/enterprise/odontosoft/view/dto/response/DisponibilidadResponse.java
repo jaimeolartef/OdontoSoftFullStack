@@ -20,4 +20,6 @@ public class DisponibilidadResponse {
 	private LocalTime horaIniciopm;
 	private LocalTime horaFinpm;
 	private Integer idConsultorio;
+	private Integer mes;
+	private Integer anio;
 }

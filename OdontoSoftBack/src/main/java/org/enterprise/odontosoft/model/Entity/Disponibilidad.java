@@ -1,6 +1,5 @@
 package org.enterprise.odontosoft.model.Entity;
 
-
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -39,4 +38,10 @@ public class Disponibilidad {
 
   @Column(name = "idconsultorio")
   private Integer idConsultorio;
+
+  @Column(name = "mes")
+  private Integer mes;
+
+  @Column(name = "anio")
+  private Integer anio;
 }

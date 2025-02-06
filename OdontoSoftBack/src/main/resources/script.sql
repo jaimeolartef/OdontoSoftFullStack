@@ -121,7 +121,7 @@ create table consultorio
     primary key (idConsultorio)
 );
 
-create table disponibilidad
+CREATE TABLE disponibilidad
 (
     idDisponibilidad Serial,
     idMedico INT,
@@ -131,6 +131,8 @@ create table disponibilidad
     horaInicioPm TIME,
     horaFinPm TIME,
     idConsultorio INT,
+    mes INT NOT NULL,
+    anio  INT NOT NULL,
     primary key (idDisponibilidad),
     foreign key (idMedico) references medico (idMedico)
 );
