@@ -1,17 +1,16 @@
 package org.enterprise.odontosoft.view;
 
 import org.enterprise.odontosoft.controller.AvailabilityController;
+import org.enterprise.odontosoft.view.dto.request.DisponibilidadRequest;
 import org.enterprise.odontosoft.view.dto.response.DisponibilidadResponse;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/availability")
+@CrossOrigin(originPatterns = "http://localhost:*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT})
 public class AvailabilityView {
 
 	private final AvailabilityController availabilityController;
@@ -27,6 +26,16 @@ public class AvailabilityView {
 	        @RequestParam(required = true) Integer year) {
 	    try {
 	        return ResponseEntity.ok(availabilityController.findAvailabilityByDoctor(idDoctor, month, year));
+	    } catch (Exception e) {
+	        return ResponseEntity.status(500).build();
+	    }
+	}
+
+	@PostMapping("/save")
+	public ResponseEntity<List<DisponibilidadResponse>> saveAvailabilityByDoctor(
+	        @RequestBody List<DisponibilidadRequest> disponibilidadRequests) {
+	    try {
+	        return ResponseEntity.ok(availabilityController.saveAvailabilityByDoctor(disponibilidadRequests));
 	    } catch (Exception e) {
 	        return ResponseEntity.status(500).build();
 	    }

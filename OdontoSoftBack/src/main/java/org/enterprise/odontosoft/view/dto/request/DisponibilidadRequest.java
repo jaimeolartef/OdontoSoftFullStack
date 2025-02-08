@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalTime;
+import java.util.List;
 
 @Builder
 @AllArgsConstructor
@@ -13,10 +13,9 @@ import java.time.LocalTime;
 @Setter
 public class DisponibilidadRequest {
 
-	private Integer idDisponibilidad;
-	private Integer idMedico;
-	private Integer diaSemana;
-	private LocalTime horaInicio;
-	private LocalTime horaFin;
-	private Integer idConsultorio;
+	private Integer idmedico;
+	private Integer idconsultorio;
+	private Integer mes;
+	private Integer anio;
+	private List<DetalleDisponibilidad> detalledisponibilidad;
 }

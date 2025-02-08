@@ -1,8 +1,7 @@
 package org.enterprise.odontosoft.model.Entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalTime;
@@ -11,6 +10,9 @@ import java.time.LocalTime;
 @Setter
 @Entity
 @Table(name = "disponibilidad")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Disponibilidad {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
