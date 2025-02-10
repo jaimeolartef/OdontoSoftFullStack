@@ -28,13 +28,13 @@ const CargueCalendario = () => {
     }
   ]);
   const [daysOfWeek, setDaysOfWeek] = useState([
-    {name: 'Lunes', value: 1, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: ''},
-    {name: 'Martes', value: 2, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: ''},
-    {name: 'Miércoles', value: 3, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: ''},
-    {name: 'Jueves', value: 4, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: ''},
-    {name: 'Viernes', value: 5, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: ''},
-    {name: 'Sábado', value: 6, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: ''},
-    {name: 'Domingo', value: 0, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: ''},
+    {id:0, name: 'Lunes', value: 1, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: ''},
+    {id:0, name: 'Martes', value: 2, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: ''},
+    {id:0, name: 'Miércoles', value: 3, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: ''},
+    {id:0, name: 'Jueves', value: 4, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: ''},
+    {id:0, name: 'Viernes', value: 5, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: ''},
+    {id:0, name: 'Sábado', value: 6, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: ''},
+    {id:0, name: 'Domingo', value: 0, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: ''},
   ]);
 
 
@@ -63,6 +63,10 @@ const CargueCalendario = () => {
       return;
     }
 
+    if (!handleValidationYear()) {
+      return;
+    }
+
     setSelectedDays(prevSelectedDays =>
       prevSelectedDays.includes(day)
         ? prevSelectedDays.filter(d => d !== day)
@@ -83,6 +87,7 @@ const CargueCalendario = () => {
       showMessage('El año seleccionado no puede ser menor al actual');
       return true;
     }
+    return true;
   }
 
   const handleOdontologoChange = async (event) => {
@@ -99,6 +104,27 @@ const CargueCalendario = () => {
         if (response.status === 200) {
           let availab = response.data;
           console.log(availab);
+          setSelectedMonth(availab[0].mes);
+          setSelectedYear(availab[0].anio);
+
+          const updatedDaysOfWeek = daysOfWeek.map(day => {
+            const availability = availab.find(a => a.diaSemana === day.value);
+            if (availability) {
+              selectedDays.push(day.value);
+              return {
+                ...day,
+                id: availability.idDisponibilidad,
+                horainicioam: availability.horaInicioam,
+                horafinam: availability.horaFinam,
+                horainiciopm: availability.horaIniciopm,
+                horafinpm: availability.horaFinpm
+              };
+            }
+            return day;
+          });
+
+          setDaysOfWeek(updatedDaysOfWeek);
+          console.log('Console log ' + selectedDays.length);
         }
       } catch (error) {
         console.error('Error fetching patient data:', error);
@@ -112,6 +138,16 @@ const CargueCalendario = () => {
 
   const handleClearOdontologo = () => {
     setSelectedOdontologo('');
+    setSelectedDays([]);
+    setDaysOfWeek([
+      {id:0, name: 'Lunes', value: 1, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: ''},
+      {id:0, name: 'Martes', value: 2, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: ''},
+      {id:0, name: 'Miércoles', value: 3, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: ''},
+      {id:0, name: 'Jueves', value: 4, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: ''},
+      {id:0, name: 'Viernes', value: 5, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: ''},
+      {id:0, name: 'Sábado', value: 6, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: ''},
+      {id:0, name: 'Domingo', value: 0, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: ''},
+    ]);
   };
 
   const handleFileChange = (e) => {
@@ -139,6 +175,7 @@ const CargueCalendario = () => {
       detalledisponibilidad: selectedDays.map(dayValue => {
         const day = daysOfWeek.find(d => d.value === dayValue);
         return {
+          id: day.id,
           diasemana: day.value.toString(),
           horainicioam: day.horainicioam,
           horafinam: day.horafinam,
@@ -152,8 +189,6 @@ const CargueCalendario = () => {
     console.log(tokenBearer);
     axios.defaults.headers.common['Authorization'] = tokenBearer;
     try {
-      let body = JSON.stringify(disponibilidad, null, 2);
-      console.log(body);
 
       axios.post(`${config.baseURL}/availability/save`, disponibilidad, {
         validateStatus: function (status) {
@@ -274,8 +309,6 @@ const CargueCalendario = () => {
                           value={daysOfWeek.find(d => d.value === day.value)?.horainicioam || ''}
                           className="form-control"
                           disabled={!selectedDays.includes(day.value)}
-                          min="06:00"
-                          max="12:00"
                           onChange={(e) => handleTimeChange(day.value, 'horainicioam', e.target.value)}
                         />
                       </div>
@@ -288,8 +321,6 @@ const CargueCalendario = () => {
                           value={daysOfWeek.find(d => d.value === day.value)?.horafinam || ''}
                           className="form-control"
                           disabled={!selectedDays.includes(day.value)}
-                          min="06:00"
-                          max="12:00"
                           onChange={(e) => handleTimeChange(day.value, 'horafinam', e.target.value)}
                         />
                       </div>
@@ -302,8 +333,6 @@ const CargueCalendario = () => {
                           value={daysOfWeek.find(d => d.value === day.value)?.horainiciopm || ''}
                           className="form-control"
                           disabled={!selectedDays.includes(day.value)}
-                          min="13:00"
-                          max="23:00"
                           onChange={(e) => handleTimeChange(day.value, 'horainiciopm', e.target.value)}
                         />
                       </div>
@@ -316,8 +345,6 @@ const CargueCalendario = () => {
                           value={daysOfWeek.find(d => d.value === day.value)?.horafinpm || ''}
                           className="form-control"
                           disabled={!selectedDays.includes(day.value)}
-                          min="13:00"
-                          max="23:00"
                           onChange={(e) => handleTimeChange(day.value, 'horafinpm', e.target.value)}
                         />
                       </div>

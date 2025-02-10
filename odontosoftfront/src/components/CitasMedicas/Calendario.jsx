@@ -62,11 +62,24 @@ const Calendar = ({ availability, patient, Rol }) => {
     const availableHours = availability
       .filter(item => item.diaSemana === dayOfWeek)
       .map(item => {
-        const startAm = parseInt(item.horaInicioam.split(':')[0], 10);
-        const endAm = parseInt(item.horaFinam.split(':')[0], 10);
-        const startPm = parseInt(item.horaIniciopm.split(':')[0], 10);
-        const endPm = parseInt(item.horaFinpm.split(':')[0], 10);
-        hourFinal = endPm;
+        let startAm = 0;
+        let endAm = 0;
+        let startPm = 0;
+        let endPm = 0;
+
+        if (item.horaInicioam !== null && item.horaInicioam.length > 0) {
+          startAm = parseHour(item.horaInicioam);
+        }
+        if (item.horaFinam !== null && item.horaFinam.length > 0) {
+          endAm = parseHour(item.horaFinam);
+        }
+        if (item.horaIniciopm !== null && item.horaIniciopm.length > 0) {
+          startPm = parseHour(item.horaIniciopm);
+        }
+        if (item.horaFinpm !== null && item.horaFinpm.length > 0) {
+          endPm = parseHour(item.horaFinpm);
+        }
+
         return [
           ...Array.from({ length: (endAm - startAm) * 2 }, (_, i) => `${String(startAm + Math.floor(i / 2)).padStart(2, '0')}:${i % 2 === 0 ? '00' : '30'}`),
           ...Array.from({ length: (endPm - startPm) * 2 }, (_, i) => `${String(startPm + Math.floor(i / 2)).padStart(2, '0')}:${i % 2 === 0 ? '00' : '30'}`)
@@ -98,6 +111,11 @@ const Calendar = ({ availability, patient, Rol }) => {
 
     setAvailableHours(availableHours);
   };
+
+  function parseHour(timeString) {
+    return parseInt(timeString.split(':')[0], 10);
+  }
+
 
   const fetchCitas = async (day, month, year) => {
     let token = localStorage.getItem('jsonwebtoken');

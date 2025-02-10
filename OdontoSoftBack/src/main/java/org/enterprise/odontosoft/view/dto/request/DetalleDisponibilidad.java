@@ -13,6 +13,7 @@ import java.time.LocalTime;
 @Setter
 public class DetalleDisponibilidad {
 
+	private Integer id;
 	private Integer diasemana;
 	private String horainicioam;
 	private String horafinam;
