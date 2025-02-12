@@ -1,7 +1,6 @@
 package org.enterprise.odontosoft.controller.mapper;
 
 import lombok.experimental.UtilityClass;
-import org.enterprise.odontosoft.model.Entity.Medico;
 import org.enterprise.odontosoft.view.dto.response.DoctorResponse;
 
 @UtilityClass

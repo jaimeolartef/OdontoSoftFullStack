@@ -3,12 +3,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Logo from '../../resource/LogoNegro.png';
 import '../../App.css';
 import axios from "axios";
-import {useLocation, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import showMessage from "../../util/UtilMessage";
 import config from "../../config";
 
 const CargueCalendario = () => {
-  const location = useLocation();
   const token = localStorage.getItem('jsonwebtoken');
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -63,10 +62,6 @@ const CargueCalendario = () => {
       return;
     }
 
-    if (!handleValidationYear()) {
-      return;
-    }
-
     setSelectedDays(prevSelectedDays =>
       prevSelectedDays.includes(day)
         ? prevSelectedDays.filter(d => d !== day)
@@ -78,14 +73,6 @@ const CargueCalendario = () => {
     if (!selectedOdontologo) {
       showMessage('warning', 'Por favor, seleccione un odontólogo');
       return false;
-    }
-    return true;
-  }
-
-  const handleValidationYear = () => {
-    if (!selectedOdontologo || selectedYear < new Date().getFullYear()) {
-      showMessage('El año seleccionado no puede ser menor al actual');
-      return true;
     }
     return true;
   }
@@ -185,26 +172,128 @@ const CargueCalendario = () => {
       })
     }];
 
+    if (!valdateForm()) {
+      return;
+    }
+
     let tokenBearer = `Bearer ${token}`;
     console.log(tokenBearer);
     axios.defaults.headers.common['Authorization'] = tokenBearer;
     try {
 
-      axios.post(`${config.baseURL}/availability/save`, disponibilidad, {
+      const response = await axios.post(`${config.baseURL}/availability/save`, disponibilidad, {
         validateStatus: function (status) {
           return status;
         }
-      })
-        .then(response => {
-          if (response.status === 200 || response.status === 201) {
-            showMessage('info', 'La agenda se creó correctamente');
-          } else {
-            showMessage('error', 'Error al crear la agenda');
-          }
-        })
+      });
+      if (response.status === 200 || response.status === 201) {
+        showMessage('info', 'La agenda se creó correctamente');
+      } else {
+        showMessage('error', 'Error al crear la agenda');
+      }
     } catch (error) {
       showMessage('error', 'Error al crear la agenda ' + error);
     }
+  };
+
+  const valdateForm = () => {
+    let validate = true;
+    const monthDecember = 12;
+
+    if (!selectedOdontologo) {
+      showMessage('warning', 'Por favor, seleccione un odontólogo');
+      validate = false;
+    }
+
+    let nextMonth = new Date().getMonth() + 2;
+    let nowMonth = new Date().getMonth() + 1;
+
+    // se valida que el mes seleccionado no sea menor al mes actual
+    if (selectedMonth < nowMonth && selectedYear === new Date().getFullYear()) {
+      showMessage('warning', 'El mes seleccionado no puede ser menor al mes actual');
+      validate = false;
+    }
+
+    // se valida que el mes seleccionado no sea mayor al mes actual y al siguiente
+    if (selectedMonth > nextMonth && selectedYear === new Date().getFullYear()) {
+      showMessage('warning', 'El mes seleccionado no puede ser mayor al mes actual');
+      validate = false;
+    }
+
+    // debe validar el año seleccionado
+    if (selectedYear === null || selectedYear == '') {
+      showMessage('warning', 'Por favor, seleccione un año');
+      validate = false;
+    }
+
+    // Se introducen variables descriptivas que unifican la lógica y evitan código repetido
+    const currentYear = new Date().getFullYear();
+    const isDecember = nowMonth === monthDecember;
+    const maxAllowedYear = currentYear + (isDecember ? 2 : 0);
+
+    if (selectedYear < currentYear || selectedYear > maxAllowedYear) {
+      showMessage('warning', 'El año seleccionado no es valido');
+      validate = false;
+    }
+
+    if (selectedDays.length === 0) {
+      showMessage('warning', 'Por favor, seleccione al menos un día');
+      validate = false;
+    }
+
+    // Uso en la validación del formulario
+    daysOfWeek.forEach(day => {
+      if (selectedDays.includes(day.value)) {
+        if (!validateTime(day)) {
+          validate = false;
+        }
+      }
+    });
+
+    return validate;
+  }
+
+  const convertTimeToMinutes = (time) => {
+    const [hours, minutes] = time.split(':').map(Number);
+    return hours * 60 + minutes;
+  };
+
+  const validateTime = (day) => {
+    const noon = convertTimeToMinutes('12:00');
+    const midnight = convertTimeToMinutes('00:00');
+    const endOfDay = convertTimeToMinutes('23:59');
+
+    if (day.horainicioam && day.horafinam) {
+      const startAM = convertTimeToMinutes(day.horainicioam);
+      const endAM = convertTimeToMinutes(day.horafinam);
+
+      if (startAM >= noon || endAM > noon) {
+        showMessage('warning', 'La hora de la mañana se comprende entre las 00:00 y 12:00');
+        return false;
+      }
+
+      if (startAM > endAM) {
+        showMessage('warning', 'La hora de inicio de la mañana no puede ser mayor a la hora de fin de la mañana');
+        return false;
+      }
+    }
+
+    if (day.horainiciopm && day.horafinpm) {
+      const startPM = convertTimeToMinutes(day.horainiciopm);
+      const endPM = convertTimeToMinutes(day.horafinpm);
+
+      if (startPM <= noon || endPM <= noon || startPM > endOfDay || endPM > endOfDay) {
+        showMessage('warning', 'La hora de la tarde se comprende entre las 12:01 y 23:59');
+        return false;
+      }
+
+      if (startPM > endPM) {
+        showMessage('warning', 'La hora de inicio de la tarde no puede ser mayor a la hora de fin de la tarde');
+        return false;
+      }
+    }
+
+    return true;
   };
 
   return (
@@ -215,19 +304,6 @@ const CargueCalendario = () => {
           <h1>Cargue agenda</h1>
         </header>
         <form onSubmit={handleSubmit}>
-          <section className="mb-4">
-            <h3>Cargue masivo</h3>
-            <div className="form-group">
-              <label htmlFor="file">Cargar archivo Excel o CSV</label>
-              <input
-                type="file"
-                className="form-control"
-                id="file"
-                accept=".csv, .xlsx, .xls"
-                onChange={handleFileChange}
-              />
-            </div>
-          </section>
           <div className="espacio"></div>
           <section className="mb-4">
             <h3>Cargue agenda odontólogo</h3>
@@ -255,7 +331,6 @@ const CargueCalendario = () => {
             </div>
             <div className="espacio"/>
             <div className="form-group">
-              <label>Seleccione el mes y año</label>
               <div className="row">
                 <div className="col-md-6 mb-3">
                   <label htmlFor="month">Mes</label>
@@ -286,7 +361,7 @@ const CargueCalendario = () => {
               </div>
             </div>
             <div className="form-group">
-              <label>Seleccione los días de la semana</label>
+              <div className="espacio"/>
               <div className="row">
                 {daysOfWeek.map(day => (
                   <div key={day.value} className="col-md-12 mb-3">

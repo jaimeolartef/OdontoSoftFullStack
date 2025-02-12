@@ -2,13 +2,10 @@ package org.enterprise.odontosoft.controller.mapper;
 
 import lombok.experimental.UtilityClass;
 import org.enterprise.odontosoft.model.Entity.Cita;
-import org.enterprise.odontosoft.model.Entity.Medico;
 import org.enterprise.odontosoft.model.Entity.Paciente;
 import org.enterprise.odontosoft.util.UtilDate;
 import org.enterprise.odontosoft.view.dto.request.CitaRequest;
 import org.enterprise.odontosoft.view.dto.response.CitaResponse;
-
-import java.time.LocalDate;
 
 @UtilityClass
 public class CitaMapper {

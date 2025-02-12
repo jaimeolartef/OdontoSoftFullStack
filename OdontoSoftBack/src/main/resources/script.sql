@@ -94,7 +94,15 @@ create table medico
     nombre   varchar(50),
     especialidad varchar(50),
     matricula varchar,
-    primary key (idMedico)
+    idtipodocumento integer not null default 1,
+    documento varchar(30),
+    fechanacimiento date,
+    direccionresidencia varchar(50),
+    ciudadresidencia varchar(20),
+    telefono varchar(20),
+    correo varchar(50),
+    primary key (idMedico),
+    foreign key (idtipodocumento) references tipoDocumento (id)
 );
 
 
@@ -757,7 +765,8 @@ values  (1, 'Pacientes', true, null, null),
         (8, 'Usuarios', true, 3, '/usuario'),
         (9, 'Consultar ', true, 1, '/consultarPac'),
         (10, 'Historia Clinica', true, 1, null),
-        (11, 'Cargue Calendario', true, 1, '/carguecalendario');
+        (11, 'Cargue Calendario', true, 3, '/carguecalendario'),
+        (12, 'Cargue Calendario Masivo', true, 3, '/carguecalendariomasivo');
 
 
 INSERT INTO public.permiso_menu (id, consultar, crear, editar, eliminar, habilitado, id_menu, id_rol) VALUES(1, false, false, false, false, true, 1, 1);
@@ -778,6 +787,7 @@ INSERT INTO public.permiso_menu (id, consultar, crear, editar, eliminar, habilit
 INSERT INTO public.permiso_menu (id, consultar, crear, editar, eliminar, habilitado, id_menu, id_rol) VALUES(18, true, false, false, false, true, 10, 2);
 INSERT INTO public.permiso_menu (id, consultar, crear, editar, eliminar, habilitado, id_menu, id_rol) VALUES(3, true, true, true, true, true, 3, 1);
 INSERT INTO public.permiso_menu (id, consultar, crear, editar, eliminar, habilitado, id_menu, id_rol) VALUES(19, true, true, true, true, true, 11, 1);
+INSERT INTO public.permiso_menu (id, consultar, crear, editar, eliminar, habilitado, id_menu, id_rol) VALUES(20, true, true, true, true, true, 12, 1);
 
 INSERT INTO public.tipodocumento(id, codigo, nombre)
 VALUES (1, 'C.C.', 'Cédula de Ciudadanía');
