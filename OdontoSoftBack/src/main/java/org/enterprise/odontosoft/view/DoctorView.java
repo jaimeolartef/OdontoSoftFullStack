@@ -34,4 +34,13 @@ public class DoctorView {
 			return ResponseEntity.status(500).build();
 		}
     }
+
+	@GetMapping("/consultar/documento/{documento}")
+	public ResponseEntity<DoctorResponse> getDoctorByDocumento(@PathVariable String documento) {
+		try {
+			return ResponseEntity.ok(doctorController.getDoctorByDocumento(documento));
+		} catch (Exception e) {
+			return ResponseEntity.status(500).build();
+		}
+	}
 }

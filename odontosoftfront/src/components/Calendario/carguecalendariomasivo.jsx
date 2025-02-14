@@ -1,54 +1,195 @@
-import React, {useEffect, useState} from 'react';
+import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Logo from '../../resource/LogoNegro.png';
 import '../../App.css';
 import axios from "axios";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import showMessage from "../../util/UtilMessage";
 import config from "../../config";
 import * as Papa from "date-fns";
 import * as XLSX from "xlsx";
 
 const CargueCalendarioMasivo = () => {
+  const token = localStorage.getItem('jsonwebtoken');
+  const [daysOfWeek, setDaysOfWeek] = useState([
+    { id: 0, name: 'Lunes', value: 1, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: '' },
+    { id: 0, name: 'Martes', value: 2, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: '' },
+    { id: 0, name: 'Miércoles', value: 3, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: '' },
+    { id: 0, name: 'Jueves', value: 4, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: '' },
+    { id: 0, name: 'Viernes', value: 5, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: '' },
+    { id: 0, name: 'Sábado', value: 6, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: '' },
+    { id: 0, name: 'Domingo', value: 0, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: '' },
+  ]);
+  const [errorMessages, setErrorMessages] = useState([]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-          const file = document.getElementById('file').files[0];
-          if (!file) {
-            showMessage('error', 'Debe seleccionar un archivo');
-            return;
-          }
+      const file = document.getElementById('file').files[0];
+      if (!file) {
+        showMessage('error', 'Debe seleccionar un archivo');
+        return;
+      }
 
-          const reader = new FileReader();
-          reader.onload = async (e) => {
-            const data = new Uint8Array(e.target.result);
-            let workbook;
-            if (file.name.endsWith('.csv')) {
-              const csvData = e.target.result;
-              const parsedData = Papa.parse(csvData, { header: true });
-              parsedData.data.forEach(row => console.log(row));
-            } else {
-              workbook = XLSX.read(data, { type: 'array' });
-              const sheetName = workbook.SheetNames[0];
-              const worksheet = workbook.Sheets[sheetName];
-              const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-              jsonData.forEach(row => {
-                console.log(row)
-              });
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const data = new Uint8Array(e.target.result);
+        let workbook;
+        let idMedico;
+        let documentoOdontologoActual;
+        let anio;
+        let mes;
+        let diaSemana;
+        let horainicioam;
+        let horafinam;
+        let horainiciopm;
+        let horafinpm;
+
+        if (file.name.endsWith('.csv')) {
+          const csvData = e.target.result;
+          const parsedData = Papa.parse(csvData, { header: true });
+          parsedData.data.forEach(row => console.log(row));
+        } else {
+          workbook = XLSX.read(data, { type: 'array' });
+          const sheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[sheetName];
+          const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+          let documentoOdontologoAnterior = '';
+          axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+          let linea = 1;
+          for (const row of jsonData) {
+            if (row === undefined || row.length === 0) {
+              continue;
             }
-          };
-          reader.readAsArrayBuffer(file);
-        } catch (e) {
-          showMessage('error', 'Error al realizar el cargue masivo');
+
+            if (linea === 1) {
+              linea++;
+              continue;
+            }
+            console.log(row);
+            documentoOdontologoActual = row[0];
+
+            if (documentoOdontologoActual !== documentoOdontologoAnterior) {
+              try {
+                const response = await axios.get(`${config.baseURL}/doctor/consultar/documento/`+ documentoOdontologoActual, {
+                  validateStatus: function (status) {
+                    return status;
+                  }
+                });
+                if (response.status === 200 || response.status === 201) {
+                  idMedico = response.data.idMedico;
+                } else {
+                  errorMessages.push('El odontólogo con documento ' + row[0] + ' no existe');
+                }
+              } catch (error) {
+                showMessage('error', 'Error al cargar el archivo por favor contacte al administrador ' + error);
+                return;
+              }
+            }
+
+            anio = row[1];
+            mes = row[2];
+            diaSemana = row[3];
+            horainicioam = row[4];
+            horafinam = row[5];
+            horainiciopm = row[6];
+            horafinpm = row[7];
+
+            validateData(anio, mes, diaSemana, horainicioam, horafinam, horainiciopm, horafinpm, linea);
+
+            documentoOdontologoAnterior = documentoOdontologoActual;
+            linea++;
+          }
         }
+      };
+      reader.readAsArrayBuffer(file);
+    } catch (e) {
+      showMessage('error', 'Error al realizar el cargue masivo');
+    }
   };
+
+  const validateData = (anio, mes, diaSemana, horainicioam, horafinam, horainiciopm, horafinpm, linea) => {
+    let validate = true;
+    const monthDecember = 12;
+    let nextMonth = new Date().getMonth() + 2;
+    let nowMonth = new Date().getMonth() + 1;
+    const timePattern = /^([01]\d|2[0-3]):([0-5]\d)$/;
+    const currentYear = new Date().getFullYear();
+    const isDecember = nowMonth === monthDecember;
+    const maxAllowedYear = currentYear + (isDecember ? 2 : 0);
+
+    let errors = [];
+
+    if (isNaN(anio)) {
+      errors.push('El año debe ser un valor numérico, línea ' + linea);
+      validate = false;
+    }
+
+    if (anio < 1900 || anio > maxAllowedYear) {
+      errors.push('El año seleccionado no es válido, línea ' + linea);
+      validate = false;
+    }
+
+    if (isNaN(mes)) {
+      errors.push('El mes debe ser un valor numérico, línea ' + linea);
+      validate = false;
+    }
+
+    if (mes < 1 || mes > 12) {
+      errors.push('El mes seleccionado debe estar entre 1 y 12, línea ' + linea);
+      validate = false;
+    }
+
+    if (isNaN(diaSemana)) {
+      errors.push('El día debe ser un valor numérico, línea ' + linea);
+      validate = false;
+    }
+
+    if (diaSemana < 0 || diaSemana > 6) {
+      errors.push('El día seleccionado debe estar entre 0 y 6, donde 0 es domingo y 6 es sábado, línea ' + linea);
+      validate = false;
+    }
+
+    if (!timePattern.test(horainicioam)) {
+      errors.push('La hora de inicio AM debe estar en el formato HH:MM, línea ' + linea);
+      validate = false;
+    }
+
+    if (!timePattern.test(horafinam)) {
+      errors.push('La hora de fin AM debe estar en el formato HH:MM, línea ' + linea);
+      validate = false;
+    }
+
+    if (!timePattern.test(horainiciopm)) {
+      errors.push('La hora de inicio PM debe estar en el formato HH:MM, línea ' + linea);
+      validate = false;
+    }
+
+    if (!timePattern.test(horafinpm)) {
+      errors.push('La hora de fin PM debe estar en el formato HH:MM, línea ' + linea);
+      validate = false;
+    }
+
+    if (mes < nowMonth && anio === new Date().getFullYear()) {
+      errors.push('El mes seleccionado no puede ser menor al mes actual, línea ' + linea);
+      validate = false;
+    }
+
+    if (mes > nextMonth && anio === new Date().getFullYear()) {
+      errors.push('El mes seleccionado no puede ser mayor al mes actual, línea ' + linea);
+      validate = false;
+    }
+
+    setErrorMessages(errors);
+    return validate;
+  }
 
   return (
     <div className="d-flex justify-content-center align-items-center ">
-      <div className="card p-4" style={{width: '1500px'}}>
+      <div className="card p-4" style={{ width: '1500px' }}>
         <header className="text-center mb-4">
-          <img src={Logo} alt="Logo" className="mb-3" style={{maxWidth: '140px'}}/>
+          <img src={Logo} alt="Logo" className="mb-3" style={{ maxWidth: '140px' }} />
           <h1>Cargue masivo</h1>
         </header>
         <form onSubmit={handleSubmit}>
@@ -65,6 +206,16 @@ const CargueCalendarioMasivo = () => {
           </section>
           <button type="submit" className="btn btn-primary">Guardar</button>
         </form>
+        {errorMessages.length > 0 && (
+          <div className="mt-4">
+            <h4>Errores:</h4>
+            <ul>
+              {errorMessages.map((error, index) => (
+                <li key={index}>{error}</li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   );

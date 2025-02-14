@@ -3,22 +3,24 @@ package org.enterprise.odontosoft.model.Entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDate;
 
 @Getter
 @Setter
+@Builder
 @Entity
 @Table(name = "medico")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Medico {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "medico_id_gen")
 	@SequenceGenerator(name = "medico_id_gen", sequenceName = "medico_idmedico_seq", allocationSize = 1)
 	@Column(name = "idmedico", nullable = false)
-	private Integer id;
+	private Integer idMedico;
 
 	@Size(max = 50)
 	@Column(name = "nombre", length = 50)
