@@ -1,29 +1,29 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Logo from '../../resource/LogoNegro.png';
 import '../../App.css';
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import showMessage from "../../util/UtilMessage";
 import config from "../../config";
 import * as Papa from "date-fns";
 import * as XLSX from "xlsx";
+import {Modal, Button} from 'react-bootstrap';
 
 const CargueCalendarioMasivo = () => {
   const token = localStorage.getItem('jsonwebtoken');
-  const [daysOfWeek, setDaysOfWeek] = useState([
-    { id: 0, name: 'Lunes', value: 1, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: '' },
-    { id: 0, name: 'Martes', value: 2, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: '' },
-    { id: 0, name: 'Miércoles', value: 3, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: '' },
-    { id: 0, name: 'Jueves', value: 4, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: '' },
-    { id: 0, name: 'Viernes', value: 5, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: '' },
-    { id: 0, name: 'Sábado', value: 6, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: '' },
-    { id: 0, name: 'Domingo', value: 0, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: '' },
-  ]);
+  const [agenda , setAgenda] = useState([{}]);
+  const [registro, setRegistro] = useState({
+    idMedico: 0, anio: 0, mes: 0, diaSemana: 0, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: ''
+  });
   const [errorMessages, setErrorMessages] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [errors, setErrors] = useState([]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMessages([]);
+    setErrors([]);
     try {
       const file = document.getElementById('file').files[0];
       if (!file) {
@@ -45,62 +45,84 @@ const CargueCalendarioMasivo = () => {
         let horainiciopm;
         let horafinpm;
 
+        let jsonData;
         if (file.name.endsWith('.csv')) {
           const csvData = e.target.result;
-          const parsedData = Papa.parse(csvData, { header: true });
+          const parsedData = Papa.parse(csvData, {header: true});
           parsedData.data.forEach(row => console.log(row));
         } else {
-          workbook = XLSX.read(data, { type: 'array' });
+          workbook = XLSX.read(data, {type: 'array'});
           const sheetName = workbook.SheetNames[0];
           const worksheet = workbook.Sheets[sheetName];
-          const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-          let documentoOdontologoAnterior = '';
-          axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+          jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+        }
 
-          let linea = 1;
-          for (const row of jsonData) {
-            if (row === undefined || row.length === 0) {
-              continue;
-            }
+        let documentoOdontologoAnterior = '';
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
-            if (linea === 1) {
-              linea++;
-              continue;
-            }
-            console.log(row);
-            documentoOdontologoActual = row[0];
-
-            if (documentoOdontologoActual !== documentoOdontologoAnterior) {
-              try {
-                const response = await axios.get(`${config.baseURL}/doctor/consultar/documento/`+ documentoOdontologoActual, {
-                  validateStatus: function (status) {
-                    return status;
-                  }
-                });
-                if (response.status === 200 || response.status === 201) {
-                  idMedico = response.data.idMedico;
-                } else {
-                  errorMessages.push('El odontólogo con documento ' + row[0] + ' no existe');
-                }
-              } catch (error) {
-                showMessage('error', 'Error al cargar el archivo por favor contacte al administrador ' + error);
-                return;
-              }
-            }
-
-            anio = row[1];
-            mes = row[2];
-            diaSemana = row[3];
-            horainicioam = row[4];
-            horafinam = row[5];
-            horainiciopm = row[6];
-            horafinpm = row[7];
-
-            validateData(anio, mes, diaSemana, horainicioam, horafinam, horainiciopm, horafinpm, linea);
-
-            documentoOdontologoAnterior = documentoOdontologoActual;
-            linea++;
+        let linea = 1;
+        for (const row of jsonData) {
+          if (row === undefined || row.length === 0) {
+            continue;
           }
+
+          if (linea === 1) {
+            linea++;
+            continue;
+          }
+          console.log(row);
+          documentoOdontologoActual = row[0];
+
+          if (documentoOdontologoActual !== documentoOdontologoAnterior) {
+            try {
+              const response = await axios.get(`${config.baseURL}/doctor/consultar/documento/` + documentoOdontologoActual, {
+                validateStatus: function (status) {
+                  return status;
+                }
+              });
+              if (response.status === 200 || response.status === 201) {
+                idMedico = response.data.idMedico;
+              } else {
+                errors.push('El odontólogo con documento ' + row[0] + ' no existe');
+              }
+            } catch (error) {
+              showMessage('error', 'Error al cargar el archivo por favor contacte al administrador ' + error);
+              return;
+            }
+          }
+
+          anio = row[1];
+          mes = row[2];
+          diaSemana = row[3];
+          horainicioam = row[4];
+          horafinam = row[5];
+          horainiciopm = row[6];
+          horafinpm = row[7];
+
+          validateData(anio, mes, diaSemana, horainicioam, horafinam, horainiciopm, horafinpm, linea);
+
+          documentoOdontologoAnterior = documentoOdontologoActual;
+          linea++;
+
+          if (errors.length === 0) {
+            setRegistro(prev => ({
+              ...prev,
+              idMedico,
+              anio,
+              mes,
+              diaSemana,
+              horainicioam,
+              horafinam,
+              horainiciopm,
+              horafinpm
+            }));
+            setAgenda(prev => [...prev, registro]);
+          }
+        }
+
+        if (errors.length > 0) {
+          setErrorMessages(errors);
+          setShowModal(true);
         }
       };
       reader.readAsArrayBuffer(file);
@@ -118,8 +140,6 @@ const CargueCalendarioMasivo = () => {
     const currentYear = new Date().getFullYear();
     const isDecember = nowMonth === monthDecember;
     const maxAllowedYear = currentYear + (isDecember ? 2 : 0);
-
-    let errors = [];
 
     if (isNaN(anio)) {
       errors.push('El año debe ser un valor numérico, línea ' + linea);
@@ -181,15 +201,14 @@ const CargueCalendarioMasivo = () => {
       validate = false;
     }
 
-    setErrorMessages(errors);
     return validate;
   }
 
   return (
     <div className="d-flex justify-content-center align-items-center ">
-      <div className="card p-4" style={{ width: '1500px' }}>
+      <div className="card p-4" style={{width: '1500px'}}>
         <header className="text-center mb-4">
-          <img src={Logo} alt="Logo" className="mb-3" style={{ maxWidth: '140px' }} />
+          <img src={Logo} alt="Logo" className="mb-3" style={{maxWidth: '140px'}}/>
           <h1>Cargue masivo</h1>
         </header>
         <form onSubmit={handleSubmit}>
@@ -206,16 +225,25 @@ const CargueCalendarioMasivo = () => {
           </section>
           <button type="submit" className="btn btn-primary">Guardar</button>
         </form>
-        {errorMessages.length > 0 && (
-          <div className="mt-4">
-            <h4>Errores:</h4>
-            <ul>
-              {errorMessages.map((error, index) => (
-                <li key={index}>{error}</li>
-              ))}
-            </ul>
-          </div>
-        )}
+        <Modal show={showModal}
+               onHide={() => setShowModal(false)}>
+
+            <Modal.Header closeButton>
+              <Modal.Title>Errores</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <div className="modal-dialog modal-dialog-scrollable">
+                {errorMessages.map((error, index) => (
+                  <li key={index}>{error}</li>
+                ))}
+              </div>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={() => setShowModal(false)}>
+                Cerrar
+              </Button>
+            </Modal.Footer>
+        </Modal>
       </div>
     </div>
   );

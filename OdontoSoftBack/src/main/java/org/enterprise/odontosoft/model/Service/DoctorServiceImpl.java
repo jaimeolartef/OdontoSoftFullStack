@@ -28,7 +28,7 @@ public class DoctorServiceImpl implements DoctorService {
 
 	@Override
 	public Medico getDoctorByDocumento(String documento) {
-		return medicoDao.getMedicoByDocumento(documento).orElseThrow();
+		return medicoDao.getMedicoByDocumento(documento).orElse(null);
 	}
 
 

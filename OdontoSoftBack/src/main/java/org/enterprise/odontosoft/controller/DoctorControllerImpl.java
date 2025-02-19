@@ -8,6 +8,7 @@ import org.enterprise.odontosoft.model.Service.DoctorService;
 import org.enterprise.odontosoft.view.dto.response.DoctorResponse;
 import org.springframework.stereotype.Controller;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -43,6 +44,9 @@ public class DoctorControllerImpl implements DoctorController {
 
 	public DoctorResponse getDoctorByDocumento(String documento) {
 		Medico medico = doctorService.getDoctorByDocumento(documento);
+		if (Objects.isNull(medico)) {
+			return null;
+		}
 		return DoctorResponse.builder()
 			.idMedico(medico.getIdMedico())
 			.nombre(medico.getNombre())
