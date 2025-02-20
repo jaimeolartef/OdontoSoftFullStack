@@ -35,14 +35,8 @@ const Calendar = ({ availability, patient, Rol }) => {
       return;
     }
 
-    month = month + 1;
-
     if (availability[0].mes !== month || availability[0].anio !== year) {
       showMessage('warning', 'La disponibilidad del odontólogo no corresponde al mes seleccionado');
-    }
-
-    if (patient.length === 0) {
-      showMessage('warning', 'Debe seleccionar un paciente para agendar la cita');
       return;
     }
 
@@ -303,7 +297,7 @@ const Calendar = ({ availability, patient, Rol }) => {
               <div
                 className={`day ${isSelected  ? 'selected-day' : ''}`}
                 key={day}
-                onClick={() => toggleDaySelection(day, currentMonth, currentYear)}>
+                onClick={() => toggleDaySelection(day, currentMonth + 1, currentYear)}>
                 {day}
               </div>
             );

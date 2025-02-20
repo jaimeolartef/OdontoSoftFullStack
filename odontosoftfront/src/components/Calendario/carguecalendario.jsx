@@ -334,6 +334,7 @@ const CargueCalendario = () => {
               <div className="row">
                 <div className="col-md-6 mb-3">
                   <label htmlFor="month">Mes</label>
+                  //TODO: INHABILIDAR EL CAMPO MES Y AÑO
                   <select
                     id="month"
                     className="form-control"
