@@ -17,7 +17,7 @@ public class AvailabilityMapper {
 	public static DisponibilidadResponse toAvailabilityResponse(Disponibilidad disponibilidad) {
 		return DisponibilidadResponse.builder()
 				.idDisponibilidad(disponibilidad.getIdDisponibilidad())
-				.diaSemana(disponibilidad.getDiaSemana())
+				.dia(disponibilidad.getDia())
 				.horaInicioam(disponibilidad.getHoraInicio())
 				.horaFinam(disponibilidad.getHoraFin())
 				.horaIniciopm(disponibilidad.getHorainiciopm())
@@ -35,7 +35,7 @@ public class AvailabilityMapper {
 			disponibilidades.add(Disponibilidad.builder()
 				.idDisponibilidad(disponibilidad.getId() == 0 ? null : disponibilidad.getId())
 				.idMedico(disponibilidadRequest.getIdmedico())
-				.diaSemana(disponibilidad.getDiasemana())
+				.dia(disponibilidad.getDia())
 				.horaInicio(Objects.nonNull(disponibilidad.getHorainicioam()) && Strings.isNotBlank(disponibilidad.getHorainicioam()) ? LocalTime.parse(disponibilidad.getHorainicioam()) : null)
 				.horaFin(Objects.nonNull(disponibilidad.getHorafinam()) && Strings.isNotBlank(disponibilidad.getHorafinam()) ? LocalTime.parse(disponibilidad.getHorafinam()) : null)
 				.horainiciopm(Objects.nonNull(disponibilidad.getHorainiciopm()) && Strings.isNotBlank(disponibilidad.getHorainiciopm()) ? LocalTime.parse(disponibilidad.getHorainiciopm()) : null)

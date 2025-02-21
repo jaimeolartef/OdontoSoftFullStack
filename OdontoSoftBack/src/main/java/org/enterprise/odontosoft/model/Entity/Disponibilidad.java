@@ -23,8 +23,8 @@ public class Disponibilidad {
   @Column(name = "idmedico")
   private Integer idMedico;
 
-  @Column(name = "diasemana")
-  private Integer diaSemana;
+  @Column(name = "dia")
+  private Integer dia;
 
   @Column(name = "horainicioam")
   private LocalTime horaInicio;

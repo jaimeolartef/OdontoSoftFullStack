@@ -14,7 +14,7 @@ import java.time.LocalTime;
 public class DetalleDisponibilidad {
 
 	private Integer id;
-	private Integer diasemana;
+	private Integer dia;
 	private String horainicioam;
 	private String horafinam;
 	private String horainiciopm;

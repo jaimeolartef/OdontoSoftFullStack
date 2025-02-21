@@ -33,24 +33,22 @@ const CitaMedica = () => {
   const Rol = localStorage.getItem('Rol');
 
   useEffect(() => {
-    const fetchOdontologos = async () => {
-      let token = localStorage.getItem('jsonwebtoken');
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      try {
-        const response = await axios.get(`${config.baseURL}/doctor/consultar`);
-        if (response.status === 200) {
-          setOdontologo(response.data);
-        }
-      } catch (error) {
-        console.error('Error fetching patient data:', error);
-      }
-    }
     fetchOdontologos();
-  }, []);
-
-  useEffect(() => {
     fetchPacientes();
   }, []);
+
+  const fetchOdontologos = async () => {
+    let token = localStorage.getItem('jsonwebtoken');
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    try {
+      const response = await axios.get(`${config.baseURL}/doctor/consultar`);
+      if (response.status === 200) {
+        setOdontologo(response.data);
+      }
+    } catch (error) {
+      console.error('Error fetching patient data:', error);
+    }
+  }
 
   const fetchPacientes = async () => {
     if (Rol != 'Paciente') {

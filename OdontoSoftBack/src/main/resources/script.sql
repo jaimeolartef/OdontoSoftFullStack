@@ -133,7 +133,7 @@ CREATE TABLE disponibilidad
 (
     idDisponibilidad Serial,
     idMedico INT,
-    diaSemana INT,
+    dia INT,
     horaInicioAm TIME,
     horaFinAm TIME,
     horaInicioPm TIME,

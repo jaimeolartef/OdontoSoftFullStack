@@ -6,18 +6,14 @@ import axios from "axios";
 import {useNavigate} from "react-router-dom";
 import showMessage from "../../util/UtilMessage";
 import config from "../../config";
+import { Modal, Button } from 'react-bootstrap';
 
 const CargueCalendario = () => {
   const token = localStorage.getItem('jsonwebtoken');
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    documento: '',
-    nombre: '',
-    file: null
-  });
-
+  const [showPopup, setShowPopup] = useState(false);
+  const [selectedDay, setSelectedDay] = useState(null);
   const [selectedOdontologo, setSelectedOdontologo] = useState('');
-  const [selectedDays, setSelectedDays] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [odontologo, setOdontologo] = useState([
@@ -26,48 +22,47 @@ const CargueCalendario = () => {
       nombre: ''
     }
   ]);
-  const [daysOfWeek, setDaysOfWeek] = useState([
-    {id:0, name: 'Lunes', value: 1, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: ''},
-    {id:0, name: 'Martes', value: 2, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: ''},
-    {id:0, name: 'Miércoles', value: 3, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: ''},
-    {id:0, name: 'Jueves', value: 4, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: ''},
-    {id:0, name: 'Viernes', value: 5, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: ''},
-    {id:0, name: 'Sábado', value: 6, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: ''},
-    {id:0, name: 'Domingo', value: 0, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: ''},
-  ]);
+  const [daysOfWeek, setDaysOfWeek] = useState([]);
 
+  let [totalCells, setTotalCells] = useState(0);
+  let [dayLastMonth, setDayLastMonth] = useState([]);
+  let [offset, setOffset] = useState(0);
 
   useEffect(() => {
-    const fetchOdontologos = async () => {
-      let token = localStorage.getItem('jsonwebtoken');
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      try {
-        const response = await axios.get(`${config.baseURL}/doctor/consultar`);
-        if (response.status === 200) {
-          setOdontologo(response.data);
-        }
-      } catch (error) {
-        console.error('Error fetching patient data:', error);
-      }
-    }
     fetchOdontologos();
+    fetchLoadCalendar();
   }, []);
 
-  const handleCheckboxChange = (day) => {
-    console.log(selectedOdontologo);
-    console.log(selectedMonth);
-    console.log(selectedYear);
-
-    if (!handleValidationOdontologo()) {
-      return;
+  const fetchOdontologos = async () => {
+    let token = localStorage.getItem('jsonwebtoken');
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    try {
+      const response = await axios.get(`${config.baseURL}/doctor/consultar`);
+      if (response.status === 200) {
+        setOdontologo(response.data);
+      }
+    } catch (error) {
+      console.error('Error fetching patient data:', error);
     }
-
-    setSelectedDays(prevSelectedDays =>
-      prevSelectedDays.includes(day)
-        ? prevSelectedDays.filter(d => d !== day)
-        : [...prevSelectedDays, day]
-    );
   };
+
+  const fetchLoadCalendar = () => {
+    const firstDay = new Date(selectedYear, selectedMonth - 1, 1).getDay();
+    const offset = firstDay === 0 ? 6 : firstDay - 1;
+    const daysMonth = new Date(selectedYear, selectedMonth, 0).getDate();
+    const newDaysOfWeek = Array.from({ length: daysMonth }, (_, index) => ({
+      id: index + 1,
+      dayInMonth: index + 1,
+      horainicioam: '',
+      horafinam: '',
+      horainiciopm: '',
+      horafinpm: ''
+    }));
+    setDayLastMonth(daysMonth);
+    setDaysOfWeek(newDaysOfWeek);
+    setTotalCells(Math.ceil((daysMonth + offset) / 7) * 7);
+    setOffset(offset);
+  }
 
   const handleValidationOdontologo = () => {
     if (!selectedOdontologo) {
@@ -90,28 +85,22 @@ const CargueCalendario = () => {
         const response = await axios.get(`${config.baseURL}/availability/doctor/${odontoSelec[0]}?month=${month}&year=${year}`);
         if (response.status === 200) {
           let availab = response.data;
-          console.log(availab);
+          console.log('disponibilidad', availab);
           setSelectedMonth(availab[0].mes);
           setSelectedYear(availab[0].anio);
 
-          const updatedDaysOfWeek = daysOfWeek.map(day => {
-            const availability = availab.find(a => a.diaSemana === day.value);
-            if (availability) {
-              selectedDays.push(day.value);
-              return {
-                ...day,
-                id: availability.idDisponibilidad,
-                horainicioam: availability.horaInicioam,
-                horafinam: availability.horaFinam,
-                horainiciopm: availability.horaIniciopm,
-                horafinpm: availability.horaFinpm
-              };
-            }
-            return day;
-          });
+          availab.forEach((item) => {
+            daysOfWeek.find(day => {
+              if (day.dayInMonth === item.dia){
+                day.horainicioam = item.horaInicioam;
+                day.horafinam = item.horaFinam;
+                day.horainiciopm = item.horaIniciopm;
+                day.horafinpm = item.horaFinpm;
+              }
 
-          setDaysOfWeek(updatedDaysOfWeek);
-          console.log('Console log ' + selectedDays.length);
+            });
+          });
+          console.log('dias', daysOfWeek);
         }
       } catch (error) {
         console.error('Error fetching patient data:', error);
@@ -125,20 +114,9 @@ const CargueCalendario = () => {
 
   const handleClearOdontologo = () => {
     setSelectedOdontologo('');
-    setSelectedDays([]);
+    setSelectedDay(null);
     setDaysOfWeek([
-      {id:0, name: 'Lunes', value: 1, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: ''},
-      {id:0, name: 'Martes', value: 2, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: ''},
-      {id:0, name: 'Miércoles', value: 3, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: ''},
-      {id:0, name: 'Jueves', value: 4, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: ''},
-      {id:0, name: 'Viernes', value: 5, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: ''},
-      {id:0, name: 'Sábado', value: 6, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: ''},
-      {id:0, name: 'Domingo', value: 0, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: ''},
     ]);
-  };
-
-  const handleFileChange = (e) => {
-    setFormData({...formData, file: e.target.files[0]});
   };
 
   const handleTimeChange = (dayValue, type, value) => {
@@ -159,11 +137,9 @@ const CargueCalendario = () => {
       idmedico: parseInt(listOdontologo[0]),
       mes: selectedMonth,
       anio: selectedYear,
-      detalledisponibilidad: selectedDays.map(dayValue => {
-        const day = daysOfWeek.find(d => d.value === dayValue);
+      detalledisponibilidad: daysOfWeek.map(day => {
         return {
-          id: day.id,
-          diasemana: day.value.toString(),
+          dia: day.dayInMonth,
           horainicioam: day.horainicioam,
           horafinam: day.horafinam,
           horainiciopm: day.horainiciopm,
@@ -172,7 +148,7 @@ const CargueCalendario = () => {
       })
     }];
 
-    if (!valdateForm()) {
+    if (!validateForm()) {
       return;
     }
 
@@ -196,7 +172,7 @@ const CargueCalendario = () => {
     }
   };
 
-  const valdateForm = () => {
+  const validateForm = () => {
     let validate = true;
     const monthDecember = 12;
 
@@ -208,25 +184,34 @@ const CargueCalendario = () => {
     let nextMonth = new Date().getMonth() + 2;
     let nowMonth = new Date().getMonth() + 1;
 
-    // se valida que el mes seleccionado no sea menor al mes actual
+    /**
+     * Se valida que el mes seleccionado no sea menor al mes actual
+     */
     if (selectedMonth < nowMonth && selectedYear === new Date().getFullYear()) {
       showMessage('warning', 'El mes seleccionado no puede ser menor al mes actual');
       validate = false;
     }
 
-    // se valida que el mes seleccionado no sea mayor al mes actual y al siguiente
+    /**
+     * Se valida que el mes seleccionado no sea mayor al mes actual y al siguiente
+     */
     if (selectedMonth > nextMonth && selectedYear === new Date().getFullYear()) {
       showMessage('warning', 'El mes seleccionado no puede ser mayor al mes actual');
       validate = false;
     }
 
-    // debe validar el año seleccionado
+    /**
+     * Debe validar el año seleccionado
+     */
     if (selectedYear === null || selectedYear == '') {
       showMessage('warning', 'Por favor, seleccione un año');
       validate = false;
     }
 
-    // Se introducen variables descriptivas que unifican la lógica y evitan código repetido
+    /**
+     * Se introducen variables descriptivas que unifican la lógica y evitan código repetido
+     * @type {number}
+     */
     const currentYear = new Date().getFullYear();
     const isDecember = nowMonth === monthDecember;
     const maxAllowedYear = currentYear + (isDecember ? 2 : 0);
@@ -236,17 +221,14 @@ const CargueCalendario = () => {
       validate = false;
     }
 
-    if (selectedDays.length === 0) {
+    if (daysOfWeek.length === 0) {
       showMessage('warning', 'Por favor, seleccione al menos un día');
       validate = false;
     }
 
-    // Uso en la validación del formulario
     daysOfWeek.forEach(day => {
-      if (selectedDays.includes(day.value)) {
-        if (!validateTime(day)) {
-          validate = false;
-        }
+      if (!validateTime(day)) {
+        validate = false;
       }
     });
 
@@ -258,6 +240,17 @@ const CargueCalendario = () => {
     return hours * 60 + minutes;
   };
 
+  /**
+   * Validates the time ranges for a given day object.
+   * Ensures that the morning and afternoon times are within valid ranges and that start times are before end times.
+   *
+   * @param {Object} day - The day object containing time information.
+   * @param {string} day.horainicioam - The start time for the morning.
+   * @param {string} day.horafinam - The end time for the morning.
+   * @param {string} day.horainiciopm - The start time for the afternoon.
+   * @param {string} day.horafinpm - The end time for the afternoon.
+   * @returns {boolean} - Returns true if the times are valid, otherwise false.
+   */
   const validateTime = (day) => {
     const noon = convertTimeToMinutes('12:00');
     const midnight = convertTimeToMinutes('00:00');
@@ -296,6 +289,15 @@ const CargueCalendario = () => {
     return true;
   };
 
+  const handleDayClick = (dayNumber) => {
+    if (dayNumber > 0 && dayNumber <= dayLastMonth) {
+      if (handleValidationOdontologo()) {
+        setSelectedDay(dayNumber);
+        setShowPopup(true);
+      }
+    }
+  };
+
   return (
     <div className="d-flex justify-content-center align-items-center ">
       <div className="card p-4" style={{width: '1500px'}}>
@@ -332,102 +334,38 @@ const CargueCalendario = () => {
             <div className="espacio"/>
             <div className="form-group">
               <div className="row">
-                <div className="col-md-6 mb-3">
-                  <label htmlFor="month">Mes</label>
-                  //TODO: INHABILIDAR EL CAMPO MES Y AÑO
-                  <select
-                    id="month"
-                    className="form-control"
-                    value={selectedMonth}
-                    onChange={(e) => setSelectedMonth(e.target.value)}
-                  >
-                    {[...Array(12).keys()].map(month => (
-                      <option key={month + 1} value={month + 1}>
-                        {new Date(0, month).toLocaleString('es', {month: 'long'})}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="col-md-6 mb-3">
-                  <label htmlFor="year">Año</label>
-                  <input
-                    type="number"
-                    id="year"
-                    className="form-control"
-                    value={selectedYear}
-                    onChange={(e) => setSelectedYear(e.target.value)}
-                    min={new Date().getFullYear()}
-                  />
+                <div className="col-md-12 mb-3">
+                  <h3>{new Date(selectedYear, selectedMonth - 1).toLocaleString('es', {month: 'long'})} {selectedYear}</h3>
+                  <table className="table">
+                    <thead>
+                    <tr>
+                      {['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].map((day, index) => (
+                        <th key={index}>{day}</th>
+                      ))}
+                    </tr>
+                    </thead>
+                    <tbody>
+                      {
+                          Array.from({ length: totalCells / 7 }, (_, weekIndex) => (
+                            <tr key={weekIndex}>
+                              {Array.from({ length: 7 }, (_, dayIndex) => {
+                                const dayNumber = weekIndex * 7 + dayIndex + 1 - offset;
+                                return (
+                                  <td key={dayIndex} style={{ width: '50px', height: '150px' , border: '1px solid #c3c3c3', cursor: 'pointer' }}
+                                      onClick={() => handleDayClick(dayNumber)}>
+                                    {dayNumber > 0 && dayNumber <= dayLastMonth ? dayNumber : ''}
+                                  </td>
+                                );
+                              })}
+                            </tr>
+                          ))
+                        }
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
             <div className="form-group">
-              <div className="espacio"/>
-              <div className="row">
-                {daysOfWeek.map(day => (
-                  <div key={day.value} className="col-md-12 mb-3">
-                    <div className="row">
-                      <div className="form-check">
-                        <input
-                          type="checkbox" className="btn-check"
-                          id={`day-${day.value}`}
-                          checked={selectedDays.includes(day.value)}
-                          onChange={() => handleCheckboxChange(day.value)}
-                        />
-                        <label className="btn btn-outline-primary" htmlFor={`day-${day.value}`}>{day.name}</label>
-                      </div>
-
-                      <div className="col-md-3">
-                        <label htmlFor={`start-time-am-${day.value}`}>Hora inicio mañana</label>
-                        <input
-                          type="time"
-                          id={`start-time-am-${day.value}`}
-                          value={daysOfWeek.find(d => d.value === day.value)?.horainicioam || ''}
-                          className="form-control"
-                          disabled={!selectedDays.includes(day.value)}
-                          onChange={(e) => handleTimeChange(day.value, 'horainicioam', e.target.value)}
-                        />
-                      </div>
-
-                      <div className="col-md-3">
-                        <label htmlFor={`end-time-am-${day.value}`}>Hora fin mañana</label>
-                        <input
-                          type="time"
-                          id={`end-time-am-${day.value}`}
-                          value={daysOfWeek.find(d => d.value === day.value)?.horafinam || ''}
-                          className="form-control"
-                          disabled={!selectedDays.includes(day.value)}
-                          onChange={(e) => handleTimeChange(day.value, 'horafinam', e.target.value)}
-                        />
-                      </div>
-
-                      <div className="col-md-3">
-                        <label htmlFor={`start-time-pm-${day.value}`}>Hora inicio tarde</label>
-                        <input
-                          type="time"
-                          id={`start-time-pm-${day.value}`}
-                          value={daysOfWeek.find(d => d.value === day.value)?.horainiciopm || ''}
-                          className="form-control"
-                          disabled={!selectedDays.includes(day.value)}
-                          onChange={(e) => handleTimeChange(day.value, 'horainiciopm', e.target.value)}
-                        />
-                      </div>
-
-                      <div className="col-md-3">
-                        <label htmlFor={`end-time-pm-${day.value}`}>Hora fin tarde</label>
-                        <input
-                          type="time"
-                          id={`end-time-pm-${day.value}`}
-                          value={daysOfWeek.find(d => d.value === day.value)?.horafinpm || ''}
-                          className="form-control"
-                          disabled={!selectedDays.includes(day.value)}
-                          onChange={(e) => handleTimeChange(day.value, 'horafinpm', e.target.value)}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
             </div>
           </section>
           <div className="espacio-2"></div>
@@ -436,6 +374,64 @@ const CargueCalendario = () => {
             <button type="button" className="btn btn-secondary" onClick={() => navigate('/inicio')}>Cancelar</button>
           </div>
           <div className="espacio-2"></div>
+          <Modal show={showPopup} onHide={() => setShowPopup(false)}>
+            <Modal.Header closeButton>
+              <Modal.Title>Detalles del día {selectedDay}</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <div className="row">
+
+                <div className="col-md-3">
+                  <label htmlFor={`start-time-am`}>Hora inicio mañana</label>
+                  <input
+                    type="time"
+                    id={`start-time-am`}
+                    value={daysOfWeek.find(d => d.dayInMonth === selectedDay)?.horainicioam || ''}
+                    className="form-control"
+                    onChange={(e) => handleTimeChange(selectedDay, 'horainicioam', e.target.value)}
+                  />
+                </div>
+
+                <div className="col-md-3">
+                  <label htmlFor={`end-time-am`}>Hora fin mañana</label>
+                  <input
+                    type="time"
+                    id={`end-time-am`}
+                    value={daysOfWeek.find(d => d.dayInMonth === selectedDay)?.horafinam || ''}
+                    className="form-control"
+                    onChange={(e) => handleTimeChange(selectedDay, 'horafinam', e.target.value)}
+                  />
+                </div>
+
+                <div className="col-md-3">
+                  <label htmlFor={`start-time-pm`}>Hora inicio tarde</label>
+                  <input
+                    type="time"
+                    id={`start-time-pm`}
+                    value={daysOfWeek.find(d => d.dayInMonth === selectedDay)?.horainiciopm || ''}
+                    className="form-control"
+                    onChange={(e) => handleTimeChange(selectedDay, 'horainiciopm', e.target.value)}
+                  />
+                </div>
+
+                <div className="col-md-3">
+                  <label htmlFor={`end-time-pm`}>Hora fin tarde</label>
+                  <input
+                    type="time"
+                    id={`end-time-pm`}
+                    value={daysOfWeek.find(d => d.dayInMonth === selectedDay)?.horafinpm || ''}
+                    className="form-control"
+                    onChange={(e) => handleTimeChange(selectedDay, 'horafinpm', e.target.value)}
+                  />
+                </div>
+              </div>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={() => setShowPopup(false)}>
+                Cerrar
+              </Button>
+            </Modal.Footer>
+          </Modal>
         </form>
       </div>
     </div>
