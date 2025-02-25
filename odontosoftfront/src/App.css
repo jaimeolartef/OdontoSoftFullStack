@@ -45,3 +45,32 @@
 .espacio-4 {
   margin-bottom: 200px;
 }
+
+/* App.css */
+.blue-block {
+  background-color: #0d6efd;
+  color: white;
+  font-size: 12px; /* Tamaño de letra pequeño */
+  padding: 5px; /* Espaciado interno para que el texto no esté pegado al borde */
+  border-radius: 3px; /* Bordes redondeados opcionales */
+}
+
+.red-block {
+  background-color: #6c757d;
+  color: white;
+  font-size: 12px; /* Tamaño de letra pequeño */
+  padding: 5px; /* Espaciado interno para que el texto no esté pegado al borde */
+  border-radius: 3px; /* Bordes redondeados opcionales */
+}
+
+
+.table-cell {
+  width: 100px; /* Set your desired width */
+  height: 150px; /* Set your desired height */
+  border: 1px solid #c3c3c3;
+  cursor: pointer;
+}
+
+.width-modal {
+  width: 80%;
+}

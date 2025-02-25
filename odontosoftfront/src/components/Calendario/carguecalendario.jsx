@@ -12,6 +12,12 @@ const CargueCalendario = () => {
   const token = localStorage.getItem('jsonwebtoken');
   const navigate = useNavigate();
   const [showPopup, setShowPopup] = useState(false);
+  const [hours , setHours] = useState({
+    horainicioam: '',
+    horafinam: '',
+    horainiciopm: '',
+    horafinpm: ''
+  });
   const [selectedDay, setSelectedDay] = useState(null);
   const [selectedOdontologo, setSelectedOdontologo] = useState('');
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
@@ -89,18 +95,22 @@ const CargueCalendario = () => {
           setSelectedMonth(availab[0].mes);
           setSelectedYear(availab[0].anio);
 
-          availab.forEach((item) => {
-            daysOfWeek.find(day => {
-              if (day.dayInMonth === item.dia){
-                day.horainicioam = item.horaInicioam;
-                day.horafinam = item.horaFinam;
-                day.horainiciopm = item.horaIniciopm;
-                day.horafinpm = item.horaFinpm;
-              }
-
-            });
+          const updatedDaysOfWeek = daysOfWeek.map(day => {
+            const availability = availab.find(item => item.dia === day.dayInMonth);
+            if (availability) {
+              return {
+                ...day,
+                horainicioam: availability.horaInicioam,
+                horafinam: availability.horaFinam,
+                horainiciopm: availability.horaIniciopm,
+                horafinpm: availability.horaFinpm
+              };
+            }
+            return day;
           });
-          console.log('dias', daysOfWeek);
+
+          setDaysOfWeek(updatedDaysOfWeek);
+          console.log('dias', updatedDaysOfWeek);
         }
       } catch (error) {
         console.error('Error fetching patient data:', error);
@@ -120,14 +130,10 @@ const CargueCalendario = () => {
   };
 
   const handleTimeChange = (dayValue, type, value) => {
-    setDaysOfWeek(prevDaysOfWeek => {
-      return prevDaysOfWeek.map(day => {
-        if (day.value === dayValue) {
-          return {...day, [type]: value};
-        }
-        return day;
-      });
-    });
+    setHours(prevHours => ({
+      ...prevHours,
+      [type]: value
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -256,6 +262,11 @@ const CargueCalendario = () => {
     const midnight = convertTimeToMinutes('00:00');
     const endOfDay = convertTimeToMinutes('23:59');
 
+    if (day.horainicioam === '' && day.horafinam === '' && day.horainiciopm === '' && day.horafinpm === '') {
+      showMessage('warning', 'Debe ingresar al menos un rango de horario');
+      return false;
+    }
+
     if (day.horainicioam && day.horafinam) {
       const startAM = convertTimeToMinutes(day.horainicioam);
       const endAM = convertTimeToMinutes(day.horafinam);
@@ -269,6 +280,12 @@ const CargueCalendario = () => {
         showMessage('warning', 'La hora de inicio de la mañana no puede ser mayor a la hora de fin de la mañana');
         return false;
       }
+
+      if ((endAM - startAM) < 60) {
+        showMessage('warning', 'La hora de fin de la mañana debe ser al menos 1 hora mayor a la hora de inicio de la mañana');
+        return false;
+      }
+
     }
 
     if (day.horainiciopm && day.horafinpm) {
@@ -297,6 +314,33 @@ const CargueCalendario = () => {
       }
     }
   };
+
+  const handleAddTime = (hours, selectDays) => {
+    if (validateTime(hours)) {
+      const updatedDaysOfWeek = daysOfWeek.map(day => {
+        if (day.dayInMonth === selectedDay) {
+          return {
+            ...day,
+            horainicioam: hours.horainicioam,
+            horafinam: hours.horafinam,
+            horainiciopm: hours.horainiciopm,
+            horafinpm: hours.horafinpm
+          };
+        }
+        return day;
+      });
+
+      setDaysOfWeek(updatedDaysOfWeek);
+      setShowPopup(false);
+      setHours({
+        horainicioam: '',
+        horafinam: '',
+        horainiciopm: '',
+        horafinpm: ''
+      });
+      setSelectedDay(null);
+    }
+  }
 
   return (
     <div className="d-flex justify-content-center align-items-center ">
@@ -351,9 +395,20 @@ const CargueCalendario = () => {
                               {Array.from({ length: 7 }, (_, dayIndex) => {
                                 const dayNumber = weekIndex * 7 + dayIndex + 1 - offset;
                                 return (
-                                  <td key={dayIndex} style={{ width: '50px', height: '150px' , border: '1px solid #c3c3c3', cursor: 'pointer' }}
+                                  <td key={dayIndex} className="table-cell"
                                       onClick={() => handleDayClick(dayNumber)}>
-                                    {dayNumber > 0 && dayNumber <= dayLastMonth ? dayNumber : ''}
+                                    {dayNumber > 0 && dayNumber <= dayLastMonth && (
+                                      <div>
+                                        {dayNumber}
+                                        {daysOfWeek[dayNumber - 1]?.horainicioam !== null && daysOfWeek[dayNumber - 1]?.horainicioam !== '' && (
+                                          <div className="blue-block">Mañana: {daysOfWeek[dayNumber - 1]?.horainicioam} - {daysOfWeek[dayNumber - 1]?.horafinam}</div>
+                                        )}
+                                        <div className="espacio"></div>
+                                        {daysOfWeek[dayNumber - 1]?.horainiciopm !== null && daysOfWeek[dayNumber - 1]?.horainiciopm !== '' && (
+                                          <div className="red-block">Tarde: {daysOfWeek[dayNumber - 1]?.horainiciopm} - {daysOfWeek[dayNumber - 1]?.horafinpm}</div>
+                                        )}
+                                      </div>
+                                    )}
                                   </td>
                                 );
                               })}
@@ -378,58 +433,55 @@ const CargueCalendario = () => {
             <Modal.Header closeButton>
               <Modal.Title>Detalles del día {selectedDay}</Modal.Title>
             </Modal.Header>
-            <Modal.Body>
-              <div className="row">
+            <Modal.Body className="width-modal">
+              <div className="mb-3">
+                <label htmlFor={`start-time-am`}>Hora inicio mañana</label>
+                <input
+                  type="time"
+                  id={`start-time-am`}
+                  value={hours.horainicioam || ''}
+                  className="form-control"
+                  onChange={(e) => handleTimeChange(selectedDay, 'horainicioam', e.target.value)}
+                />
+              </div>
 
-                <div className="col-md-3">
-                  <label htmlFor={`start-time-am`}>Hora inicio mañana</label>
-                  <input
-                    type="time"
-                    id={`start-time-am`}
-                    value={daysOfWeek.find(d => d.dayInMonth === selectedDay)?.horainicioam || ''}
-                    className="form-control"
-                    onChange={(e) => handleTimeChange(selectedDay, 'horainicioam', e.target.value)}
-                  />
-                </div>
+              <div className="mb-3">
+                <label htmlFor={`end-time-am`}>Hora fin mañana</label>
+                <input
+                  type="time"
+                  id={`end-time-am`}
+                  value={hours.horafinam || ''}
+                  className="form-control"
+                  onChange={(e) => handleTimeChange(selectedDay, 'horafinam', e.target.value)}
+                />
+              </div>
 
-                <div className="col-md-3">
-                  <label htmlFor={`end-time-am`}>Hora fin mañana</label>
-                  <input
-                    type="time"
-                    id={`end-time-am`}
-                    value={daysOfWeek.find(d => d.dayInMonth === selectedDay)?.horafinam || ''}
-                    className="form-control"
-                    onChange={(e) => handleTimeChange(selectedDay, 'horafinam', e.target.value)}
-                  />
-                </div>
+              <div className="mb-3">
+                <label htmlFor={`start-time-pm`}>Hora inicio tarde</label>
+                <input
+                  type="time"
+                  id={`start-time-pm`}
+                  value={hours.horainiciopm || ''}
+                  className="form-control"
+                  onChange={(e) => handleTimeChange(selectedDay, 'horainiciopm', e.target.value)}
+                />
+              </div>
 
-                <div className="col-md-3">
-                  <label htmlFor={`start-time-pm`}>Hora inicio tarde</label>
-                  <input
-                    type="time"
-                    id={`start-time-pm`}
-                    value={daysOfWeek.find(d => d.dayInMonth === selectedDay)?.horainiciopm || ''}
-                    className="form-control"
-                    onChange={(e) => handleTimeChange(selectedDay, 'horainiciopm', e.target.value)}
-                  />
-                </div>
-
-                <div className="col-md-3">
-                  <label htmlFor={`end-time-pm`}>Hora fin tarde</label>
-                  <input
-                    type="time"
-                    id={`end-time-pm`}
-                    value={daysOfWeek.find(d => d.dayInMonth === selectedDay)?.horafinpm || ''}
-                    className="form-control"
-                    onChange={(e) => handleTimeChange(selectedDay, 'horafinpm', e.target.value)}
-                  />
-                </div>
+              <div className="mb-3">
+                <label htmlFor={`end-time-pm`}>Hora fin tarde</label>
+                <input
+                  type="time"
+                  id={`end-time-pm`}
+                  value={hours.horafinpm || ''}
+                  className="form-control"
+                  onChange={(e) => handleTimeChange(selectedDay, 'horafinpm', e.target.value)}
+                />
               </div>
             </Modal.Body>
-            <Modal.Footer>
-              <Button variant="secondary" onClick={() => setShowPopup(false)}>
-                Cerrar
-              </Button>
+            <Modal.Footer className="d-flex justify-content-center">
+                <Button variant="primary" onClick={() => handleAddTime(hours, selectedDay)}>
+                  Agregar horario
+                </Button>
             </Modal.Footer>
           </Modal>
         </form>
