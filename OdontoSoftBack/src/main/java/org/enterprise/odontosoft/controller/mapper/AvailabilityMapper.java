@@ -18,10 +18,10 @@ public class AvailabilityMapper {
 		return DisponibilidadResponse.builder()
 				.idDisponibilidad(disponibilidad.getIdDisponibilidad())
 				.dia(disponibilidad.getDia())
-				.horaInicioam(disponibilidad.getHoraInicio())
-				.horaFinam(disponibilidad.getHoraFin())
-				.horaIniciopm(disponibilidad.getHorainiciopm())
-				.horaFinpm(disponibilidad.getHorafinpm())
+				.horaInicioam(Objects.isNull(disponibilidad.getHoraInicio()) ? null : disponibilidad.getHoraInicio().toString())
+				.horaFinam(Objects.isNull(disponibilidad.getHoraFin()) ? null : disponibilidad.getHoraFin().toString())
+				.horaIniciopm(Objects.isNull(disponibilidad.getHorainiciopm()) ? null : disponibilidad.getHorainiciopm().toString())
+				.horaFinpm(Objects.isNull(disponibilidad.getHorafinpm()) ? null :disponibilidad.getHorafinpm().toString())
 				.idMedico(disponibilidad.getIdMedico())
 				.idConsultorio(disponibilidad.getIdConsultorio())
 				.mes(disponibilidad.getMes())
@@ -33,7 +33,7 @@ public class AvailabilityMapper {
 		List<Disponibilidad> disponibilidades = new ArrayList<>();
 		disponibilidadRequest.getDetalledisponibilidad().forEach(disponibilidad ->
 			disponibilidades.add(Disponibilidad.builder()
-				.idDisponibilidad(disponibilidad.getId() == 0 ? null : disponibilidad.getId())
+				.idDisponibilidad(disponibilidad.getIdDisponibilidad() == null || disponibilidad.getIdDisponibilidad() == 0 ? null : disponibilidad.getIdDisponibilidad())
 				.idMedico(disponibilidadRequest.getIdmedico())
 				.dia(disponibilidad.getDia())
 				.horaInicio(Objects.nonNull(disponibilidad.getHorainicioam()) && Strings.isNotBlank(disponibilidad.getHorainicioam()) ? LocalTime.parse(disponibilidad.getHorainicioam()) : null)

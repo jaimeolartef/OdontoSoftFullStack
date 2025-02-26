@@ -19,4 +19,5 @@ public class DetalleDisponibilidad {
 	private String horafinam;
 	private String horainiciopm;
 	private String horafinpm;
+	private Integer idDisponibilidad;
 }

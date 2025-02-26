@@ -103,7 +103,8 @@ const CargueCalendario = () => {
                 horainicioam: availability.horaInicioam,
                 horafinam: availability.horaFinam,
                 horainiciopm: availability.horaIniciopm,
-                horafinpm: availability.horaFinpm
+                horafinpm: availability.horaFinpm,
+                iddisponibilidad: availability.idDisponibilidad
               };
             }
             return day;
@@ -144,17 +145,23 @@ const CargueCalendario = () => {
       mes: selectedMonth,
       anio: selectedYear,
       detalledisponibilidad: daysOfWeek.map(day => {
-        return {
-          dia: day.dayInMonth,
-          horainicioam: day.horainicioam,
-          horafinam: day.horafinam,
-          horainiciopm: day.horainiciopm,
-          horafinpm: day.horafinpm
-        };
+        if (day.horainicioam !== '' || day.horafinam !== '' || day.horainiciopm !== '' || day.horafinpm !== '') {
+          return {
+            dia: day.dayInMonth,
+            horainicioam: day.horainicioam,
+            horafinam: day.horafinam,
+            horainiciopm: day.horainiciopm,
+            horafinpm: day.horafinpm,
+            idDisponibilidad: day.iddisponibilidad
+          };
+        } else {
+          return null;
+        }
       })
     }];
+    disponibilidad[0].detalledisponibilidad = disponibilidad[0].detalledisponibilidad.filter(day => day !== null && day !== undefined);
 
-    if (!validateForm()) {
+    if (!validateForm(disponibilidad)) {
       return;
     }
 
@@ -162,6 +169,8 @@ const CargueCalendario = () => {
     console.log(tokenBearer);
     axios.defaults.headers.common['Authorization'] = tokenBearer;
     try {
+
+      console.log('disponibilidad', disponibilidad);
 
       const response = await axios.post(`${config.baseURL}/availability/save`, disponibilidad, {
         validateStatus: function (status) {
@@ -174,11 +183,12 @@ const CargueCalendario = () => {
         showMessage('error', 'Error al crear la agenda');
       }
     } catch (error) {
+      console.log('error', error);
       showMessage('error', 'Error al crear la agenda ' + error);
     }
   };
 
-  const validateForm = () => {
+  const validateForm = (disponibilidad) => {
     let validate = true;
     const monthDecember = 12;
 
@@ -227,12 +237,12 @@ const CargueCalendario = () => {
       validate = false;
     }
 
-    if (daysOfWeek.length === 0) {
+    if (disponibilidad[0].detalledisponibilidad.length === 0) {
       showMessage('warning', 'Por favor, seleccione al menos un día');
       validate = false;
     }
 
-    daysOfWeek.forEach(day => {
+    disponibilidad[0].detalledisponibilidad.filter(day => day !== null &&  day !== undefined).forEach(day => {
       if (!validateTime(day)) {
         validate = false;
       }
@@ -267,9 +277,19 @@ const CargueCalendario = () => {
       return false;
     }
 
-    if (day.horainicioam && day.horafinam) {
+    if ((day.horainicioam !== '' && day.horainicioam !== null) || (day.horafinam !== '' && day.horafinam !== null)) {
       const startAM = convertTimeToMinutes(day.horainicioam);
       const endAM = convertTimeToMinutes(day.horafinam);
+
+      if (Number.isNaN(startAM)) {
+        showMessage('warning', 'La hora de inicio de la mañana debe estar en el formato HH:MM');
+        return false;
+      }
+
+      if (Number.isNaN(endAM)) {
+        showMessage('warning', 'La hora de fin de la mañana debe estar en el formato HH:MM');
+        return false;
+      }
 
       if (startAM >= noon || endAM > noon) {
         showMessage('warning', 'La hora de la mañana se comprende entre las 00:00 y 12:00');
@@ -288,9 +308,19 @@ const CargueCalendario = () => {
 
     }
 
-    if (day.horainiciopm && day.horafinpm) {
+    if ((day.horainiciopm !== '' && day.horainiciopm !== null) || (day.horafinpm !== '' && day.horafinpm !== null)) {
       const startPM = convertTimeToMinutes(day.horainiciopm);
       const endPM = convertTimeToMinutes(day.horafinpm);
+
+      if (Number.isNaN(startPM)) {
+        showMessage('warning', 'La hora de inicio de la tarde debe estar en el formato HH:MM');
+        return false;
+      }
+
+      if (Number.isNaN(endPM)) {
+        showMessage('warning', 'La hora de fin de la tarde debe estar en el formato HH:MM');
+        return false;
+      }
 
       if (startPM <= noon || endPM <= noon || startPM > endOfDay || endPM > endOfDay) {
         showMessage('warning', 'La hora de la tarde se comprende entre las 12:01 y 23:59');
@@ -301,6 +331,11 @@ const CargueCalendario = () => {
         showMessage('warning', 'La hora de inicio de la tarde no puede ser mayor a la hora de fin de la tarde');
         return false;
       }
+
+      if ((endPM - startPM) < 60) {
+        showMessage('warning', 'La hora de fin de la tarde debe ser al menos 1 hora mayor a la hora de inicio de la tarde');
+        return false;
+      }
     }
 
     return true;
@@ -308,7 +343,14 @@ const CargueCalendario = () => {
 
   const handleDayClick = (dayNumber) => {
     if (dayNumber > 0 && dayNumber <= dayLastMonth) {
+      let day = daysOfWeek[dayNumber - 1];
       if (handleValidationOdontologo()) {
+        setHours({
+          horainicioam: day.horainicioam,
+          horafinam: day.horafinam,
+          horainiciopm: day.horainiciopm,
+          horafinpm: day.horafinpm
+        });
         setSelectedDay(dayNumber);
         setShowPopup(true);
       }
@@ -324,7 +366,8 @@ const CargueCalendario = () => {
             horainicioam: hours.horainicioam,
             horafinam: hours.horafinam,
             horainiciopm: hours.horainiciopm,
-            horafinpm: hours.horafinpm
+            horafinpm: hours.horafinpm,
+            idDisponibilidad: null
           };
         }
         return day;
