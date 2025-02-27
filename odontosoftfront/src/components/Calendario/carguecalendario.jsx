@@ -126,8 +126,7 @@ const CargueCalendario = () => {
   const handleClearOdontologo = () => {
     setSelectedOdontologo('');
     setSelectedDay(null);
-    setDaysOfWeek([
-    ]);
+    fetchLoadCalendar();
   };
 
   const handleTimeChange = (dayValue, type, value) => {
@@ -422,7 +421,7 @@ const CargueCalendario = () => {
             <div className="form-group">
               <div className="row">
                 <div className="col-md-12 mb-3">
-                  <h3>{new Date(selectedYear, selectedMonth - 1).toLocaleString('es', {month: 'long'})} {selectedYear}</h3>
+                  <h3>{new Date(selectedYear, selectedMonth - 1).toLocaleString('es', {month: 'long'}).charAt(0).toUpperCase() + new Date(selectedYear, selectedMonth - 1).toLocaleString('es', {month: 'long'}).slice(1)} {selectedYear}</h3>
                   <table className="table">
                     <thead>
                     <tr>
@@ -443,11 +442,11 @@ const CargueCalendario = () => {
                                     {dayNumber > 0 && dayNumber <= dayLastMonth && (
                                       <div>
                                         {dayNumber}
-                                        {daysOfWeek[dayNumber - 1]?.horainicioam !== null && daysOfWeek[dayNumber - 1]?.horainicioam !== '' && (
+                                        {daysOfWeek.length !== 0 && daysOfWeek[dayNumber - 1]?.horainicioam !== null && daysOfWeek[dayNumber - 1]?.horainicioam !== '' && (
                                           <div className="blue-block">Mañana: {daysOfWeek[dayNumber - 1]?.horainicioam} - {daysOfWeek[dayNumber - 1]?.horafinam}</div>
                                         )}
                                         <div className="espacio"></div>
-                                        {daysOfWeek[dayNumber - 1]?.horainiciopm !== null && daysOfWeek[dayNumber - 1]?.horainiciopm !== '' && (
+                                        {daysOfWeek.length !== 0 && daysOfWeek[dayNumber - 1]?.horainiciopm !== null && daysOfWeek[dayNumber - 1]?.horainiciopm !== '' && (
                                           <div className="red-block">Tarde: {daysOfWeek[dayNumber - 1]?.horainiciopm} - {daysOfWeek[dayNumber - 1]?.horafinpm}</div>
                                         )}
                                       </div>
