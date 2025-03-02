@@ -5,6 +5,7 @@ import '../../App.css';
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
 import showMessage from "../../util/UtilMessage";
+import validationHours from "../../util/UtilValidation";
 import config from "../../config";
 import { Modal, Button } from 'react-bootstrap';
 
@@ -92,26 +93,29 @@ const CargueCalendario = () => {
         if (response.status === 200) {
           let availab = response.data;
           console.log('disponibilidad', availab);
-          setSelectedMonth(availab[0].mes);
-          setSelectedYear(availab[0].anio);
+          console.log('mes', daysOfWeek);
+          if (availab.length !== 0) {
+            setSelectedMonth(availab[0].mes);
+            setSelectedYear(availab[0].anio);
 
-          const updatedDaysOfWeek = daysOfWeek.map(day => {
-            const availability = availab.find(item => item.dia === day.dayInMonth);
-            if (availability) {
-              return {
-                ...day,
-                horainicioam: availability.horaInicioam,
-                horafinam: availability.horaFinam,
-                horainiciopm: availability.horaIniciopm,
-                horafinpm: availability.horaFinpm,
-                iddisponibilidad: availability.idDisponibilidad
-              };
-            }
-            return day;
-          });
+            const updatedDaysOfWeek = daysOfWeek.map(day => {
+              const availability = availab.find(item => item.dia === day.dayInMonth);
+              if (availability) {
+                return {
+                  ...day,
+                  horainicioam: availability.horaInicioam,
+                  horafinam: availability.horaFinam,
+                  horainiciopm: availability.horaIniciopm,
+                  horafinpm: availability.horaFinpm,
+                  iddisponibilidad: availability.idDisponibilidad
+                };
+              }
+              return day;
+            });
 
-          setDaysOfWeek(updatedDaysOfWeek);
-          console.log('dias', updatedDaysOfWeek);
+            setDaysOfWeek(updatedDaysOfWeek);
+            console.log('dias', updatedDaysOfWeek);
+          }
         }
       } catch (error) {
         console.error('Error fetching patient data:', error);
@@ -250,10 +254,6 @@ const CargueCalendario = () => {
     return validate;
   }
 
-  const convertTimeToMinutes = (time) => {
-    const [hours, minutes] = time.split(':').map(Number);
-    return hours * 60 + minutes;
-  };
 
   /**
    * Validates the time ranges for a given day object.
@@ -267,77 +267,12 @@ const CargueCalendario = () => {
    * @returns {boolean} - Returns true if the times are valid, otherwise false.
    */
   const validateTime = (day) => {
-    const noon = convertTimeToMinutes('12:00');
-    const midnight = convertTimeToMinutes('00:00');
-    const endOfDay = convertTimeToMinutes('23:59');
-
-    if (day.horainicioam === '' && day.horafinam === '' && day.horainiciopm === '' && day.horafinpm === '') {
-      showMessage('warning', 'Debe ingresar al menos un rango de horario');
-      return false;
-    }
-
-    if ((day.horainicioam !== '' && day.horainicioam !== null) || (day.horafinam !== '' && day.horafinam !== null)) {
-      const startAM = convertTimeToMinutes(day.horainicioam);
-      const endAM = convertTimeToMinutes(day.horafinam);
-
-      if (Number.isNaN(startAM)) {
-        showMessage('warning', 'La hora de inicio de la mañana debe estar en el formato HH:MM');
+      if (!day.horainicioam && !day.horafinam && !day.horainiciopm && !day.horafinpm) {
+        showMessage('warning', 'Debe ingresar al menos un rango de horario');
         return false;
       }
 
-      if (Number.isNaN(endAM)) {
-        showMessage('warning', 'La hora de fin de la mañana debe estar en el formato HH:MM');
-        return false;
-      }
-
-      if (startAM >= noon || endAM > noon) {
-        showMessage('warning', 'La hora de la mañana se comprende entre las 00:00 y 12:00');
-        return false;
-      }
-
-      if (startAM > endAM) {
-        showMessage('warning', 'La hora de inicio de la mañana no puede ser mayor a la hora de fin de la mañana');
-        return false;
-      }
-
-      if ((endAM - startAM) < 60) {
-        showMessage('warning', 'La hora de fin de la mañana debe ser al menos 1 hora mayor a la hora de inicio de la mañana');
-        return false;
-      }
-
-    }
-
-    if ((day.horainiciopm !== '' && day.horainiciopm !== null) || (day.horafinpm !== '' && day.horafinpm !== null)) {
-      const startPM = convertTimeToMinutes(day.horainiciopm);
-      const endPM = convertTimeToMinutes(day.horafinpm);
-
-      if (Number.isNaN(startPM)) {
-        showMessage('warning', 'La hora de inicio de la tarde debe estar en el formato HH:MM');
-        return false;
-      }
-
-      if (Number.isNaN(endPM)) {
-        showMessage('warning', 'La hora de fin de la tarde debe estar en el formato HH:MM');
-        return false;
-      }
-
-      if (startPM <= noon || endPM <= noon || startPM > endOfDay || endPM > endOfDay) {
-        showMessage('warning', 'La hora de la tarde se comprende entre las 12:01 y 23:59');
-        return false;
-      }
-
-      if (startPM > endPM) {
-        showMessage('warning', 'La hora de inicio de la tarde no puede ser mayor a la hora de fin de la tarde');
-        return false;
-      }
-
-      if ((endPM - startPM) < 60) {
-        showMessage('warning', 'La hora de fin de la tarde debe ser al menos 1 hora mayor a la hora de inicio de la tarde');
-        return false;
-      }
-    }
-
-    return true;
+      return validationHours(day.horainicioam, day.horafinam, true) && validationHours(day.horainiciopm, day.horafinpm, false);
   };
 
   const handleDayClick = (dayNumber) => {

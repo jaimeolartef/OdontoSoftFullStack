@@ -5,6 +5,7 @@ import '../../App.css';
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
 import showMessage from "../../util/UtilMessage";
+import validateHours from "../../util/UtilValidation";
 import config from "../../config";
 import * as Papa from "date-fns";
 import * as XLSX from "xlsx";
@@ -59,6 +60,8 @@ const CargueCalendarioMasivo = () => {
 
         let documentoOdontologoAnterior = '';
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        let availableDoctors = [];
+        let detalledisponibilidad = [];
 
         let linea = 1;
         for (const row of jsonData) {
@@ -70,7 +73,6 @@ const CargueCalendarioMasivo = () => {
             linea++;
             continue;
           }
-          console.log(row);
           documentoOdontologoActual = row[0];
 
           if (documentoOdontologoActual !== documentoOdontologoAnterior) {
@@ -105,24 +107,52 @@ const CargueCalendarioMasivo = () => {
           linea++;
 
           if (errors.length === 0) {
-            setRegistro(prev => ({
-              ...prev,
-              idMedico,
-              anio,
-              mes,
-              diaSemana,
-              horainicioam,
-              horafinam,
-              horainiciopm,
-              horafinpm
-            }));
-            setAgenda(prev => [...prev, registro]);
+            let aval = availableDoctors.find(doctor => doctor.idMedico === idMedico);
+
+            if (aval) {
+              console.log(aval);
+              aval.detalledisponibilidad.push({
+                dia: diaSemana,
+                horainicioam: horainicioam,
+                horafinam: horafinam,
+                horainiciopm: horainiciopm,
+                horafinpm: horafinpm
+              });
+            } else {
+              availableDoctors.push({
+                idMedico: idMedico,
+                anio: anio,
+                mes: mes,
+                detalledisponibilidad: {
+                  dia: diaSemana,
+                  horainicioam: horainicioam,
+                  horafinam: horafinam,
+                  horainiciopm: horainiciopm,
+                  horafinpm: horafinpm
+                }
+              });
+            }
           }
         }
 
         if (errors.length > 0) {
           setErrorMessages(errors);
           setShowModal(true);
+          return false;
+        }
+
+        console.log(availableDoctors);
+
+        const response = await axios.post(`${config.baseURL}/availability/save`, availableDoctors, {
+          validateStatus: function (status) {
+            return status;
+          }
+        });
+
+        if (response.status === 200 || response.status === 201) {
+          showMessage('success', 'Cargue masivo realizado con éxito');
+        } else {
+          showMessage('error', 'Error al realizar el cargue masivo');
         }
       };
       reader.readAsArrayBuffer(file);
@@ -161,48 +191,30 @@ const CargueCalendarioMasivo = () => {
       validate = false;
     }
 
+    if (mes < nowMonth || mes > nextMonth) {
+      errors.push('El mes seleccionado debe ser el mes actual o el siguiente, línea ' + linea);
+      validate = false;
+    }
+
     if (isNaN(diaSemana)) {
       errors.push('El día debe ser un valor numérico, línea ' + linea);
       validate = false;
     }
 
-    if (diaSemana < 0 || diaSemana > 6) {
-      errors.push('El día seleccionado debe estar entre 0 y 6, donde 0 es domingo y 6 es sábado, línea ' + linea);
+    const daysInMonth = new Date(anio, mes, 0).getDate();
+    if (diaSemana < 1 || diaSemana > daysInMonth) {
+      errors.push('El día seleccionado debe estar entre 1 y ' + daysInMonth + ' para el mes ' + mes + ', línea ' + linea);
       validate = false;
     }
 
-    if (!timePattern.test(horainicioam)) {
-      errors.push('La hora de inicio AM debe estar en el formato HH:MM, línea ' + linea);
-      validate = false;
-    }
-
-    if (!timePattern.test(horafinam)) {
-      errors.push('La hora de fin AM debe estar en el formato HH:MM, línea ' + linea);
-      validate = false;
-    }
-
-    if (!timePattern.test(horainiciopm)) {
-      errors.push('La hora de inicio PM debe estar en el formato HH:MM, línea ' + linea);
-      validate = false;
-    }
-
-    if (!timePattern.test(horafinpm)) {
-      errors.push('La hora de fin PM debe estar en el formato HH:MM, línea ' + linea);
-      validate = false;
-    }
-
-    if (mes < nowMonth && anio === new Date().getFullYear()) {
-      errors.push('El mes seleccionado no puede ser menor al mes actual, línea ' + linea);
-      validate = false;
-    }
-
-    if (mes > nextMonth && anio === new Date().getFullYear()) {
-      errors.push('El mes seleccionado no puede ser mayor al mes actual, línea ' + linea);
+    if (!(validateHours(horainicioam, horafinam, true, linea) && validateHours(horainiciopm, horafinpm, false, linea))) {
       validate = false;
     }
 
     return validate;
   }
+
+
 
   return (
     <div className="d-flex justify-content-center align-items-center ">
