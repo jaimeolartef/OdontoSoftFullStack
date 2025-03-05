@@ -19,6 +19,12 @@ public class DisponibilidadServiceImpl implements DisponibilidadService {
 	}
 
 	@Override
+	public List<Disponibilidad> findByIdMedicoAndMesAndAnioAndDia(Integer idDoctor, Integer month, Integer year, Integer day) {
+		return disponibilidadDao.findByIdMedicoAndMesAndAnioAndDia(idDoctor, month, year, day);
+	}
+
+
+	@Override
 	public void saveAll(List<Disponibilidad> disponibilidad) {
 		disponibilidadDao.saveAll(disponibilidad);
 	}

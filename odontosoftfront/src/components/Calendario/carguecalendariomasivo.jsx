@@ -45,6 +45,7 @@ const CargueCalendarioMasivo = () => {
         let horafinam;
         let horainiciopm;
         let horafinpm;
+        let availabNow;
 
         let jsonData;
         if (file.name.endsWith('.csv')) {
@@ -64,6 +65,7 @@ const CargueCalendarioMasivo = () => {
         let detalledisponibilidad = [];
 
         let linea = 1;
+
         for (const row of jsonData) {
           if (row === undefined || row.length === 0) {
             continue;
@@ -74,6 +76,13 @@ const CargueCalendarioMasivo = () => {
             continue;
           }
           documentoOdontologoActual = row[0];
+          anio = row[1];
+          mes = row[2];
+          diaSemana = row[3];
+          horainicioam = row[4];
+          horafinam = row[5];
+          horainiciopm = row[6];
+          horafinpm = row[7];
 
           if (documentoOdontologoActual !== documentoOdontologoAnterior) {
             try {
@@ -84,6 +93,10 @@ const CargueCalendarioMasivo = () => {
               });
               if (response.status === 200 || response.status === 201) {
                 idMedico = response.data.idMedico;
+                const responseAvailab = await axios.get(`${config.baseURL}/availability/doctor/${idMedico}?month=${mes}&year=${anio}`);
+                if (responseAvailab.status === 200) {
+                  availabNow = responseAvailab.data;
+                }
               } else {
                 errors.push('El odontólogo con documento ' + row[0] + ' no existe');
               }
@@ -93,15 +106,7 @@ const CargueCalendarioMasivo = () => {
             }
           }
 
-          anio = row[1];
-          mes = row[2];
-          diaSemana = row[3];
-          horainicioam = row[4];
-          horafinam = row[5];
-          horainiciopm = row[6];
-          horafinpm = row[7];
-
-          validateData(anio, mes, diaSemana, horainicioam, horafinam, horainiciopm, horafinpm, linea);
+          validateData(anio, mes, diaSemana, horainicioam, horafinam, horainiciopm, horafinpm, linea, availabNow);
 
           documentoOdontologoAnterior = documentoOdontologoActual;
           linea++;
@@ -110,7 +115,6 @@ const CargueCalendarioMasivo = () => {
             let aval = availableDoctors.find(doctor => doctor.idMedico === idMedico);
 
             if (aval) {
-              console.log(aval);
               aval.detalledisponibilidad.push({
                 dia: diaSemana,
                 horainicioam: horainicioam,
@@ -120,16 +124,16 @@ const CargueCalendarioMasivo = () => {
               });
             } else {
               availableDoctors.push({
-                idMedico: idMedico,
+                idmedico: idMedico,
                 anio: anio,
                 mes: mes,
-                detalledisponibilidad: {
+                detalledisponibilidad: [{
                   dia: diaSemana,
                   horainicioam: horainicioam,
                   horafinam: horafinam,
                   horainiciopm: horainiciopm,
                   horafinpm: horafinpm
-                }
+                }]
               });
             }
           }
@@ -161,7 +165,7 @@ const CargueCalendarioMasivo = () => {
     }
   };
 
-  const validateData = (anio, mes, diaSemana, horainicioam, horafinam, horainiciopm, horafinpm, linea) => {
+  const validateData = (anio, mes, diaSemana, horainicioam, horafinam, horainiciopm, horafinpm, linea, availabNow) => {
     let validate = true;
     const monthDecember = 12;
     let nextMonth = new Date().getMonth() + 2;
@@ -209,6 +213,14 @@ const CargueCalendarioMasivo = () => {
 
     if (!(validateHours(horainicioam, horafinam, true, linea) && validateHours(horainiciopm, horafinpm, false, linea))) {
       validate = false;
+    }
+
+    let day = availabNow.find(day => day.dia === diaSemana);
+    if (day) {
+      if (day.horainicioam !== horainicioam || day.horafinam !== horafinam || day.horainiciopm !== horainiciopm || day.horafinpm !== horafinpm) {
+        errors.push('El día ' + diaSemana + ' ya esta registrado, línea ' + linea);
+        validate = false;
+      }
     }
 
     return validate;
