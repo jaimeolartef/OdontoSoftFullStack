@@ -3,11 +3,10 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Logo from '../../resource/LogoNegro.png';
 import '../../App.css';
 import axios from "axios";
-import {useNavigate} from "react-router-dom";
 import showMessage from "../../util/UtilMessage";
 import validateHours from "../../util/UtilValidation";
 import config from "../../config";
-import * as Papa from "date-fns";
+import Papa from 'papaparse';
 import * as XLSX from "xlsx";
 import {Modal, Button} from 'react-bootstrap';
 
@@ -48,33 +47,44 @@ const CargueCalendarioMasivo = () => {
         let availabNow;
 
         let jsonData;
-        if (file.name.endsWith('.csv')) {
-          const csvData = e.target.result;
-          const parsedData = Papa.parse(csvData, {header: true});
-          parsedData.data.forEach(row => console.log(row));
-        } else {
-          workbook = XLSX.read(data, {type: 'array'});
-          const sheetName = workbook.SheetNames[0];
-          const worksheet = workbook.Sheets[sheetName];
-          jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
-        }
+          if (file.name.endsWith('.csv')) {
+            const csvData = e.target.result;
+            const textDecoder = new TextDecoder('utf-8');
+            const csvText = textDecoder.decode(csvData);
+            const parsedData = Papa.parse(csvText, { header: true });
+            jsonData = parsedData.data.map(row => [
+              row['documento'],
+              row['anio'],
+              row['mes'],
+              row['dia'],
+              row['horainicioam'],
+              row['horafinam'],
+              row['horainiciopm'],
+              row['horafinpm']
+            ]);
+          } else if (file.name.endsWith('.xls') || file.name.endsWith('.xlsx')) {
+            workbook = XLSX.read(data, {type: 'array'});
+            const sheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[sheetName];
+            jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1}).slice(1);
+          } else {
+            showMessage('error', 'Formato de archivo no válido');
+            return;
+          }
 
         let documentoOdontologoAnterior = '';
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         let availableDoctors = [];
         let detalledisponibilidad = [];
+        let uniqueRecords = new Set();
 
-        let linea = 1;
+        let linea = 2;
 
         for (const row of jsonData) {
-          if (row === undefined || row.length === 0) {
+          if (!row || row.length === 0 || (!row[0] && !row[1] && !row[2] && !row[3])) {
             continue;
           }
 
-          if (linea === 1) {
-            linea++;
-            continue;
-          }
           documentoOdontologoActual = row[0];
           anio = row[1];
           mes = row[2];
@@ -98,7 +108,7 @@ const CargueCalendarioMasivo = () => {
                   availabNow = responseAvailab.data;
                 }
               } else {
-                errors.push('El odontólogo con documento ' + row[0] + ' no existe');
+                errors.push('El odontólogo con documento ' + row[0] + ' no existe, línea ' + linea);
               }
             } catch (error) {
               showMessage('error', 'Error al cargar el archivo por favor contacte al administrador ' + error);
@@ -106,7 +116,7 @@ const CargueCalendarioMasivo = () => {
             }
           }
 
-          validateData(anio, mes, diaSemana, horainicioam, horafinam, horainiciopm, horafinpm, linea, availabNow);
+          validateData(anio, mes, diaSemana, horainicioam, horafinam, horainiciopm, horafinpm, linea, availabNow, documentoOdontologoActual, uniqueRecords);
 
           documentoOdontologoAnterior = documentoOdontologoActual;
           linea++;
@@ -165,7 +175,7 @@ const CargueCalendarioMasivo = () => {
     }
   };
 
-  const validateData = (anio, mes, diaSemana, horainicioam, horafinam, horainiciopm, horafinpm, linea, availabNow) => {
+  const validateData = (anio, mes, diaSemana, horainicioam, horafinam, horainiciopm, horafinpm, linea, availabNow, documentoOdontologoActual, uniqueRecords) => {
     let validate = true;
     const monthDecember = 12;
     let nextMonth = new Date().getMonth() + 2;
@@ -174,6 +184,15 @@ const CargueCalendarioMasivo = () => {
     const currentYear = new Date().getFullYear();
     const isDecember = nowMonth === monthDecember;
     const maxAllowedYear = currentYear + (isDecember ? 2 : 0);
+
+    // Validar que no se repita el registro en el archivo con la combinación de documento, año, mes y día
+    const recordKey = `${documentoOdontologoActual}-${anio}-${mes}-${diaSemana}`;
+    if (uniqueRecords.has(recordKey)) {
+      errors.push(`El registro con documento ${documentoOdontologoActual}, año ${anio}, mes ${mes}, día ${diaSemana} ya existe, línea ${linea}`);
+      validate = false;
+    } else {
+      uniqueRecords.add(recordKey);
+    }
 
     if (isNaN(anio)) {
       errors.push('El año debe ser un valor numérico, línea ' + linea);
@@ -215,7 +234,7 @@ const CargueCalendarioMasivo = () => {
       validate = false;
     }
 
-    let day = availabNow.find(day => day.dia === diaSemana);
+    let day = availabNow.find(day => day.dia === diaSemana && day.documento === documentoOdontologoActual);
     if (day) {
       if (day.horainicioam !== horainicioam || day.horafinam !== horafinam || day.horainiciopm !== horainiciopm || day.horafinpm !== horafinpm) {
         errors.push('El día ' + diaSemana + ' ya esta registrado, línea ' + linea);
@@ -229,6 +248,7 @@ const CargueCalendarioMasivo = () => {
 
 
   return (
+    //TODO: AGREGAR UN LINK PARA DESCARGAR EL FORMATO DE EXCEL
     <div className="d-flex justify-content-center align-items-center ">
       <div className="card p-4" style={{width: '1500px'}}>
         <header className="text-center mb-4">

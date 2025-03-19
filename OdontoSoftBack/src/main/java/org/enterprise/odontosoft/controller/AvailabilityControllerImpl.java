@@ -10,6 +10,7 @@ import org.enterprise.odontosoft.view.dto.response.DisponibilidadResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,14 +30,15 @@ public class AvailabilityControllerImpl implements AvailabilityController {
 
 	@Override
 	public List<DisponibilidadResponse> saveAvailabilityByDoctor(List<DisponibilidadRequest> disponibilidadRequests) {
+		List<Disponibilidad> disponibilidadesGuardar = new ArrayList<>();
 		List<Disponibilidad> disponibilidad = disponibilidadRequests.stream()
 				.flatMap(dispo -> AvailabilityMapper.toAvailability(dispo).stream())
 				.collect(Collectors.toList());
 		disponibilidad.forEach(disponibilidadResponse -> {
-			if (!disponibilidadService.findByIdMedicoAndMesAndAnioAndDia(disponibilidadResponse.getIdMedico(), disponibilidadResponse.getMes(), disponibilidadResponse.getAnio(), disponibilidadResponse.getDia()).isEmpty())
-				throw new CustomException("Ya existe una disponibilidad para el día " + disponibilidadResponse.getDia(), HttpStatus.CONFLICT.value());
+			if (disponibilidadService.findByIdMedicoAndMesAndAnioAndDia(disponibilidadResponse.getIdMedico(), disponibilidadResponse.getMes(), disponibilidadResponse.getAnio(), disponibilidadResponse.getDia()).isEmpty())
+				disponibilidadesGuardar.add(disponibilidadResponse);
 		});
-		disponibilidadService.saveAll(disponibilidad);
+		disponibilidadService.saveAll(disponibilidadesGuardar);
 		return disponibilidad.stream()
 				.map(AvailabilityMapper::toAvailabilityResponse)
 				.toList();

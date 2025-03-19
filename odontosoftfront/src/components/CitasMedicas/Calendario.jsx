@@ -21,6 +21,7 @@ const Calendar = ({ availability, patient, Rol }) => {
   const [cancelReason, setCancelReason] = useState('');
   const [selectedCita, setSelectedCita] = useState(null);
   const [citasMedicas, setCitasMedicas] = useState([]);
+  const duracionCita = localStorage.getItem('DURACION_CITA');
 
   const monthNames = [
     'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
@@ -49,12 +50,12 @@ const Calendar = ({ availability, patient, Rol }) => {
     setSelectedMonth(month);
     setSelectedYear(year);
 
-    let date = new Date(year, month, day);
-    let dayOfWeek = date.getDay();
+    let date = new Date(year, month - 1, day);
+    //let dayOfWeek = date.getDay();
 
     let hourFinal = '';
     const availableHours = availability
-      .filter(item => item.diaSemana === dayOfWeek)
+      .filter(item => item.dia === day)
       .map(item => {
         let startAm = 0;
         let endAm = 0;
@@ -91,7 +92,7 @@ const Calendar = ({ availability, patient, Rol }) => {
 
     listCita.forEach(citaMedica => {
       let fechaCita = citaMedica.fecha.split('-');
-      let fecha = new Date(fechaCita[0], fechaCita[1] - 1, fechaCita[2]);
+      let fecha = new Date(fechaCita[0], fechaCita[1], fechaCita[2]);
       if (fecha.getDate() === day && fecha.getMonth() === month && fecha.getFullYear() === year) {
         availableHours.forEach((hour, index) => {
           if (hour === citaMedica.horainicio) {
@@ -115,7 +116,7 @@ const Calendar = ({ availability, patient, Rol }) => {
     let token = localStorage.getItem('jsonwebtoken');
     let odontoSelec = odontologoSelect();
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-    let monthFormated = (month + 1) < 10 ? '0' + (month + 1) : month + 1;
+    let monthFormated = (month) < 10 ? '0' + (month) : month;
     let dayFormated = (day < 10 ? '0' + day : day);
     try {
       const response = await axios.get(`${config.baseURL}/appointment/doctor?idOdontologo=${odontoSelec}&fechaDia=${year + "-" + monthFormated + "-" + dayFormated}`);
@@ -160,6 +161,7 @@ const Calendar = ({ availability, patient, Rol }) => {
   const handleAgendarCita = async (time) => {
     let odontoSelec = odontologoSelect();
     let idpaciente = pacienteSelect();
+    let hourFinal = addMinutesToTime(time, duracionCita);
 
     if (odontoSelec != null && odontoSelec.length <= 0) {
       showMessage('warning', 'Debe seleccionar un odontólogo para agendar la cita');
@@ -175,7 +177,7 @@ const Calendar = ({ availability, patient, Rol }) => {
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
     let day = selectedDay < 10 ? '0' + selectedDay : selectedDay;
-    let month = selectedMonth < 10 ? '0' + (selectedMonth + 1) : selectedMonth + 1;
+    let month = selectedMonth < 10 ? '0' + (selectedMonth) : selectedMonth;
     let fechaFormateada = `${selectedYear}-${month}-${day}`;
     let citaMedica = {
       idMedico: odontoSelec[0],
@@ -184,7 +186,7 @@ const Calendar = ({ availability, patient, Rol }) => {
       fecha: fechaFormateada,
       fechaNotificacion: calculateDateNotif(fechaFormateada),
       horainicio: time,
-      horafin: time,
+      horafin: hourFinal,
       habilitado: true
     };
 
@@ -198,6 +200,16 @@ const Calendar = ({ availability, patient, Rol }) => {
     } catch (error) {
       console.error('Error fetching patient data:', error);
     }
+  }
+
+  function addMinutesToTime(time, minutesToAdd) {
+    const [hours, minutes] = time.split(':').map(Number);
+    const date = new Date();
+    date.setHours(hours);
+    date.setMinutes(minutes + minutesToAdd);
+    const newHours = String(date.getHours()).padStart(2, '0');
+    const newMinutes = String(date.getMinutes()).padStart(2, '0');
+    return `${newHours}:${newMinutes}`;
   }
 
   const calculateDateNotif = (fecha) => {

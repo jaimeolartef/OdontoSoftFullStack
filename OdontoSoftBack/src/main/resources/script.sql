@@ -731,29 +731,6 @@ INSERT INTO public.usuario (id, nombre, clave, id_rol, habilitado, codigo)
 VALUES (DEFAULT, 'admin'::varchar(50), 'daaad6e5604e8e17bd9f108d91e26afe6281dac8fda0091040a7a6d7bd9b43b5'::text, 1::integer, true::boolean, 'admin'::varchar(20));
 insert into public.usuario (id, nombre, clave, id_rol, habilitado, codigo) values (2, 'Juan Perez', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', 3, true, '12345678');
 
-
-INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado)
-VALUES (DEFAULT, 'Pacientes'::varchar(50), null, null, true::boolean);
-INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado)
-VALUES (DEFAULT, 'Agenda'::varchar(50), null, null, true::boolean);
-INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado)
-VALUES (DEFAULT, 'Configuración'::varchar(50), null, null, true::boolean);
-
-INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado)
-VALUES (DEFAULT, 'Registrar paciente'::varchar(50), 1::integer, '/registroPac', true::boolean);
-INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado)
-VALUES (DEFAULT, 'Asignación de citas'::varchar(50), 2::integer, '/citaMedica', true::boolean);
-INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado)
-VALUES (DEFAULT, 'Mi calendario'::varchar(50), 2::integer, '/calendario', true::boolean);
-INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado)
-VALUES (DEFAULT, 'Roles'::varchar(50), 3::integer, '/role', true::boolean);
-INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado)
-VALUES (DEFAULT, 'Usuarios'::varchar(50), 3::integer, '/usuario', true::boolean);
-INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado)
-VALUES (DEFAULT, 'Consultar '::varchar(50), 1::integer, '/consultarPac', true::boolean);
-INSERT INTO public.menu (id, descripcion, id_menu_padre, url, habilitado)
-VALUES (DEFAULT, 'Historia Clinica'::varchar(50), 1::integer, NULL, true::boolean);
-
 INSERT INTO public.menu (id, descripcion, habilitado, id_menu_padre, url)
 values  (1, 'Pacientes', true, null, null),
         (2, 'Agenda', true, null, null),
@@ -764,9 +741,10 @@ values  (1, 'Pacientes', true, null, null),
         (7, 'Roles', true, 3, '/role'),
         (8, 'Usuarios', true, 3, '/usuario'),
         (9, 'Consultar ', true, 1, '/consultarPac'),
-        (10, 'Historia Clinica', true, 1, null),
+        (10, 'Historia Clínica', true, 1, null),
         (11, 'Cargue Calendario', true, 3, '/carguecalendario'),
-        (12, 'Cargue Calendario Masivo', true, 3, '/carguecalendariomasivo');
+        (12, 'Cargue Calendario Masivo', true, 3, '/carguecalendariomasivo'),
+        (13, 'Agenda Medica', true, 2, '/agendaMedica');
 
 
 INSERT INTO public.permiso_menu (id, consultar, crear, editar, eliminar, habilitado, id_menu, id_rol) VALUES(1, false, false, false, false, true, 1, 1);
@@ -788,6 +766,7 @@ INSERT INTO public.permiso_menu (id, consultar, crear, editar, eliminar, habilit
 INSERT INTO public.permiso_menu (id, consultar, crear, editar, eliminar, habilitado, id_menu, id_rol) VALUES(3, true, true, true, true, true, 3, 1);
 INSERT INTO public.permiso_menu (id, consultar, crear, editar, eliminar, habilitado, id_menu, id_rol) VALUES(19, true, true, true, true, true, 11, 1);
 INSERT INTO public.permiso_menu (id, consultar, crear, editar, eliminar, habilitado, id_menu, id_rol) VALUES(20, true, true, true, true, true, 12, 1);
+INSERT INTO public.permiso_menu (id, consultar, crear, editar, eliminar, habilitado, id_menu, id_rol) VALUES(20, true, true, true, true, true, 13, 3);
 
 INSERT INTO public.tipodocumento(id, codigo, nombre)
 VALUES (1, 'C.C.', 'Cédula de Ciudadanía');
@@ -924,7 +903,19 @@ values  (1, 'S025', 'Radiografía de aleta', true),
         (4, 'S032', 'Radiografías Periapicales Serie Completa o Parcial:', true);
 
 
+CREATE TABLE constantesistema
+(
+    id SERIAL PRIMARY KEY,
+    codigo VARCHAR(50) NOT NULL,
+    nombre VARCHAR(100) NOT NULL,
+    valor VARCHAR(100) NOT NULL,
+    descripcion VARCHAR(500),
+    habilitado BOOLEAN DEFAULT TRUE NOT NULL
+);
 
+-- Insertar la constante de duración de cita
+INSERT INTO constantesistema (codigo, nombre, valor, descripcion)
+VALUES ('DURACION_CITA', 'Duración cita', '30', 'Duración en minutos de una cita odontológica');
 
 
 

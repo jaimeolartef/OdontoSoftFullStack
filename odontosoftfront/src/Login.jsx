@@ -86,6 +86,14 @@ const Login = (props) => {
                 }
                 localStorage.setItem('nombre', responseMenu.data.nombreUsuario);
 
+                axios.get(`${config.baseURL}/constants`)
+                  .then(response => {
+                    console.log('Data -> ' + response.data);
+                    response.data.forEach(constant => {
+                      localStorage.setItem(constant.codigo, constant.valor);
+                    });
+                  });
+
 
                 props.onLoggedIn();
               }).catch(error => {

@@ -21,6 +21,7 @@ import CitaMedica from "./components/CitasMedicas/CitaMedica";
 import RestaurarContrasenia from "./components/RestaurarContrasenia";
 import CargueCalendario from "./components/Calendario/carguecalendario";
 import CargueCalendarioMasivo from "./components/Calendario/carguecalendariomasivo";
+import AgendaMedica from "./components/CitasMedicas/agendaMedica";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -55,6 +56,7 @@ root.render(
             <Route exact path = "/recordarClave" Component = {RecordarClave} />
             <Route exact path = "/cargueCalendario" Component = {requireAuth(CargueCalendario)} />
             <Route exact path = "/carguecalendariomasivo" Component = {requireAuth(CargueCalendarioMasivo)} />
+            <Route exact path = "/agendaMedica" Component = {requireAuth(AgendaMedica)} />
           </Routes>
         </NavBar>
       </Provider>

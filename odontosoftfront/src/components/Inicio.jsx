@@ -9,9 +9,6 @@ const Inicio = () => {
     const menuUser = localStorage.getItem('menuUser');
     if (menuUser) {
       setMenu(JSON.parse(menuUser));
-    } else {
-      // Si no hay menú en el localStorage, realizar una llamada a la API para obtenerlo
-      // axios.get('/api/menu').then(response => setMenu(response.data));
     }
   }, []);
 
