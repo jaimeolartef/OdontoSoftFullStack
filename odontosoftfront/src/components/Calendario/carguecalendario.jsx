@@ -382,7 +382,7 @@ const CargueCalendario = () => {
                                         )}
                                         <div className="espacio"></div>
                                         {daysOfWeek.length !== 0 && daysOfWeek[dayNumber - 1]?.horainiciopm !== null && daysOfWeek[dayNumber - 1]?.horainiciopm !== '' && (
-                                          <div className="red-block">Tarde: {daysOfWeek[dayNumber - 1]?.horainiciopm} - {daysOfWeek[dayNumber - 1]?.horafinpm}</div>
+                                          <div className="silver-block">Tarde: {daysOfWeek[dayNumber - 1]?.horainiciopm} - {daysOfWeek[dayNumber - 1]?.horafinpm}</div>
                                         )}
                                       </div>
                                     )}

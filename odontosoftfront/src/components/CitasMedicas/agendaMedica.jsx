@@ -13,7 +13,18 @@ const AgendaMedica = () => {
   let [offset, setOffset] = useState(0);
   let [dayLastMonth, setDayLastMonth] = useState([]);
   const [daysOfWeek, setDaysOfWeek] = useState([]);
-  const [hours , setHours] = useState({
+  const [citaDia, setCitaDia] = useState([]);
+  const monthFormated = (new Date().getMonth() + 1 < 10) ? '0' + (new Date().getMonth() + 1) : (new Date().getMonth() + 1);
+  // Add this state variable near your other state declarations
+  const [showFromToday, setShowFromToday] = useState(false);
+
+  // Add a function to check if a date is today or in the future
+  const isDateFromTodayOrLater = (year, month, day) => {
+    const today = new Date();
+    const checkDate = new Date(year, month - 1, day);
+    return checkDate >= new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  };
+  const [hours, setHours] = useState({
     horainicioam: '',
     horafinam: '',
     horainiciopm: '',
@@ -27,15 +38,15 @@ const AgendaMedica = () => {
   ]);
 
   useEffect(() => {
-    fetchOdontologo();
     fetchLoadCalendar();
+    fetchOdontologo();
   }, []);
 
   const fetchLoadCalendar = () => {
     const firstDay = new Date(selectedYear, selectedMonth - 1, 1).getDay();
     const offset = firstDay === 0 ? 6 : firstDay - 1;
     const daysMonth = new Date(selectedYear, selectedMonth, 0).getDate();
-    const newDaysOfWeek = Array.from({ length: daysMonth }, (_, index) => ({
+    const newDaysOfWeek = Array.from({length: daysMonth}, (_, index) => ({
       id: index + 1,
       dayInMonth: index + 1,
       horainicioam: '',
@@ -49,8 +60,6 @@ const AgendaMedica = () => {
     setOffset(offset);
   };
 
-
-
   const fetchOdontologo = async () => {
     let token = localStorage.getItem('jsonwebtoken');
     const usuario = localStorage.getItem('username');
@@ -61,69 +70,42 @@ const AgendaMedica = () => {
         setOdontologo(response.data);
         const odontoSelec = response.data.idMedico;
         const year = selectedYear;
-        const monthFormated = (selectedMonth) < 10 ? '0' + (selectedMonth) : selectedMonth;
 
-        const promises = Array.from({ length: dayLastMonth }, async (_, day) => {
-          const dayFormated = (day + 1) < 10 ? '0' + (day + 1) : (day + 1);
+        // Número de días en el mes seleccionado
+        const daysInMonth = new Date(year, monthFormated, 0).getDate();
+        console.log('dias en el mes', daysInMonth);
+        console.log('Odonto seleccionado ' + odontoSelec);
+
+        // Recorrer todos los días del mes
+        let allCitas = [];
+        for (let day = 1; day <= daysInMonth; day++) {
+          const dayFormated = (day < 10) ? '0' + day : '' + day;
           const date = `${year}-${monthFormated}-${dayFormated}`;
-          const appointmentResponse = await axios.get(`${config.baseURL}/appointment/doctor?idOdontologo=${odontoSelec}&fechaDia=${date}`);
-          if (appointmentResponse.status === 200) {
-            const appointmentData = appointmentResponse.data;
-            setDaysOfWeek(prevDays => prevDays.map(d =>
-              d.dayInMonth === day + 1 ? { ...d, ...appointmentData } : d
-            ));
+          try {
+            const appointmentResponse = await axios.get(`${config.baseURL}/appointment/doctor?idOdontologo=${odontoSelec}&fechaDia=${date}`);
+            if (appointmentResponse.status === 200) {
+              allCitas = [...allCitas, ...appointmentResponse.data];
+            }
+          } catch (error) {
+            console.error(`Error fetching appointments for day ${date}:`, error);
           }
-        });
-
-        await Promise.all(promises);
+        }
+        setCitaDia(allCitas);
+        console.log('Citas del día', allCitas);
       }
     } catch (error) {
       console.error('Error fetching patient data:', error);
     }
   };
 
-  // const fetchAgendaMedica = async () => {
-  //   try {
-  //     const promises = daysOfWeek.map(async (day) => {
-  //       let monthFormated = (selectedMonth + 1) < 10 ? '0' + (selectedMonth + 1) : selectedMonth + 1;
-  //
-  //       let dayFormated = (day < 10 ? '0' + day : day);
-  //       const response = await axios.get(`${config.baseURL}/appointment/doctor?idOdontologo=${odontologo.idMedico}&fechaDia=${selectedYear + "-" + monthFormated + "-" + dayFormated}`);
-  //       if (response.status === 200) {
-  //         return {
-  //           ...day,
-  //           horainicioam: response.data.horainicioam,
-  //           horafinam: response.data.horafinam,
-  //           horainiciopm: response.data.horainiciopm,
-  //           horafinpm: response.data.horafinpm
-  //         };
-  //       }
-  //       return day;
-  //     });
-  //     const updatedDaysOfWeek = await Promise.all(promises);
-  //     setDaysOfWeek(updatedDaysOfWeek);
-  //   } catch (error) {
-  //     console.error('Error fetching agenda data:', error);
-  //   }
-  // };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
   }
 
-  const handleDayClick = (dayNumber) => {
-    if (dayNumber > 0 && dayNumber <= dayLastMonth) {
-      let day = daysOfWeek[dayNumber - 1];
-        setHours({
-          horainicioam: day.horainicioam,
-          horafinam: day.horafinam,
-          horainiciopm: day.horainiciopm,
-          horafinpm: day.horafinpm
-        });
-        setSelectedDay(dayNumber);
-        //setShowPopup(true);
-      }
-  };
+  const handleCitaClick = (cita) => {
+    //TODO: LLAMAR A LA VENTANA DE CITA MEDICA
+    alert(`Cita seleccionada: ${cita.nombrePaciente} - ${cita.idpaciente} - ${cita.horainicio} - ${cita.horafin}`);
+  }
 
   return (
     <div className="d-flex justify-content-center align-items-center ">
@@ -139,6 +121,18 @@ const AgendaMedica = () => {
               <div className="row">
                 <div className="col-md-12 mb-3">
                   <h3>{new Date(selectedYear, selectedMonth - 1).toLocaleString('es', {month: 'long'}).charAt(0).toUpperCase() + new Date(selectedYear, selectedMonth - 1).toLocaleString('es', {month: 'long'}).slice(1)} {selectedYear}</h3>
+                  <div className="form-check mb-3">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      id="showFromToday"
+                      checked={showFromToday}
+                      onChange={(e) => setShowFromToday(e.target.checked)}
+                    />
+                    <label className="form-check-label" htmlFor="showFromToday">
+                      Mostrar citas a partir del día actual
+                    </label>
+                  </div>
                   <table className="table">
                     <thead>
                     <tr>
@@ -149,23 +143,35 @@ const AgendaMedica = () => {
                     </thead>
                     <tbody>
                     {
-                      Array.from({ length: totalCells / 7 }, (_, weekIndex) => (
+                      Array.from({length: totalCells / 7}, (_, weekIndex) => (
                         <tr key={weekIndex}>
-                          {Array.from({ length: 7 }, (_, dayIndex) => {
+                          {Array.from({length: 7}, (_, dayIndex) => {
                             const dayNumber = weekIndex * 7 + dayIndex + 1 - offset;
                             return (
-                              <td key={dayIndex} className="table-cell"
-                                  onClick={() => handleDayClick(dayNumber)}>
+                              <td key={dayIndex} className="table-cell">
                                 {dayNumber > 0 && dayNumber <= dayLastMonth && (
                                   <div>
                                     {dayNumber}
-                                    {daysOfWeek.length !== 0 && daysOfWeek[dayNumber - 1]?.horainicioam !== null && daysOfWeek[dayNumber - 1]?.horainicioam !== '' && (
-                                      <div className="blue-block">Mañana: {daysOfWeek[dayNumber - 1]?.horainicioam} - {daysOfWeek[dayNumber - 1]?.horafinam}</div>
-                                    )}
-                                    <div className="espacio"></div>
-                                    {daysOfWeek.length !== 0 && daysOfWeek[dayNumber - 1]?.horainiciopm !== null && daysOfWeek[dayNumber - 1]?.horainiciopm !== '' && (
-                                      <div className="red-block">Tarde: {daysOfWeek[dayNumber - 1]?.horainiciopm} - {daysOfWeek[dayNumber - 1]?.horafinpm}</div>
-                                    )}
+                                    {citaDia.map((cita, index) => {
+                                      const dayFormatted = dayNumber < 10 ? `0${dayNumber}` : `${dayNumber}`;
+                                      const formattedDate = `${selectedYear}-${monthFormated}-${dayFormatted}`;
+
+                                      // Check if we should show this appointment based on the checkbox selection
+                                      if (cita.fecha === formattedDate &&
+                                          (!showFromToday || isDateFromTodayOrLater(selectedYear, selectedMonth, dayNumber))) {
+                                        return (
+                                          <div
+                                            key={index}
+                                            className={index % 2 === 0 ? "blue-block" : "silver-block"}
+                                            style={{ marginBottom: '4px', cursor: 'pointer' }}
+                                            onClick={() => handleCitaClick(cita)}
+                                          >
+                                            {cita.horainicio} - {cita.horafin}: {cita.nombrePaciente}
+                                          </div>
+                                        );
+                                      }
+                                      return null;
+                                    })}
                                   </div>
                                 )}
                               </td>
