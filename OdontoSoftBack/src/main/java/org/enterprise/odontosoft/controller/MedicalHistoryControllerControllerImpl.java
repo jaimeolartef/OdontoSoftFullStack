@@ -6,6 +6,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.enterprise.odontosoft.controller.mapper.*;
 import org.enterprise.odontosoft.model.Dao.*;
 import org.enterprise.odontosoft.model.Entity.*;
+import org.enterprise.odontosoft.model.Service.MedicalHistoryService;
 import org.enterprise.odontosoft.view.dto.request.HistoriaClinicaRequest;
 import org.enterprise.odontosoft.view.dto.response.HistoriaClinicaResponse;
 import org.slf4j.Logger;
@@ -39,6 +40,8 @@ public class MedicalHistoryControllerControllerImpl implements MedicalHistoryCon
     private final DetalleOdontogramaDao detalleOdontogramaDao;
     private final UsuarioDao usuarioDao;
     private final AnalisisFuncionalDao analisisFuncionalDao;
+
+    private final MedicalHistoryService medicalHistoryService;
 
     private static final Logger logger = LoggerFactory.getLogger(MedicalHistoryControllerControllerImpl.class);
 
@@ -185,6 +188,26 @@ public class MedicalHistoryControllerControllerImpl implements MedicalHistoryCon
             if (historiaClinica == null) {
                 responseEntity = ResponseEntity.status(HttpStatus.NOT_FOUND).body(new HistoriaClinicaResponse(String.valueOf(HttpStatus.NOT_FOUND.value()), "No se encontró la historia clínica"));
                 return responseEntity;
+            }
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(MedicalHistoryMapper.toDto(historiaClinica));
+        } catch (Exception e) {
+            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            logger.error("Error getting medical history.", e);
+        }
+
+        return responseEntity;
+    }
+
+    @Override
+    public ResponseEntity<HistoriaClinicaResponse> getMedicalHistoryByIdPaciente(Integer idPaciente) {
+        ResponseEntity<HistoriaClinicaResponse> responseEntity = null;
+        try {
+            HistoriaClinica historiaClinica = medicalHistoryService.getMedicalHistoryByIdPatient(idPaciente).isEmpty() ? null : medicalHistoryService.getMedicalHistoryByIdPatient(idPaciente).get(0);
+            if (historiaClinica == null) {
+                responseEntity = ResponseEntity.status(HttpStatus.OK).body(new HistoriaClinicaResponse(String.valueOf(HttpStatus.NOT_FOUND.value()), "No se encontró la historia clínica"));
+                return responseEntity;
+            } else {
+                historiaClinica.setSignovitals(signoVitalDao.findByIdhistoriaclinica(historiaClinica.getId()));
             }
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(MedicalHistoryMapper.toDto(historiaClinica));
         } catch (Exception e) {

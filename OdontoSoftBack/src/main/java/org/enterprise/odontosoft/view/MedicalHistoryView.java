@@ -27,6 +27,11 @@ public class MedicalHistoryView {
         return medicalHistoryController.getMedicalHistoryById(id);
     }
 
+    @GetMapping("/consultar/paciente/{idPaciente}")
+    public ResponseEntity<HistoriaClinicaResponse> getMedicalHistory(@PathVariable Integer idPaciente) {
+        return medicalHistoryController.getMedicalHistoryByIdPaciente(idPaciente);
+    }
+
     @PutMapping("/modificar")
     public ResponseEntity<HistoriaClinicaResponse> updateMedicalHistory(@RequestBody HistoriaClinicaRequest historiaClinicaRequest) {
         return medicalHistoryController.updateMedicalHistory(historiaClinicaRequest);

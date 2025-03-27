@@ -2,9 +2,11 @@ import React, {useEffect, useState} from 'react';
 import Logo from "../../resource/LogoNegro.png";
 import axios from "axios";
 import config from "../../config";
+import { useNavigate } from 'react-router-dom';
 
 const AgendaMedica = () => {
 
+  const navigate = useNavigate();
   const [selectedDay, setSelectedDay] = useState(null);
   const [selectedOdontologo, setSelectedOdontologo] = useState('');
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
@@ -102,10 +104,40 @@ const AgendaMedica = () => {
     e.preventDefault();
   }
 
-  const handleCitaClick = (cita) => {
-    //TODO: LLAMAR A LA VENTANA DE CITA MEDICA
-    alert(`Cita seleccionada: ${cita.nombrePaciente} - ${cita.idpaciente} - ${cita.horainicio} - ${cita.horafin}`);
+  const handleCitaClick = async (cita) => {
+    let token = localStorage.getItem('jsonwebtoken');
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    try {
+      const response = await axios.get(`${config.baseURL}/historiaClinica/consultar/paciente/` + cita.idpaciente);
+      if (response.status === 200) {
+        let paciente = await handlePatientClick(cita.idpaciente);
+        if (response.data.codigoValidacion === '404') {
+          handleMedicalRecordClick(paciente);
+        } else {
+          handleMedicalRecordClick(paciente);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching patient data:', error);
+    }
   }
+
+  const handlePatientClick = async (idpaciente) => {
+    let token = localStorage.getItem('jsonwebtoken');
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    try {
+      const response = await axios.get(`${config.baseURL}/pacientes/consultar/` + idpaciente);
+      if (response.status === 200) {
+        return response.data;
+      }
+    } catch (error) {
+      console.error('Error fetching patient data:', error);
+    }
+  }
+
+  const handleMedicalRecordClick = (paciente) => {
+    navigate('/historiaPac', { state: { patient: paciente } });
+  };
 
   return (
     <div className="d-flex justify-content-center align-items-center ">

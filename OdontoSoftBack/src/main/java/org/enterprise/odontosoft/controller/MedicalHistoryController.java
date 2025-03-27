@@ -10,5 +10,7 @@ public interface MedicalHistoryController {
 
         ResponseEntity<HistoriaClinicaResponse> getMedicalHistoryById(Integer id);
 
+        ResponseEntity<HistoriaClinicaResponse> getMedicalHistoryByIdPaciente(Integer idPaciente);
+
         ResponseEntity<HistoriaClinicaResponse> updateMedicalHistory(HistoriaClinicaRequest historiaClinicaRequest);
 }
