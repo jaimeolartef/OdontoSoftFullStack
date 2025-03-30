@@ -11,4 +11,7 @@ public class CustomException extends RuntimeException {
         this.statusCode = statusCode;
     }
 
+    public int getStatusCode() {
+        return statusCode;
+    }
 }

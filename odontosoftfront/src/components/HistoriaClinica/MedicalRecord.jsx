@@ -16,6 +16,7 @@ import Diente from "../../resource/diente.png";
 import AyudasDiagnostico from "./AyudaDiagnostica";
 import {Tooltip} from "react-tooltip";
 import showMessage from "../../util/UtilMessage";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const MedicalRecord = () => {
   const location = useLocation();

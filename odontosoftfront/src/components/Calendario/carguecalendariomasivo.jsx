@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Logo from '../../resource/LogoNegro.png';
 import '../../App.css';
 import axios from "axios";
 import showMessage from "../../util/UtilMessage";
@@ -9,6 +8,9 @@ import config from "../../config";
 import Papa from 'papaparse';
 import * as XLSX from "xlsx";
 import {Modal, Button} from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import Logo from '../../resource/LogoNegro.png';
 
 const CargueCalendarioMasivo = () => {
   const token = localStorage.getItem('jsonwebtoken');
@@ -248,7 +250,6 @@ const CargueCalendarioMasivo = () => {
 
 
   return (
-    //TODO: AGREGAR UN LINK PARA DESCARGAR EL FORMATO DE EXCEL
     <div className="d-flex justify-content-center align-items-center ">
       <div className="card p-4" style={{width: '1500px'}}>
         <header className="text-center mb-4">
@@ -258,7 +259,13 @@ const CargueCalendarioMasivo = () => {
         <form onSubmit={handleSubmit}>
           <section className="mb-4">
             <div className="form-group">
-              <label htmlFor="file">Cargar archivo Excel o CSV</label>
+              <div className="d-flex align-items-center justify-content-between mb-2">
+                <label htmlFor="file">Cargar archivo Excel o CSV</label>
+                <a href="../../resource/formatocargamasiva.xlsx" download
+                   className="icon-link icon-link-hover">
+                  <i className="bi bi-file-earmark-spreadsheet me-1"></i>Formato
+                </a>
+              </div>
               <input
                 type="file"
                 className="form-control"
@@ -272,7 +279,7 @@ const CargueCalendarioMasivo = () => {
         <Modal show={showModal}
                onHide={() => setShowModal(false)}>
 
-            <Modal.Header closeButton>
+        <Modal.Header closeButton>
               <Modal.Title>Errores</Modal.Title>
             </Modal.Header>
             <Modal.Body>

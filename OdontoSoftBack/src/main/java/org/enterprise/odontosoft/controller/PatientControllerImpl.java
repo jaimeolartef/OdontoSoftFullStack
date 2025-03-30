@@ -6,6 +6,7 @@ import java.util.Objects;
 import lombok.AllArgsConstructor;
 import org.enterprise.odontosoft.controller.Enum.TipoDocumentoEnum;
 import org.enterprise.odontosoft.controller.mapper.PatientMapper;
+import org.enterprise.odontosoft.exception.CustomException;
 import org.enterprise.odontosoft.model.Dao.PatientDao;
 import org.enterprise.odontosoft.model.Dao.UsuarioDao;
 import org.enterprise.odontosoft.model.Entity.Paciente;
@@ -55,30 +56,36 @@ public class PatientControllerImpl implements PatientController {
 
     @Override
     public ResponseEntity<List<PacienteResponse>> getPatient(String documento, String nombre, String correo) {
-        ResponseEntity<List<PacienteResponse>> responseEntity;
         try {
             List<Paciente> pacientes;
-            List<PacienteResponse> pacientesDto;
-            if (Objects.nonNull(documento) && StringUtils.hasText(documento)) {
-                pacientes = patientDao.findByDocument(documento);
-            } else if (Objects.nonNull(nombre) && StringUtils.hasText(nombre)) {
-                pacientes = patientDao.findByName(nombre);
-            } else if (Objects.nonNull(correo) && StringUtils.hasText(correo)) {
-                pacientes = patientDao.findByCorreo(correo);
-            } else {
-                responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-                return responseEntity;
+
+            // Verificar si al menos un parámetro tiene valor
+            if (!StringUtils.hasText(documento) && !StringUtils.hasText(nombre) && !StringUtils.hasText(correo)) {
+                throw new CustomException("Se debe proporcionar al menos un criterio de búsqueda: documento, nombre o correo", 400);
             }
 
-            pacientesDto = PatientMapper.toDto(pacientes);
+            if (StringUtils.hasText(documento)) {
+                pacientes = patientDao.findByDocument(documento);
+            } else if (StringUtils.hasText(nombre)) {
+                pacientes = patientDao.findByName(nombre);
+            } else {
+                pacientes = patientDao.findByCorreo(correo);
+            }
 
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(pacientesDto);
+            // Si no se encuentran pacientes, lanzar excepción
+            if (pacientes.isEmpty()) {
+                throw new CustomException("No se encontraron pacientes con los criterios de búsqueda proporcionados", 404);
+            }
+
+            List<PacienteResponse> pacientesDto = PatientMapper.toDto(pacientes);
+            return ResponseEntity.status(HttpStatus.OK).body(pacientesDto);
+        } catch (CustomException e) {
+            // Propagar la excepción personalizada para que la maneje el GlobalExceptionHandler
+            throw e;
         } catch (Exception e) {
-            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-            logger.error("Error getting patient.", e);
+            logger.error("Error al buscar pacientes", e);
+            throw new CustomException("Error al procesar la solicitud de búsqueda de pacientes", 500);
         }
-
-        return responseEntity;
     }
 
     @Override

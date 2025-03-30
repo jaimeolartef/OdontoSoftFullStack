@@ -128,6 +128,7 @@ const AgendaMedica = () => {
     try {
       const response = await axios.get(`${config.baseURL}/pacientes/consultar/` + idpaciente);
       if (response.status === 200) {
+        console.log('Consultar paciente' + response.data)
         return response.data;
       }
     } catch (error) {

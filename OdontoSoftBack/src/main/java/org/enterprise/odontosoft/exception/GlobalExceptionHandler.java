@@ -12,7 +12,6 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-	//TODO: NO ESTA FUNCIONANDO PORQUE NO INGRESA A ESTE METODO
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<Map<String, String>> handleCustomException(CustomException ex, WebRequest request) {
         Map<String, String> errorDetails = new HashMap<>();
@@ -20,5 +19,14 @@ public class GlobalExceptionHandler {
         errorDetails.put("details", ex.getMessage());
         HttpStatus httpStatus = HttpStatus.resolve(ex.getStatusCode());
         return new ResponseEntity<>(errorDetails, httpStatus != null ? httpStatus : HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    // Excepción genérica para capturar cualquier otra excepción
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Map<String, String>> handleAllExceptions(Exception ex, WebRequest request) {
+        Map<String, String> errorDetails = new HashMap<>();
+        errorDetails.put("error", "Error interno del servidor");
+        errorDetails.put("details", ex.getMessage());
+        return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

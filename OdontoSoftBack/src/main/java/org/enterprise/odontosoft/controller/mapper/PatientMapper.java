@@ -46,8 +46,13 @@ public class PatientMapper {
     }
 
     public static PacienteResponse toDto(Paciente paciente) {
+        Integer idHistoriaClinica = null;
+        if (Objects.nonNull(paciente.getHistoriaclinicas()) && !paciente.getHistoriaclinicas().isEmpty()){
+            idHistoriaClinica = paciente.getHistoriaclinicas().stream().toList().get(0).getId();
+        }
         return PacienteResponse.builder()
             .id(paciente.getId())
+            .idHistoriaClinica(idHistoriaClinica)
             .idtipodocumento(TipoDocumentoEnum.getById(paciente.getIdtipodocumento().getId()).getSigla())
             .documento(paciente.getDocumento())
             .primernombre(paciente.getPrimernombre())

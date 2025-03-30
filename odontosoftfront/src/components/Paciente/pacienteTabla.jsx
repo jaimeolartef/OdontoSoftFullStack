@@ -28,6 +28,7 @@ const PacienteTabla = ({ data, formData, permisosPaciente, permisosHistoria }) =
   };
 
   const handleMedicalRecordClick = (paciente) => {
+    console.log(paciente)
     navigate('/historiaPac', { state: { patient: paciente } });
   };
 
