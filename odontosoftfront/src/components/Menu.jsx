@@ -6,8 +6,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import usuario from '../resource/usuario.png';
 
 function Menu(props) {
-  let data = localStorage.getItem('menuUser');
-  let nombre = localStorage.getItem('nombre');
+  let data = sessionStorage.getItem('menuUser');
+  let nombre = sessionStorage.getItem('nombre');
   let dataMenu = data ? JSON.parse(data) : [];
 
   const renderSubMenu = (menu) => {
@@ -25,7 +25,7 @@ function Menu(props) {
   };
 
   const handleLogout = () => {
-    localStorage.clear();
+    sessionStorage.clear();
     window.location.reload();
   };
 

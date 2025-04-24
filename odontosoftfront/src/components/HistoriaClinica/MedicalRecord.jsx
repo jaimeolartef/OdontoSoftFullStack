@@ -58,7 +58,7 @@ const MedicalRecord = () => {
   });
 
   const handleSubmit = (e) => {
-    let usuario = localStorage.getItem('username');
+    let usuario = sessionStorage.getItem('username');
     e.preventDefault();
     if (formMedicalHistory.idHistoriaClinica) {
       formMedicalHistory.idusuariomodificacion = usuario;
@@ -68,7 +68,7 @@ const MedicalRecord = () => {
       formMedicalHistory.fechacreacion = new Date().toISOString();
     }
     
-    let token = localStorage.getItem('jsonwebtoken');
+    let token = sessionStorage.getItem('jsonwebtoken');
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     axios.post(`${config.baseURL}/historiaClinica/crear`, formMedicalHistory, {
       validateStatus: function (status) {

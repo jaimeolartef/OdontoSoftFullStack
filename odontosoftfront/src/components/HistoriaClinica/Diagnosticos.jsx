@@ -14,11 +14,11 @@ const Diagnosticos = ({ formMedicalHistory, setFormMedicalHistory, readOnly }) =
     }]);
 
     const [selectedDiagnostico, setSelectedDiagnostico] = useState('');
-    const usuario = localStorage.getItem('username');
+    const usuario = sessionStorage.getItem('username');
 
     useEffect(() => {
         const fetchTipoDiagnostico = async () => {
-            let token = localStorage.getItem('jsonwebtoken');
+            let token = sessionStorage.getItem('jsonwebtoken');
             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
             try {
                 const response = await axios.get(`${config.baseURL}/tipodiagnostico/consultar`);

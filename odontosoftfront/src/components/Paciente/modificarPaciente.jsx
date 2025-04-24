@@ -10,7 +10,7 @@ import showMessage from "../../util/UtilMessage";
 
 const ModificarPaciente = () => {
   const location = useLocation();
-  const usuario = localStorage.getItem('username');
+  const usuario = sessionStorage.getItem('username');
   const navigate = useNavigate();
   const { id } = location.state || {};
   const [formData, setFormData] = useState({
@@ -89,7 +89,7 @@ const ModificarPaciente = () => {
     formData.idusuariocreacion = usuario;
     formData.fechacreacion = new Date().toISOString();
     e.preventDefault();
-    let token = localStorage.getItem('jsonwebtoken');
+    let token = sessionStorage.getItem('jsonwebtoken');
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     axios.put(`${config.baseURL}/pacientes/modificar`, formData, {
       validateStatus: function (status) {

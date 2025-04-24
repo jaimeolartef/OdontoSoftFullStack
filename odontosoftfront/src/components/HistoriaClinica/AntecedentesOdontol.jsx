@@ -5,7 +5,7 @@ import config from "../../config";
 const Antecedentes = ({formMedicalHistory, readOnly}) => {
 
   const [antecedentesOdont, setAntecedentesOdont] = useState([]);
-  const usuario = localStorage.getItem('username');
+  const usuario = sessionStorage.getItem('username');
 
   const mapAntecedenteOdont = (data) => ({
     id: data.id || '',

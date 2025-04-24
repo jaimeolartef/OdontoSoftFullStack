@@ -30,7 +30,7 @@ const CitaMedica = () => {
   const patient = useMemo(() => {
     return location.state?.patient || {};
   }, [location.state]);
-  const Rol = localStorage.getItem('Rol');
+  const Rol = sessionStorage.getItem('Rol');
 
   useEffect(() => {
     fetchOdontologos();
@@ -38,7 +38,7 @@ const CitaMedica = () => {
   }, []);
 
   const fetchOdontologos = async () => {
-    let token = localStorage.getItem('jsonwebtoken');
+    let token = sessionStorage.getItem('jsonwebtoken');
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     try {
       const response = await axios.get(`${config.baseURL}/doctor/consultar`);
@@ -52,7 +52,7 @@ const CitaMedica = () => {
 
   const fetchPacientes = async () => {
     if (Rol != 'Paciente') {
-      let token = localStorage.getItem('jsonwebtoken');
+      let token = sessionStorage.getItem('jsonwebtoken');
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       try {
         const response = await axios.get(`${config.baseURL}/pacientes/listar`);
@@ -75,10 +75,10 @@ const CitaMedica = () => {
         console.error('Error fetching patient data:', error);
       }
     } else {
-      let token = localStorage.getItem('jsonwebtoken');
+      let token = sessionStorage.getItem('jsonwebtoken');
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       try {
-        const response = await axios.get(`${config.baseURL}/pacientes/consultar/${localStorage.getItem('idPaciente')}`);
+        const response = await axios.get(`${config.baseURL}/pacientes/consultar/${sessionStorage.getItem('idPaciente')}`);
         if (response.status === 200) {
           setSelectedPaciente(response.data.id + ' - ' + (response.data.segundonombre == null ? '': response.data.segundonombre) + ' ' + response.data.primerapellido.trim() + ' ' + (response.data.segundoapellido == null ? '': response.data.segundoapellido.trim()));
         }
@@ -104,7 +104,7 @@ const CitaMedica = () => {
     let year = new Date().getFullYear();
     const odontoSelected = odontologo.findIndex(odontologo => odontologo.idMedico == odontoSelec[0]);
     if (odontoSelected > -1) {
-      let token = localStorage.getItem('jsonwebtoken');
+      let token = sessionStorage.getItem('jsonwebtoken');
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       try {
         const response = await axios.get(`${config.baseURL}/availability/doctor/${odontoSelec[0]}?month=${month}&year=${year}`);

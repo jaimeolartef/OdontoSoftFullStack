@@ -8,7 +8,7 @@ import config from '../../config';
 import showMessage from "../../util/UtilMessage";
 import {useNavigate} from "react-router-dom";
 const RegistroPaciente = () => {
-  const usuario = localStorage.getItem('username');
+  const usuario = sessionStorage.getItem('username');
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -75,7 +75,7 @@ const RegistroPaciente = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    let token = localStorage.getItem('jsonwebtoken');
+    let token = sessionStorage.getItem('jsonwebtoken');
 
     const responseValidate = await axios.get(`${config.baseURL}/pacientes/consultar`, {
       params: { documento: formData.documento },
@@ -133,7 +133,7 @@ const RegistroPaciente = () => {
   };
 
   const registrarUsuario = async (usuario) => {
-    let token = localStorage.getItem('jsonwebtoken');
+    let token = sessionStorage.getItem('jsonwebtoken');
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
     axios.post(`${config.baseURL}/user/signup`, usuario, {

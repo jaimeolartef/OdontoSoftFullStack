@@ -4,6 +4,8 @@ import config from "../../config";
 import showMessage from "../../util/UtilMessage";
 import {Tooltip} from "react-tooltip";
 import EliminarIcon from "../../resource/Eliminar.png";
+import EditIcon from '../../resource/EditIcon.png';
+import VerIcon from "../../resource/ver.png";
 
 const AyudaDiagnostica = ({formMedicalHistory, setFormMedicalHistory, readOnly}) => {
   const [TipoAyudaDiagnostica, setTipoAyudaDiagnostica] = useState([{
@@ -15,11 +17,11 @@ const AyudaDiagnostica = ({formMedicalHistory, setFormMedicalHistory, readOnly})
 
   const [ayudasDiagnostica, setAyudaDiagnostica] = useState(formMedicalHistory.ayudadiagnosticas);
   const [selectedAyudaDiagnostico, setSelectedAyudaDiagnostico] = useState('');
-  const usuario = localStorage.getItem('username');
+  const usuario = sessionStorage.getItem('username');
+  const token = sessionStorage.getItem('jsonwebtoken');
 
   useEffect(() => {
     const fetchTipoAyudaDiagnostico = async () => {
-      let token = localStorage.getItem('jsonwebtoken');
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       try {
         const response = await axios.get(`${config.baseURL}/tipoayudadiagnostico/consultar`);
@@ -73,6 +75,61 @@ const AyudaDiagnostica = ({formMedicalHistory, setFormMedicalHistory, readOnly})
     }));
   };
 
+  const handleAgregar = (idtipoayudadiag) => {
+    // Crear un elemento input type file y simular clic
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = '.pdf,.jpg,.png';
+    fileInput.onchange = async (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        console.log('Archivo seleccionado:', file.name);
+
+        try {
+          // Crear FormData para enviar el archivo
+          const formData = new FormData();
+          formData.append('file', file);
+          formData.append('idHistoriaClinica', formMedicalHistory.idHistoriaClinica);
+          formData.append('idTipoAyudaDiag', idtipoayudadiag);
+
+          // Obtener token de autenticación
+          axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+          // Enviar petición al servidor
+          const response = await axios.post(
+            `${config.baseURL}/tipoayudadiagnostico/subirArchivo`,
+            formData,
+            {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            }
+          );
+
+          if (response.status === 200) {
+            showMessage('success', 'Archivo subido correctamente');
+            // Actualizar datos si es necesario
+            handleUploadSuccess(response.data);
+          }
+        } catch (error) {
+          console.error('Error al subir el archivo:', error);
+          showMessage('error', 'Error al subir el archivo');
+        }
+      } else {
+        showMessage('error', 'No se seleccionó ningún archivo.');
+      }
+    };
+    fileInput.click();
+  };
+
+  const handleVer = (idtipoayudadiag) => {
+    alert(idtipoayudadiag);
+  };
+
+  const handleUploadSuccess = (data) => {
+    showMessage('success', 'Archivo subido con éxito.');
+  };
+
   return (
     <div className="card">
       <div className="card-header">
@@ -118,7 +175,19 @@ const AyudaDiagnostica = ({formMedicalHistory, setFormMedicalHistory, readOnly})
                   <td style={{width: '50%'}}>{diagnostico.descripciontipoayudadiag}</td>
                   <td>
                     {!readOnly && (
-                    <img src={EliminarIcon} alt="Eliminar"
+                      <img src={EditIcon} alt="Agregar Ayuda Diagnostica"
+                           style={{marginRight: '5px', width: '35px', height: '35px', cursor: 'pointer'}}
+                           onClick={() => handleAgregar(diagnostico.idtipoayudadiag)}
+                           data-tooltip-id="editTooltip" data-tooltip-content="Subir"/>
+                    )}
+                    {!readOnly && (
+                      <img src={VerIcon} alt="Ver Ayuda Diagnóstica"
+                           style={{marginRight: '5px', width: '35px', height: '35px', cursor: 'pointer'}}
+                           onClick={() => handleVer(diagnostico.idtipoayudadiag)}
+                           data-tooltip-id="editTooltip" data-tooltip-content="Ver"/>
+                    )}
+                    {!readOnly && (
+                    <img src={EliminarIcon} alt="Eliminar Ayuda Diagnóstica"
                          style={{marginRight: '5px', width: '35px', height: '35px', cursor: 'pointer'}}
                          onClick={() => handleDelete(index)}
                          data-tooltip-id="editTooltip" data-tooltip-content="Eliminar"/>

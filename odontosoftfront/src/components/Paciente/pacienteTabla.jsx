@@ -23,7 +23,7 @@ const PacienteTabla = ({ data, formData, permisosPaciente, permisosHistoria }) =
   };
 
   const handleEditClick = (paciente) => {
-    localStorage.setItem('consultarPacienteFormData', JSON.stringify(formData));
+    sessionStorage.setItem('consultarPacienteFormData', JSON.stringify(formData));
     navigate('/modificarPac', { state: { id: paciente.id } });
   };
 

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 
 const ExamenEstomatologico = ({ formMedicalHistory, setFormMedicalHistory, readOnly }) => {
-  const usuario = localStorage.getItem('username');
+  const usuario = sessionStorage.getItem('username');
   const handleChange = (e) => {
     const { name, checked } = e.target;
     let fecha = new Date().toISOString();

@@ -912,6 +912,18 @@ CREATE TABLE constantesistema
     descripcion VARCHAR(500),
     habilitado BOOLEAN DEFAULT TRUE NOT NULL
 );
+CREATE TABLE ayudaDiagnosticaarchivo (
+                                         id SERIAL PRIMARY KEY,
+                                         archivo_contenido BYTEA,
+                                         archivo_nombre VARCHAR(255),
+                                         archivo_tipo VARCHAR(100),
+                                         archivo_tamano BIGINT,
+                                         fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE ayudadiagnostica
+    ADD COLUMN idayudadiagnosticaarchivo INTEGER,
+    ADD CONSTRAINT fk_ayuda_diagnostica_archivo FOREIGN KEY (idayudadiagnosticaarchivo) REFERENCES ayudaDiagnosticaarchivo (id);
 
 -- Insertar la constante de duración de cita
 INSERT INTO constantesistema (codigo, nombre, valor, descripcion)

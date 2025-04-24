@@ -4,7 +4,7 @@ import config from "../../config";
 
 const Antecedentes = ({formMedicalHistory, readOnly}) => {
 
-  const usuario = localStorage.getItem('username');
+  const usuario = sessionStorage.getItem('username');
 
   useEffect(() => {
     // Este useEffect se ejecutará después del primer useEffect

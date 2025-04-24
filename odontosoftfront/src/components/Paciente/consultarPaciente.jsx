@@ -19,19 +19,19 @@ const ConsultarPaciente = () => {
     documento: '',
     nombre: ''
   });
-  const rol = localStorage.getItem('Rol');
+  const rol = sessionStorage.getItem('Rol');
 
   const [responseData, setResponseData] = useState([]);
 
   useEffect(() => {
     if (redireccionadoModificar) {
-      if (localStorage.getItem('consultarPacienteFormData')) {
-        setFormData(JSON.parse(localStorage.getItem('consultarPacienteFormData')));
-        fetchPacientes(JSON.parse(localStorage.getItem('consultarPacienteFormData'))).then(r => r);
-        localStorage.removeItem('consultarPacienteFormData');
+      if (sessionStorage.getItem('consultarPacienteFormData')) {
+        setFormData(JSON.parse(sessionStorage.getItem('consultarPacienteFormData')));
+        fetchPacientes(JSON.parse(sessionStorage.getItem('consultarPacienteFormData'))).then(r => r);
+        sessionStorage.removeItem('consultarPacienteFormData');
       }
-    } else if (localStorage.getItem('consultarPacienteFormData')) {
-      localStorage.removeItem('consultarPacienteFormData');
+    } else if (sessionStorage.getItem('consultarPacienteFormData')) {
+      sessionStorage.removeItem('consultarPacienteFormData');
     }
   }, []);
 
@@ -39,7 +39,7 @@ const ConsultarPaciente = () => {
     if (rol === 'Paciente') {
       setFormData((prevFormData) => ({
         ...prevFormData,
-        documento: localStorage.getItem('documento')
+        documento: sessionStorage.getItem('documento')
       }));
     }
   }, [rol]);
@@ -52,7 +52,7 @@ const ConsultarPaciente = () => {
 
   useEffect(() => {
     if (permisosHistoria.length === 0 && permisosPaciente.length === 0) {
-      let menuUser = JSON.parse(localStorage.getItem('menuUser'));
+      let menuUser = JSON.parse(sessionStorage.getItem('menuUser'));
       if (menuUser) {
         const newPermisosHistoria = [];
         const newPermisosPaciente = [];
@@ -105,7 +105,7 @@ const ConsultarPaciente = () => {
 
   const fetchPacientes = async (formData) => {
     try {
-      let token = localStorage.getItem('jsonwebtoken');
+      let token = sessionStorage.getItem('jsonwebtoken');
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       const response = await axios.get(`${config.baseURL}/pacientes/consultar`, {
         params: formData,

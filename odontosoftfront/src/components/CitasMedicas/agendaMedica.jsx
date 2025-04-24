@@ -63,8 +63,8 @@ const AgendaMedica = () => {
   };
 
   const fetchOdontologo = async () => {
-    let token = localStorage.getItem('jsonwebtoken');
-    const usuario = localStorage.getItem('username');
+    let token = sessionStorage.getItem('jsonwebtoken');
+    const usuario = sessionStorage.getItem('username');
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     try {
       const response = await axios.get(`${config.baseURL}/doctor/consultar/documento/` + usuario);
@@ -105,7 +105,7 @@ const AgendaMedica = () => {
   }
 
   const handleCitaClick = async (cita) => {
-    let token = localStorage.getItem('jsonwebtoken');
+    let token = sessionStorage.getItem('jsonwebtoken');
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     try {
       const response = await axios.get(`${config.baseURL}/historiaClinica/consultar/paciente/` + cita.idpaciente);
@@ -123,7 +123,7 @@ const AgendaMedica = () => {
   }
 
   const handlePatientClick = async (idpaciente) => {
-    let token = localStorage.getItem('jsonwebtoken');
+    let token = sessionStorage.getItem('jsonwebtoken');
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     try {
       const response = await axios.get(`${config.baseURL}/pacientes/consultar/` + idpaciente);

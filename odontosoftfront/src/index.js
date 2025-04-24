@@ -29,7 +29,7 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 
 const store = createStore(reducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())
 
-const token = localStorage.getItem("jsonwebtoken")
+const token = sessionStorage.getItem("jsonwebtoken")
 setAuthenticationHeader(token) // axios
 
 // perform a dispatch to change the global state

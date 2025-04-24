@@ -10,7 +10,7 @@ import showMessage from "../../../util/UtilMessage";
 const Odontograma = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const usuario = localStorage.getItem('username');
+  const usuario = sessionStorage.getItem('username');
 
   // Utiliza useMemo para memorizar el objeto patient
   const idHistoriaClinica = useMemo(() => {
@@ -46,7 +46,7 @@ const Odontograma = () => {
   });
 
   const handleToothClick = (indexSegmento, segmentos) => {
-    let usuario = localStorage.getItem('username');
+    let usuario = sessionStorage.getItem('username');
 
     Object.keys(segmentos).forEach(key => {
       if (initOdontograma.detalleodontogramas.length === 0) {
@@ -108,7 +108,7 @@ const Odontograma = () => {
   useEffect(() => {
     const fetchOdontograma = async () => {
       if (initOdontograma.id === '' || initOdontograma.id === 0) {
-        let token = localStorage.getItem('jsonwebtoken');
+        let token = sessionStorage.getItem('jsonwebtoken');
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         try {
           const response = await axios.get(`${config.baseURL}/odontograma/consultar/` + idHistoriaClinica);
@@ -184,7 +184,7 @@ const Odontograma = () => {
       }));
     }
 
-    let token = localStorage.getItem('jsonwebtoken');
+    let token = sessionStorage.getItem('jsonwebtoken');
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     axios.post(`${config.baseURL}/odontograma/guardar`, initOdontograma, {
       validateStatus: function (status) {

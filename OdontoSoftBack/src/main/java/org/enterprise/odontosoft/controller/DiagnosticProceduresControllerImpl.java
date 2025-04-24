@@ -10,9 +10,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @AllArgsConstructor
 @Controller
@@ -40,5 +43,40 @@ public class DiagnosticProceduresControllerImpl implements DiagnosticProceduresC
 			logger.error("Error getting medical history.", e);
 		}
 		return responseEntity;
+	}
+
+	@Override
+	public ResponseEntity<?> saveFile(MultipartFile file, Integer idHistoriaClinica, Integer idTipoAyudaDiag) {
+		try {
+			// Validar el archivo
+			if (file.isEmpty()) {
+				return ResponseEntity.badRequest().body("El archivo está vacío");
+			}
+
+			// Validar tipo de archivo (puedes añadir más validaciones según tus requisitos)
+			String contentType = file.getContentType();
+			if (contentType == null || (!contentType.startsWith("image/") && !contentType.equals("application/pdf"))) {
+				return ResponseEntity.badRequest().body("Tipo de archivo no permitido");
+			}
+
+			// Obtener bytes del archivo
+			byte[] fileBytes = file.getBytes();
+
+			// Guardar archivo en la base de datos o sistema de archivos
+			//crear el dao, crear el service y llamar al service desde aqui
+			// Implementa aquí la lógica para guardar en tu repositorio
+
+			// Ejemplo de respuesta exitosa
+			Map<String, Object> response = new HashMap<>();
+			response.put("message", "Archivo guardado correctamente");
+			response.put("fileName", file.getOriginalFilename());
+			response.put("fileSize", file.getSize());
+
+			return ResponseEntity.ok(response);
+
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+				.body("Error al procesar el archivo: " + e.getMessage());
+		}
 	}
 }

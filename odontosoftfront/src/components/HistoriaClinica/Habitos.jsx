@@ -4,7 +4,7 @@ import axios from "axios";
 
 const Habitos = ({formMedicalHistory, setFormMedicalHistory, readOnly}) => {
   const [habitos, setHabitos] = useState([]);
-  const usuario = localStorage.getItem('username');
+  const usuario = sessionStorage.getItem('username');
 
   const mapHabito = (data) => ({
     id: data.id || '',

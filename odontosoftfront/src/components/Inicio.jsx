@@ -5,8 +5,8 @@ const Inicio = () => {
   const [menu, setMenu] = useState([]);
 
   useEffect(() => {
-    // Cargar el menú desde el localStorage
-    const menuUser = localStorage.getItem('menuUser');
+    // Cargar el menú desde el sessionStorage
+    const menuUser = sessionStorage.getItem('menuUser');
     if (menuUser) {
       setMenu(JSON.parse(menuUser));
     }

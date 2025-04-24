@@ -13,7 +13,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import Logo from '../../resource/LogoNegro.png';
 
 const CargueCalendarioMasivo = () => {
-  const token = localStorage.getItem('jsonwebtoken');
+  const token = sessionStorage.getItem('jsonwebtoken');
   const [agenda , setAgenda] = useState([{}]);
   const [registro, setRegistro] = useState({
     idMedico: 0, anio: 0, mes: 0, diaSemana: 0, horainicioam: '', horafinam: '', horainiciopm: '', horafinpm: ''

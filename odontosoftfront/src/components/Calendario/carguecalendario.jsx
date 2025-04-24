@@ -10,7 +10,7 @@ import config from "../../config";
 import { Modal, Button } from 'react-bootstrap';
 
 const CargueCalendario = () => {
-  const token = localStorage.getItem('jsonwebtoken');
+  const token = sessionStorage.getItem('jsonwebtoken');
   const navigate = useNavigate();
   const [showPopup, setShowPopup] = useState(false);
   const [hours , setHours] = useState({
@@ -41,7 +41,7 @@ const CargueCalendario = () => {
   }, []);
 
   const fetchOdontologos = async () => {
-    let token = localStorage.getItem('jsonwebtoken');
+    let token = sessionStorage.getItem('jsonwebtoken');
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     try {
       const response = await axios.get(`${config.baseURL}/doctor/consultar`);

@@ -16,7 +16,7 @@ const RestaurarContrasenia = () => {
     confirmarClave: ''
   });
   const navigate = useNavigate();
-  const usuario = localStorage.getItem('username');
+  const usuario = sessionStorage.getItem('username');
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -55,7 +55,7 @@ const RestaurarContrasenia = () => {
 
       const loginResponse = await axios.post(`${config.baseURL}/user/login`, loginObj);
 
-      const token = localStorage.getItem('jsonwebtoken');
+      const token = sessionStorage.getItem('jsonwebtoken');
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       const resetResponse = await axios.put(`${config.baseURL}/user/resetpassword`, updatedPasswordObj);
       if (resetResponse.status === 200) {

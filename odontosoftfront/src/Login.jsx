@@ -63,34 +63,34 @@ const Login = (props) => {
         .then(response => {
           if (response.data) {
             axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
-            localStorage.setItem('jsonwebtoken', response.data.token);
+            sessionStorage.setItem('jsonwebtoken', response.data.token);
             usuarioDto.codigo = response.data.usuario;
             axios.post(`${config.baseURL}/user/validateRole`, usuarioDto)
               .then(responseMenu => {
                 const responseValidateRole = JSON.stringify(responseMenu.data.menus);
-                localStorage.setItem('menuUser', responseValidateRole);
+                sessionStorage.setItem('menuUser', responseValidateRole);
                 navigate('/inicio');
-                localStorage.setItem('username', usuarioDto.codigo);
-                localStorage.setItem('idPaciente', responseMenu.data.idPatient);
-                localStorage.setItem('Rol', responseMenu.data.rol);
+                sessionStorage.setItem('username', usuarioDto.codigo);
+                sessionStorage.setItem('idPaciente', responseMenu.data.idPatient);
+                sessionStorage.setItem('Rol', responseMenu.data.rol);
 
                 if (responseMenu.data.idPatient) {
                   axios.get(`${config.baseURL}/pacientes/consultar/${responseMenu.data.idPatient}`)
                     .then(response => {
-                      localStorage.setItem('documento', response.data.documento);
-                      localStorage.setItem('nombre', response.data.primernombre + (response.data.segundonombre ? ' ' + response.data.segundonombre : '') + ' ' + response.data.primerapellido + (response.data.segundoapellido ? ' ' + response.data.segundoapellido : ''));
+                      sessionStorage.setItem('documento', response.data.documento);
+                      sessionStorage.setItem('nombre', response.data.primernombre + (response.data.segundonombre ? ' ' + response.data.segundonombre : '') + ' ' + response.data.primerapellido + (response.data.segundoapellido ? ' ' + response.data.segundoapellido : ''));
                     })
                     .catch(error => {
                       console.error('Error fetching patient data:', error);
                     });
                 }
-                localStorage.setItem('nombre', responseMenu.data.nombreUsuario);
+                sessionStorage.setItem('nombre', responseMenu.data.nombreUsuario);
 
                 axios.get(`${config.baseURL}/constants`)
                   .then(response => {
                     console.log('Data -> ' + response.data);
                     response.data.forEach(constant => {
-                      localStorage.setItem(constant.codigo, constant.valor);
+                      sessionStorage.setItem(constant.codigo, constant.valor);
                     });
                   });
 

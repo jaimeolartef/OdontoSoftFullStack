@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 
 const SignosVitales = ({ formMedicalHistory, setFormMedicalHistory, readOnly }) => {
-  const usuario = localStorage.getItem('username');
+  const usuario = sessionStorage.getItem('username');
 
     const handleChange = (e) => {
       const { name, value } = e.target;

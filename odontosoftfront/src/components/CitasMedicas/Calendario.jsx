@@ -21,7 +21,7 @@ const Calendar = ({ availability, patient, Rol }) => {
   const [cancelReason, setCancelReason] = useState('');
   const [selectedCita, setSelectedCita] = useState(null);
   const [citasMedicas, setCitasMedicas] = useState([]);
-  const duracionCita = localStorage.getItem('DURACION_CITA');
+  const duracionCita = sessionStorage.getItem('DURACION_CITA');
 
   const monthNames = [
     'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
@@ -113,7 +113,7 @@ const Calendar = ({ availability, patient, Rol }) => {
 
 
   const fetchCitas = async (day, month, year) => {
-    let token = localStorage.getItem('jsonwebtoken');
+    let token = sessionStorage.getItem('jsonwebtoken');
     let odontoSelec = odontologoSelect();
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     let monthFormated = (month) < 10 ? '0' + (month) : month;
@@ -173,7 +173,7 @@ const Calendar = ({ availability, patient, Rol }) => {
       return;
     }
 
-    let token = localStorage.getItem('jsonwebtoken');
+    let token = sessionStorage.getItem('jsonwebtoken');
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
     let day = selectedDay < 10 ? '0' + selectedDay : selectedDay;
@@ -237,7 +237,7 @@ const Calendar = ({ availability, patient, Rol }) => {
   };
 
   const fetchCitaCancelada = async (citaCancelada) => {
-    let token = localStorage.getItem('jsonwebtoken');
+    let token = sessionStorage.getItem('jsonwebtoken');
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     try {
       const response = await axios.put(`${config.baseURL}/appointment/update`, citaCancelada);

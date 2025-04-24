@@ -37,17 +37,17 @@ function App() {
           .then(response => {
             if (response.data) {
               axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
-              localStorage.setItem('jsonwebtoken', response.data.token);
+              sessionStorage.setItem('jsonwebtoken', response.data.token);
               usuarioDto.codigo = response.data.usuario;
               axios.post(`${config.baseURL}/user/validateRole`, usuarioDto)
                 .then(responseMenu => {
                   const responseValidateRole = JSON.stringify(responseMenu.data.menus);
-                  localStorage.setItem('menuUser', responseValidateRole);
+                  sessionStorage.setItem('menuUser', responseValidateRole);
                 }).catch(error => {
                 showMessage('error','Error al validar el rol del usuario');
               })
               navigate('/inicio');
-              localStorage.setItem('username', usuarioDto.codigo);
+              sessionStorage.setItem('username', usuarioDto.codigo);
             }  else {
               showMessage('error','Error de autenticación, por favor validar sus credenciales');
             }
