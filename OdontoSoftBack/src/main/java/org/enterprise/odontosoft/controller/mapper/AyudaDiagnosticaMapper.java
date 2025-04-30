@@ -27,15 +27,16 @@ public class AyudaDiagnosticaMapper {
 
     public static AyudaDiagnosticaResponse toResponse(AyudaDiagnostica ayudaDiagnostica) {
         return AyudaDiagnosticaResponse.builder()
-                .id(ayudaDiagnostica.getId())
-                .idhistoriaclinica(ayudaDiagnostica.getIdhistoriaclinica().getId())
-                .idtipoayudadiag(ayudaDiagnostica.getIdtipoayudadiag().getId())
-                .codtipoayudadiag(ayudaDiagnostica.getIdtipoayudadiag().getCodigo())
-                .descripciontipoayudadiag(ayudaDiagnostica.getIdtipoayudadiag().getDescripcion())
-                .idusuariocreacion(ayudaDiagnostica.getIdusuariocreacion().getCodigo())
-                .fechacreacion(ayudaDiagnostica.getFechacreacion())
-                .idusuariomodificacion(Objects.nonNull(ayudaDiagnostica.getIdusuariomodificacion()) ? ayudaDiagnostica.getIdusuariomodificacion().getCodigo() : null)
-                .fechamodificacion(ayudaDiagnostica.getFechamodificacion())
-                .build();
+            .id(ayudaDiagnostica.getId())
+            .idhistoriaclinica(ayudaDiagnostica.getIdhistoriaclinica().getId())
+            .idtipoayudadiag(ayudaDiagnostica.getIdtipoayudadiag().getId())
+            .codtipoayudadiag(ayudaDiagnostica.getIdtipoayudadiag().getCodigo())
+            .descripciontipoayudadiag(ayudaDiagnostica.getIdtipoayudadiag().getDescripcion())
+            .idusuariocreacion(ayudaDiagnostica.getIdusuariocreacion().getCodigo())
+            .fechacreacion(ayudaDiagnostica.getFechacreacion())
+            .idusuariomodificacion(Objects.nonNull(ayudaDiagnostica.getIdusuariomodificacion()) ? ayudaDiagnostica.getIdusuariomodificacion().getCodigo() : null)
+            .fechamodificacion(ayudaDiagnostica.getFechamodificacion())
+            .ayudaDiagnosticaArchivoResponse(Objects.nonNull(ayudaDiagnostica.getIdayudadiagnosticaarchivo()) ? AyudaDiagnosticaArchivoMapper.toDto(ayudaDiagnostica.getIdayudadiagnosticaarchivo()) : null)
+            .build();
     }
 }

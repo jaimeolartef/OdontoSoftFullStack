@@ -2,7 +2,12 @@ package org.enterprise.odontosoft.controller;
 
 import lombok.AllArgsConstructor;
 import org.enterprise.odontosoft.controller.mapper.TipoAyudaDiagMapper;
+import org.enterprise.odontosoft.model.Dao.AyudaDiagnosticaDao;
 import org.enterprise.odontosoft.model.Dao.TipoAyudaDiagnosticaDao;
+import org.enterprise.odontosoft.model.Entity.AyudaDiagnostica;
+import org.enterprise.odontosoft.model.Entity.AyudaDiagnosticaArchivo;
+import org.enterprise.odontosoft.model.Service.AyudaDiagArchivoService;
+import org.enterprise.odontosoft.model.Service.AyudaDiagnosticaService;
 import org.enterprise.odontosoft.view.dto.response.OdontogramaResponse;
 import org.enterprise.odontosoft.view.dto.response.TipoAyudaDiagResponse;
 import org.slf4j.Logger;
@@ -12,10 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @AllArgsConstructor
 @Controller
@@ -23,14 +26,16 @@ public class DiagnosticProceduresControllerImpl implements DiagnosticProceduresC
 
 	private static final Logger logger = LoggerFactory.getLogger(DiagnosticProceduresControllerImpl.class);
 
-	private final TipoAyudaDiagnosticaDao ayudaDiagnosticaDao;
+	private final TipoAyudaDiagnosticaDao tipoAyudaDiagnosticaDao;
+	private final AyudaDiagnosticaService ayudaDiagnosticaService;
+	private final AyudaDiagArchivoService ayudaDiagArchivoService;
 
 	@Override
 	public ResponseEntity<List<TipoAyudaDiagResponse>> getAllDiagnosticProcedures() {
 		ResponseEntity<List<TipoAyudaDiagResponse>> responseEntity = null;
 		List<TipoAyudaDiagResponse> tipoAyudaDiagsResponse = new ArrayList<>();
 		try {
-			ayudaDiagnosticaDao.findAll().forEach(tipoAyudaDiag -> {
+			tipoAyudaDiagnosticaDao.findAll().forEach(tipoAyudaDiag -> {
 				tipoAyudaDiagsResponse.add(TipoAyudaDiagMapper.toResponse(tipoAyudaDiag));
 			});
 
@@ -46,7 +51,7 @@ public class DiagnosticProceduresControllerImpl implements DiagnosticProceduresC
 	}
 
 	@Override
-	public ResponseEntity<?> saveFile(MultipartFile file, Integer idHistoriaClinica, Integer idTipoAyudaDiag) {
+	public ResponseEntity<?> saveFile(MultipartFile file, Integer idAyudaDiag) {
 		try {
 			// Validar el archivo
 			if (file.isEmpty()) {
@@ -63,8 +68,22 @@ public class DiagnosticProceduresControllerImpl implements DiagnosticProceduresC
 			byte[] fileBytes = file.getBytes();
 
 			// Guardar archivo en la base de datos o sistema de archivos
-			//crear el dao, crear el service y llamar al service desde aqui
-			// Implementa aquí la lógica para guardar en tu repositorio
+			AyudaDiagnosticaArchivo ayudaDiagnosticaArchivo = ayudaDiagArchivoService.saveAyudaDiagnosticaArchivo(AyudaDiagnosticaArchivo.builder()
+				.archivoContenido(fileBytes)
+				.archivoNombre(file.getOriginalFilename())
+				.archivoTamanio(file.getSize())
+				.archivoTipo(contentType)
+				.fechaCreacion(LocalDateTime.now())
+				.build());
+
+			if (Objects.nonNull(ayudaDiagnosticaArchivo)) {
+				// Guardar la relación con el tipo de ayuda diagnóstica
+				AyudaDiagnostica ayudaDiagnostica = ayudaDiagnosticaService.getAyudaDiagnosticaById(idAyudaDiag);
+				if (ayudaDiagnostica != null) {
+					ayudaDiagnostica.setIdayudadiagnosticaarchivo(AyudaDiagnosticaArchivo.builder().id(ayudaDiagnosticaArchivo.getId()).build());
+					ayudaDiagnosticaService.saveAyudaDiagnostica(ayudaDiagnostica);
+				}
+			}
 
 			// Ejemplo de respuesta exitosa
 			Map<String, Object> response = new HashMap<>();

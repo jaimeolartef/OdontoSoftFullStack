@@ -10,5 +10,5 @@ public interface DiagnosticProceduresController {
 
 	ResponseEntity<List<TipoAyudaDiagResponse>> getAllDiagnosticProcedures();
 
-	ResponseEntity<?> saveFile(MultipartFile file, Integer idHistoriaClinica, Integer idTipoAyudaDiag);
+	ResponseEntity<?> saveFile(MultipartFile file, Integer idTipoAyudaDiag);
 }

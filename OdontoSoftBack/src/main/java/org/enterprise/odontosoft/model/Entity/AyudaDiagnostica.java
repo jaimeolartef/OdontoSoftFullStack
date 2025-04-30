@@ -47,4 +47,8 @@ public class AyudaDiagnostica {
     @Column(name = "fechamodificacion")
     private LocalDateTime fechamodificacion;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "idayudadiagnosticaarchivo")
+    private AyudaDiagnosticaArchivo idayudadiagnosticaarchivo;
+
 }

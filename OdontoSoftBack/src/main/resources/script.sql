@@ -914,11 +914,11 @@ CREATE TABLE constantesistema
 );
 CREATE TABLE ayudaDiagnosticaarchivo (
                                          id SERIAL PRIMARY KEY,
-                                         archivo_contenido BYTEA,
-                                         archivo_nombre VARCHAR(255),
-                                         archivo_tipo VARCHAR(100),
-                                         archivo_tamano BIGINT,
-                                         fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                                         archivocontenido BYTEA,
+                                         archivonombre VARCHAR(255),
+                                         archivotipo VARCHAR(100),
+                                         archivotamano BIGINT,
+                                         fechaCreacion date null
 );
 
 ALTER TABLE ayudadiagnostica

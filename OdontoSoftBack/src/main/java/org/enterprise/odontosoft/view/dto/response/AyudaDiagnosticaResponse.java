@@ -35,4 +35,6 @@ public class AyudaDiagnosticaResponse {
     private String idusuariomodificacion;
 
     private LocalDateTime fechamodificacion;
+
+    private AyudaDiagnosticaArchivoResponse ayudaDiagnosticaArchivoResponse;
 }

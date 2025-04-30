@@ -33,6 +33,7 @@ const AyudaDiagnostica = ({formMedicalHistory, setFormMedicalHistory, readOnly})
       }
     }
     fetchTipoAyudaDiagnostico();
+    console.log(formMedicalHistory)
   }, [formMedicalHistory]);
 
 
@@ -89,7 +90,6 @@ const AyudaDiagnostica = ({formMedicalHistory, setFormMedicalHistory, readOnly})
           // Crear FormData para enviar el archivo
           const formData = new FormData();
           formData.append('file', file);
-          formData.append('idHistoriaClinica', formMedicalHistory.idHistoriaClinica);
           formData.append('idTipoAyudaDiag', idtipoayudadiag);
 
           // Obtener token de autenticación
@@ -108,8 +108,6 @@ const AyudaDiagnostica = ({formMedicalHistory, setFormMedicalHistory, readOnly})
 
           if (response.status === 200) {
             showMessage('success', 'Archivo subido correctamente');
-            // Actualizar datos si es necesario
-            handleUploadSuccess(response.data);
           }
         } catch (error) {
           console.error('Error al subir el archivo:', error);
@@ -124,10 +122,6 @@ const AyudaDiagnostica = ({formMedicalHistory, setFormMedicalHistory, readOnly})
 
   const handleVer = (idtipoayudadiag) => {
     alert(idtipoayudadiag);
-  };
-
-  const handleUploadSuccess = (data) => {
-    showMessage('success', 'Archivo subido con éxito.');
   };
 
   return (
@@ -177,13 +171,13 @@ const AyudaDiagnostica = ({formMedicalHistory, setFormMedicalHistory, readOnly})
                     {!readOnly && (
                       <img src={EditIcon} alt="Agregar Ayuda Diagnostica"
                            style={{marginRight: '5px', width: '35px', height: '35px', cursor: 'pointer'}}
-                           onClick={() => handleAgregar(diagnostico.idtipoayudadiag)}
+                           onClick={() => handleAgregar(diagnostico.id)}
                            data-tooltip-id="editTooltip" data-tooltip-content="Subir"/>
                     )}
                     {!readOnly && (
                       <img src={VerIcon} alt="Ver Ayuda Diagnóstica"
                            style={{marginRight: '5px', width: '35px', height: '35px', cursor: 'pointer'}}
-                           onClick={() => handleVer(diagnostico.idtipoayudadiag)}
+                           onClick={() => handleVer(diagnostico.id)}
                            data-tooltip-id="editTooltip" data-tooltip-content="Ver"/>
                     )}
                     {!readOnly && (

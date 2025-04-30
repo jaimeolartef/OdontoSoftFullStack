@@ -22,9 +22,8 @@ public class DiagnosticProceduresView {
 	@PostMapping("/subirArchivo")
 	public ResponseEntity<?> uploadFile(
 		@RequestParam("file") MultipartFile file,
-		@RequestParam("idHistoriaClinica") Integer idHistoriaClinica,
 		@RequestParam("idTipoAyudaDiag") Integer idTipoAyudaDiag) {
 
-		return diagnosticProceduresController.saveFile(file, idHistoriaClinica, idTipoAyudaDiag);
+		return diagnosticProceduresController.saveFile(file, idTipoAyudaDiag);
 	}
 }
