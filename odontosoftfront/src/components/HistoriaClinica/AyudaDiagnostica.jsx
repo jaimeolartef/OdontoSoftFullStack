@@ -87,6 +87,11 @@ const AyudaDiagnostica = ({formMedicalHistory, setFormMedicalHistory, readOnly})
       const file = e.target.files[0];
       if (file) {
         // Validación de tamaño...
+        if (file.size > 1 * 1024 * 1024) { // debe ser parametrizable y en spring boot tambien
+          showMessage('warning', 'El archivo es demasiado grande. El tamaño máximo permitido es de 5 MB.');
+          return;
+        }
+
         try {
           // Crear FormData para enviar el archivo
           const formData = new FormData();

@@ -70,6 +70,13 @@ public class DiagnosticProceduresControllerImpl implements DiagnosticProceduresC
 			// Obtener bytes del archivo
 			byte[] fileBytes = file.getBytes();
 
+			AyudaDiagnostica ayudaDiagnostica = ayudaDiagnosticaService.getAyudaDiagnosticaById(idAyudaDiag);
+
+			Integer idAyudaDiagnosticaArchivo = null;
+			if (Objects.nonNull(ayudaDiagnostica) && Objects.nonNull(ayudaDiagnostica.getIdayudadiagnosticaarchivo())) {
+				idAyudaDiagnosticaArchivo = ayudaDiagnostica.getIdayudadiagnosticaarchivo().getId();
+			}
+
 			// Guardar archivo en la base de datos o sistema de archivos
 			AyudaDiagnosticaArchivo ayudaDiagnosticaArchivo = ayudaDiagArchivoService.saveAyudaDiagnosticaArchivo(AyudaDiagnosticaArchivo.builder()
 				.archivoContenido(fileBytes)
@@ -77,11 +84,10 @@ public class DiagnosticProceduresControllerImpl implements DiagnosticProceduresC
 				.archivoTamanio(file.getSize())
 				.archivoTipo(contentType)
 				.fechaCreacion(LocalDateTime.now())
+				.id(idAyudaDiagnosticaArchivo)
 				.build());
 
 			if (Objects.nonNull(ayudaDiagnosticaArchivo)) {
-				// Guardar la relación con el tipo de ayuda diagnóstica
-				AyudaDiagnostica ayudaDiagnostica = ayudaDiagnosticaService.getAyudaDiagnosticaById(idAyudaDiag);
 				if (ayudaDiagnostica != null) {
 					ayudaDiagnostica.setIdayudadiagnosticaarchivo(AyudaDiagnosticaArchivo.builder().id(ayudaDiagnosticaArchivo.getId()).build());
 					ayudaDiagnosticaService.saveAyudaDiagnostica(ayudaDiagnostica);
