@@ -67,7 +67,7 @@ const MedicalRecord = () => {
       formMedicalHistory.idusuariocreacion = usuario;
       formMedicalHistory.fechacreacion = new Date().toISOString();
     }
-    
+
     let token = sessionStorage.getItem('jsonwebtoken');
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     axios.post(`${config.baseURL}/historiaClinica/crear`, formMedicalHistory, {
@@ -77,8 +77,17 @@ const MedicalRecord = () => {
     })
       .then(response => {
         if (response.status === 201) {
-          navigate(-1);
-          showMessage('success', 'La historia clínica se guardo con éxito');
+          showMessage('success', 'La historia clínica se guardó con éxito');
+          console.log("Datos actualizados:", response.data);
+
+          // Obtener el ID de la historia clínica del response si es nueva
+          const idHistoriaClinica = formMedicalHistory.idHistoriaClinica || response.data.id;
+
+          // Recargar la historia clínica con los datos actualizados
+          if (idHistoriaClinica) {
+            LoadMedicalRecord(idHistoriaClinica);
+            console.log("Recargando historia clínica con ID:", idHistoriaClinica);
+          }
         } else {
           showMessage('error', 'Error al guardar la historia clínica');
         }
@@ -87,6 +96,27 @@ const MedicalRecord = () => {
         showMessage('error', 'Error al guardar la historia clínica');
       });
   }
+
+  // Función para mapear los datos de la historia clínica
+  const LoadMedicalRecord = async (idHistoriaClinica) => {
+    try {
+      let token = sessionStorage.getItem('jsonwebtoken');
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+      const response = await axios.get(`${config.baseURL}/historiaClinica/consultar/${idHistoriaClinica}`);
+      console.log("Historia clínica recargada:", response.data);
+
+      if (response.status === 200) {
+        // Actualizar el estado con los datos obtenidos
+        setFormMedicalHistory(mapMedicalHistory(response.data));
+      } else {
+        console.error('Error al cargar la historia clínica:', response.status);
+      }
+    } catch (error) {
+      console.error('Error al recargar la historia clínica:', error);
+      showMessage('error', 'Error al recargar los datos');
+    }
+  };
 
   const mapMedicalHistory = (data) => {
     const mappedData = {
@@ -129,6 +159,7 @@ const MedicalRecord = () => {
     const fetchData = async () => {
       if (formPatient.idPaciente && formPatient.idHistoriaClinica) {
         const response = await axios.get(`${config.baseURL}/historiaClinica/consultar/` + patient.idHistoriaClinica);
+        console.log("Historia clínica inicia web:", response.data);
         setFormMedicalHistory(mapMedicalHistory(response.data));
       } else {
         setFormMedicalHistory(mapMedicalHistory({idpaciente: formPatient.idPaciente}));

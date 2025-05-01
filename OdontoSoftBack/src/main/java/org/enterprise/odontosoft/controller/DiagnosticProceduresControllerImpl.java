@@ -1,6 +1,7 @@
 package org.enterprise.odontosoft.controller;
 
 import lombok.AllArgsConstructor;
+import org.enterprise.odontosoft.controller.mapper.AyudaDiagnosticaArchivoMapper;
 import org.enterprise.odontosoft.controller.mapper.TipoAyudaDiagMapper;
 import org.enterprise.odontosoft.model.Dao.AyudaDiagnosticaDao;
 import org.enterprise.odontosoft.model.Dao.TipoAyudaDiagnosticaDao;
@@ -8,6 +9,7 @@ import org.enterprise.odontosoft.model.Entity.AyudaDiagnostica;
 import org.enterprise.odontosoft.model.Entity.AyudaDiagnosticaArchivo;
 import org.enterprise.odontosoft.model.Service.AyudaDiagArchivoService;
 import org.enterprise.odontosoft.model.Service.AyudaDiagnosticaService;
+import org.enterprise.odontosoft.view.dto.response.AyudaDiagnosticaArchivoResponse;
 import org.enterprise.odontosoft.view.dto.response.OdontogramaResponse;
 import org.enterprise.odontosoft.view.dto.response.TipoAyudaDiagResponse;
 import org.slf4j.Logger;
@@ -51,17 +53,18 @@ public class DiagnosticProceduresControllerImpl implements DiagnosticProceduresC
 	}
 
 	@Override
-	public ResponseEntity<?> saveFile(MultipartFile file, Integer idAyudaDiag) {
+	public ResponseEntity<AyudaDiagnosticaArchivoResponse> saveFile(MultipartFile file, Integer idAyudaDiag) {
+		ResponseEntity<AyudaDiagnosticaArchivoResponse> responseEntity = null;
 		try {
 			// Validar el archivo
 			if (file.isEmpty()) {
-				return ResponseEntity.badRequest().body("El archivo está vacío");
+				responseEntity = ResponseEntity.status(HttpStatus.NOT_FOUND).body(new AyudaDiagnosticaArchivoResponse(String.valueOf(HttpStatus.NOT_FOUND.value()), "El archivo esta vacio"));
 			}
 
 			// Validar tipo de archivo (puedes añadir más validaciones según tus requisitos)
 			String contentType = file.getContentType();
 			if (contentType == null || (!contentType.startsWith("image/") && !contentType.equals("application/pdf"))) {
-				return ResponseEntity.badRequest().body("Tipo de archivo no permitido");
+				responseEntity = ResponseEntity.status(HttpStatus.NOT_FOUND).body(new AyudaDiagnosticaArchivoResponse(String.valueOf(HttpStatus.NOT_FOUND.value()), "Tipo de archivo no permitido"));
 			}
 
 			// Obtener bytes del archivo
@@ -86,16 +89,13 @@ public class DiagnosticProceduresControllerImpl implements DiagnosticProceduresC
 			}
 
 			// Ejemplo de respuesta exitosa
-			Map<String, Object> response = new HashMap<>();
-			response.put("message", "Archivo guardado correctamente");
-			response.put("fileName", file.getOriginalFilename());
-			response.put("fileSize", file.getSize());
 
-			return ResponseEntity.ok(response);
-
+			responseEntity =  ResponseEntity.status(HttpStatus.OK)
+				.body(AyudaDiagnosticaArchivoMapper.toDto(ayudaDiagnosticaArchivo));
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-				.body("Error al procesar el archivo: " + e.getMessage());
+			responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+			logger.error("Error getting medical history.", e);
 		}
+		return responseEntity;
 	}
 }

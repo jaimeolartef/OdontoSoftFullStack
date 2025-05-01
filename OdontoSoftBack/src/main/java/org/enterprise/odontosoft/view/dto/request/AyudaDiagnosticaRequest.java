@@ -27,4 +27,6 @@ public class AyudaDiagnosticaRequest {
     private String idusuariomodificacion;
 
     private LocalDateTime fechamodificacion;
+
+    private AyudaDiagnosticaArchivoRequest idayudadiagnosticaarchivo;
 }

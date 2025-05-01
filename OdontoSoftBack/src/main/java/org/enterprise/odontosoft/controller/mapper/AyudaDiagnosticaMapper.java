@@ -15,14 +15,15 @@ public class AyudaDiagnosticaMapper {
 
     public static AyudaDiagnostica toEntity(AyudaDiagnosticaRequest ayudaDiagnosticaRequest) {
         return AyudaDiagnostica.builder()
-                .id(ayudaDiagnosticaRequest.getId())
-                .idhistoriaclinica(HistoriaClinica.builder().id(ayudaDiagnosticaRequest.getIdhistoriaclinica()).build())
-                 .idtipoayudadiag(TipoAyudaDiag.builder().id(ayudaDiagnosticaRequest.getIdtipoayudadiag()).build())
-                .idusuariocreacion(Usuario.builder().codigo(ayudaDiagnosticaRequest.getIdusuariocreacion()).build())
-                .fechacreacion(ayudaDiagnosticaRequest.getFechacreacion())
-                .idusuariomodificacion(Objects.nonNull(ayudaDiagnosticaRequest.getIdusuariomodificacion()) ? Usuario.builder().codigo(ayudaDiagnosticaRequest.getIdusuariomodificacion()).build(): null)
-                .fechamodificacion(ayudaDiagnosticaRequest.getFechamodificacion())
-                .build();
+            .id(ayudaDiagnosticaRequest.getId())
+            .idhistoriaclinica(HistoriaClinica.builder().id(ayudaDiagnosticaRequest.getIdhistoriaclinica()).build())
+            .idtipoayudadiag(TipoAyudaDiag.builder().id(ayudaDiagnosticaRequest.getIdtipoayudadiag()).build())
+            .idusuariocreacion(Usuario.builder().codigo(ayudaDiagnosticaRequest.getIdusuariocreacion()).build())
+            .fechacreacion(ayudaDiagnosticaRequest.getFechacreacion())
+            .idusuariomodificacion(Objects.nonNull(ayudaDiagnosticaRequest.getIdusuariomodificacion()) ? Usuario.builder().codigo(ayudaDiagnosticaRequest.getIdusuariomodificacion()).build() : null)
+            .idayudadiagnosticaarchivo(Objects.isNull(ayudaDiagnosticaRequest.getIdayudadiagnosticaarchivo()) ? null : AyudaDiagnosticaArchivoMapper.toEntity(ayudaDiagnosticaRequest.getIdayudadiagnosticaarchivo()))
+            .fechamodificacion(ayudaDiagnosticaRequest.getFechamodificacion())
+            .build();
     }
 
     public static AyudaDiagnosticaResponse toResponse(AyudaDiagnostica ayudaDiagnostica) {
@@ -36,7 +37,7 @@ public class AyudaDiagnosticaMapper {
             .fechacreacion(ayudaDiagnostica.getFechacreacion())
             .idusuariomodificacion(Objects.nonNull(ayudaDiagnostica.getIdusuariomodificacion()) ? ayudaDiagnostica.getIdusuariomodificacion().getCodigo() : null)
             .fechamodificacion(ayudaDiagnostica.getFechamodificacion())
-            .ayudaDiagnosticaArchivoResponse(Objects.nonNull(ayudaDiagnostica.getIdayudadiagnosticaarchivo()) ? AyudaDiagnosticaArchivoMapper.toDto(ayudaDiagnostica.getIdayudadiagnosticaarchivo()) : null)
+            .idayudadiagnosticaarchivo(Objects.nonNull(ayudaDiagnostica.getIdayudadiagnosticaarchivo()) ? AyudaDiagnosticaArchivoMapper.toDto(ayudaDiagnostica.getIdayudadiagnosticaarchivo()) : null)
             .build();
     }
 }

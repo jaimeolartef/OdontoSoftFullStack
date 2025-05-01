@@ -6,6 +6,7 @@ import {Tooltip} from "react-tooltip";
 import EliminarIcon from "../../resource/Eliminar.png";
 import EditIcon from '../../resource/EditIcon.png';
 import VerIcon from "../../resource/ver.png";
+import { mostrarArchivoModal } from '../../../src/components/HistoriaClinica/FileViewerModal';
 
 const AyudaDiagnostica = ({formMedicalHistory, setFormMedicalHistory, readOnly}) => {
   const [TipoAyudaDiagnostica, setTipoAyudaDiagnostica] = useState([{
@@ -77,22 +78,22 @@ const AyudaDiagnostica = ({formMedicalHistory, setFormMedicalHistory, readOnly})
   };
 
   const handleAgregar = (idtipoayudadiag) => {
-    // Crear un elemento input type file y simular clic
+    // Validaciones existentes...
+
     const fileInput = document.createElement('input');
     fileInput.type = 'file';
     fileInput.accept = '.pdf,.jpg,.png';
     fileInput.onchange = async (e) => {
       const file = e.target.files[0];
       if (file) {
-        console.log('Archivo seleccionado:', file.name);
-
+        // Validación de tamaño...
         try {
           // Crear FormData para enviar el archivo
           const formData = new FormData();
           formData.append('file', file);
+          formData.append('idHistoriaClinica', formMedicalHistory.idHistoriaClinica);
           formData.append('idTipoAyudaDiag', idtipoayudadiag);
 
-          // Obtener token de autenticación
           axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
           // Enviar petición al servidor
@@ -108,20 +109,54 @@ const AyudaDiagnostica = ({formMedicalHistory, setFormMedicalHistory, readOnly})
 
           if (response.status === 200) {
             showMessage('success', 'Archivo subido correctamente');
+
+            // Capturar el ID del archivo subido si está disponible en la respuesta
+            const archivoId = response.data.id || response.data.archivoId;
+            console.log('Archivo ID:', response.data);
+
+            formMedicalHistory.ayudadiagnosticas.forEach((ayudaDiagnostica) => {
+              console.log(ayudaDiagnostica.idtipoayudadiag);
+              console.log(idtipoayudadiag);
+              if (ayudaDiagnostica.id === idtipoayudadiag) {
+                ayudaDiagnostica.idayudadiagnosticaarchivo = {
+                  id: response.data.id,
+                  archivoContenido: response.data.archivoContenido,
+                  archivoTipo: response.data.archivoTipo,
+                  archivoNombre: response.data.archivoNombre,
+                  archivoTamanio: response.data.archivoTamanio
+                };
+              }
+            });
+            console.log('Archivo cargado', formMedicalHistory);
           }
         } catch (error) {
           console.error('Error al subir el archivo:', error);
           showMessage('error', 'Error al subir el archivo');
         }
-      } else {
-        showMessage('error', 'No se seleccionó ningún archivo.');
       }
     };
     fileInput.click();
   };
 
   const handleVer = (idtipoayudadiag) => {
-    alert(idtipoayudadiag);
+    // Buscar la ayuda diagnóstica correspondiente
+    const ayudaDiagnostica = formMedicalHistory.ayudadiagnosticas.find(
+      item => item.id === idtipoayudadiag
+    );
+
+    visualizarArchivoDiagnostico(ayudaDiagnostica);
+  };
+
+  const visualizarArchivoDiagnostico = (ayudaDiagnostica) => {
+    if (!ayudaDiagnostica || !ayudaDiagnostica.idayudadiagnosticaarchivo) {
+      showMessage('warning', 'No hay archivo disponible para visualizar');
+      return;
+    }
+
+    const archivoData = ayudaDiagnostica.idayudadiagnosticaarchivo;
+    const { archivoContenido, archivoTipo, archivoNombre } = archivoData;
+
+    mostrarArchivoModal(archivoContenido, archivoTipo, archivoNombre);
   };
 
   return (

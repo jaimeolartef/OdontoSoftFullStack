@@ -1,21 +1,19 @@
 package org.enterprise.odontosoft.view.dto.response;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
+
 import lombok.*;
-import org.enterprise.odontosoft.model.Entity.AyudaDiagnostica;
-import org.hibernate.annotations.ColumnDefault;
+import lombok.experimental.SuperBuilder;
+import org.enterprise.odontosoft.view.dto.MensajeValidation;
 
 import java.time.LocalDateTime;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
+@SuperBuilder
 @NoArgsConstructor
 @Builder
 @Getter
 @Setter
 @AllArgsConstructor
-public class AyudaDiagnosticaArchivoResponse {
+public class AyudaDiagnosticaArchivoResponse extends MensajeValidation {
 
 	private Integer id;
 	private byte[] archivoContenido;
@@ -24,4 +22,7 @@ public class AyudaDiagnosticaArchivoResponse {
 	private Long archivoTamanio;
 	private LocalDateTime fechaCreacion;
 
+	public AyudaDiagnosticaArchivoResponse(String codigoValidacion, String mensajeValidacion) {
+		super(codigoValidacion, mensajeValidacion);
+	}
 }

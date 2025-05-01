@@ -36,5 +36,5 @@ public class AyudaDiagnosticaResponse {
 
     private LocalDateTime fechamodificacion;
 
-    private AyudaDiagnosticaArchivoResponse ayudaDiagnosticaArchivoResponse;
+    private AyudaDiagnosticaArchivoResponse idayudadiagnosticaarchivo;
 }
