@@ -1,7 +1,7 @@
 package org.enterprise.odontosoft.controller.mapper;
 
 import lombok.experimental.UtilityClass;
-import org.enterprise.odontosoft.model.Entity.Habito;
+import org.enterprise.odontosoft.model.entity.Habito;
 import org.enterprise.odontosoft.view.dto.request.HabitoRequest;
 import org.enterprise.odontosoft.view.dto.response.HabitoResponse;
 

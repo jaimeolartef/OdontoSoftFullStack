@@ -1,9 +1,9 @@
 package org.enterprise.odontosoft.controller.mapper;
 
 import lombok.experimental.UtilityClass;
-import org.enterprise.odontosoft.model.Entity.HistoriaClinica;
-import org.enterprise.odontosoft.model.Entity.SignoVital;
-import org.enterprise.odontosoft.model.Entity.Usuario;
+import org.enterprise.odontosoft.model.entity.HistoriaClinica;
+import org.enterprise.odontosoft.model.entity.SignoVital;
+import org.enterprise.odontosoft.model.entity.Usuario;
 import org.enterprise.odontosoft.view.dto.request.SignoVitalRequest;
 import org.enterprise.odontosoft.view.dto.response.SignoVitalResponse;
 

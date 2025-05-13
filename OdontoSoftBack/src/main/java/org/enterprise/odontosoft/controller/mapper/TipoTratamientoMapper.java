@@ -1,6 +1,6 @@
 package org.enterprise.odontosoft.controller.mapper;
 
-import org.enterprise.odontosoft.model.Entity.TipoTratamiento;
+import org.enterprise.odontosoft.model.entity.TipoTratamiento;
 import org.enterprise.odontosoft.view.dto.request.TipoTratamientoRequest;
 import org.enterprise.odontosoft.view.dto.response.TipoTratamientoResponse;
 

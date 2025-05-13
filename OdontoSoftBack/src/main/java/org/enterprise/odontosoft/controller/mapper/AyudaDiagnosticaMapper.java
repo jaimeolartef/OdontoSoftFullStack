@@ -1,10 +1,10 @@
 package org.enterprise.odontosoft.controller.mapper;
 
 import lombok.experimental.UtilityClass;
-import org.enterprise.odontosoft.model.Entity.AyudaDiagnostica;
-import org.enterprise.odontosoft.model.Entity.HistoriaClinica;
-import org.enterprise.odontosoft.model.Entity.TipoAyudaDiag;
-import org.enterprise.odontosoft.model.Entity.Usuario;
+import org.enterprise.odontosoft.model.entity.AyudaDiagnostica;
+import org.enterprise.odontosoft.model.entity.HistoriaClinica;
+import org.enterprise.odontosoft.model.entity.TipoAyudaDiag;
+import org.enterprise.odontosoft.model.entity.Usuario;
 import org.enterprise.odontosoft.view.dto.request.AyudaDiagnosticaRequest;
 import org.enterprise.odontosoft.view.dto.response.AyudaDiagnosticaResponse;
 

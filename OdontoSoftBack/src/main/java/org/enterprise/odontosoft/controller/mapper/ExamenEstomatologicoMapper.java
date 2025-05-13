@@ -1,9 +1,8 @@
 package org.enterprise.odontosoft.controller.mapper;
 
 import lombok.experimental.UtilityClass;
-import org.enterprise.odontosoft.model.Entity.ExamenEstomatologico;
-import org.enterprise.odontosoft.model.Entity.HistoriaClinica;
-import org.enterprise.odontosoft.model.Entity.Usuario;
+import org.enterprise.odontosoft.model.entity.ExamenEstomatologico;
+import org.enterprise.odontosoft.model.entity.Usuario;
 import org.enterprise.odontosoft.view.dto.request.ExamenEstomatologicoRequest;
 import org.enterprise.odontosoft.view.dto.response.ExamenEstomatologicoResponse;
 

@@ -1,10 +1,10 @@
 package org.enterprise.odontosoft.controller.mapper;
 
 import lombok.experimental.UtilityClass;
-import org.enterprise.odontosoft.model.Entity.HistoriaClinica;
-import org.enterprise.odontosoft.model.Entity.PlanTratamiento;
-import org.enterprise.odontosoft.model.Entity.TipoTratamiento;
-import org.enterprise.odontosoft.model.Entity.Usuario;
+import org.enterprise.odontosoft.model.entity.HistoriaClinica;
+import org.enterprise.odontosoft.model.entity.PlanTratamiento;
+import org.enterprise.odontosoft.model.entity.TipoTratamiento;
+import org.enterprise.odontosoft.model.entity.Usuario;
 import org.enterprise.odontosoft.view.dto.request.PlanTratamientoRequest;
 import org.enterprise.odontosoft.view.dto.response.PlanTratamientoResponse;
 

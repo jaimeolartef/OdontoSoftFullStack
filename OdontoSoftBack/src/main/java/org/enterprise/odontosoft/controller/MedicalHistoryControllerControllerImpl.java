@@ -4,9 +4,9 @@ import io.micrometer.common.util.StringUtils;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
 import org.enterprise.odontosoft.controller.mapper.*;
-import org.enterprise.odontosoft.model.Dao.*;
-import org.enterprise.odontosoft.model.Entity.*;
-import org.enterprise.odontosoft.model.Service.MedicalHistoryService;
+import org.enterprise.odontosoft.model.dao.*;
+import org.enterprise.odontosoft.model.entity.*;
+import org.enterprise.odontosoft.model.service.MedicalHistoryService;
 import org.enterprise.odontosoft.view.dto.request.HistoriaClinicaRequest;
 import org.enterprise.odontosoft.view.dto.response.HistoriaClinicaResponse;
 import org.slf4j.Logger;
@@ -15,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 
-import java.util.List;
 import java.util.Objects;
 
 @AllArgsConstructor

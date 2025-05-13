@@ -6,7 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.coyote.Response;
-import org.enterprise.odontosoft.model.Service.UserServiceImpl;
+import org.enterprise.odontosoft.model.service.UserServiceImpl;
 import org.enterprise.odontosoft.view.security.UtilSecurity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;

@@ -1,7 +1,7 @@
 package org.enterprise.odontosoft.controller.mapper;
 
 import lombok.experimental.UtilityClass;
-import org.enterprise.odontosoft.model.Entity.*;
+import org.enterprise.odontosoft.model.entity.*;
 import org.enterprise.odontosoft.view.dto.request.DetalleOdontogramaRequest;
 import org.enterprise.odontosoft.view.dto.response.DetalleOdontogramaResponse;
 

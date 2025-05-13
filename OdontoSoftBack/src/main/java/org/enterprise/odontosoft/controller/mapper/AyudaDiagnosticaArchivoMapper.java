@@ -1,7 +1,7 @@
 package org.enterprise.odontosoft.controller.mapper;
 
 import lombok.experimental.UtilityClass;
-import org.enterprise.odontosoft.model.Entity.AyudaDiagnosticaArchivo;
+import org.enterprise.odontosoft.model.entity.AyudaDiagnosticaArchivo;
 import org.enterprise.odontosoft.view.dto.request.AyudaDiagnosticaArchivoRequest;
 import org.enterprise.odontosoft.view.dto.response.AyudaDiagnosticaArchivoResponse;
 

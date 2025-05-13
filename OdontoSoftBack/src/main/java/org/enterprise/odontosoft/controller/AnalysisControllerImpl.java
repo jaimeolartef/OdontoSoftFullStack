@@ -2,7 +2,7 @@ package org.enterprise.odontosoft.controller;
 
 import lombok.AllArgsConstructor;
 import org.enterprise.odontosoft.controller.mapper.TipoDiagnosticoMapper;
-import org.enterprise.odontosoft.model.Dao.TipoDiagnosticoDao;
+import org.enterprise.odontosoft.model.dao.TipoDiagnosticoDao;
 import org.enterprise.odontosoft.view.dto.response.OdontogramaResponse;
 import org.enterprise.odontosoft.view.dto.response.TipoDiagnosticoResponse;
 import org.slf4j.Logger;

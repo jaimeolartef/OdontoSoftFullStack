@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import org.enterprise.odontosoft.model.Entity.Usuario;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

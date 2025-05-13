@@ -1,6 +1,6 @@
 package org.enterprise.odontosoft.controller.mapper;
 
-import org.enterprise.odontosoft.model.Entity.ConstanteSistema;
+import org.enterprise.odontosoft.model.entity.ConstanteSistema;
 import org.enterprise.odontosoft.view.dto.response.ConstanteResponse;
 
 public class ConstantesSistemaMapper {

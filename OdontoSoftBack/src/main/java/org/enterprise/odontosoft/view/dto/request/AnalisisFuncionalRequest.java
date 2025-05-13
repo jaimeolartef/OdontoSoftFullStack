@@ -3,7 +3,6 @@ package org.enterprise.odontosoft.view.dto.request;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.enterprise.odontosoft.model.Entity.Usuario;
 
 import java.time.LocalDateTime;
 

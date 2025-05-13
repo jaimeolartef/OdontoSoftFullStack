@@ -921,6 +921,51 @@ CREATE TABLE ayudaDiagnosticaarchivo (
                                          fechaCreacion date null
 );
 
+create table tipoentidad
+(
+    id          serial PRIMARY KEY,
+    descripcion varchar(50) NOT NULL,
+    habilitado  bool DEFAULT false NOT NULL
+);
+
+create table regimen
+(
+    id          serial PRIMARY KEY,
+    descripcion varchar(50) NOT NULL,
+    habilitado  bool DEFAULT false NOT NULL
+);
+
+CREATE TABLE entidadprestadorasalud
+(
+    id              SERIAL PRIMARY KEY,
+    idtipodocumento INT not null,
+    numerodocumento INT          NOT NULL,
+    nombre          VARCHAR(255) NOT NULL,
+    idtipoentidad     int          NOT NULL,
+    codigoHabilitacionminsalud VARCHAR(50) NOT NULL,
+    idregimenadministra int NOT NULL,
+    direccion       VARCHAR(255),
+    telefono        VARCHAR(50),
+    sitioweb       VARCHAR(255),
+    correo          VARCHAR(255),
+    canalesatencion VARCHAR(255),
+    foreign key (idtipodocumento) references tipoDocumento (id),
+    foreign key (idtipoentidad) references tipoentidad (id),
+    foreign key (idregimenadministra) references regimen (id)
+);
+
+CREATE TABLE sedesempresa
+(
+    id       SERIAL PRIMARY KEY,
+    idtipodocumento INT not null,
+    numerodocumento INT          NOT NULL,
+    nombre   VARCHAR(255) NOT NULL,
+    direccion       VARCHAR(255),
+    telefono        VARCHAR(50),
+    correo          VARCHAR(255),
+    canalesatencion VARCHAR(255)
+);
+
 ALTER TABLE ayudadiagnostica
     ADD COLUMN idayudadiagnosticaarchivo INTEGER,
     ADD CONSTRAINT fk_ayuda_diagnostica_archivo FOREIGN KEY (idayudadiagnosticaarchivo) REFERENCES ayudaDiagnosticaarchivo (id);

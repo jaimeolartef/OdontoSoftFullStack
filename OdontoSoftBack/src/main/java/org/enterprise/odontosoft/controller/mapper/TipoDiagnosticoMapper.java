@@ -1,7 +1,7 @@
 package org.enterprise.odontosoft.controller.mapper;
 
 import lombok.experimental.UtilityClass;
-import org.enterprise.odontosoft.model.Entity.TipoDiagnostico;
+import org.enterprise.odontosoft.model.entity.TipoDiagnostico;
 import org.enterprise.odontosoft.view.dto.request.TipoDiagnosticoRequest;
 import org.enterprise.odontosoft.view.dto.response.TipoDiagnosticoResponse;
 

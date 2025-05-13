@@ -1,7 +1,7 @@
 package org.enterprise.odontosoft.controller.mapper;
 
-import org.enterprise.odontosoft.model.Entity.AnalisisFuncional;
-import org.enterprise.odontosoft.model.Entity.Usuario;
+import org.enterprise.odontosoft.model.entity.AnalisisFuncional;
+import org.enterprise.odontosoft.model.entity.Usuario;
 import org.enterprise.odontosoft.view.dto.request.AnalisisFuncionalRequest;
 import org.enterprise.odontosoft.view.dto.response.AnalisisFuncionalResponse;
 

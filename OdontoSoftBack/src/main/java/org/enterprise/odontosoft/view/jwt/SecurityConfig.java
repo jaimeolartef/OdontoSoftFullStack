@@ -1,6 +1,6 @@
 package org.enterprise.odontosoft.view.jwt;
 
-import org.enterprise.odontosoft.model.Service.UserServiceImpl;
+import org.enterprise.odontosoft.model.service.UserServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;

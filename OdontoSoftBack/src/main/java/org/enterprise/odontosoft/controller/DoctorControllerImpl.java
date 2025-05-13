@@ -2,8 +2,8 @@ package org.enterprise.odontosoft.controller;
 
 import lombok.AllArgsConstructor;
 import org.enterprise.odontosoft.controller.mapper.DoctorMapper;
-import org.enterprise.odontosoft.model.Entity.Medico;
-import org.enterprise.odontosoft.model.Service.DoctorService;
+import org.enterprise.odontosoft.model.entity.Medico;
+import org.enterprise.odontosoft.model.service.DoctorService;
 import org.enterprise.odontosoft.view.dto.response.DoctorResponse;
 import org.springframework.stereotype.Controller;
 import java.util.List;

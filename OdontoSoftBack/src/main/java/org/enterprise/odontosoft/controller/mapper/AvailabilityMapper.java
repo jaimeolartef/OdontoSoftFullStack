@@ -2,7 +2,7 @@ package org.enterprise.odontosoft.controller.mapper;
 
 import lombok.experimental.UtilityClass;
 import org.apache.logging.log4j.util.Strings;
-import org.enterprise.odontosoft.model.Entity.Disponibilidad;
+import org.enterprise.odontosoft.model.entity.Disponibilidad;
 import org.enterprise.odontosoft.view.dto.request.DisponibilidadRequest;
 import org.enterprise.odontosoft.view.dto.response.DisponibilidadResponse;
 

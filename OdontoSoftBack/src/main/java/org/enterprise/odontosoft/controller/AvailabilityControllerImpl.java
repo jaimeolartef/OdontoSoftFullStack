@@ -2,12 +2,10 @@ package org.enterprise.odontosoft.controller;
 
 import lombok.AllArgsConstructor;
 import org.enterprise.odontosoft.controller.mapper.AvailabilityMapper;
-import org.enterprise.odontosoft.exception.CustomException;
-import org.enterprise.odontosoft.model.Entity.Disponibilidad;
-import org.enterprise.odontosoft.model.Service.DisponibilidadService;
+import org.enterprise.odontosoft.model.entity.Disponibilidad;
+import org.enterprise.odontosoft.model.service.DisponibilidadService;
 import org.enterprise.odontosoft.view.dto.request.DisponibilidadRequest;
 import org.enterprise.odontosoft.view.dto.response.DisponibilidadResponse;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 
 import java.util.ArrayList;

@@ -2,7 +2,7 @@ package org.enterprise.odontosoft.controller.mapper;
 
 import io.micrometer.common.util.StringUtils;
 import lombok.experimental.UtilityClass;
-import org.enterprise.odontosoft.model.Entity.*;
+import org.enterprise.odontosoft.model.entity.*;
 import org.enterprise.odontosoft.view.dto.request.HistoriaClinicaRequest;
 import org.enterprise.odontosoft.view.dto.response.HistoriaClinicaResponse;
 

@@ -2,10 +2,10 @@ package org.enterprise.odontosoft.controller.mapper;
 
 import lombok.experimental.UtilityClass;
 import org.apache.logging.log4j.util.Strings;
-import org.enterprise.odontosoft.model.Entity.Antecedente;
-import org.enterprise.odontosoft.model.Entity.AntecedentePaciente;
-import org.enterprise.odontosoft.model.Entity.HistoriaClinica;
-import org.enterprise.odontosoft.model.Entity.Usuario;
+import org.enterprise.odontosoft.model.entity.Antecedente;
+import org.enterprise.odontosoft.model.entity.AntecedentePaciente;
+import org.enterprise.odontosoft.model.entity.HistoriaClinica;
+import org.enterprise.odontosoft.model.entity.Usuario;
 import org.enterprise.odontosoft.view.dto.request.AntecedentePacienteRequest;
 import org.enterprise.odontosoft.view.dto.response.AntecedentePacienteResponse;
 

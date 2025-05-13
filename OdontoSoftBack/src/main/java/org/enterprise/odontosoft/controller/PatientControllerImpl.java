@@ -4,13 +4,12 @@ import java.util.List;
 import java.util.Objects;
 
 import lombok.AllArgsConstructor;
-import org.enterprise.odontosoft.controller.Enum.TipoDocumentoEnum;
 import org.enterprise.odontosoft.controller.mapper.PatientMapper;
 import org.enterprise.odontosoft.exception.CustomException;
-import org.enterprise.odontosoft.model.Dao.PatientDao;
-import org.enterprise.odontosoft.model.Dao.UsuarioDao;
-import org.enterprise.odontosoft.model.Entity.Paciente;
-import org.enterprise.odontosoft.model.Entity.Usuario;
+import org.enterprise.odontosoft.model.dao.PatientDao;
+import org.enterprise.odontosoft.model.dao.UsuarioDao;
+import org.enterprise.odontosoft.model.entity.Paciente;
+import org.enterprise.odontosoft.model.entity.Usuario;
 import org.enterprise.odontosoft.view.dto.request.PacienteRequest;
 import org.enterprise.odontosoft.view.dto.response.PacienteResponse;
 import org.springframework.http.HttpStatus;

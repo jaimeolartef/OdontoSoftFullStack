@@ -1,7 +1,7 @@
 package org.enterprise.odontosoft.controller.mapper;
 
 import lombok.experimental.UtilityClass;
-import org.enterprise.odontosoft.model.Entity.Antecedente;
+import org.enterprise.odontosoft.model.entity.Antecedente;
 import org.enterprise.odontosoft.view.dto.request.AntecedenteRequest;
 import org.enterprise.odontosoft.view.dto.response.AntecedenteResponse;
 

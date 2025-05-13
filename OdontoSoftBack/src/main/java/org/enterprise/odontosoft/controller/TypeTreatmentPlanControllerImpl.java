@@ -2,10 +2,8 @@ package org.enterprise.odontosoft.controller;
 
 import lombok.AllArgsConstructor;
 import org.enterprise.odontosoft.controller.mapper.TipoTratamientoMapper;
-import org.enterprise.odontosoft.model.Dao.TipoTratamientoDao;
-import org.enterprise.odontosoft.model.Entity.TipoTratamiento;
+import org.enterprise.odontosoft.model.dao.TipoTratamientoDao;
 import org.enterprise.odontosoft.view.dto.response.OdontogramaResponse;
-import org.enterprise.odontosoft.view.dto.response.TipoAyudaDiagResponse;
 import org.enterprise.odontosoft.view.dto.response.TipoTratamientoResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +13,6 @@ import org.springframework.stereotype.Controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @AllArgsConstructor
 @Controller

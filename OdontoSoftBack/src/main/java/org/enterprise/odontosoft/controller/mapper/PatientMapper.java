@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.Objects;
 
 import lombok.experimental.UtilityClass;
-import org.enterprise.odontosoft.controller.Enum.TipoDocumentoEnum;
-import org.enterprise.odontosoft.model.Entity.Paciente;
-import org.enterprise.odontosoft.model.Entity.Tipodocumento;
-import org.enterprise.odontosoft.model.Entity.Usuario;
+import org.enterprise.odontosoft.controller.enume.TipoDocumentoEnum;
+import org.enterprise.odontosoft.model.entity.Paciente;
+import org.enterprise.odontosoft.model.entity.TipoDocumento;
+import org.enterprise.odontosoft.model.entity.Usuario;
 import org.enterprise.odontosoft.util.UtilDate;
 import org.enterprise.odontosoft.view.dto.request.PacienteRequest;
 import org.enterprise.odontosoft.view.dto.response.PacienteResponse;
@@ -18,7 +18,7 @@ public class PatientMapper {
     public static Paciente toEntity(PacienteRequest pacienteRequest) {
         return Paciente.builder()
             .id(pacienteRequest.getId())
-            .idtipodocumento(Tipodocumento.builder()
+            .idtipodocumento(TipoDocumento.builder()
                 .id(TipoDocumentoEnum.getBySigla(pacienteRequest.getIdtipodocumento()).getId())
                 .build())
             .documento(pacienteRequest.getDocumento())
