@@ -103,6 +103,7 @@ const Calendar = ({ availability, patient, Rol }) => {
         });
       }
     });
+    console.log('Citas ', availableHours);
 
     setAvailableHours(availableHours);
   };
@@ -206,9 +207,14 @@ const Calendar = ({ availability, patient, Rol }) => {
     const [hours, minutes] = time.split(':').map(Number);
     const date = new Date();
     date.setHours(hours);
-    date.setMinutes(minutes + minutesToAdd);
-    const newHours = String(date.getHours()).padStart(2, '0');
-    const newMinutes = String(date.getMinutes()).padStart(2, '0');
+    date.setMinutes(minutes);
+    date.setSeconds(0);
+    console.log(date);
+    const newDate = new Date(date);
+    newDate.setMinutes(date.getMinutes() + parseInt(minutesToAdd));
+    const newHours = String(newDate.getHours()).padStart(2, '0');
+    const newMinutes = String(newDate.getMinutes()).padStart(2, '0');
+    console.log(`${newHours}:${newMinutes}`);
     return `${newHours}:${newMinutes}`;
   }
 

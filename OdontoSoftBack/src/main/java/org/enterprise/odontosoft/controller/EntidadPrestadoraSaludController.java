@@ -1,6 +1,5 @@
 package org.enterprise.odontosoft.controller;
 
-import org.enterprise.odontosoft.model.entity.EntidadPrestadoraSalud;
 import org.enterprise.odontosoft.view.dto.request.EntidadPrestadoraSaludRequest;
 import org.enterprise.odontosoft.view.dto.response.EntidadPrestadoraSaludResponse;
 import org.springframework.http.ResponseEntity;

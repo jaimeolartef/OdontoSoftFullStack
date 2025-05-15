@@ -3,7 +3,8 @@ import Logo from "../../resource/LogoNegro.png";
 import axios from "axios";
 import config from "../../config";
 import { useNavigate } from 'react-router-dom';
-
+import { createEvents } from 'ics';
+import { saveAs } from 'file-saver';
 const AgendaMedica = () => {
 
   const navigate = useNavigate();
@@ -140,6 +141,46 @@ const AgendaMedica = () => {
     navigate('/historiaPac', { state: { patient: paciente } });
   };
 
+  const exportCalendar = () => {
+    // Verificar si hay citas para exportar
+    if (citaDia.length === 0) {
+      alert("No hay citas para exportar");
+      return;
+    }
+
+    // Convertir citas al formato ics
+    const events = citaDia.map(cita => {
+      // Parsear fecha y hora
+      const [year, month, day] = cita.fecha.split('-').map(Number);
+      const [startHour, startMinute] = cita.horainicio.split(':').map(Number);
+      const [endHour, endMinute] = cita.horafin.split(':').map(Number);
+
+      return {
+        title: `Cita: ${cita.nombrePaciente}`,
+        description: `Cita médica con paciente ${cita.nombrePaciente}`,
+        start: [year, month, day, startHour, startMinute],
+        end: [year, month, day, endHour, endMinute],
+        location: 'Consultorio dental',
+        organizer: { name: odontologo.nombre, email: 'contacto@odontosoft.com' }
+      };
+    });
+
+    // Generar archivo .ics
+    createEvents(events, (error, value) => {
+      if (error) {
+        console.error("Error al generar el calendario:", error);
+        alert("Error al generar el calendario");
+        return;
+      }
+
+      // Crear y descargar archivo
+      const blob = new Blob([value], { type: 'text/calendar;charset=utf-8' });
+      saveAs(blob, `agenda_medica_${selectedYear}_${selectedMonth}.ics`);
+      //TODO: enviar el archivo por correo
+    });
+  };
+
+  //TODO: validar el cargue de los días con el medico juan perez el 14 de mayo a las 7:30 la cita va hasta las 9:30
   return (
     <div className="d-flex justify-content-center align-items-center ">
       <div className="card p-4" style={{width: '1500px'}}>
@@ -197,8 +238,7 @@ const AgendaMedica = () => {
                                             key={index}
                                             className={index % 2 === 0 ? "blue-block" : "silver-block"}
                                             style={{ marginBottom: '4px', cursor: 'pointer' }}
-                                            onClick={() => handleCitaClick(cita)}
-                                          >
+                                            onClick={() => handleCitaClick(cita)}>
                                             {cita.horainicio} - {cita.horafin}: {cita.nombrePaciente}
                                           </div>
                                         );
@@ -219,6 +259,16 @@ const AgendaMedica = () => {
               </div>
             </div>
           </section>
+          <div className="col-md-12 mb-3">
+            <div className="d-flex justify-content-between mb-3">
+              <button
+                className="btn btn-primary"
+                onClick={exportCalendar}
+                title="Exportar calendario a formato .ics (compatible con Google Calendar y iOS)">
+                Exportar Calendario
+              </button>
+            </div>
+          </div>
         </form>
       </div>
     </div>
