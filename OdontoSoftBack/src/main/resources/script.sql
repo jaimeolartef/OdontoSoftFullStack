@@ -731,42 +731,52 @@ INSERT INTO public.usuario (id, nombre, clave, id_rol, habilitado, codigo)
 VALUES (DEFAULT, 'admin'::varchar(50), 'daaad6e5604e8e17bd9f108d91e26afe6281dac8fda0091040a7a6d7bd9b43b5'::text, 1::integer, true::boolean, 'admin'::varchar(20));
 insert into public.usuario (id, nombre, clave, id_rol, habilitado, codigo) values (2, 'Juan Perez', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', 3, true, '12345678');
 
-INSERT INTO public.menu (id, descripcion, habilitado, id_menu_padre, url)
-values  (1, 'Pacientes', true, null, null),
-        (2, 'Agenda', true, null, null),
-        (3, 'Configuración', true, null, null),
-        (4, 'Registrar paciente', true, 1, '/registroPac'),
-        (5, 'Asignación de citas', true, 2, '/asigCita'),
-        (6, 'Mi calendario', true, 2, '/calendario'),
-        (7, 'Roles', true, 3, '/role'),
-        (8, 'Usuarios', true, 3, '/usuario'),
-        (9, 'Consultar ', true, 1, '/consultarPac'),
-        (10, 'Historia Clínica', true, 1, null),
-        (11, 'Cargue Calendario', true, 3, '/carguecalendario'),
-        (12, 'Cargue Calendario Masivo', true, 3, '/carguecalendariomasivo'),
-        (13, 'Agenda Medica', true, 2, '/agendaMedica');
+INSERT INTO public.menu (descripcion, habilitado, id_menu_padre, url)
+values  ( 'Pacientes', true, null, null),
+        ( 'Agenda', true, null, null),
+        ( 'Configuración', true, null, null),
+        ( 'Registrar paciente', true, 1, '/registroPac'),
+        ( 'Asignación de citas', true, 2, '/asigCita'),
+        ( 'Mi calendario', true, 2, '/calendario'),
+        ( 'Roles', true, 3, '/role'),
+        ( 'Usuarios', true, 3, '/usuario'),
+        ('Consultar ', true, 1, '/consultarPac'),
+        ( 'Historia Clínica', true, 1, null),
+        ( 'Cargue Calendario', true, 3, '/carguecalendario'),
+        ( 'Cargue Calendario Masivo', true, 3, '/carguecalendariomasivo'),
+        ( 'Agenda Medica', true, 2, '/agendaMedica'),
+        ( 'Entidad Prestadora de Salud', true, 3, '/entidad');
 
 
-INSERT INTO public.permiso_menu (id, consultar, crear, editar, eliminar, habilitado, id_menu, id_rol) VALUES(1, false, false, false, false, true, 1, 1);
-INSERT INTO public.permiso_menu (id, consultar, crear, editar, eliminar, habilitado, id_menu, id_rol) VALUES(2, false, false, false, false, true, 2, 1);
-INSERT INTO public.permiso_menu (id, consultar, crear, editar, eliminar, habilitado, id_menu, id_rol) VALUES(4, true, true, true, true, true, 4, 1);
-INSERT INTO public.permiso_menu (id, consultar, crear, editar, eliminar, habilitado, id_menu, id_rol) VALUES(5, true, true, true, true, true, 5, 1);
-INSERT INTO public.permiso_menu (id, consultar, crear, editar, eliminar, habilitado, id_menu, id_rol) VALUES(7, true, true, true, true, false, 7, 1);
-INSERT INTO public.permiso_menu (id, consultar, crear, editar, eliminar, habilitado, id_menu, id_rol) VALUES(8, true, true, true, true, false, 8, 1);
-INSERT INTO public.permiso_menu (id, consultar, crear, editar, eliminar, habilitado, id_menu, id_rol) VALUES(9, false, false, false, false, true, 2, 2);
-INSERT INTO public.permiso_menu (id, consultar, crear, editar, eliminar, habilitado, id_menu, id_rol) VALUES(10, true, true, true, true, true, 9, 1);
-INSERT INTO public.permiso_menu (id, consultar, crear, editar, eliminar, habilitado, id_menu, id_rol) VALUES(11, false, false, false, false, true, 5, 2);
-INSERT INTO public.permiso_menu (id, consultar, crear, editar, eliminar, habilitado, id_menu, id_rol) VALUES(12, false, false, false, false, true, 1, 2);
-INSERT INTO public.permiso_menu (id, consultar, crear, editar, eliminar, habilitado, id_menu, id_rol) VALUES(13, false, false, false, false, true, 9, 2);
-INSERT INTO public.permiso_menu (id, consultar, crear, editar, eliminar, habilitado, id_menu, id_rol) VALUES(14, true, true, true, false, true, 10, 1);
-INSERT INTO public.permiso_menu (id, consultar, crear, editar, eliminar, habilitado, id_menu, id_rol) VALUES(15, false, false, false, false, true, 1, 3);
-INSERT INTO public.permiso_menu (id, consultar, crear, editar, eliminar, habilitado, id_menu, id_rol) VALUES(16, true, false, false, false, true, 9, 3);
-INSERT INTO public.permiso_menu (id, consultar, crear, editar, eliminar, habilitado, id_menu, id_rol) VALUES(17, true, true, true, false, true, 10, 3);
-INSERT INTO public.permiso_menu (id, consultar, crear, editar, eliminar, habilitado, id_menu, id_rol) VALUES(18, true, false, false, false, true, 10, 2);
-INSERT INTO public.permiso_menu (id, consultar, crear, editar, eliminar, habilitado, id_menu, id_rol) VALUES(3, true, true, true, true, true, 3, 1);
-INSERT INTO public.permiso_menu (id, consultar, crear, editar, eliminar, habilitado, id_menu, id_rol) VALUES(19, true, true, true, true, true, 11, 1);
-INSERT INTO public.permiso_menu (id, consultar, crear, editar, eliminar, habilitado, id_menu, id_rol) VALUES(20, true, true, true, true, true, 12, 1);
-INSERT INTO public.permiso_menu (id, consultar, crear, editar, eliminar, habilitado, id_menu, id_rol) VALUES(20, true, true, true, true, true, 13, 3);
+
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (1, 1, 1, true, false, false, false, false);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (2, 1, 2, true, false, false, false, false);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (3, 1, 3, true, true, true, true, true);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (4, 1, 4, true, true, true, true, true);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (5, 1, 5, true, true, true, true, true);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (7, 1, 7, false, true, true, true, true);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (8, 1, 8, false, true, true, true, true);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (9, 2, 2, true, false, false, false, false);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (10, 1, 9, true, true, true, true, true);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (11, 2, 5, true, false, false, false, false);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (12, 2, 1, true, false, false, false, false);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (13, 2, 9, true, false, false, false, false);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (14, 1, 10, true, true, true, false, true);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (15, 3, 1, true, false, false, false, false);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (16, 3, 9, true, false, true, false, false);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (17, 3, 10, true, true, true, false, true);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (18, 2, 10, true, false, true, false, false);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (19, 4, 1, true, false, false, false, false);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (20, 4, 4, true, true, true, true, true);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (21, 4, 9, true, false, true, false, false);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (22, 4, 5, true, true, true, true, true);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (23, 4, 2, true, false, false, false, false);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (24, 1, 11, true, true, true, true, true);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (25, 1, 12, true, true, true, true, true);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (26, 3, 14, true, true, true, true, true);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (27, 1, 14, true, true, true, true, true);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (28, 3, 2, true, true, true, true, true);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (29, 1, 15, true, true, true, true, true);
 
 INSERT INTO public.tipodocumento(id, codigo, nombre)
 VALUES (1, 'C.C.', 'Cédula de Ciudadanía');

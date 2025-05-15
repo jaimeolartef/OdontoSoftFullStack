@@ -176,11 +176,9 @@ const AgendaMedica = () => {
       // Crear y descargar archivo
       const blob = new Blob([value], { type: 'text/calendar;charset=utf-8' });
       saveAs(blob, `agenda_medica_${selectedYear}_${selectedMonth}.ics`);
-      //TODO: enviar el archivo por correo
     });
   };
 
-  //TODO: validar el cargue de los días con el medico juan perez el 14 de mayo a las 7:30 la cita va hasta las 9:30
   return (
     <div className="d-flex justify-content-center align-items-center ">
       <div className="card p-4" style={{width: '1500px'}}>
