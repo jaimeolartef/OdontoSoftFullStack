@@ -40,9 +40,9 @@ public class EntidadPrestadoraSaludMapper {
                 .regimenadministra(entidad.getRegimenAdministra().getId().toString())
                 .direccion(entidad.getDireccion())
                 .telefono(entidad.getTelefono())
-                .sitioWeb(entidad.getSitioWeb())
+                .sitioweb(entidad.getSitioWeb())
                 .correo(entidad.getCorreo())
-                .canalesAtencion(entidad.getCanalesAtencion())
+                .canalesatencion(entidad.getCanalesAtencion())
                 .build();
     }
 }

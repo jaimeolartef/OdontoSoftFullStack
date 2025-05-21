@@ -1,0 +1,59 @@
+
+
+/* Estilos de paginación */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.pagination button {
+    margin: 0 5px;
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    background-color: #f2f2f2;
+    cursor: pointer;
+}
+
+.pagination button.active {
+    background-color: #ddd;
+    font-weight: bold;
+}
+
+/* Estilos responsivos */
+@media screen and (max-width: 600px) {
+    .table-container table,
+    .table-container thead,
+    .table-container tbody,
+    .table-container th,
+    .table-container td,
+    .table-container tr {
+        display: block;
+    }
+
+    .table-container thead tr {
+        display: none;
+    }
+
+    .table-container td {
+        position: relative;
+        padding-left: 50%;
+        text-align: right;
+        height: 50px;
+    }
+
+    .table-container td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 50%;
+        padding-left: 10px;
+        font-weight: bold;
+        text-align: left;
+        border-right: 1px solid #ddd;
+    }
+
+    .table-container tr {
+        margin-bottom: 10px;
+    }
+}

@@ -745,7 +745,7 @@ values  ( 'Pacientes', true, null, null),
         ( 'Cargue Calendario', true, 3, '/carguecalendario'),
         ( 'Cargue Calendario Masivo', true, 3, '/carguecalendariomasivo'),
         ( 'Agenda Medica', true, 2, '/agendaMedica'),
-        ( 'Entidad Prestadora de Salud', true, 3, '/entidad');
+        ( 'ConsultarEntidad Prestadora de Salud', true, 3, '/entidad');
 
 
 

@@ -17,7 +17,7 @@ public class EntidadPrestadoraSaludResponse {
 	private String regimenadministra;
 	private String direccion;
 	private String telefono;
-	private String sitioWeb;
+	private String sitioweb;
 	private String correo;
-	private String canalesAtencion;
+	private String canalesatencion;
 }
