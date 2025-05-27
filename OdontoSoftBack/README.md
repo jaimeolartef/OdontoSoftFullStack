@@ -6,7 +6,7 @@
 
 * Para crear el contenedor en docker de la BD, creamos el volumen primero con el siguiente comando `docker volume create odontosoft`
 
-* Luego, creamos el contenedor con el siguiente comando `docker run -d --name PostgresOdontoSoft -e POSTGRES_PASSWORD=qwerty -v odontosoft:/var/lib/postgresql/data -p 5433:5432 postgres`
+* Luego, creamos el contenedor con el siguiente comando `docker run -d --name PostgresOdontoSoft -e POSTGRES_PASSWORD=qwerty -e POSTGRES_DB=odontosoft -v odontosoft:/var/lib/postgresql/data -p 5433:5432 postgres`
 
 * Configurar el proyecto para utilizar el JDK 17
 

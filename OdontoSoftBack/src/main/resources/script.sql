@@ -745,7 +745,7 @@ values  ( 'Pacientes', true, null, null),
         ( 'Cargue Calendario', true, 3, '/carguecalendario'),
         ( 'Cargue Calendario Masivo', true, 3, '/carguecalendariomasivo'),
         ( 'Agenda Medica', true, 2, '/agendaMedica'),
-        ( 'ConsultarEntidad Prestadora de Salud', true, 3, '/entidad');
+        ( 'Entidad Prestadora de Salud', true, 3, '/entidad');
 
 
 
@@ -776,7 +776,7 @@ INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consult
 INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (26, 3, 14, true, true, true, true, true);
 INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (27, 1, 14, true, true, true, true, true);
 INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (28, 3, 2, true, true, true, true, true);
-INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (29, 1, 15, true, true, true, true, true);
+--INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (29, 1, 15, true, true, true, true, true);
 
 INSERT INTO public.tipodocumento(id, codigo, nombre)
 VALUES (1, 'C.C.', 'Cédula de Ciudadanía');
@@ -984,6 +984,10 @@ ALTER TABLE ayudadiagnostica
 INSERT INTO constantesistema (codigo, nombre, valor, descripcion)
 VALUES ('DURACION_CITA', 'Duración cita', '30', 'Duración en minutos de una cita odontológica');
 
+INSERT INTO public.tipoentidad (descripcion, habilitado) VALUES ('Privada', true);
+INSERT INTO public.tipoentidad (descripcion, habilitado) VALUES ('Publica', true);
 
-
-
+INSERT INTO public.regimen (descripcion, habilitado) VALUES ('Contributivo', true);
+INSERT INTO public.regimen (descripcion, habilitado) VALUES ('Subsidiado', true);
+INSERT INTO public.regimen (descripcion, habilitado) VALUES ('Especial', true);
+INSERT INTO public.regimen (descripcion, habilitado) VALUES ('Excepción', true);
