@@ -43,6 +43,7 @@ public class EntidadPrestadoraSaludMapper {
                 .sitioweb(entidad.getSitioWeb())
                 .correo(entidad.getCorreo())
                 .canalesatencion(entidad.getCanalesAtencion())
+                .habilitado(entidad.getHabilitado())
                 .build();
     }
 }

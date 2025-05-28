@@ -959,10 +959,15 @@ CREATE TABLE entidadprestadorasalud
     sitioweb       VARCHAR(255),
     correo          VARCHAR(255),
     canalesatencion VARCHAR(255),
+    habilitado  bool DEFAULT false NOT NULL,
     foreign key (idtipodocumento) references tipoDocumento (id),
     foreign key (idtipoentidad) references tipoentidad (id),
     foreign key (idregimenadministra) references regimen (id)
 );
+
+alter table entidadprestadorasalud add column habilitado  bool DEFAULT false NOT NULL;
+alter table sedesempresa add column habilitado  bool DEFAULT false NOT NULL;
+
 
 CREATE TABLE sedesempresa
 (
@@ -973,7 +978,8 @@ CREATE TABLE sedesempresa
     direccion       VARCHAR(255),
     telefono        VARCHAR(50),
     correo          VARCHAR(255),
-    canalesatencion VARCHAR(255)
+    canalesatencion VARCHAR(255),
+    habilitado  bool DEFAULT false NOT NULL
 );
 
 ALTER TABLE ayudadiagnostica

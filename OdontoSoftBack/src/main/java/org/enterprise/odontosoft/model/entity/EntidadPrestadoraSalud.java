@@ -51,4 +51,7 @@ public class EntidadPrestadoraSalud {
 
 	@Column(name = "canalesatencion")
 	private String canalesAtencion;
+
+	@Column(name = "habilitado", nullable = false)
+	private Boolean habilitado;
 }

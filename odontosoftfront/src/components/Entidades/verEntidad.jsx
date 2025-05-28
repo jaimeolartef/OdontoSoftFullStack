@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from "axios";
 import config from '../../config';
@@ -8,7 +8,7 @@ import showMessage from "../../util/UtilMessage";
 
 const VerEntidad = () => {
   const location = useLocation();
-  const { id } = location.state || {};
+  const {id} = location.state || {};
   const navigate = useNavigate();
   const [entidad, setEntidad] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -42,7 +42,7 @@ const VerEntidad = () => {
 
   if (loading) {
     return (
-      <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
+      <div className="d-flex justify-content-center align-items-center" style={{height: '100vh'}}>
         <div className="spinner-border text-primary" role="status">
           <span className="visually-hidden">Cargando...</span>
         </div>
@@ -52,7 +52,7 @@ const VerEntidad = () => {
 
   if (!entidad) {
     return (
-      <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
+      <div className="d-flex justify-content-center align-items-center" style={{height: '100vh'}}>
         <div className="alert alert-danger" role="alert">
           No se encontró la entidad solicitada
         </div>
@@ -62,14 +62,24 @@ const VerEntidad = () => {
 
   return (
     <div className="d-flex justify-content-center align-items-center">
-      <div className="card p-4" style={{ width: '1200px' }}>
+      <div className="card p-4" style={{width: '1200px'}}>
         <header className="text-center mb-4">
-          <img src={Logo} alt="Logo" className="mb-3" style={{ maxWidth: '140px' }} />
+          <img src={Logo} alt="Logo" className="mb-3" style={{maxWidth: '140px'}}/>
           <h1>Detalles de la Entidad Prestadora de Salud</h1>
         </header>
         <section className="mb-4">
           <h3>Información General</h3>
           <div className="row g-3">
+            <div className="col-md-6">
+              <div className="form-group mb-3">
+                <label className="form-label fw-bold">Estado:</label>
+                <div className="form-control bg-light d-flex align-items-center">
+                                  <span className={`badge ${entidad.habilitado ? 'bg-success' : 'bg-danger'} me-2`}>
+                                    {entidad.habilitado ? 'Habilitado' : 'Inhabilitado'}
+                                  </span>
+                </div>
+              </div>
+            </div>
             <div className="col-md-6">
               <div className="form-group mb-3">
                 <label className="form-label fw-bold">Tipo de documento:</label>
@@ -82,7 +92,7 @@ const VerEntidad = () => {
                 <p className="form-control bg-light">{entidad.numerodocumento}</p>
               </div>
             </div>
-            <div className="col-md-12">
+            <div className="col-md-6">
               <div className="form-group mb-3">
                 <label className="form-label fw-bold">Nombre:</label>
                 <p className="form-control bg-light">{entidad.nombre}</p>
