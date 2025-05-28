@@ -22,12 +22,12 @@ const EntidadTabla = ({ data, loading }) => {
     setCurrentPage(pageNumber);
   };
 
-  const handleReadClick = (paciente) => {
-    navigate('/historiaPac', { state: { patient: paciente, readOnly: true } });
+  const handleReadClick = (entidad) => {
+    navigate('/verentidad', { state: { id: entidad.id, readOnly: true } });
   }
 
-  const handleEditClick = (paciente) => {
-    navigate('/historiaPac', { state: { patient: paciente, readOnly: true } });
+  const handleEditClick = (entidad) => {
+    navigate('/editarentidad', { state: { id: entidad.id, readOnly: true } });
   }
 
   return (

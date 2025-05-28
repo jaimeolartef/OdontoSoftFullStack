@@ -23,6 +23,9 @@ import CargueCalendario from "./components/Calendario/carguecalendario";
 import CargueCalendarioMasivo from "./components/Calendario/carguecalendariomasivo";
 import AgendaMedica from "./components/CitasMedicas/agendaMedica";
 import ConsultarEntidad from "./components/Entidades/consultarEntidad";
+import VerEntidad from "./components/Entidades/verEntidad";
+import CrearEntidad from "./components/Entidades/creaEntidad";
+import EditarEntidad from "./components/Entidades/editarEntidad";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -59,6 +62,9 @@ root.render(
             <Route exact path = "/carguecalendariomasivo" Component = {requireAuth(CargueCalendarioMasivo)} />
             <Route exact path = "/agendaMedica" Component = {requireAuth(AgendaMedica)} />
             <Route exact path = "/entidad" Component = {requireAuth(ConsultarEntidad)} />
+            <Route exact path = "/crearentidad" Component = {requireAuth(CrearEntidad)} />
+            <Route exact path = "/editarentidad" Component = {requireAuth(EditarEntidad)} />
+            <Route exact path = "/verentidad" Component = {requireAuth(VerEntidad)} />
           </Routes>
         </NavBar>
       </Provider>
