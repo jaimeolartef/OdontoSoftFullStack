@@ -15,7 +15,13 @@ public class EntidadPrestadoraSaludView {
     private final EntidadPrestadoraSaludController entidadPrestadoraSaludController;
 
     @GetMapping("/consultar")
-    public ResponseEntity getEntidadesPrestadorasSalud() {
+    public ResponseEntity getEntidadesPrestadorasSalud(
+        @RequestParam(required = false) String numerodocumento,
+        @RequestParam(required = false) String nombre) {
+        if ((numerodocumento != null && !numerodocumento.isEmpty()) ||
+            (nombre != null && !nombre.isEmpty())) {
+            return entidadPrestadoraSaludController.buscarEntidadesPorNombreODocumento(numerodocumento, nombre);
+        }
         return entidadPrestadoraSaludController.getAllEntidadesPrestadorasSalud();
     }
 

@@ -31,23 +31,35 @@ const ConsultarEntidad = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    fetchEntidades();
+    fetchEntidades(formData);
   };
 
-  const fetchEntidades = async () => {
+  const fetchEntidades = async (filters = {}) => {
     try {
       setLoading(true);
       let token = sessionStorage.getItem('jsonwebtoken');
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+      // Solo incluimos parámetros si tienen valor
+      const params = {};
+      if (filters.numerodocumento) params.numerodocumento = filters.numerodocumento;
+      if (filters.nombre) params.nombre = filters.nombre;
+
       const response = await axios.get(`${config.baseURL}/eps/consultar`, {
-        params: formData,
+        params: params,
         validateStatus: function (status) {
           return status;
         }
       });
 
-      if (response.status === 200) {
+      if (response.status === 201 || response.status === 200) {
         setEntidades(response.data);
+        if (response.data.length === 0) {
+          showMessage('info', 'No se encontraron entidades con los criterios de búsqueda');
+        }
+      } else if (response.status === 404) {
+        setEntidades([]);
+        showMessage('info', 'No se encontraron entidades con los criterios de búsqueda');
       } else if (response.status === 400) {
         showMessage('error', response.data.mensajeValidacion || 'Error en los datos');
       } else if (response.status === 403) {
@@ -58,14 +70,12 @@ const ConsultarEntidad = () => {
     } catch (error) {
       console.error('Error:', error);
       showMessage('error', 'Error al consultar entidades');
+      setEntidades([]);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchEntidades();
-  }, []);
 
   return (
     <div className="d-flex justify-content-center align-items-center">
@@ -77,27 +87,52 @@ const ConsultarEntidad = () => {
 
         <form onSubmit={handleSubmit} className="needs-validation" noValidate>
           <section className="mb-4">
-            <h3>Información Personal</h3>
-            <div className="form-floating mb-3">
-              <input type="text" className="form-control" name="documento" value={formData.documento}
-                     onChange={handleChange} placeholder="Documento de Identidad" disabled={rol === 'Paciente'}/>
-              <label>Documento de Identidad</label>
-            </div>
-            <div className="form-floating mb-3">
-              <input type="text" className="form-control" name="nombre" value={formData.nombre} onChange={handleChange}
-                     placeholder="Nombre" disabled={rol === 'Paciente'}/>
-              <label>Nombre</label>
+            <h3>Criterios de búsqueda</h3>
+            <div className="row g-3">
+              <div className="col-md-6">
+                <div className="form-group mb-3">
+                  <div className="form-floating">
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="numerodocumento"
+                      value={formData.numerodocumento}
+                      onChange={handleChange}
+                      placeholder="Número de documento"
+                      disabled={rol === 'Paciente'}
+                    />
+                    <label>Número de documento</label>
+                  </div>
+                </div>
+              </div>
+              <div className="col-md-6">
+                <div className="form-group mb-3">
+                  <div className="form-floating">
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="nombre"
+                      value={formData.nombre}
+                      onChange={handleChange}
+                      placeholder="Nombre de la entidad"
+                      disabled={rol === 'Paciente'}
+                    />
+                    <label>Nombre de la entidad</label>
+                  </div>
+                </div>
+              </div>
             </div>
           </section>
-          <div className="d-grid">
+          <div className="d-flex justify-content-center mb-4">
             <button type="submit" className="btn btn-primary" disabled={loading}>
-              {loading ? 'Consultando...' : 'Consultar'}
+              {loading ? 'Consultando...' : 'Buscar'}
             </button>
           </div>
         </form>
-        <br/>
+
         <EntidadTabla data={entidades} loading={loading} />
-        <div className="d-grid mt-3">
+
+        <div className="d-flex justify-content-center mt-3">
           <button
             type="button"
             className="btn btn-secondary"

@@ -10,4 +10,5 @@ public interface EntidadPrestadoraSaludService {
   EntidadPrestadoraSalud saveEntidadPrestadoraSalud(EntidadPrestadoraSalud entidad);
   void deleteEntidadPrestadoraSalud(Integer id);
   EntidadPrestadoraSalud getEntidadPrestadoraSaludById(Integer id);
+  List<EntidadPrestadoraSalud> buscarPorNombreODocumento(String numerodocumento, String nombre);
 }

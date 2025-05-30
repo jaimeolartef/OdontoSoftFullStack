@@ -19,4 +19,6 @@ public interface EntidadPrestadoraSaludController {
 
     // Eliminar una entidad prestadora de salud por ID
     ResponseEntity<Void> deleteEntidadPrestadoraSalud(Integer id);
+
+    ResponseEntity<List<EntidadPrestadoraSaludResponse>> buscarEntidadesPorNombreODocumento(String numerodocumento, String nombre);
 }

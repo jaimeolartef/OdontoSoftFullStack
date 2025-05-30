@@ -12,20 +12,21 @@ import org.enterprise.odontosoft.view.dto.response.EntidadPrestadoraSaludRespons
 public class EntidadPrestadoraSaludMapper {
 
     public static EntidadPrestadoraSalud toEntity(EntidadPrestadoraSaludRequest request) {
-        EntidadPrestadoraSalud entidad = new EntidadPrestadoraSalud();
-        entidad.setId(request.getId());
-        entidad.setTipoDocumento(TipoDocumento.builder().id(Integer.valueOf(request.getTipodocumento())).build());
-        entidad.setNumeroDocumento(Integer.valueOf(request.getNumerodocumento()));
-        entidad.setNombre(request.getNombre());
-        entidad.setTipoEntidad(TipoEntidad.builder().id(Integer.valueOf(request.getTipoentidad())).build());
-        entidad.setCodigoHabilitacionMinsalud(request.getCodigominsalud());
-        entidad.setRegimenAdministra(Regimen.builder().id(Integer.valueOf(request.getRegimenadministra())).build());
-        entidad.setDireccion(request.getDireccion());
-        entidad.setTelefono(request.getTelefono());
-        entidad.setSitioWeb(request.getSitioWeb());
-        entidad.setCorreo(request.getCorreo());
-        entidad.setCanalesAtencion(request.getCanalesAtencion());
-        return entidad;
+        return EntidadPrestadoraSalud.builder()
+            .id(request.getId())
+            .tipoDocumento(TipoDocumento.builder().id(Integer.valueOf(request.getTipodocumento())).build())
+            .numeroDocumento(Integer.valueOf(request.getNumerodocumento()))
+            .nombre(request.getNombre())
+            .tipoEntidad(TipoEntidad.builder().id(Integer.valueOf(request.getTipoentidad())).build())
+            .codigoHabilitacionMinsalud(request.getCodigominsalud())
+            .regimenAdministra(Regimen.builder().id(Integer.valueOf(request.getRegimenadministra())).build())
+            .direccion(request.getDireccion())
+            .telefono(request.getTelefono())
+            .sitioWeb(request.getSitioWeb())
+            .correo(request.getCorreo())
+            .canalesAtencion(request.getCanalesAtencion())
+            .habilitado(request.getHabilitado())
+            .build();
     }
 
     public static EntidadPrestadoraSaludResponse toResponse(EntidadPrestadoraSalud entidad) {

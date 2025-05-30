@@ -187,6 +187,7 @@ const RegistroPaciente = () => {
                     <select className="form-select" name="idtipodocumento" value={formData.idtipodocumento}
                             onChange={handleChange} required>
                       <option value="">Seleccionar...</option>
+                      //TODO: consumir API para obtener los tipos de documento
                       <option value="C.C.">Cédula de ciudadanía</option>
                       <option value="C.E.">Cédula de Extranjería</option>
                       <option value="T.I.">Tarjeta de Identidad</option>

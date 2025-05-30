@@ -20,4 +20,6 @@ public class EntidadPrestadoraSaludRequest {
 	private String sitioWeb;
 	private String correo;
 	private String canalesAtencion;
+	private Boolean habilitado;
+
 }

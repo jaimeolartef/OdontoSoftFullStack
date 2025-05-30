@@ -32,4 +32,18 @@ public class EntidadPrestadoraSaludServiceImpl implements EntidadPrestadoraSalud
   public EntidadPrestadoraSalud getEntidadPrestadoraSaludById(Integer id) {
     return entidadPrestadoraSaludDao.findById(id).orElse(null);
   }
+
+  @Override
+  public List<EntidadPrestadoraSalud> buscarPorNombreODocumento(String numerodocumento, String nombre) {
+      Integer numDoc = null;
+      if (numerodocumento != null && !numerodocumento.isEmpty()) {
+          try {
+              numDoc = Integer.valueOf(numerodocumento);
+          } catch (NumberFormatException e) {
+              // Si no es un número válido, se mantendrá como null
+          }
+      }
+
+      return entidadPrestadoraSaludDao.buscarPorNombreODocumento(numDoc, nombre);
+  }
 }

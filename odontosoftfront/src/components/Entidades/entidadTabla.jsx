@@ -27,7 +27,7 @@ const EntidadTabla = ({ data, loading }) => {
   }
 
   const handleEditClick = (entidad) => {
-    navigate('/editarentidad', { state: { id: entidad.id, readOnly: true } });
+    navigate('/editarentidad', { state: { id: entidad.id, readOnly: false } });
   }
 
   return (
