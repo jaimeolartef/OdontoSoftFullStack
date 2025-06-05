@@ -1,0 +1,59 @@
+package org.enterprise.odontosoft.controller.mapper;
+
+import lombok.experimental.UtilityClass;
+import org.enterprise.odontosoft.model.entity.EntidadPrestadoraSalud;
+import org.enterprise.odontosoft.model.entity.SedeEmpresa;
+import org.enterprise.odontosoft.model.entity.TipoDocumento;
+import org.enterprise.odontosoft.view.dto.request.SedeEmpresaRequest;
+import org.enterprise.odontosoft.view.dto.response.SedeEmpresaResponse;
+
+import java.util.List;
+import java.util.Objects;
+
+@UtilityClass
+public class SedeEmpresaMapper {
+
+	public static SedeEmpresa toEntity(SedeEmpresaRequest request) {
+		return SedeEmpresa.builder()
+			.id(request.getId())
+			.tipoDocumento(TipoDocumento.builder()
+				.id(request.getIdTipoDocumento())
+				.build())
+			.numeroDocumento(request.getNumeroDocumento())
+			.nombre(request.getNombre())
+			.direccion(request.getDireccion())
+			.telefono(request.getTelefono())
+			.correo(request.getCorreo())
+			.canalesAtencion(request.getCanalesAtencion())
+			.entidadPrestadoraSalud(EntidadPrestadoraSalud.builder()
+				.id(request.getIdEntidadPrestadoraSalud())
+				.build())
+			.habilitado(Objects.equals(request.getHabilitado(), "true"))
+			.build();
+	}
+
+	public static SedeEmpresaResponse toDto(SedeEmpresa sedeEmpresa) {
+		return SedeEmpresaResponse.builder()
+			.id(sedeEmpresa.getId())
+			.tipoDocumento(Objects.nonNull(sedeEmpresa.getTipoDocumento()) ?
+				sedeEmpresa.getTipoDocumento().getNombre() : null)
+			.tipoDocumento(Objects.nonNull(sedeEmpresa.getTipoDocumento()) ?
+				sedeEmpresa.getTipoDocumento().getNombre() : null)
+			.numeroDocumento(sedeEmpresa.getNumeroDocumento())
+			.nombre(sedeEmpresa.getNombre())
+			.direccion(sedeEmpresa.getDireccion())
+			.telefono(sedeEmpresa.getTelefono())
+			.correo(sedeEmpresa.getCorreo())
+			.canalesAtencion(sedeEmpresa.getCanalesAtencion())
+			.idEntidadPrestadoraSalud(Objects.nonNull(sedeEmpresa.getEntidadPrestadoraSalud()) ?
+				sedeEmpresa.getEntidadPrestadoraSalud().getId() : null)
+			.habilitado(sedeEmpresa.isHabilitado())
+			.build();
+	}
+
+	public static List<SedeEmpresaResponse> toDtoList(List<SedeEmpresa> sedeEmpresas) {
+		return sedeEmpresas.stream()
+			.map(SedeEmpresaMapper::toDto)
+			.toList();
+	}
+}

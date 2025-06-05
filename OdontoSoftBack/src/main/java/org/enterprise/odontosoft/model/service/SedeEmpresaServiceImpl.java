@@ -32,4 +32,9 @@ public class SedeEmpresaServiceImpl implements SedeEmpresaService {
   public SedeEmpresa getSedeEmpresaById(Integer id) {
     return sedeEmpresaDao.findById(id).orElse(null);
   }
+
+  @Override
+  public List<SedeEmpresa> getSedeEmpresaByEntidad(Integer idEntidad) {
+    return sedeEmpresaDao.findByEntidadPrestadoraSaludId(idEntidad);
+  }
 }

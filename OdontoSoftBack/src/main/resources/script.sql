@@ -975,11 +975,13 @@ CREATE TABLE sedesempresa
     idtipodocumento INT not null,
     numerodocumento INT          NOT NULL,
     nombre   VARCHAR(255) NOT NULL,
+    identidadprestadora INT NOT NULL,
     direccion       VARCHAR(255),
     telefono        VARCHAR(50),
     correo          VARCHAR(255),
     canalesatencion VARCHAR(255),
-    habilitado  bool DEFAULT false NOT NULL
+    habilitado  bool DEFAULT false NOT NULL,
+    foreign key (identidadprestadora) references entidadprestadorasalud (id)  -- Clave foránea
 );
 
 ALTER TABLE ayudadiagnostica

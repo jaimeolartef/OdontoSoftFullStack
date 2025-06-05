@@ -1,11 +1,14 @@
 package org.enterprise.odontosoft.model.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+import javax.validation.constraints.NotNull;
+
+
+@Builder
+@Getter
+@Setter
 @Entity
 @Table(name = "sedesempresa")
 @NoArgsConstructor
@@ -37,4 +40,13 @@ public class SedeEmpresa {
 
 	@Column(name = "canalesatencion")
 	private String canalesAtencion;
+
+	@Column(name = "habilitado", nullable = false)
+	private boolean habilitado;
+
+	@NotNull
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "identidadprestadora")
+	private EntidadPrestadoraSalud entidadPrestadoraSalud;
+
 }
