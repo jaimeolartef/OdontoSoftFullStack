@@ -124,6 +124,9 @@ public class UserControllerImpl implements UserController {
     permisosDto.setMenus(new ArrayList<>());
 
     Usuario usuario = usuarioDao.findByCodigo(usuarioDto.getCodigo());
+    if (usuario == null) {
+        throw new jakarta.persistence.EntityNotFoundException("Usuario no encontrado con código: " + usuarioDto.getCodigo());
+    }
     permisosDto.setRol(usuario.getIdRol().getDescripcion());
     permisosDto.setNombreUsuario(usuario.getNombre());
     if (usuario.getIdRol().getDescripcion().equals("Paciente")) {

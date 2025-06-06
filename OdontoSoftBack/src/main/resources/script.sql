@@ -43,7 +43,7 @@ CREATE TABLE permiso_menu
     paciente bool,
     CONSTRAINT permiso_menu_pkey PRIMARY KEY (id),
     CONSTRAINT permiso_menu_id_menu FOREIGN KEY (id_menu) REFERENCES menu (id),
-    CONSTRAINT permiso_menu_id_rol FOREIGN KEY (id_rol) REFERENCES menu (id)
+    CONSTRAINT permiso_menu_id_rol FOREIGN KEY (id_rol) REFERENCES rol (id)
 );
 
 CREATE TABLE usuario
@@ -725,6 +725,8 @@ INSERT INTO public.rol (id, descripcion, habilitado)
 VALUES (DEFAULT, 'Paciente'::varchar(200), true::boolean);
 insert into public.rol (id, descripcion, habilitado)
 values (DEFAULT, 'Medico', true);
+insert into public.rol (id, descripcion, habilitado)
+values (DEFAULT, 'Asistente', true);
 
 
 INSERT INTO public.usuario (id, nombre, clave, id_rol, habilitado, codigo)
@@ -740,12 +742,15 @@ values  ( 'Pacientes', true, null, null),
         ( 'Mi calendario', true, 2, '/calendario'),
         ( 'Roles', true, 3, '/role'),
         ( 'Usuarios', true, 3, '/usuario'),
-        ( 'Consultar', true, 1, '/consultarPac'),
-        ( 'Historia Clínica', true, 1, null),
-        ( 'Cargue Calendario', true, 3, '/carguecalendario'),
-        ( 'Cargue Calendario Masivo', true, 3, '/carguecalendariomasivo'),
-        ( 'Agenda Medica', true, 2, '/agendaMedica'),
-        ( 'Entidad Prestadora de Salud', true, 3, '/entidad');
+        ( 'Consultar paciente', true, 1, '/consultarPac'),
+        ( 'Historia clínica', true, 1, null),
+        ( 'Cargue calendario', true, 3, '/carguecalendario'),
+        ( 'Cargue calendario masivo', true, 3, '/carguecalendariomasivo'),
+        ( 'Agenda medica', true, 2, '/agendaMedica'),
+        ( 'Consultar entidad prestadora de salud', true, 3, '/entidad'),
+        ('Crear entidad prestadora de salud', true, 3, '/crearentidad');
+
+
 
 
 
@@ -776,6 +781,7 @@ INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consult
 INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (26, 3, 14, true, true, true, true, true);
 INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (27, 1, 14, true, true, true, true, true);
 INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (28, 3, 2, true, true, true, true, true);
+insert into public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) values (29, 1, 16, true, true, true, true, true);
 --INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (29, 1, 15, true, true, true, true, true);
 
 INSERT INTO public.tipodocumento(id, codigo, nombre)
