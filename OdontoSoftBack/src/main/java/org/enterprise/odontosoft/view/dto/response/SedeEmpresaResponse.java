@@ -12,8 +12,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SedeEmpresaResponse {
 	private Integer id;
-	private Integer idTipoDocumento;
-	private String tipoDocumento;
 	private Integer numeroDocumento;
 	private String nombre;
 	private String direccion;
@@ -23,4 +21,5 @@ public class SedeEmpresaResponse {
 	private Integer idEntidadPrestadoraSalud;
 	private String entidadPrestadoraSalud;
 	private Boolean habilitado;
+	private String serviciosPrestados;
 }

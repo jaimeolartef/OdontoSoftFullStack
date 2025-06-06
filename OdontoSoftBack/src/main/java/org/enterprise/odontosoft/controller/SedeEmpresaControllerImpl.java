@@ -38,6 +38,9 @@ public class SedeEmpresaControllerImpl implements SedeEmpresaController {
 		try {
 			log.info("Obteniendo sede empresa por ID: {}", id);
 			SedeEmpresa sede = sedeEmpresaService.getSedeEmpresaById(id);
+			if (sede == null) {
+				throw new jakarta.persistence.EntityNotFoundException("Sede no encontrada con id: " + id);
+			}
 			return SedeEmpresaMapper.toDto(sede);
 		} catch (Exception e) {
 			log.error("Error al obtener sede empresa por ID {}: {}", id, e.getMessage());

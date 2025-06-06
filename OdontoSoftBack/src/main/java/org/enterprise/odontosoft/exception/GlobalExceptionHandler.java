@@ -11,6 +11,7 @@ import org.springframework.web.context.request.WebRequest;
 import jakarta.persistence.EntityNotFoundException;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +25,7 @@ public class GlobalExceptionHandler {
         errorDetails.put("success", false);
         errorDetails.put("error", "Error personalizado");
         errorDetails.put("message", ex.getMessage());
-        errorDetails.put("timestamp", Timestamp.valueOf(LocalDateTime.now()));
+        errorDetails.put("timestamp", Instant.now().toString());
 
         HttpStatus httpStatus = HttpStatus.resolve(ex.getStatusCode());
         return new ResponseEntity<>(errorDetails, httpStatus != null ? httpStatus : HttpStatus.INTERNAL_SERVER_ERROR);
@@ -36,7 +37,7 @@ public class GlobalExceptionHandler {
         errorDetails.put("success", false);
         errorDetails.put("error", "Recurso no encontrado");
         errorDetails.put("message", ex.getMessage());
-        errorDetails.put("timestamp", Timestamp.valueOf(LocalDateTime.now()));
+        errorDetails.put("timestamp", Instant.now().toString());
 
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
@@ -56,7 +57,7 @@ public class GlobalExceptionHandler {
         response.put("error", "Error de validación");
         response.put("message", "Los datos enviados no son válidos");
         response.put("details", errors);
-        response.put("timestamp", Timestamp.valueOf(LocalDateTime.now()));
+        response.put("timestamp", Instant.now().toString());
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
@@ -67,7 +68,7 @@ public class GlobalExceptionHandler {
         errorDetails.put("success", false);
         errorDetails.put("error", "Argumento inválido");
         errorDetails.put("message", ex.getMessage());
-        errorDetails.put("timestamp", Timestamp.valueOf(LocalDateTime.now()));
+        errorDetails.put("timestamp", Instant.now().toString());
 
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
@@ -79,7 +80,7 @@ public class GlobalExceptionHandler {
         errorDetails.put("error", "Error interno del servidor");
         errorDetails.put("message", "Ha ocurrido un error inesperado");
         errorDetails.put("details", ex.getMessage());
-        errorDetails.put("timestamp", Timestamp.valueOf(LocalDateTime.now()));
+        errorDetails.put("timestamp", Instant.now().toString());
 
         return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
     }

@@ -24,6 +24,7 @@ public class SedeEmpresaMapper {
 				.id(request.getIdEntidadPrestadoraSalud())
 				.build())
 			.habilitado(request.getHabilitado())
+			.serviciosPrestados(request.getServiciosPrestados())
 			.build();
 	}
 
@@ -38,6 +39,7 @@ public class SedeEmpresaMapper {
 			.idEntidadPrestadoraSalud(Objects.nonNull(sedeEmpresa.getEntidadPrestadoraSalud()) ?
 				sedeEmpresa.getEntidadPrestadoraSalud().getId() : null)
 			.habilitado(sedeEmpresa.isHabilitado())
+			.serviciosPrestados(sedeEmpresa.getServiciosPrestados())
 			.build();
 	}
 

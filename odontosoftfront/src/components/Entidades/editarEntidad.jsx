@@ -275,7 +275,7 @@ const EditarEntidad = () => {
 
   // Función para navegar a la página de edición de sede
   const handleEditSede = (sedeId) => {
-    navigate('/editarsede', { state: { id: sedeId, entidadId: id } });
+    navigate('/editarSede', { state: { id: sedeId, entidadId: id } });
   };
 
   // Función para navegar a la página de creación de sede

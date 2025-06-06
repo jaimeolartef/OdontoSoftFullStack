@@ -37,6 +37,9 @@ public class SedeEmpresa {
 	@Column(name = "habilitado", nullable = false)
 	private boolean habilitado;
 
+	@Column(name = "serviciosprestados")
+	private String serviciosPrestados;
+
 	@NotNull
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "identidadprestadora")

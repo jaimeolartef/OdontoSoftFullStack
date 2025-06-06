@@ -35,6 +35,8 @@ public class SedeEmpresaRequest {
 	@NotNull(message = "El estado de habilitación es obligatorio")
 	private Boolean habilitado;
 
+	private String serviciosPrestados;
+
 	@NotNull(message = "La entidad prestadora de salud es obligatoria")
 	private Integer idEntidadPrestadoraSalud;
 }

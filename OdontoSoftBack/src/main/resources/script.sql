@@ -984,6 +984,7 @@ CREATE TABLE sedesempresa
     telefono        VARCHAR(50),
     correo          VARCHAR(255),
     canalesatencion VARCHAR(255),
+    serviciosprestados VARCHAR(255),
     habilitado  bool DEFAULT false NOT NULL,
     foreign key (identidadprestadora) references entidadprestadorasalud (id)  -- Clave foránea
 );

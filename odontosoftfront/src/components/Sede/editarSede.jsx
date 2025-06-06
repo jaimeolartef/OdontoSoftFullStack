@@ -7,23 +7,25 @@ import axios from "axios";
 import config from '../../config';
 import showMessage from "../../util/UtilMessage";
 
-const CrearSede = () => {
+const EditarSede = () => {
   const location = useLocation();
-  const { entidadId } = location.state || {};
+  const { id, entidadId } = location.state || {};
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
+  const [loadingData, setLoadingData] = useState(true);
 
   // Estado para los datos del formulario
   const [formData, setFormData] = useState({
+    id: '',
     nombre: '',
     direccion: '',
     telefono: '',
     correo: '',
     horarioAtencion: '',
-    codigoHabilitacion: '',
     servicios: '',
-    habilitado: true
+    habilitado: true,
+    idEntidadPrestadoraSalud: ''
   });
 
   // Función para configurar el token de autorización
@@ -32,13 +34,52 @@ const CrearSede = () => {
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   };
 
-  // Verificar que se haya pasado el ID de la entidad
+  // Cargar datos de la sede
   useEffect(() => {
-    if (!entidadId) {
-      showMessage('error', 'No se ha especificado la entidad');
-      navigate('/entidad');
-    }
-  }, [entidadId, navigate]);
+    const fetchSede = async () => {
+      if (!id) {
+        showMessage('error', 'No se ha especificado la sede');
+        navigate('/entidad');
+        return;
+      }
+
+      try {
+        setLoadingData(true);
+        setAuthToken();
+
+        const response = await axios.get(`${config.baseURL}/sedeempresa/consultar/${id}`, {
+          validateStatus: function (status) {
+            return status;
+          }
+        });
+
+        if (response.status === 200 && response.data.success) {
+          const sedeData = response.data.data;
+          setFormData({
+            id: sedeData.id,
+            nombre: sedeData.nombre || '',
+            direccion: sedeData.direccion || '',
+            telefono: sedeData.telefono || '',
+            correo: sedeData.correo || '',
+            horarioAtencion: sedeData.canalesAtencion || '',
+            servicios: sedeData.serviciosPrestados || '',
+            habilitado: sedeData.habilitado,
+            idEntidadPrestadoraSalud: sedeData.idEntidadPrestadoraSalud
+          });
+        } else {
+          showMessage('error', 'Error al obtener datos de la sede');
+          navigate('/editarentidad', { state: { id: entidadId } });
+        }
+      } catch (error) {
+        showMessage('error', 'Error de conexión: ' + error.message);
+        navigate('/editarentidad', { state: { id: entidadId } });
+      } finally {
+        setLoadingData(false);
+      }
+    };
+
+    fetchSede();
+  }, [id, entidadId, navigate]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -63,14 +104,13 @@ const CrearSede = () => {
 
       // Preparar datos para enviar
       const sedeData = {
-        id: null,
+        id: formData.id,
         nombre: formData.nombre,
         direccion: formData.direccion,
         telefono: formData.telefono,
         correo: formData.correo,
         horarioAtencion: formData.horarioAtencion,
-        idEntidadPrestadoraSalud: entidadId,
-        codigoHabilitacion: formData.codigoHabilitacion,
+        idEntidadPrestadoraSalud: formData.idEntidadPrestadoraSalud,
         serviciosPrestados: formData.servicios,
         habilitado: formData.habilitado
       };
@@ -85,31 +125,44 @@ const CrearSede = () => {
 
       if (response.status === 201 || response.status === 200) {
         if (response.data.success) {
-          showMessage('success', 'Sede creada correctamente');
-          navigate('/editarentidad', { state: { id: entidadId } });
+          showMessage('success', 'Sede actualizada correctamente');
+          navigate('/editarentidad', { state: { id: formData.idEntidadPrestadoraSalud } });
         } else {
-          showMessage('error', response.data.message || 'Error al crear la sede');
+          showMessage('error', response.data.message || 'Error al actualizar la sede');
         }
       } else {
-        showMessage('error', response.data?.message || 'Error al crear la sede');
+        showMessage('error', response.data?.message || 'Error al actualizar la sede');
       }
     } catch (error) {
-      showMessage('error', 'Error al guardar la sede: ' + error.message);
+      showMessage('error', 'Error al guardar los cambios: ' + error.message);
     } finally {
       setLoading(false);
     }
   };
 
   const handleCancel = () => {
-    navigate('/editarentidad', { state: { id: entidadId } });
+    navigate('/editarentidad', { state: { id: formData.idEntidadPrestadoraSalud || entidadId } });
   };
+
+  if (loadingData) {
+    return (
+      <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
+        <div className="text-center">
+          <div className="spinner-border text-primary mb-3" role="status">
+            <span className="visually-hidden">Cargando...</span>
+          </div>
+          <p>Cargando datos de la sede...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh', padding: '20px' }}>
       <div className="card p-4" style={{ width: '800px' }}>
         <header className="text-center mb-4">
           <img src={Logo} alt="Logo" className="mb-3" style={{ maxWidth: '140px' }} />
-          <h1>Crear Nueva Sede</h1>
+          <h1>Editar Sede</h1>
         </header>
 
         <form onSubmit={handleSubmit} className="needs-validation" noValidate>
@@ -158,26 +211,7 @@ const CrearSede = () => {
                   </div>
                 </div>
               </div>
-              <div className="col-md-6">
-                <div className="form-group mb-3">
-                  <div className="form-floating">
-                    <input
-                      type="text"
-                      className="form-control"
-                      name="codigoHabilitacion"
-                      value={formData.codigoHabilitacion}
-                      onChange={handleChange}
-                      required
-                      placeholder="Código de habilitación"
-                    />
-                    <label>Código de habilitación</label>
-                    <div className="invalid-feedback">
-                      Debe ingresar un código de habilitación
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="col-md-6">
+              <div className="col-md-12">
                 <div className="form-group mb-3">
                   <div className="form-floating">
                     <input
@@ -254,7 +288,7 @@ const CrearSede = () => {
                     ></textarea>
                     <label>Canales de atención</label>
                     <div className="invalid-feedback">
-                      Debe ingresar el horario de atención
+                      Debe ingresar los canales de atención
                     </div>
                   </div>
                 </div>
@@ -286,10 +320,10 @@ const CrearSede = () => {
               {loading ? (
                 <>
                   <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                  Guardando...
+                  Actualizando...
                 </>
               ) : (
-                'Guardar'
+                'Actualizar'
               )}
             </button>
             <button
@@ -307,4 +341,4 @@ const CrearSede = () => {
   );
 };
 
-export default CrearSede;
+export default EditarSede;
