@@ -19,13 +19,6 @@ public class SedeEmpresa {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "idtipodocumento")
-	private TipoDocumento tipoDocumento;
-
-	@Column(name = "numerodocumento", nullable = false)
-	private Integer numeroDocumento;
-
 	@Column(name = "nombre", nullable = false)
 	private String nombre;
 

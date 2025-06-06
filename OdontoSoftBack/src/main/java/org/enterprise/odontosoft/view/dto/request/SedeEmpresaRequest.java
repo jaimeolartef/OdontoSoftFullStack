@@ -15,12 +15,6 @@ public class SedeEmpresaRequest {
 
 	private Integer id;
 
-	@NotNull(message = "El tipo de documento es obligatorio")
-	private Integer idTipoDocumento;
-
-	@NotNull(message = "El número de documento es obligatorio")
-	private Integer numeroDocumento;
-
 	@NotBlank(message = "El nombre es obligatorio")
 	@Size(max = 255, message = "El nombre no puede exceder 255 caracteres")
 	private String nombre;

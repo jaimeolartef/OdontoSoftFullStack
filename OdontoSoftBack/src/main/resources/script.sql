@@ -978,8 +978,6 @@ alter table sedesempresa add column habilitado  bool DEFAULT false NOT NULL;
 CREATE TABLE sedesempresa
 (
     id       SERIAL PRIMARY KEY,
-    idtipodocumento INT not null,
-    numerodocumento INT          NOT NULL,
     nombre   VARCHAR(255) NOT NULL,
     identidadprestadora INT NOT NULL,
     direccion       VARCHAR(255),

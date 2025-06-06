@@ -26,6 +26,7 @@ import ConsultarEntidad from "./components/Entidades/consultarEntidad";
 import VerEntidad from "./components/Entidades/verEntidad";
 import CrearEntidad from "./components/Entidades/creaEntidad";
 import EditarEntidad from "./components/Entidades/editarEntidad";
+import CrearSede from "./components/Sede/crearSede";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -65,6 +66,7 @@ root.render(
             <Route exact path = "/crearentidad" Component = {requireAuth(CrearEntidad)} />
             <Route exact path = "/editarentidad" Component = {requireAuth(EditarEntidad)} />
             <Route exact path = "/verentidad" Component = {requireAuth(VerEntidad)} />
+            <Route exact path = "/crearSede" Component = {requireAuth(CrearSede)} />
           </Routes>
         </NavBar>
       </Provider>

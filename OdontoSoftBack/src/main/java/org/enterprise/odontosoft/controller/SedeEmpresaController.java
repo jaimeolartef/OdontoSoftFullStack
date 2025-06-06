@@ -2,7 +2,6 @@ package org.enterprise.odontosoft.controller;
 
 import org.enterprise.odontosoft.view.dto.request.SedeEmpresaRequest;
 import org.enterprise.odontosoft.view.dto.response.SedeEmpresaResponse;
-import org.springframework.http.ResponseEntity;
 
 import javax.validation.Valid;
 import java.util.List;

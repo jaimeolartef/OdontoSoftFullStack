@@ -15,11 +15,15 @@ const EditarEntidad = () => {
 
   const [loading, setLoading] = useState(true);
   const [loadingCombos, setLoadingCombos] = useState(true);
+  const [loadingSedes, setLoadingSedes] = useState(true);
 
   // Estados para los datos de los combos
   const [tiposDocumento, setTiposDocumento] = useState([]);
   const [tiposEntidad, setTiposEntidad] = useState([]);
   const [regimenes, setRegimenes] = useState([]);
+
+  // Estado para las sedes
+  const [sedes, setSedes] = useState([]);
 
   const [formData, setFormData] = useState({
     id: '',
@@ -60,6 +64,37 @@ const EditarEntidad = () => {
     );
     return found ? found.id.toString() : '';
   };
+
+  // Cargar sedes de la entidad
+  useEffect(() => {
+    const fetchSedes = async () => {
+      if (!id) return;
+
+      try {
+        setLoadingSedes(true);
+        setAuthToken();
+
+        const response = await axios.get(`${config.baseURL}/sedeempresa/consultar/entidad/${id}`, {
+          validateStatus: (status) => status
+        });
+
+        if (response.status === 200 && response.data.success) {
+          // La respuesta tiene los datos en response.data.data
+          setSedes(response.data.data || []);
+        } else {
+          console.error('Error al cargar sedes:', response.status);
+          setSedes([]);
+        }
+      } catch (error) {
+        console.error('Error al cargar sedes:', error);
+        setSedes([]);
+      } finally {
+        setLoadingSedes(false);
+      }
+    };
+
+    fetchSedes();
+  }, [id]);
 
   // Cargar datos de los combos
   useEffect(() => {
@@ -236,6 +271,16 @@ const EditarEntidad = () => {
       ...formData,
       habilitado: !formData.habilitado
     });
+  };
+
+  // Función para navegar a la página de edición de sede
+  const handleEditSede = (sedeId) => {
+    navigate('/editarsede', { state: { id: sedeId, entidadId: id } });
+  };
+
+  // Función para navegar a la página de creación de sede
+  const handleCrearSede = () => {
+    navigate('/crearSede', { state: { entidadId: id } });
   };
 
   if (loading || loadingCombos) {
@@ -508,6 +553,72 @@ const EditarEntidad = () => {
                   </div>
                 </div>
               </div>
+            </div>
+          </section>
+
+          <section className="mb-4">
+            <div className="d-flex justify-content-between align-items-center mb-3">
+              <h3>Sedes</h3>
+              <button
+                type="button"
+                className="btn btn-success btn-sm"
+                onClick={handleCrearSede}
+              >
+                <i className="bi bi-plus-circle me-1"></i> Agregar Sede
+              </button>
+            </div>
+            <div className="table-responsive">
+              {loadingSedes ? (
+                <div className="text-center py-3">
+                  <div className="spinner-border spinner-border-sm text-primary" role="status">
+                    <span className="visually-hidden">Cargando sedes...</span>
+                  </div>
+                  <p className="mt-2 mb-0">Cargando sedes...</p>
+                </div>
+              ) : sedes.length === 0 ? (
+                <div className="alert alert-info text-center">
+                  <i className="bi bi-info-circle me-2"></i>
+                  No hay sedes registradas para esta entidad.
+                </div>
+              ) : (
+                <table className="table table-bordered table-hover">
+                  <thead className="table-light">
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Dirección</th>
+                    <th>Teléfono</th>
+                    <th>Correo</th>
+                    <th>Estado</th>
+                    <th style={{ width: '100px' }}>Acciones</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  {sedes.map(sede => (
+                    <tr key={sede.id}>
+                      <td>{sede.nombre}</td>
+                      <td>{sede.direccion}</td>
+                      <td>{sede.telefono}</td>
+                      <td>{sede.correo}</td>
+                      <td>
+                          <span className={`badge ${sede.habilitado ? 'bg-success' : 'bg-danger'}`}>
+                            {sede.habilitado ? 'Activa' : 'Inactiva'}
+                          </span>
+                      </td>
+                      <td className="text-center">
+                        <button
+                          type="button"
+                          className="btn btn-primary btn-sm"
+                          onClick={() => handleEditSede(sede.id)}
+                          title="Editar sede"
+                        >
+                          <i className="bi bi-pencil"></i>
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                  </tbody>
+                </table>
+              )}
             </div>
           </section>
 
