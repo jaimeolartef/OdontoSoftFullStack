@@ -109,7 +109,7 @@ const EditarSede = () => {
         direccion: formData.direccion,
         telefono: formData.telefono,
         correo: formData.correo,
-        horarioAtencion: formData.horarioAtencion,
+        canalesAtencion: formData.horarioAtencion,
         idEntidadPrestadoraSalud: formData.idEntidadPrestadoraSalud,
         serviciosPrestados: formData.servicios,
         habilitado: formData.habilitado
