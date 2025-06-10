@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface AnalysisController {
 
-    ResponseEntity<List<TipoDiagnosticoResponse>> getAllAnalysis();
+    List<TipoDiagnosticoResponse> getAllAnalysis();
 }
