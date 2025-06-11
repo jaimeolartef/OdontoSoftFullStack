@@ -4,17 +4,16 @@ import java.util.List;
 
 import org.enterprise.odontosoft.view.dto.request.PacienteRequest;
 import org.enterprise.odontosoft.view.dto.response.PacienteResponse;
-import org.springframework.http.ResponseEntity;
 
 public interface PatientController {
 
-    ResponseEntity<PacienteResponse> createPatient(PacienteRequest pacienteRequest);
+    PacienteResponse createPatient(PacienteRequest pacienteRequest);
 
-    ResponseEntity<List<PacienteResponse>> getPatient(String documento, String nombre, String correo);
+    List<PacienteResponse> getPatient(String documento, String nombre, String correo);
 
-    ResponseEntity<PacienteResponse> getPatientById(Integer id);
+    PacienteResponse getPatientById(Integer id);
 
-    ResponseEntity<PacienteResponse> updatePatient(PacienteRequest pacienteRequest);
+    PacienteResponse updatePatient(PacienteRequest pacienteRequest);
 
-    ResponseEntity<List<PacienteResponse>> getAllPatients();
+    List<PacienteResponse> getAllPatients();
 }

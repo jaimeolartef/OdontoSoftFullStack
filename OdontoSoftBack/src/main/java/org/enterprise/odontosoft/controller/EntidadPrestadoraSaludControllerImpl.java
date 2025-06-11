@@ -8,8 +8,6 @@ import org.enterprise.odontosoft.view.dto.request.EntidadPrestadoraSaludRequest;
 import org.enterprise.odontosoft.view.dto.response.EntidadPrestadoraSaludResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
@@ -23,80 +21,68 @@ public class EntidadPrestadoraSaludControllerImpl implements EntidadPrestadoraSa
 	private final EntidadPrestadoraSaludService entidadPrestadoraSaludService;
 
 	@Override
-    public ResponseEntity<List<EntidadPrestadoraSaludResponse>> getAllEntidadesPrestadorasSalud() {
-        ResponseEntity<List<EntidadPrestadoraSaludResponse>> responseEntity;
+    public List<EntidadPrestadoraSaludResponse> getAllEntidadesPrestadorasSalud() {
         try {
             List<EntidadPrestadoraSalud> entidades = entidadPrestadoraSaludService.getAllEntidadPrestadoraSalud();
             if (entidades.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+				throw new jakarta.persistence.EntityNotFoundException("No se encontraron entidades prestadoras de salud.");
             }
-			List<EntidadPrestadoraSaludResponse> entidadesResponse = entidades.stream()
+			return entidades.stream()
 			    .map(EntidadPrestadoraSaludMapper::toResponse)
 			    .toList();
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(entidadesResponse);
         } catch (Exception e) {
-            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             logger.error("Error al obtener las entidades prestadoras de salud.", e);
         }
-        return responseEntity;
-    }
+		return List.of();
+	}
 
 	@Override
-    public ResponseEntity<EntidadPrestadoraSaludResponse> getEntidadPrestadoraSaludById(Integer id) {
-        ResponseEntity<EntidadPrestadoraSaludResponse> responseEntity;
-        try {
-            EntidadPrestadoraSalud entidad = entidadPrestadoraSaludService.getEntidadPrestadoraSaludById(id);
-            if (entidad == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-            }
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(EntidadPrestadoraSaludMapper.toResponse(entidad));
-        } catch (Exception e) {
-            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-            logger.error("Error al obtener la entidad prestadora de salud con id: " + id, e);
-        }
-        return responseEntity;
-    }
+	public EntidadPrestadoraSaludResponse getEntidadPrestadoraSaludById(Integer id) {
+	    try {
+	        EntidadPrestadoraSalud entidad = entidadPrestadoraSaludService.getEntidadPrestadoraSaludById(id);
+	        if (entidad == null) {
+	            throw new jakarta.persistence.EntityNotFoundException("No se encontró la entidad prestadora de salud con id: " + id);
+	        }
+	        return EntidadPrestadoraSaludMapper.toResponse(entidad);
+	    } catch (Exception e) {
+	        logger.error("Error al obtener la entidad prestadora de salud con id: " + id, e);
+	        return null;
+	    }
+	}
 
 	@Override
-	public ResponseEntity<EntidadPrestadoraSaludResponse> saveEntidadPrestadoraSalud(EntidadPrestadoraSaludRequest entidad) {
-		ResponseEntity<EntidadPrestadoraSaludResponse> responseEntity;
+	public EntidadPrestadoraSaludResponse saveEntidadPrestadoraSalud(EntidadPrestadoraSaludRequest entidad) {
 		try {
 			EntidadPrestadoraSalud savedEntidad = entidadPrestadoraSaludService.saveEntidadPrestadoraSalud(EntidadPrestadoraSaludMapper.toEntity(entidad));
-			responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(EntidadPrestadoraSaludMapper.toResponse(savedEntidad));
+			return EntidadPrestadoraSaludMapper.toResponse(savedEntidad);
 		} catch (Exception e) {
-			responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 			logger.error("Error al guardar la entidad prestadora de salud.", e);
+			return null;
 		}
-		return responseEntity;
 	}
 
 	@Override
-	public ResponseEntity<Void> deleteEntidadPrestadoraSalud(Integer id) {
+	public void deleteEntidadPrestadoraSalud(Integer id) {
 		try {
 			entidadPrestadoraSaludService.deleteEntidadPrestadoraSalud(id);
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 		} catch (Exception e) {
 			logger.error("Error al eliminar la entidad prestadora de salud con id: " + id, e);
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
 
 	@Override
-	public ResponseEntity<List<EntidadPrestadoraSaludResponse>> buscarEntidadesPorNombreODocumento(String numerodocumento, String nombre) {
-		ResponseEntity<List<EntidadPrestadoraSaludResponse>> responseEntity;
+	public List<EntidadPrestadoraSaludResponse> buscarEntidadesPorNombreODocumento(String numerodocumento, String nombre) {
 		try {
 			List<EntidadPrestadoraSalud> entidades = entidadPrestadoraSaludService.buscarPorNombreODocumento(numerodocumento, nombre);
 			if (entidades.isEmpty()) {
-				return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+				throw new jakarta.persistence.EntityNotFoundException("No se encontraron entidades prestadoras de salud.");
 			}
-			List<EntidadPrestadoraSaludResponse> entidadesResponse = entidades.stream()
+			return entidades.stream()
 				.map(EntidadPrestadoraSaludMapper::toResponse)
 				.toList();
-			responseEntity = ResponseEntity.status(HttpStatus.OK).body(entidadesResponse);
 		} catch (Exception e) {
-			responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 			logger.error("Error al buscar entidades por nombre o documento", e);
+			return List.of();
 		}
-		return responseEntity;
 	}
 }

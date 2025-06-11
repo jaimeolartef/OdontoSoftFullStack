@@ -6,5 +6,5 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public interface TipoEntidadController {
-    ResponseEntity<List<TipoEntidadResponse>> getAllTipoEntidad();
+    List<TipoEntidadResponse> getAllTipoEntidad();
 }

@@ -1,6 +1,7 @@
 package org.enterprise.odontosoft.view;
 
 import org.enterprise.odontosoft.controller.ConstantsController;
+import org.enterprise.odontosoft.view.dto.ApiResponse;
 import org.enterprise.odontosoft.view.dto.response.ConstanteResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,8 @@ public class ConstantsView {
 	}
 
 	@GetMapping()
-	public ResponseEntity<List<ConstanteResponse>> findConstant() {
-		return ResponseEntity.ok(constantsController.getAllConstants());
+	public ResponseEntity<ApiResponse<List<ConstanteResponse>>> findConstant() {
+		List<ConstanteResponse> response = constantsController.getAllConstants();
+		return ResponseEntity.ok(ApiResponse.success(response, "Constantes obtenidas correctamente"));
 	}
 }

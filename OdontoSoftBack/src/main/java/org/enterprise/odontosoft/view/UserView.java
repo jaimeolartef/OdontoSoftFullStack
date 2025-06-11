@@ -2,6 +2,7 @@ package org.enterprise.odontosoft.view;
 
 import org.enterprise.odontosoft.controller.UserController;
 import org.enterprise.odontosoft.view.dto.*;
+import org.enterprise.odontosoft.view.dto.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,44 +12,50 @@ import javax.validation.Valid;
 @CrossOrigin(originPatterns = "http://localhost:*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT})
 public class UserView {
 
-  private final UserController userController;
+    private final UserController userController;
 
-  public UserView(UserController userController) {
-    this.userController = userController;
-  }
-
-  @PostMapping("user/login")
-  public ResponseEntity<CredencialDto> login(@Valid @RequestBody CredencialDto credencial) {
-    return userController.login(credencial);
-  }
-
-  @PutMapping("user/recordarContrasenia")
-    public ResponseEntity<String> recordarContrasenia(@Valid @RequestBody UsuarioRecordarDto usuarioRecordarDto) {
-        return userController.recordarContrasenia(usuarioRecordarDto);
+    public UserView(UserController userController) {
+        this.userController = userController;
     }
 
-  @PostMapping("user/signup")
-  public ResponseEntity<String> signup(@Valid @RequestBody UsuarioDto usuarioDto) {
-    return userController.signup(usuarioDto);
-  }
+    @PostMapping("user/login")
+    public ResponseEntity<ApiResponse<CredencialDto>> login(@Valid @RequestBody CredencialDto credencial) {
+        CredencialDto response = userController.login(credencial).getBody();
+        return ResponseEntity.ok(ApiResponse.success(response, "Login exitoso"));
+    }
 
-  @GetMapping("user/validatetoken")
-  public ResponseEntity<Void> validateToken(@Valid @RequestBody UsuarioValidarDto usuarioValidarDto) {
-    return userController.validateToken(usuarioValidarDto);
-  }
+    @PutMapping("user/recordarContrasenia")
+    public ResponseEntity<ApiResponse<String>> recordarContrasenia(@Valid @RequestBody UsuarioRecordarDto usuarioRecordarDto) {
+        String response = userController.recordarContrasenia(usuarioRecordarDto).getBody();
+        return ResponseEntity.ok(ApiResponse.success(response, "Correo de recuperación enviado"));
+    }
 
-  @GetMapping("user/prueba")
-  public String prueba() {
-    return "prueba";
-  }
+    @PostMapping("user/signup")
+    public ResponseEntity<ApiResponse<String>> signup(@Valid @RequestBody UsuarioDto usuarioDto) {
+        String response = userController.signup(usuarioDto).getBody();
+        return ResponseEntity.ok(ApiResponse.success(response, "Usuario registrado correctamente"));
+    }
 
-  @PostMapping("user/validateRole")
-  public ResponseEntity<PermisosDto> validateRole(@Valid @RequestBody UsuarioDto usuarioDto) {
-    return userController.validateRole(usuarioDto);
-  }
+    @GetMapping("user/validatetoken")
+    public ResponseEntity<ApiResponse<Void>> validateToken(@Valid @RequestBody UsuarioValidarDto usuarioValidarDto) {
+        userController.validateToken(usuarioValidarDto);
+        return ResponseEntity.ok(ApiResponse.success(null, "Token válido"));
+    }
 
-  @PutMapping("user/resetpassword")
-    public ResponseEntity<String> resetPassword(@Valid @RequestBody UsuarioPasswordDto usuarioPasswordDto) {
-        return userController.resetPassword(usuarioPasswordDto);
+    @GetMapping("user/prueba")
+    public ResponseEntity<ApiResponse<String>> prueba() {
+        return ResponseEntity.ok(ApiResponse.success("prueba", "Prueba exitosa"));
+    }
+
+    @PostMapping("user/validateRole")
+    public ResponseEntity<ApiResponse<PermisosDto>> validateRole(@Valid @RequestBody UsuarioDto usuarioDto) {
+        PermisosDto response = userController.validateRole(usuarioDto).getBody();
+        return ResponseEntity.ok(ApiResponse.success(response, "Rol validado correctamente"));
+    }
+
+    @PutMapping("user/resetpassword")
+    public ResponseEntity<ApiResponse<String>> resetPassword(@Valid @RequestBody UsuarioPasswordDto usuarioPasswordDto) {
+        String response = userController.resetPassword(usuarioPasswordDto).getBody();
+        return ResponseEntity.ok(ApiResponse.success(response, "Contraseña restablecida correctamente"));
     }
 }

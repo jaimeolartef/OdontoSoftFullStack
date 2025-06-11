@@ -40,26 +40,21 @@ public class OdontogramControllerImpl implements OdontogramController {
 	private static final Logger logger = LoggerFactory.getLogger(OdontogramControllerImpl.class);
 
 	@Override
-	public ResponseEntity<OdontogramaResponse> getOdontogramByMedicalHistory(Integer idHistoriaClinica) {
-		ResponseEntity<OdontogramaResponse> responseEntity = null;
+	public OdontogramaResponse getOdontogramByMedicalHistory(Integer idHistoriaClinica) {
 		try {
 			Odontograma odontograma = odontogramaDao.findByIdhistoriaclinica(idHistoriaClinica).orElse(null);
 			if (odontograma == null) {
-				responseEntity = ResponseEntity.status(HttpStatus.NO_CONTENT).body(new OdontogramaResponse(String.valueOf(HttpStatus.NO_CONTENT.value()), "No se encontró el odontograma"));
-				return responseEntity;
+				throw new jakarta.persistence.EntityNotFoundException("No se encontró el odontograma para la historia clínica con ID: " + idHistoriaClinica);
 			}
-			responseEntity = ResponseEntity.status(HttpStatus.OK).body(OdontogramaMapper.toResponse(odontograma));
+			return OdontogramaMapper.toResponse(odontograma);
 		} catch (Exception e) {
-			responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 			logger.error("Error getting medical history.", e);
 		}
-
-		return responseEntity;
+		return null;
 	}
 
 	@Override
-	public ResponseEntity<OdontogramaResponse> saveOdontogram(OdontogramaRequest odontogramaRequest) {
-		ResponseEntity<OdontogramaResponse> responseEntity = null;
+	public void saveOdontogram(OdontogramaRequest odontogramaRequest) {
 		try {
 			Odontograma odontograma = OdontogramaMapper.toEntity(odontogramaRequest);
 			List<DetalleOdontograma> detalleOdontograma = odontogramaRequest.getDetalleodontogramas().stream()
@@ -70,13 +65,9 @@ public class OdontogramControllerImpl implements OdontogramController {
 			odontograma.setIdusuariomodificacion(Usuario.builder().id(usuarioDao.findByCodigo(odontograma.getIdusuariomodificacion().getCodigo()).getId()).build());
 			odontograma = odontogramaDao.save(odontograma);
 			saveDetalleOdontograma(detalleOdontograma, odontograma.getId());
-			responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(null);
 		} catch (Exception e) {
-			responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 			logger.error("Error saving odontogram.", e);
 		}
-
-		return responseEntity;
 	}
 
 	private void saveDetalleOdontograma(List<DetalleOdontograma> detalleOdontograma, int idOdontograma) {

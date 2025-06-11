@@ -3,6 +3,7 @@ package org.enterprise.odontosoft.controller;
 import java.util.List;
 import java.util.Objects;
 
+import jakarta.persistence.EntityExistsException;
 import lombok.AllArgsConstructor;
 import org.enterprise.odontosoft.controller.mapper.PatientMapper;
 import org.enterprise.odontosoft.exception.CustomException;
@@ -28,13 +29,11 @@ public class PatientControllerImpl implements PatientController {
     private static final Logger logger = LoggerFactory.getLogger(PatientControllerImpl.class);
 
     @Override
-    public ResponseEntity<PacienteResponse> createPatient(PacienteRequest pacienteRequest) {
-        ResponseEntity<PacienteResponse> responseEntity;
+    public PacienteResponse createPatient(PacienteRequest pacienteRequest) {
         try {
             List<Paciente> pacientes = patientDao.findByDocument(pacienteRequest.getDocumento());
             if (!pacientes.isEmpty()) {
-                responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new PacienteResponse(String.valueOf(HttpStatus.BAD_REQUEST.value()), "Ya existe un paciente con el número de documento proporcionado"));
-                return responseEntity;
+                throw new EntityExistsException("Ya existe un paciente con el número de documento proporcionado");
             }
             Paciente paciente = PatientMapper.toEntity(pacienteRequest);
             paciente.setIdusuariocreacion(Usuario.builder().id(usuarioDao.findByCodigo(pacienteRequest.getIdusuariocreacion()).getId()).build());
@@ -44,17 +43,15 @@ public class PatientControllerImpl implements PatientController {
                 paciente.setIdusuariomodificacion(null);
             }
             patientDao.save(paciente);
-            responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(PatientMapper.toDto(paciente));
+            return PatientMapper.toDto(paciente);
         } catch (Exception e) {
-            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             logger.error("Error creating patient.", e);
+            throw e;
         }
-
-        return responseEntity;
     }
 
     @Override
-    public ResponseEntity<List<PacienteResponse>> getPatient(String documento, String nombre, String correo) {
+    public List<PacienteResponse> getPatient(String documento, String nombre, String correo) {
         try {
             List<Paciente> pacientes;
 
@@ -76,66 +73,55 @@ public class PatientControllerImpl implements PatientController {
                 throw new CustomException("No se encontraron pacientes con los criterios de búsqueda proporcionados", 404);
             }
 
-            List<PacienteResponse> pacientesDto = PatientMapper.toDto(pacientes);
-            return ResponseEntity.status(HttpStatus.OK).body(pacientesDto);
-        } catch (CustomException e) {
-            // Propagar la excepción personalizada para que la maneje el GlobalExceptionHandler
-            throw e;
+            return PatientMapper.toDto(pacientes);
         } catch (Exception e) {
             logger.error("Error al buscar pacientes", e);
-            throw new CustomException("Error al procesar la solicitud de búsqueda de pacientes", 500);
+            throw e;
         }
     }
 
     @Override
-    public ResponseEntity<PacienteResponse> getPatientById(Integer id) {
-        ResponseEntity<PacienteResponse> responseEntity;
+    public PacienteResponse getPatientById(Integer id) {
         try {
             Paciente paciente = patientDao.findById(id).orElse(null);
             if (Objects.isNull(paciente)) {
-                responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new PacienteResponse(String.valueOf(HttpStatus.BAD_REQUEST.value()), "No existe un paciente con el id proporcionado"));
+                throw new CustomException("No existe un paciente con el id proporcionado", 404);
             } else {
-                responseEntity = ResponseEntity.status(HttpStatus.OK).body(PatientMapper.toDto(paciente));
+                return PatientMapper.toDto(paciente);
             }
         } catch (Exception e) {
-            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             logger.error("Error find patient", e);
+            throw e;
         }
-        return responseEntity;
     }
 
     @Override
-    public ResponseEntity<PacienteResponse> updatePatient(PacienteRequest pacienteRequest) {
-        ResponseEntity<PacienteResponse> responseEntity;
+    public PacienteResponse updatePatient(PacienteRequest pacienteRequest) {
         try {
             Paciente paciente = PatientMapper.toEntity(pacienteRequest);
             paciente.setIdusuariocreacion(Usuario.builder().id(usuarioDao.findByCodigo(pacienteRequest.getIdusuariocreacion()).getId()).build());
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(PatientMapper.toDto(paciente));
+            PacienteResponse pacienteResponse = PatientMapper.toDto(paciente);
             if (Objects.nonNull(pacienteRequest.getFechamodificacion())) {
                 paciente.setIdusuariomodificacion(Usuario.builder().id(usuarioDao.findByCodigo(pacienteRequest.getIdusuariomodificacion()).getId()).build());
             } else {
                 paciente.setIdusuariomodificacion(null);
             }
             patientDao.save(paciente);
+            return pacienteResponse;
         } catch (Exception e) {
-            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             logger.error("Error updating patient", e);
+            throw e;
         }
-
-        return responseEntity;
     }
 
     @Override
-    public ResponseEntity<List<PacienteResponse>> getAllPatients() {
-        ResponseEntity<List<PacienteResponse>> responseEntity;
+    public List<PacienteResponse> getAllPatients() {
         try {
             List<Paciente> pacientes = (List<Paciente>) patientDao.findAll();
-            List<PacienteResponse> pacientesDto = PatientMapper.toDto(pacientes);
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(pacientesDto);
+            return PatientMapper.toDto(pacientes);
         } catch (Exception e) {
-            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             logger.error("Error getting all patients", e);
+            throw e;
         }
-        return responseEntity;
     }
 }

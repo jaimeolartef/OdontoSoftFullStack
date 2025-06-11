@@ -2,11 +2,11 @@ package org.enterprise.odontosoft.view;
 
 import lombok.RequiredArgsConstructor;
 import org.enterprise.odontosoft.controller.HabitsHistoryController;
-import org.enterprise.odontosoft.view.dto.MensajeValidation;
+import org.enterprise.odontosoft.view.dto.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.NoSuchElementException;
+import org.enterprise.odontosoft.view.dto.response.HabitoResponse;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -14,14 +14,11 @@ import java.util.NoSuchElementException;
 @CrossOrigin(originPatterns = "http://localhost:*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT})
 public class HabitsHistoryView {
 
-	private final HabitsHistoryController habitsHistory;
+    private final HabitsHistoryController habitsHistory;
 
-	@GetMapping("/getall")
-	public ResponseEntity getHabitos() {
-		try {
-			return ResponseEntity.ok(habitsHistory.getHabitos());
-		} catch (NoSuchElementException e) {
-			return ResponseEntity.badRequest().body(MensajeValidation.builder().codigoValidacion(e.getCause().toString()).mensajeValidacion(e.getMessage()).build());
-		}
-	}
+    @GetMapping("/getall")
+    public ResponseEntity<ApiResponse<List<HabitoResponse>>> getHabitos() {
+        List<HabitoResponse> response = habitsHistory.getHabitos();
+        return ResponseEntity.ok(ApiResponse.success(response, "Hábitos obtenidos correctamente"));
+    }
 }

@@ -7,8 +7,6 @@ import org.enterprise.odontosoft.model.service.TipoDocumentoService;
 import org.enterprise.odontosoft.view.dto.response.TipoDocumentoResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
@@ -22,21 +20,18 @@ public class TipoDocumentoControllerImpl implements TipoDocumentoController {
     private final TipoDocumentoService tipoDocumentoService;
 
     @Override
-    public ResponseEntity<List<TipoDocumentoResponse>> getAllTipoDocumento() {
-        ResponseEntity<List<TipoDocumentoResponse>> responseEntity;
+    public List<TipoDocumentoResponse> getAllTipoDocumento() {
         try {
             List<TipoDocumento> tiposDocumento = tipoDocumentoService.getAllTipoDocumento();
             if (tiposDocumento.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                throw new jakarta.persistence.EntityNotFoundException("No se encontraron tipos de documento.");
             }
-            List<TipoDocumentoResponse> tiposDocumentoResponse = tiposDocumento.stream()
+            return tiposDocumento.stream()
                 .map(TipoDocumentoMapper::toResponse)
                 .toList();
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(tiposDocumentoResponse);
         } catch (Exception e) {
-            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             logger.error("Error al obtener los tipos de documento.", e);
+            throw e;
         }
-        return responseEntity;
     }
 }

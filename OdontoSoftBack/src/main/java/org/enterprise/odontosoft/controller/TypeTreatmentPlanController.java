@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface TypeTreatmentPlanController {
 
-	ResponseEntity<List<TipoTratamientoResponse>> getTypeTreatmentPlan();
+	List<TipoTratamientoResponse> getTypeTreatmentPlan();
 }

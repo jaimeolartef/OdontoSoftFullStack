@@ -2,12 +2,12 @@ package org.enterprise.odontosoft.view;
 
 import lombok.RequiredArgsConstructor;
 import org.enterprise.odontosoft.controller.PrecedentHistoryController;
-import org.enterprise.odontosoft.view.dto.MensajeValidation;
+import org.enterprise.odontosoft.view.dto.ApiResponse;
+import org.enterprise.odontosoft.view.dto.response.AntecedenteResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.NoSuchElementException;
-
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -18,11 +18,8 @@ public class PrecedentHistoryView {
     private final PrecedentHistoryController precedentHistory;
 
     @GetMapping("/get")
-    public ResponseEntity getAntecedentes() {
-        try {
-            return ResponseEntity.ok(precedentHistory.getAntecedentes());
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.badRequest().body(MensajeValidation.builder().codigoValidacion(e.getCause().toString()).mensajeValidacion(e.getMessage()).build());
-        }
+    public ResponseEntity<ApiResponse<List<AntecedenteResponse>>> getAntecedentes() {
+        List<AntecedenteResponse> response = precedentHistory.getAntecedentes();
+        return ResponseEntity.ok(ApiResponse.success(response, "Antecedentes obtenidos correctamente"));
     }
 }

@@ -23,21 +23,19 @@ public class TypeTreatmentPlanControllerImpl implements TypeTreatmentPlanControl
 	private final TipoTratamientoDao tipoTratamientoDao;
 
 	@Override
-	public ResponseEntity<List<TipoTratamientoResponse>> getTypeTreatmentPlan() {
-		ResponseEntity<List<TipoTratamientoResponse>> responseEntity = null;
+	public List<TipoTratamientoResponse> getTypeTreatmentPlan() {
 		List<TipoTratamientoResponse> tipoTratamientosResponse = new ArrayList<>();
 		try {
 			tipoTratamientoDao.findAllByHabilitadoTrue().forEach(tipoTratamiento -> {
 				tipoTratamientosResponse.add(TipoTratamientoMapper.toResponse(tipoTratamiento));
 			});
 			if (tipoTratamientosResponse.isEmpty()) {
-				ResponseEntity.status(HttpStatus.NOT_FOUND).body((List<TipoTratamientoResponse>) new OdontogramaResponse(String.valueOf(HttpStatus.NOT_FOUND.value()), "No se encontró tipos de tratamiento."));
+				throw new jakarta.persistence.EntityNotFoundException("No se encontraron tipos de tratamiento.");
 			}
-			responseEntity = ResponseEntity.status(HttpStatus.OK).body(tipoTratamientosResponse);
+			return tipoTratamientosResponse;
 		} catch (Exception e) {
-			responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 			logger.error("Error getting medical history.", e);
+			throw e;
 		}
-		return responseEntity;
 	}
 }
