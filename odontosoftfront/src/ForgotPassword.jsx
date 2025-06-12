@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import config from './config';
 import showMessage from '../src/util/UtilMessage';
 import { useNavigate } from 'react-router-dom';
+import { apiPut } from './components/apiService';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
@@ -16,12 +15,10 @@ const ForgotPassword = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.put(`${config.baseURL}/user/recordarContrasenia`, { "email": email });
-      if (response.status === 201) {
-        showMessage('success', 'Se ha enviado un enlace para restablecer tu contraseña a tu correo electrónico.');
-      }
+      await apiPut('/user/recordarContrasenia', {email}, {includeAuth: false});
+      showMessage('success', 'Se ha enviado un enlace para restablecer tu contraseña a tu correo electrónico.');
     } catch (error) {
-      showMessage('error', 'Error al enviar el enlace de restablecimiento de contraseña.');
+      showMessage('error', error?.message || 'Error al enviar el enlace de restablecimiento de contraseña.');
     }
   };
 

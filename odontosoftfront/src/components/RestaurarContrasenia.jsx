@@ -1,16 +1,12 @@
-import React, {useEffect, useState} from 'react';
-import axios from 'axios';
-import config from "../config";
+import React, { useState } from 'react';
 import showMessage from "../util/UtilMessage";
-import {useLocation, useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import sha256 from "crypto-js/sha256";
+import { apiPost, apiPut } from './apiService';
 
 const RestaurarContrasenia = () => {
-  const [email, setEmail] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const location = useLocation();
   const [passwordObj, setPasswordObj] = useState({
-    usuario: '',
     clave: '',
     nuevaClave: '',
     confirmarClave: ''
@@ -18,18 +14,17 @@ const RestaurarContrasenia = () => {
   const navigate = useNavigate();
   const usuario = sessionStorage.getItem('username');
 
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setPasswordObj(prevState => ({ ...prevState, [name]: value }));
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setPasswordObj(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     if (passwordObj.nuevaClave !== passwordObj.confirmarClave) {
       showMessage('error', 'Las claves no coinciden.');
       return;
     }
-
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
     if (!passwordRegex.test(passwordObj.nuevaClave)) {
       showMessage('error', 'La clave debe contener letras, números y un mínimo de 8 caracteres.');
@@ -41,37 +36,20 @@ const RestaurarContrasenia = () => {
     const hashClaveConfirmar = sha256(passwordObj.confirmarClave).toString();
 
     const updatedPasswordObj = {
-      usuario: usuario,
+      usuario,
       clave: hashClave,
       nuevaClave: hashClaveNueva,
       confirmarClave: hashClaveConfirmar
     };
 
     try {
-      const loginObj = {
-        usuario: usuario,
-        clave: hashClave
-      };
-
-      const loginResponse = await axios.post(`${config.baseURL}/user/login`, loginObj);
-
-      const token = sessionStorage.getItem('jsonwebtoken');
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      const resetResponse = await axios.put(`${config.baseURL}/user/resetpassword`, updatedPasswordObj);
-      if (resetResponse.status === 200) {
-        showMessage('success', 'La contraseña se cambió correctamente.');
-        navigate('/inicio');
-        setIsSubmitted(true);
-      } else {
-        showMessage('error', 'Error al cambiar la contraseña. Por favor, inténtalo de nuevo más tarde.');
-      }
+      await apiPost('/user/login', { usuario, clave: hashClave });
+      await apiPut('/user/resetpassword', updatedPasswordObj);
+      showMessage('success', 'La contraseña se cambió correctamente.');
+      navigate('/inicio');
+      setIsSubmitted(true);
     } catch (error) {
-      if (error.response.status === 403) {
-        showMessage('error', 'Error de autenticación, por favor validar sus credenciales');
-        return;
-      } else {
-        showMessage('error', 'Error al cambiar la contraseña. Por favor, inténtalo de nuevo más tarde.');
-      }
+      showMessage('error', error?.message || 'Error al cambiar la contraseña. Por favor, inténtalo de nuevo más tarde.');
     }
   };
 
@@ -84,34 +62,25 @@ const RestaurarContrasenia = () => {
         ) : (
           <form className="row g-3 needs-validation" noValidate onSubmit={handleSubmit}>
             <div className="form-floating mb-3">
-              <input id="floatingInputPwd" type="password"
-                     className="form-control" name="clave"
-                     value={passwordObj.clave} onChange={handleInputChange} placeholder="Clave actual" required/>
-              <label htmlFor="floatingInputPwd">Clave actual</label>
-              <div className="invalid-feedback">
-                Debe ingresar una clave
-              </div>
+              <input type="password" className="form-control" name="clave"
+                value={passwordObj.clave} onChange={handleInputChange} placeholder="Clave actual" required />
+              <label>Clave actual</label>
+              <div className="invalid-feedback">Debe ingresar una clave</div>
             </div>
             <div className="form-floating mb-3">
-              <input id="floatingInputPwdNew" type="password" className="form-control" name="nuevaClave" value={passwordObj.nuevaClave}
-                     onChange={handleInputChange} placeholder="Nueva clave" required/>
-              <label htmlFor="floatingInputPwdNew">Nueva clave</label>
-              <div className="invalid-feedback">
-                Debe ingresar una clave
-              </div>
+              <input type="password" className="form-control" name="nuevaClave"
+                value={passwordObj.nuevaClave} onChange={handleInputChange} placeholder="Nueva clave" required />
+              <label>Nueva clave</label>
+              <div className="invalid-feedback">Debe ingresar una clave</div>
             </div>
             <div className="form-floating mb-3">
-              <input id="floatingInputPwdRepeat" type="password" className="form-control" name="confirmarClave" value={passwordObj.confirmarClave}
-                     onChange={handleInputChange} placeholder="Confirmar clave" required/>
-              <label htmlFor="floatingInputPwdRepeat">Confirmar clave</label>
-              <div className="invalid-feedback">
-                Debe ingresar una clave
-              </div>
+              <input type="password" className="form-control" name="confirmarClave"
+                value={passwordObj.confirmarClave} onChange={handleInputChange} placeholder="Confirmar clave" required />
+              <label>Confirmar clave</label>
+              <div className="invalid-feedback">Debe ingresar una clave</div>
             </div>
             <div className="d-grid">
-              <button type="submit" className="btn btn-primary">
-                Guardar
-              </button>
+              <button type="submit" className="btn btn-primary">Guardar</button>
             </div>
           </form>
         )}

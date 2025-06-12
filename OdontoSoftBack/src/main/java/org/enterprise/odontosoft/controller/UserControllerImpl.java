@@ -1,6 +1,7 @@
 package org.enterprise.odontosoft.controller;
 
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.enterprise.odontosoft.model.dao.MenuDao;
 import org.enterprise.odontosoft.model.dao.PatientDao;
 import org.enterprise.odontosoft.model.dao.PermisoMenuDao;
@@ -25,6 +26,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 
+@Slf4j
 @Controller
 public class UserControllerImpl implements UserController {
 
@@ -46,22 +48,18 @@ public class UserControllerImpl implements UserController {
   }
 
   @Override
-  public ResponseEntity<CredencialDto> login(@Valid @RequestBody CredencialDto credencial) {
-    ResponseEntity<CredencialDto> responseEntity;
+  public CredencialDto login(@Valid @RequestBody CredencialDto credencial) {
     Usuario usuario = usuarioDao.findByCodigo(credencial.getUsuario());
     if (Objects.nonNull(usuario) && credencial.getClave().equals(usuario.getClave())) {
       String token = UtilSecurity.generateToken(credencial.getUsuario());
-      responseEntity = ResponseEntity.status(HttpStatus.OK).body(CredencialDto.builder().usuario(credencial.getUsuario()).token(token).build());
-      return responseEntity;
+      return CredencialDto.builder().usuario(credencial.getUsuario()).token(token).build();
     } else {
-      responseEntity = ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-      return responseEntity;
+      throw new jakarta.persistence.EntityNotFoundException("Usuario no encontrado o contraseña incorrecta");
     }
   }
 
   @Override
-  public ResponseEntity<String> recordarContrasenia(UsuarioRecordarDto usuarioRecordarDto) {
-    ResponseEntity<String> responseEntity;
+  public String recordarContrasenia(UsuarioRecordarDto usuarioRecordarDto) {
     Usuario usuario = usuarioDao.findByEmail(usuarioRecordarDto.getEmail());
 
     if (usuario != null) {
@@ -70,12 +68,11 @@ public class UserControllerImpl implements UserController {
       String text = "Hola " + usuario.getNombre() + ",\n\nTu contraseña es " + newPassword + ".\n\nSaludos,\nEquipo de Soporte.";
       usuario.setClave(UtilSecurity.encriptar(newPassword));
       emailService.sendUserCreationEmail(usuario.getCorreo(), subject, text);
-      responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(MENSAJE_USUARIO);
       usuarioDao.save(usuario);
     } else {
-      responseEntity = ResponseEntity.status(HttpStatus.NOT_FOUND).body("El usuario no existe con el correo " + usuarioRecordarDto.getEmail());
+      throw new jakarta.persistence.EntityNotFoundException("Usuario no encontrado con correo: " + usuarioRecordarDto.getEmail());
     }
-    return responseEntity;
+    return MENSAJE_USUARIO;
   }
 
   public String generateRandomString(int length) {
@@ -90,8 +87,7 @@ public class UserControllerImpl implements UserController {
 
 
   @Override
-  public ResponseEntity<String> signup(UsuarioDto usuarioDto) {
-    ResponseEntity<String> responseEntity;
+  public String signup(UsuarioDto usuarioDto) {
     Usuario usuario = usuarioDao.findByCodigo(usuarioDto.getCodigo());
     if (usuario == null) {
       Rol rol = new Rol();
@@ -110,16 +106,14 @@ public class UserControllerImpl implements UserController {
       String text = "Hola " + usuarioDto.getNombre() + ",\n\nTu usuario ha sido creado exitosamente.\nEl usuario es tu número de documento y la clave es " + usuarioDto.getClave() + ".\n\nSaludos,\nEquipo de Soporte.";
       emailService.sendUserCreationEmail(usuarioDto.getCorreo(), MENSAJE_USUARIO, text);
 
-      responseEntity = ResponseEntity.status(HttpStatus.CREATED).body(MENSAJE_USUARIO);
+      return MENSAJE_USUARIO;
     } else {
-      responseEntity = ResponseEntity.status(HttpStatus.CONFLICT).body("El usuario ya existe con el codigo " + usuarioDto.getCodigo());
+      throw new jakarta.persistence.EntityExistsException("El usuario ya existe con el código: " + usuarioDto.getCodigo());
     }
-    return responseEntity;
   }
 
   @Override
-  public ResponseEntity<PermisosDto> validateRole(UsuarioDto usuarioDto) {
-    ResponseEntity<PermisosDto> responseEntity;
+  public PermisosDto validateRole(UsuarioDto usuarioDto) {
     PermisosDto permisosDto = new PermisosDto();
     permisosDto.setMenus(new ArrayList<>());
 
@@ -153,7 +147,7 @@ public class UserControllerImpl implements UserController {
                   .build();
 
               permisoMenuDao.findByIdRolAndIdMenu(usuario.getIdRol().getId(), menuDto.getId()).forEach(permisoMenu -> {
-                if (permisoMenu.getHabilitado()) {
+                if (Boolean.TRUE.equals(permisoMenu.getHabilitado())) {
                     menuHijoDto.setCrear(permisoMenu.getCrear());
                     menuHijoDto.setEditar(permisoMenu.getEditar());
                     menuHijoDto.setEliminar(permisoMenu.getEliminar());
@@ -170,32 +164,27 @@ public class UserControllerImpl implements UserController {
         }
       });
 
-      responseEntity = ResponseEntity.status(HttpStatus.OK).body(permisosDto);
-      return responseEntity;
+      return permisosDto;
     }
 
     return null;
   }
 
   @Override
-  public ResponseEntity<Void> validateToken(UsuarioValidarDto usuarioValidarDto) {
-    ResponseEntity<Void> responseEntity = null;
+  public void validateToken(UsuarioValidarDto usuarioValidarDto) {
     try {
       boolean validado = UtilSecurity.validateToken(usuarioValidarDto.getToken(), usuarioValidarDto.getUsuario());
 
-      if (validado) {
-        responseEntity = ResponseEntity.status(HttpStatus.OK).build();
-      } else {
-        responseEntity = ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+      if (!validado) {
+        throw new AccessDeniedException("Token inválido o usuario no autorizado");
       }
-    } catch (AccessDeniedException e) {
-      responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    } catch (Exception e) {
+      log.error("Error al validar el token: {}", e.getMessage());
     }
-    return responseEntity;
   }
 
   @Override
-  public ResponseEntity<String> resetPassword(UsuarioPasswordDto usuarioPasswordDto) {
+  public String resetPassword(UsuarioPasswordDto usuarioPasswordDto) {
     try {
       Optional.of(usuarioDao.findByCodigo(usuarioPasswordDto.getUsuario())).
           ifPresent(usuario -> {
@@ -204,9 +193,10 @@ public class UserControllerImpl implements UserController {
               usuarioDao.save(usuario);
             }
           });
-      return ResponseEntity.status(HttpStatus.OK).body("Contraseña actualizada con éxito");
+      return "Contraseña actualizada con éxito";
     } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al actualizar la contraseña");
+      log.error("Error al actualizar la contraseña");
+      throw e;
     }
   }
 }

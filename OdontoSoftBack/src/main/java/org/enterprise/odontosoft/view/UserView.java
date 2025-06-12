@@ -20,19 +20,19 @@ public class UserView {
 
     @PostMapping("user/login")
     public ResponseEntity<ApiResponse<CredencialDto>> login(@Valid @RequestBody CredencialDto credencial) {
-        CredencialDto response = userController.login(credencial).getBody();
+        CredencialDto response = userController.login(credencial);
         return ResponseEntity.ok(ApiResponse.success(response, "Login exitoso"));
     }
 
     @PutMapping("user/recordarContrasenia")
     public ResponseEntity<ApiResponse<String>> recordarContrasenia(@Valid @RequestBody UsuarioRecordarDto usuarioRecordarDto) {
-        String response = userController.recordarContrasenia(usuarioRecordarDto).getBody();
+        String response = userController.recordarContrasenia(usuarioRecordarDto);
         return ResponseEntity.ok(ApiResponse.success(response, "Correo de recuperación enviado"));
     }
 
     @PostMapping("user/signup")
     public ResponseEntity<ApiResponse<String>> signup(@Valid @RequestBody UsuarioDto usuarioDto) {
-        String response = userController.signup(usuarioDto).getBody();
+        String response = userController.signup(usuarioDto);
         return ResponseEntity.ok(ApiResponse.success(response, "Usuario registrado correctamente"));
     }
 
@@ -49,13 +49,13 @@ public class UserView {
 
     @PostMapping("user/validateRole")
     public ResponseEntity<ApiResponse<PermisosDto>> validateRole(@Valid @RequestBody UsuarioDto usuarioDto) {
-        PermisosDto response = userController.validateRole(usuarioDto).getBody();
+        PermisosDto response = userController.validateRole(usuarioDto);
         return ResponseEntity.ok(ApiResponse.success(response, "Rol validado correctamente"));
     }
 
     @PutMapping("user/resetpassword")
     public ResponseEntity<ApiResponse<String>> resetPassword(@Valid @RequestBody UsuarioPasswordDto usuarioPasswordDto) {
-        String response = userController.resetPassword(usuarioPasswordDto).getBody();
+        String response = userController.resetPassword(usuarioPasswordDto);
         return ResponseEntity.ok(ApiResponse.success(response, "Contraseña restablecida correctamente"));
     }
 }

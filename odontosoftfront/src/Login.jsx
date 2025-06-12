@@ -8,6 +8,7 @@ import {useNavigate} from 'react-router-dom';
 import config from './config';
 import showMessage from "../src/util/UtilMessage";
 import { Link } from 'react-router-dom';
+import { apiGet, apiPost} from './components/apiService';
 
 const Login = (props) => {
   const [loginObj, setLoginObj] = useState({
@@ -53,73 +54,63 @@ const Login = (props) => {
     }));
   };
 
-  const handleLogin = (event) => {
+  const handleLogin = async (event) => {
     event.preventDefault();
     try {
       const hash = sha256(loginObj.clave).toString();
-      loginObj.clave = hash;
+      const loginData = {...loginObj, clave: hash};
 
-      axios.post(`${config.baseURL}/user/login`, loginObj)
-        .then(response => {
-          if (response.data) {
-            axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
-            sessionStorage.setItem('jsonwebtoken', response.data.token);
-            usuarioDto.codigo = response.data.usuario;
-            axios.post(`${config.baseURL}/user/validateRole`, usuarioDto)
-              .then(responseMenu => {
-                const responseValidateRole = JSON.stringify(responseMenu.data.menus);
-                sessionStorage.setItem('menuUser', responseValidateRole);
-                navigate('/inicio');
-                sessionStorage.setItem('username', usuarioDto.codigo);
-                sessionStorage.setItem('idPaciente', responseMenu.data.idPatient);
-                sessionStorage.setItem('Rol', responseMenu.data.rol);
+      // 1. Login
+      const loginResponse = await apiPost('/user/login', loginData, {includeAuth: false});
+      if (loginResponse) {
+        sessionStorage.setItem('jsonwebtoken', loginResponse.token);
+        const usuarioCodigo = loginResponse.usuario;
+        setUsuarioDto({codigo: usuarioCodigo});
 
-                if (responseMenu.data.idPatient) {
-                  axios.get(`${config.baseURL}/pacientes/consultar/${responseMenu.data.idPatient}`)
-                    .then(response => {
-                      sessionStorage.setItem('documento', response.data.documento);
-                      sessionStorage.setItem('nombre', response.data.primernombre + (response.data.segundonombre ? ' ' + response.data.segundonombre : '') + ' ' + response.data.primerapellido + (response.data.segundoapellido ? ' ' + response.data.segundoapellido : ''));
-                    })
-                    .catch(error => {
-                      console.error('Error fetching patient data:', error);
-                    });
-                }
-                sessionStorage.setItem('nombre', responseMenu.data.nombreUsuario);
+        // 2. Validar rol
+        const roleResponse = await apiPost('/user/validateRole', {codigo: usuarioCodigo});
+        const responseValidateRole = JSON.stringify(roleResponse.menus);
+        sessionStorage.setItem('menuUser', responseValidateRole);
+        sessionStorage.setItem('username', usuarioCodigo);
+        sessionStorage.setItem('idPaciente', roleResponse.idPatient);
+        sessionStorage.setItem('Rol', roleResponse.rol);
+        sessionStorage.setItem('nombre', roleResponse.nombreUsuario);
 
-                axios.get(`${config.baseURL}/constants`)
-                  .then(response => {
-                    console.log('Data -> ' + response.data);
-                    response.data.forEach(constant => {
-                      sessionStorage.setItem(constant.codigo, constant.valor);
-                    });
-                  });
-
-
-                props.onLoggedIn();
-              }).catch(error => {
-              showMessage('error', 'Error al validar el rol del usuario');
-            });
-          } else {
-            showMessage('error', 'Error de autenticación, por favor validar sus credenciales');
+        // 3. Si es paciente, obtener datos del paciente
+        if (roleResponse.idPatient) {
+          try {
+            const patientResponse = await apiGet(`/pacientes/consultar/${roleResponse.idPatient}`);
+            sessionStorage.setItem('documento', patientResponse.documento);
+            sessionStorage.setItem('nombre',
+              patientResponse.primernombre +
+              (patientResponse.segundonombre ? ' ' + patientResponse.segundonombre : '') +
+              ' ' + patientResponse.primerapellido +
+              (patientResponse.segundoapellido ? ' ' + patientResponse.segundoapellido : '')
+            );
+          } catch (error) {
+            console.error('Error fetching patient data:', error);
           }
-        }).catch(error => {
+        }
+
+        // 4. Obtener constantes
+        try {
+          const constantsResponse = await apiGet('/constants');
+          constantsResponse.forEach(constant => {
+            sessionStorage.setItem(constant.codigo, constant.valor);
+          });
+        } catch (error) {
+          console.error('Error fetching constants:', error);
+        }
+
+        navigate('/inicio');
+        props.onLoggedIn();
+      } else {
         showMessage('error', 'Error de autenticación, por favor validar sus credenciales');
-      });
+      }
     } catch (error) {
-      showMessage('error', 'Error ' + error);
+      showMessage('error', 'Error de autenticación, por favor validar sus credenciales');
     }
   };
-
-  const consultarPaciente = (idPaciente) => {
-    let paciente = axios.get(`${config.baseURL}/pacientes/consultar/${idPaciente}`)
-      .then(response => {
-        return response.data;
-      })
-      .catch(error => {
-        console.error('Error fetching patient data:', error);
-      });
-    return paciente;
-  }
 
   const handleKeyDown = (event) => {
     if (event.key === 'Enter') {
