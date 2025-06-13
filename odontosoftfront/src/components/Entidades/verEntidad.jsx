@@ -57,7 +57,93 @@ const VerEntidad = () => {
           <img src={Logo} alt="Logo" className="mb-3" style={{ maxWidth: '140px' }} />
           <h1>Detalles de la Entidad Prestadora de Salud</h1>
         </header>
-        {/* ...resto del renderizado igual... */}
+        <section className="mb-4">
+          <h3>Información General</h3>
+          <div className="row g-3">
+            <div className="col-md-6">
+              <div className="form-group mb-3">
+                <label className="form-label fw-bold">Estado:</label>
+                <div className="form-control bg-light d-flex align-items-center">
+                                  <span className={`badge ${entidad.habilitado ? 'bg-success' : 'bg-danger'} me-2`}>
+                                    {entidad.habilitado ? 'Habilitado' : 'Inhabilitado'}
+                                  </span>
+                </div>
+              </div>
+            </div>
+            <div className="col-md-6">
+              <div className="form-group mb-3">
+                <label className="form-label fw-bold">Tipo de documento:</label>
+                <p className="form-control bg-light">{entidad.tipodocumento}</p>
+              </div>
+            </div>
+            <div className="col-md-6">
+              <div className="form-group mb-3">
+                <label className="form-label fw-bold">Número de documento:</label>
+                <p className="form-control bg-light">{entidad.numerodocumento}</p>
+              </div>
+            </div>
+            <div className="col-md-6">
+              <div className="form-group mb-3">
+                <label className="form-label fw-bold">Nombre:</label>
+                <p className="form-control bg-light">{entidad.nombre}</p>
+              </div>
+            </div>
+            <div className="col-md-6">
+              <div className="form-group mb-3">
+                <label className="form-label fw-bold">Tipo de entidad:</label>
+                <p className="form-control bg-light">{entidad.tipoentidad}</p>
+              </div>
+            </div>
+            <div className="col-md-6">
+              <div className="form-group mb-3">
+                <label className="form-label fw-bold">Código habilitación Minsalud:</label>
+                <p className="form-control bg-light">{entidad.codigominsalud}</p>
+              </div>
+            </div>
+            <div className="col-md-6">
+              <div className="form-group mb-3">
+                <label className="form-label fw-bold">Régimen que administra:</label>
+                <p className="form-control bg-light">{entidad.regimenadministra}</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="mb-4">
+          <h3>Datos de Contacto</h3>
+          <div className="row g-3">
+            <div className="col-md-12">
+              <div className="form-group mb-3">
+                <label className="form-label fw-bold">Dirección:</label>
+                <p className="form-control bg-light">{entidad.direccion}</p>
+              </div>
+            </div>
+            <div className="col-md-6">
+              <div className="form-group mb-3">
+                <label className="form-label fw-bold">Teléfono:</label>
+                <p className="form-control bg-light">{entidad.telefono}</p>
+              </div>
+            </div>
+            <div className="col-md-6">
+              <div className="form-group mb-3">
+                <label className="form-label fw-bold">Sitio Web:</label>
+                <p className="form-control bg-light">{entidad.sitioweb}</p>
+              </div>
+            </div>
+            <div className="col-md-6">
+              <div className="form-group mb-3">
+                <label className="form-label fw-bold">Correo electrónico:</label>
+                <p className="form-control bg-light">{entidad.correo}</p>
+              </div>
+            </div>
+            <div className="col-md-12">
+              <div className="form-group mb-3">
+                <label className="form-label fw-bold">Canales de atención:</label>
+                <p className="form-control bg-light">{entidad.canalesatencion}</p>
+              </div>
+            </div>
+          </div>
+        </section>
         <div className="d-flex justify-content-center">
           <button type="button" className="btn btn-secondary" onClick={() => navigate('/entidad')}>
             Volver
