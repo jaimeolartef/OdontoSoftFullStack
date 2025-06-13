@@ -3,16 +3,14 @@ import './Odontograma.css'
 import CondicionesDentales from './CondicionesDentale';
 import Diente from './Diente';
 import {useLocation, useNavigate} from "react-router-dom";
-import axios from "axios";
-import config from "../../../config";
 import showMessage from "../../../util/UtilMessage";
+import {apiGet, apiPost} from "../../apiService";
 
 const Odontograma = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const usuario = sessionStorage.getItem('username');
 
-  // Utiliza useMemo para memorizar el objeto patient
   const idHistoriaClinica = useMemo(() => {
     return location.state?.idHistoriaClinica || {};
   }, [location.state]);
@@ -33,6 +31,7 @@ const Odontograma = () => {
     detalleodontogramas: [],
     habilitado: true
   });
+
   const mapFormOdontograma = (data) => ({
     id: data.id || '',
     idhistoriaclinica: data.idhistoriaclinica || '',
@@ -68,7 +67,6 @@ const Odontograma = () => {
         );
 
         if (existingItemIndex === -1 && segmentos[key].idestado !== 'DS') {
-          // Agregar nuevo segmento si no existe
           initOdontograma.detalleodontogramas.push({
             id: '',
             iddiente: segmentos[key].iddiente,
@@ -81,16 +79,14 @@ const Odontograma = () => {
             idodontograma: idOdontograma,
           });
         } else if (existingItemIndex > -1 && segmentos[key].idestado === 'DS') {
-          // Actualizar segmento existente
           initOdontograma.detalleodontogramas[existingItemIndex] = {
             ...initOdontograma.detalleodontogramas[existingItemIndex],
-            idestado: segmentos[key].idestado === 'DS' ? '' : segmentos[key].idestado, // si esta vacio significa que se debe eliminar
+            idestado: segmentos[key].idestado === 'DS' ? '' : segmentos[key].idestado,
             fechatratamiento: new Date().toISOString(),
             idusuariomodificacion: usuario,
             fechamodificacion: new Date().toISOString(),
           };
         } else if (existingItemIndex > -1) {
-          // Actualizar segmento existente
           initOdontograma.detalleodontogramas[existingItemIndex] = {
             ...initOdontograma.detalleodontogramas[existingItemIndex],
             idestado: segmentos[key].idestado,
@@ -108,29 +104,34 @@ const Odontograma = () => {
   useEffect(() => {
     const fetchOdontograma = async () => {
       if (initOdontograma.id === '' || initOdontograma.id === 0) {
-        let token = sessionStorage.getItem('jsonwebtoken');
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         try {
-          const response = await axios.get(`${config.baseURL}/odontograma/consultar/` + idHistoriaClinica);
-          if (response.status === 201 || response.status === 200) {
-            setInitOdontograma(mapFormOdontograma(response.data));
-          } else if (response.status === 204) {
+          const response = await apiGet(`/odontograma/consultar/${idHistoriaClinica}`);
+          if (response && (response.id || response.id === 0)) {
+            setInitOdontograma(mapFormOdontograma(response));
+            setIdOdontograma(response.id);
+          } else {
             setInitOdontograma(mapFormOdontograma({
-                idhistoriaclinica: idHistoriaClinica,
-                fecha: new Date().toISOString(),
-                idusuariocreacion: usuario,
-                fechacreacion: new Date().toISOString(),
-              }));
+              idhistoriaclinica: idHistoriaClinica,
+              fecha: new Date().toISOString(),
+              idusuariocreacion: usuario,
+              fechacreacion: new Date().toISOString(),
+            }));
           }
         } catch (error) {
-          console.error('Error fetching patient data:', error);
+          setInitOdontograma(mapFormOdontograma({
+            idhistoriaclinica: idHistoriaClinica,
+            fecha: new Date().toISOString(),
+            idusuariocreacion: usuario,
+            fechacreacion: new Date().toISOString(),
+          }));
+          console.error('Error fetching odontograma data:', error);
         }
       }
     };
 
     fetchOdontograma();
+    // eslint-disable-next-line
   }, []);
-
 
   const renderTooth = (index, toothNumber) => {
     const initSegmentos = {
@@ -155,26 +156,25 @@ const Odontograma = () => {
           }
         });
 
-    return (
-      <div key={index} className="">
-        <div style={{textAlign: 'center'}}>{toothNumber}</div>
-        <Diente toothNumber={toothNumber} onClick={handleToothClick}
-                initSegmentos={initSegmentos} readOnly={readOnly}/>
-      </div>
-    );
-  } else {
-    return (
-      <div key={index} className="">
-        <div style={{textAlign: 'center'}}>{toothNumber}</div>
-        <Diente toothNumber={toothNumber} onClick={handleToothClick} readOnly={readOnly}
-                initSegmentos={initSegmentos}/>
-      </div>
-    );
-  }
-  return null;
-};
+      return (
+        <div key={index} className="">
+          <div style={{textAlign: 'center'}}>{toothNumber}</div>
+          <Diente toothNumber={toothNumber} onClick={handleToothClick}
+                  initSegmentos={initSegmentos} readOnly={readOnly}/>
+        </div>
+      );
+    } else {
+      return (
+        <div key={index} className="">
+          <div style={{textAlign: 'center'}}>{toothNumber}</div>
+          <Diente toothNumber={toothNumber} onClick={handleToothClick} readOnly={readOnly}
+                  initSegmentos={initSegmentos}/>
+        </div>
+      );
+    }
+  };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (initOdontograma.id === '' || initOdontograma.id === 0) {
       setInitOdontograma(prevState => ({
@@ -183,25 +183,13 @@ const Odontograma = () => {
         fechacreacion: new Date().toISOString(),
       }));
     }
-
-    let token = sessionStorage.getItem('jsonwebtoken');
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-    axios.post(`${config.baseURL}/odontograma/guardar`, initOdontograma, {
-      validateStatus: function (status) {
-        return status;
-      }
-    })
-      .then(response => {
-        navigate(-1);
-        if (response.status === 201) {
-          showMessage('success', 'El odontograma se guardo con éxito');
-        } else {
-          showMessage('error', 'Error al guardar el odontograma');
-        }
-      })
-      .catch(error => {
-        showMessage('error', 'Error al guardar el odontograma');
-      });
+    try {
+      await apiPost('/odontograma/guardar', initOdontograma);
+      navigate(-1);
+      showMessage('success', 'El odontograma se guardó con éxito');
+    } catch (error) {
+      showMessage('error', 'Error al guardar el odontograma');
+    }
   }
 
   return (
@@ -252,7 +240,7 @@ const Odontograma = () => {
         </form>
       </div>
     </div>
-);
+  );
 };
 
 export default Odontograma;

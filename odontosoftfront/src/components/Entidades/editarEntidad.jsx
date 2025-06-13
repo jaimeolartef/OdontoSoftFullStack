@@ -3,9 +3,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Logo from '../../resource/LogoNegro.png';
 import '../../App.css';
-import axios from "axios";
-import config from '../../config';
 import showMessage from "../../util/UtilMessage";
+import { apiGet, apiPost } from '../apiService';
 
 const EditarEntidad = () => {
   const location = useLocation();
@@ -41,26 +40,11 @@ const EditarEntidad = () => {
     habilitado: true
   });
 
-  // Función para configurar el token de autorización
-  const setAuthToken = () => {
-    let token = sessionStorage.getItem('jsonwebtoken');
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-  };
-
-  // Función para encontrar el valor correcto basado en la descripción/nombre
-  const findOptionValue = (options, currentValue, keyField = 'descripcion') => {
-    if (!currentValue || !options.length) return '';
-    const found = options.find(option =>
-      option[keyField].toLowerCase() === currentValue.toLowerCase()
-    );
-    return found ? found.id : '';
-  };
-
   // Función helper para mapear descripciones a IDs
   const findIdByDescription = (options, description, keyField = 'descripcion') => {
     if (!description || !options.length) return '';
     const found = options.find(option =>
-      option[keyField].toLowerCase() === description.toLowerCase()
+      (option[keyField] || '').toLowerCase() === (description || '').toLowerCase()
     );
     return found ? found.id.toString() : '';
   };
@@ -69,22 +53,10 @@ const EditarEntidad = () => {
   useEffect(() => {
     const fetchSedes = async () => {
       if (!id) return;
-
       try {
         setLoadingSedes(true);
-        setAuthToken();
-
-        const response = await axios.get(`${config.baseURL}/sedeempresa/consultar/entidad/${id}`, {
-          validateStatus: (status) => status
-        });
-
-        if (response.status === 200 && response.data.success) {
-          // La respuesta tiene los datos en response.data.data
-          setSedes(response.data.data || []);
-        } else {
-          console.error('Error al cargar sedes:', response.status);
-          setSedes([]);
-        }
+        const response = await apiGet(`/sedeempresa/consultar/entidad/${id}`);
+        setSedes(response || []);
       } catch (error) {
         console.error('Error al cargar sedes:', error);
         setSedes([]);
@@ -92,7 +64,6 @@ const EditarEntidad = () => {
         setLoadingSedes(false);
       }
     };
-
     fetchSedes();
   }, [id]);
 
@@ -101,49 +72,17 @@ const EditarEntidad = () => {
     const fetchCombosData = async () => {
       try {
         setLoadingCombos(true);
-        setAuthToken();
-
-        // Llamadas simultáneas a las tres APIs
         const [tiposDocResp, tiposEntResp, regimenesResp] = await Promise.all([
-          axios.get(`${config.baseURL}/tipodocumento/consultar`, {
-            validateStatus: (status) => status
-          }),
-          axios.get(`${config.baseURL}/tipoentidad/consultar`, {
-            validateStatus: (status) => status
-          }),
-          axios.get(`${config.baseURL}/regimen/consultar`, {
-            validateStatus: (status) => status
-          })
+          apiGet('/tipodocumento/consultar'),
+          apiGet('/tipoentidad/consultar'),
+          apiGet('/regimen/consultar')
         ]);
-
-        // Procesar respuestas de tipos de documento
-        if (tiposDocResp.status === 200) {
-          setTiposDocumento(tiposDocResp.data);
-        } else {
-          console.error('Error al cargar tipos de documento:', tiposDocResp.status);
-          setTiposDocumento([]);
-        }
-
-        // Procesar respuestas de tipos de entidad
-        if (tiposEntResp.status === 200) {
-          setTiposEntidad(tiposEntResp.data.filter(tipo => tipo.habilitado));
-        } else {
-          console.error('Error al cargar tipos de entidad:', tiposEntResp.status);
-          setTiposEntidad([]);
-        }
-
-        // Procesar respuestas de regímenes
-        if (regimenesResp.status === 200) {
-          setRegimenes(regimenesResp.data.filter(regimen => regimen.habilitado));
-        } else {
-          console.error('Error al cargar regímenes:', regimenesResp.status);
-          setRegimenes([]);
-        }
-
+        setTiposDocumento(tiposDocResp || []);
+        setTiposEntidad((tiposEntResp || []).filter(tipo => tipo.habilitado));
+        setRegimenes((regimenesResp || []).filter(regimen => regimen.habilitado));
       } catch (error) {
         console.error('Error al cargar datos de combos:', error);
         showMessage('warning', 'Error al cargar algunos datos de los formularios');
-        // Establecer valores por defecto en caso de error
         setTiposDocumento([]);
         setTiposEntidad([]);
         setRegimenes([]);
@@ -151,7 +90,6 @@ const EditarEntidad = () => {
         setLoadingCombos(false);
       }
     };
-
     fetchCombosData();
   }, []);
 
@@ -162,46 +100,31 @@ const EditarEntidad = () => {
         navigate('/entidad');
         return;
       }
-
       try {
         setLoading(true);
-        setAuthToken();
-
-        const response = await axios.get(`${config.baseURL}/eps/consultar/${id}`, {
-          validateStatus: function (status) {
-            return status;
-          }
+        const response = await apiGet(`/eps/consultar/${id}`);
+        setFormData({
+          id: response.id,
+          tipodocumento: findIdByDescription(tiposDocumento, response.tipodocumento, 'nombre'),
+          numerodocumento: response.numerodocumento,
+          nombre: response.nombre,
+          tipoentidad: findIdByDescription(tiposEntidad, response.tipoentidad),
+          codigominsalud: response.codigominsalud,
+          regimenadministra: findIdByDescription(regimenes, response.regimenadministra),
+          direccion: response.direccion,
+          telefono: response.telefono,
+          sitioweb: response.sitioweb,
+          correo: response.correo,
+          canalesatencion: response.canalesatencion,
+          habilitado: response.habilitado
         });
-
-        if (response.status === 200) {
-          setFormData({
-            id: response.data.id,
-            tipodocumento: findIdByDescription(tiposDocumento, response.data.tipodocumento, 'nombre'),
-            numerodocumento: response.data.numerodocumento,
-            nombre: response.data.nombre,
-            tipoentidad: findIdByDescription(tiposEntidad, response.data.tipoentidad),
-            codigominsalud: response.data.codigominsalud,
-            regimenadministra: findIdByDescription(regimenes, response.data.regimenadministra),
-            direccion: response.data.direccion,
-            telefono: response.data.telefono,
-            sitioweb: response.data.sitioweb,
-            correo: response.data.correo,
-            canalesatencion: response.data.canalesatencion,
-            habilitado: response.data.habilitado
-          });
-        } else {
-          showMessage('error', 'Error al obtener datos de la entidad');
-          navigate('/entidad');
-        }
       } catch (error) {
-        showMessage('error', 'Error de conexión: ' + error.message);
+        showMessage('error', 'Error al obtener datos de la entidad');
         navigate('/entidad');
       } finally {
         setLoading(false);
       }
     };
-
-    // Solo ejecutar cuando los combos estén cargados
     if (!loadingCombos && tiposDocumento.length && tiposEntidad.length && regimenes.length) {
       fetchEntidad();
     }
@@ -217,26 +140,21 @@ const EditarEntidad = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!e.target.checkValidity()) {
       e.stopPropagation();
       e.target.classList.add('was-validated');
       return;
     }
-
     try {
       setLoading(true);
-      setAuthToken();
-
-      // Preparar datos para enviar con IDs como números
       const entidadData = {
         id: formData.id,
-        tipodocumento: parseInt(formData.tipodocumento), // Convertir a número
+        tipodocumento: parseInt(formData.tipodocumento),
         numerodocumento: formData.numerodocumento,
         nombre: formData.nombre,
-        tipoentidad: parseInt(formData.tipoentidad), // Convertir a número
+        tipoentidad: parseInt(formData.tipoentidad),
         codigominsalud: formData.codigominsalud,
-        regimenadministra: parseInt(formData.regimenadministra), // Convertir a número
+        regimenadministra: parseInt(formData.regimenadministra),
         direccion: formData.direccion,
         telefono: formData.telefono,
         sitioWeb: formData.sitioweb,
@@ -244,23 +162,11 @@ const EditarEntidad = () => {
         canalesAtencion: formData.canalesatencion,
         habilitado: formData.habilitado
       };
-
-      console.log('Datos a enviar:', entidadData); // Para debug
-
-      const response = await axios.post(`${config.baseURL}/eps/guardar`, entidadData, {
-        validateStatus: function (status) {
-          return status;
-        }
-      });
-
-      if (response.status === 201 || response.status === 200) {
-        showMessage('success', 'Entidad actualizada correctamente');
-        navigate('/entidad');
-      } else {
-        showMessage('error', response.data?.mensajeValidacion || 'Error al actualizar la entidad');
-      }
+      await apiPost('/eps/guardar', entidadData);
+      showMessage('success', 'Entidad actualizada correctamente');
+      navigate('/entidad');
     } catch (error) {
-      showMessage('error', 'Error al guardar los cambios: ' + error.message);
+      showMessage('error', error.message || 'Error al guardar los cambios');
     } finally {
       setLoading(false);
     }
@@ -341,16 +247,14 @@ const EditarEntidad = () => {
                       onChange={handleChange}
                       required
                     >
-                      <option value="">Seleccionar...</option>
+                      <option value="">Seleccione...</option>
                       {tiposDocumento.map(tipo => (
-                        <option key={tipo.id} value={tipo.id}>
-                          {tipo.nombre}
-                        </option>
+                        <option key={tipo.id} value={tipo.id}>{tipo.nombre}</option>
                       ))}
                     </select>
                     <label>Tipo de documento</label>
                     <div className="invalid-feedback">
-                      Debe seleccionar un tipo de documento
+                      Seleccione un tipo de documento
                     </div>
                   </div>
                 </div>
@@ -369,7 +273,7 @@ const EditarEntidad = () => {
                     />
                     <label>Número de documento</label>
                     <div className="invalid-feedback">
-                      Debe ingresar un número de documento
+                      Ingrese el número de documento
                     </div>
                   </div>
                 </div>
@@ -388,7 +292,7 @@ const EditarEntidad = () => {
                     />
                     <label>Nombre de la entidad</label>
                     <div className="invalid-feedback">
-                      Debe ingresar un nombre
+                      Ingrese el nombre de la entidad
                     </div>
                   </div>
                 </div>
@@ -403,16 +307,14 @@ const EditarEntidad = () => {
                       onChange={handleChange}
                       required
                     >
-                      <option value="">Seleccionar...</option>
+                      <option value="">Seleccione...</option>
                       {tiposEntidad.map(tipo => (
-                        <option key={tipo.id} value={tipo.id}>
-                          {tipo.descripcion}
-                        </option>
+                        <option key={tipo.id} value={tipo.id}>{tipo.nombre}</option>
                       ))}
                     </select>
                     <label>Tipo de entidad</label>
                     <div className="invalid-feedback">
-                      Debe seleccionar un tipo de entidad
+                      Seleccione un tipo de entidad
                     </div>
                   </div>
                 </div>
@@ -427,11 +329,11 @@ const EditarEntidad = () => {
                       value={formData.codigominsalud}
                       onChange={handleChange}
                       required
-                      placeholder="Código Minsalud"
+                      placeholder="Código habilitación Minsalud"
                     />
                     <label>Código habilitación Minsalud</label>
                     <div className="invalid-feedback">
-                      Debe ingresar un código de habilitación
+                      Ingrese el código de habilitación
                     </div>
                   </div>
                 </div>
@@ -446,16 +348,14 @@ const EditarEntidad = () => {
                       onChange={handleChange}
                       required
                     >
-                      <option value="">Seleccionar...</option>
+                      <option value="">Seleccione...</option>
                       {regimenes.map(regimen => (
-                        <option key={regimen.id} value={regimen.id}>
-                          {regimen.descripcion}
-                        </option>
+                        <option key={regimen.id} value={regimen.id}>{regimen.nombre}</option>
                       ))}
                     </select>
                     <label>Régimen que administra</label>
                     <div className="invalid-feedback">
-                      Debe seleccionar un régimen
+                      Seleccione un régimen
                     </div>
                   </div>
                 </div>
@@ -480,7 +380,7 @@ const EditarEntidad = () => {
                     />
                     <label>Dirección</label>
                     <div className="invalid-feedback">
-                      Debe ingresar una dirección
+                      Ingrese la dirección
                     </div>
                   </div>
                 </div>
@@ -499,7 +399,7 @@ const EditarEntidad = () => {
                     />
                     <label>Teléfono</label>
                     <div className="invalid-feedback">
-                      Debe ingresar un número de teléfono
+                      Ingrese el teléfono
                     </div>
                   </div>
                 </div>
@@ -513,9 +413,12 @@ const EditarEntidad = () => {
                       name="sitioweb"
                       value={formData.sitioweb}
                       onChange={handleChange}
-                      placeholder="Sitio web"
+                      placeholder="Sitio Web"
                     />
                     <label>Sitio Web</label>
+                    <div className="invalid-feedback">
+                      Ingrese el sitio web
+                    </div>
                   </div>
                 </div>
               </div>
@@ -533,7 +436,7 @@ const EditarEntidad = () => {
                     />
                     <label>Correo electrónico</label>
                     <div className="invalid-feedback">
-                      Debe ingresar un correo electrónico válido
+                      Ingrese un correo electrónico válido
                     </div>
                   </div>
                 </div>
@@ -561,61 +464,61 @@ const EditarEntidad = () => {
               <h3>Sedes</h3>
               <button
                 type="button"
-                className="btn btn-success btn-sm"
+                className="btn btn-success"
                 onClick={handleCrearSede}
               >
-                <i className="bi bi-plus-circle me-1"></i> Agregar Sede
+                Crear Sede
               </button>
             </div>
             <div className="table-responsive">
               {loadingSedes ? (
-                <div className="text-center py-3">
-                  <div className="spinner-border spinner-border-sm text-primary" role="status">
-                    <span className="visually-hidden">Cargando sedes...</span>
+                <div className="text-center">
+                  <div className="spinner-border text-primary mb-3" role="status">
+                    <span className="visually-hidden">Cargando...</span>
                   </div>
-                  <p className="mt-2 mb-0">Cargando sedes...</p>
-                </div>
-              ) : sedes.length === 0 ? (
-                <div className="alert alert-info text-center">
-                  <i className="bi bi-info-circle me-2"></i>
-                  No hay sedes registradas para esta entidad.
+                  <p>Cargando sedes...</p>
                 </div>
               ) : (
-                <table className="table table-bordered table-hover">
-                  <thead className="table-light">
-                  <tr>
-                    <th>Nombre</th>
-                    <th>Dirección</th>
-                    <th>Teléfono</th>
-                    <th>Correo</th>
-                    <th>Estado</th>
-                    <th style={{ width: '100px' }}>Acciones</th>
-                  </tr>
+                <table className="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Nombre</th>
+                      <th>Dirección</th>
+                      <th>Teléfono</th>
+                      <th>Correo</th>
+                      <th>Habilitado</th>
+                      <th>Acciones</th>
+                    </tr>
                   </thead>
                   <tbody>
-                  {sedes.map(sede => (
-                    <tr key={sede.id}>
-                      <td>{sede.nombre}</td>
-                      <td>{sede.direccion}</td>
-                      <td>{sede.telefono}</td>
-                      <td>{sede.correo}</td>
-                      <td>
-                          <span className={`badge ${sede.habilitado ? 'bg-success' : 'bg-danger'}`}>
-                            {sede.habilitado ? 'Activa' : 'Inactiva'}
-                          </span>
-                      </td>
-                      <td className="text-center">
-                        <button
-                          type="button"
-                          className="btn btn-primary btn-sm"
-                          onClick={() => handleEditSede(sede.id)}
-                          title="Editar sede"
-                        >
-                          <i className="bi bi-pencil"></i>
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                    {sedes.length === 0 ? (
+                      <tr>
+                        <td colSpan="6" className="text-center">No hay sedes registradas</td>
+                      </tr>
+                    ) : (
+                      sedes.map(sede => (
+                        <tr key={sede.id}>
+                          <td>{sede.nombre}</td>
+                          <td>{sede.direccion}</td>
+                          <td>{sede.telefono}</td>
+                          <td>{sede.correo}</td>
+                          <td>
+                            <span className={sede.habilitado ? 'text-success' : 'text-danger'}>
+                              {sede.habilitado ? 'Sí' : 'No'}
+                            </span>
+                          </td>
+                          <td>
+                            <button
+                              type="button"
+                              className="btn btn-primary btn-sm"
+                              onClick={() => handleEditSede(sede.id)}
+                            >
+                              Editar
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               )}

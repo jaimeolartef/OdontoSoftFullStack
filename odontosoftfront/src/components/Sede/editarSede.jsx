@@ -3,9 +3,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Logo from '../../resource/LogoNegro.png';
 import '../../App.css';
-import axios from "axios";
-import config from '../../config';
 import showMessage from "../../util/UtilMessage";
+import { apiGet, apiPost } from '../apiService';
 
 const EditarSede = () => {
   const location = useLocation();
@@ -28,12 +27,6 @@ const EditarSede = () => {
     idEntidadPrestadoraSalud: ''
   });
 
-  // Función para configurar el token de autorización
-  const setAuthToken = () => {
-    let token = sessionStorage.getItem('jsonwebtoken');
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-  };
-
   // Cargar datos de la sede
   useEffect(() => {
     const fetchSede = async () => {
@@ -45,33 +38,21 @@ const EditarSede = () => {
 
       try {
         setLoadingData(true);
-        setAuthToken();
 
-        const response = await axios.get(`${config.baseURL}/sedeempresa/consultar/${id}`, {
-          validateStatus: function (status) {
-            return status;
-          }
+        const sedeData = await apiGet(`/sedeempresa/consultar/${id}`);
+        setFormData({
+          id: sedeData.id,
+          nombre: sedeData.nombre || '',
+          direccion: sedeData.direccion || '',
+          telefono: sedeData.telefono || '',
+          correo: sedeData.correo || '',
+          horarioAtencion: sedeData.canalesAtencion || '',
+          servicios: sedeData.serviciosPrestados || '',
+          habilitado: sedeData.habilitado,
+          idEntidadPrestadoraSalud: sedeData.idEntidadPrestadoraSalud
         });
-
-        if (response.status === 200 && response.data.success) {
-          const sedeData = response.data.data;
-          setFormData({
-            id: sedeData.id,
-            nombre: sedeData.nombre || '',
-            direccion: sedeData.direccion || '',
-            telefono: sedeData.telefono || '',
-            correo: sedeData.correo || '',
-            horarioAtencion: sedeData.canalesAtencion || '',
-            servicios: sedeData.serviciosPrestados || '',
-            habilitado: sedeData.habilitado,
-            idEntidadPrestadoraSalud: sedeData.idEntidadPrestadoraSalud
-          });
-        } else {
-          showMessage('error', 'Error al obtener datos de la sede');
-          navigate('/editarentidad', { state: { id: entidadId } });
-        }
       } catch (error) {
-        showMessage('error', 'Error de conexión: ' + error.message);
+        showMessage('error', 'Error al obtener datos de la sede');
         navigate('/editarentidad', { state: { id: entidadId } });
       } finally {
         setLoadingData(false);
@@ -100,7 +81,6 @@ const EditarSede = () => {
 
     try {
       setLoading(true);
-      setAuthToken();
 
       // Preparar datos para enviar
       const sedeData = {
@@ -115,26 +95,12 @@ const EditarSede = () => {
         habilitado: formData.habilitado
       };
 
-      console.log('Datos a enviar:', sedeData); // Para debug
+      await apiPost('/sedeempresa/guardar', sedeData);
 
-      const response = await axios.post(`${config.baseURL}/sedeempresa/guardar`, sedeData, {
-        validateStatus: function (status) {
-          return status;
-        }
-      });
-
-      if (response.status === 201 || response.status === 200) {
-        if (response.data.success) {
-          showMessage('success', 'Sede actualizada correctamente');
-          navigate('/editarentidad', { state: { id: formData.idEntidadPrestadoraSalud } });
-        } else {
-          showMessage('error', response.data.message || 'Error al actualizar la sede');
-        }
-      } else {
-        showMessage('error', response.data?.message || 'Error al actualizar la sede');
-      }
+      showMessage('success', 'Sede actualizada correctamente');
+      navigate('/editarentidad', { state: { id: formData.idEntidadPrestadoraSalud } });
     } catch (error) {
-      showMessage('error', 'Error al guardar los cambios: ' + error.message);
+      showMessage('error', error.message || 'Error al actualizar la sede');
     } finally {
       setLoading(false);
     }

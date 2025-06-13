@@ -3,9 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Logo from '../../resource/LogoNegro.png';
 import '../../App.css';
-import axios from "axios";
-import config from '../../config';
 import showMessage from "../../util/UtilMessage";
+import { apiGet, apiPost } from '../apiService';
 
 const CrearEntidad = () => {
   const navigate = useNavigate();
@@ -34,60 +33,24 @@ const CrearEntidad = () => {
     habilitado: true
   });
 
-  // Función para configurar el token de autorización
-  const setAuthToken = () => {
-    let token = sessionStorage.getItem('jsonwebtoken');
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-  };
-
   // Cargar datos de los combos
   useEffect(() => {
     const fetchCombosData = async () => {
       try {
         setLoadingCombos(true);
-        setAuthToken();
 
-        // Llamadas simultáneas a las tres APIs
         const [tiposDocResp, tiposEntResp, regimenesResp] = await Promise.all([
-          axios.get(`${config.baseURL}/tipodocumento/consultar`, {
-            validateStatus: (status) => status
-          }),
-          axios.get(`${config.baseURL}/tipoentidad/consultar`, {
-            validateStatus: (status) => status
-          }),
-          axios.get(`${config.baseURL}/regimen/consultar`, {
-            validateStatus: (status) => status
-          })
+          apiGet('/tipodocumento/consultar'),
+          apiGet('/tipoentidad/consultar'),
+          apiGet('/regimen/consultar')
         ]);
 
-        // Procesar respuestas de tipos de documento
-        if (tiposDocResp.status === 200) {
-          setTiposDocumento(tiposDocResp.data);
-        } else {
-          console.error('Error al cargar tipos de documento:', tiposDocResp.status);
-          setTiposDocumento([]);
-        }
-
-        // Procesar respuestas de tipos de entidad
-        if (tiposEntResp.status === 200) {
-          setTiposEntidad(tiposEntResp.data.filter(tipo => tipo.habilitado));
-        } else {
-          console.error('Error al cargar tipos de entidad:', tiposEntResp.status);
-          setTiposEntidad([]);
-        }
-
-        // Procesar respuestas de regímenes
-        if (regimenesResp.status === 200) {
-          setRegimenes(regimenesResp.data.filter(regimen => regimen.habilitado));
-        } else {
-          console.error('Error al cargar regímenes:', regimenesResp.status);
-          setRegimenes([]);
-        }
-
+        setTiposDocumento(tiposDocResp || []);
+        setTiposEntidad((tiposEntResp || []).filter(tipo => tipo.habilitado));
+        setRegimenes((regimenesResp || []).filter(regimen => regimen.habilitado));
       } catch (error) {
         console.error('Error al cargar datos de combos:', error);
         showMessage('warning', 'Error al cargar algunos datos de los formularios');
-        // Establecer valores por defecto en caso de error
         setTiposDocumento([]);
         setTiposEntidad([]);
         setRegimenes([]);
@@ -106,7 +69,7 @@ const CrearEntidad = () => {
     if (name === 'telefono') {
       const phoneRegex = /^[0-9\s\-\(\)\+]*$/;
       if (!phoneRegex.test(value)) {
-        return; // No actualizar si contiene caracteres no válidos
+        return;
       }
     }
 
@@ -127,16 +90,14 @@ const CrearEntidad = () => {
 
     try {
       setLoading(true);
-      setAuthToken();
 
-      // Preparar datos para enviar con IDs como números
       const entidadData = {
-        tipodocumento: parseInt(formData.tipodocumento), // Convertir a número
+        tipodocumento: parseInt(formData.tipodocumento),
         numerodocumento: formData.numerodocumento,
         nombre: formData.nombre,
-        tipoentidad: parseInt(formData.tipoentidad), // Convertir a número
+        tipoentidad: parseInt(formData.tipoentidad),
         codigominsalud: formData.codigominsalud,
-        regimenadministra: parseInt(formData.regimenadministra), // Convertir a número
+        regimenadministra: parseInt(formData.regimenadministra),
         direccion: formData.direccion,
         telefono: formData.telefono,
         sitioWeb: formData.sitioweb,
@@ -145,22 +106,12 @@ const CrearEntidad = () => {
         habilitado: formData.habilitado
       };
 
-      console.log('Datos a enviar:', entidadData); // Para debug
+      await apiPost('/eps/guardar', entidadData);
 
-      const response = await axios.post(`${config.baseURL}/eps/guardar`, entidadData, {
-        validateStatus: function (status) {
-          return status;
-        }
-      });
-
-      if (response.status === 201 || response.status === 200) {
-        showMessage('success', 'Entidad creada correctamente');
-        navigate('/entidad');
-      } else {
-        showMessage('error', response.data?.mensajeValidacion || 'Error al crear la entidad');
-      }
+      showMessage('success', 'Entidad creada correctamente');
+      navigate('/entidad');
     } catch (error) {
-      showMessage('error', 'Error al guardar los datos: ' + error.message);
+      showMessage('error', error.message || 'Error al crear la entidad');
     } finally {
       setLoading(false);
     }
@@ -231,16 +182,14 @@ const CrearEntidad = () => {
                       onChange={handleChange}
                       required
                     >
-                      <option value="">Seleccionar...</option>
+                      <option value="">Seleccione...</option>
                       {tiposDocumento.map(tipo => (
-                        <option key={tipo.id} value={tipo.id}>
-                          {tipo.nombre}
-                        </option>
+                        <option key={tipo.id} value={tipo.id}>{tipo.nombre}</option>
                       ))}
                     </select>
                     <label>Tipo de documento</label>
                     <div className="invalid-feedback">
-                      Debe seleccionar un tipo de documento
+                      Seleccione un tipo de documento
                     </div>
                   </div>
                 </div>
@@ -259,7 +208,7 @@ const CrearEntidad = () => {
                     />
                     <label>Número de documento</label>
                     <div className="invalid-feedback">
-                      Debe ingresar un número de documento
+                      Ingrese el número de documento
                     </div>
                   </div>
                 </div>
@@ -278,7 +227,7 @@ const CrearEntidad = () => {
                     />
                     <label>Nombre de la entidad</label>
                     <div className="invalid-feedback">
-                      Debe ingresar un nombre
+                      Ingrese el nombre de la entidad
                     </div>
                   </div>
                 </div>
@@ -293,16 +242,14 @@ const CrearEntidad = () => {
                       onChange={handleChange}
                       required
                     >
-                      <option value="">Seleccionar...</option>
+                      <option value="">Seleccione...</option>
                       {tiposEntidad.map(tipo => (
-                        <option key={tipo.id} value={tipo.id}>
-                          {tipo.descripcion}
-                        </option>
+                        <option key={tipo.id} value={tipo.id}>{tipo.nombre}</option>
                       ))}
                     </select>
                     <label>Tipo de entidad</label>
                     <div className="invalid-feedback">
-                      Debe seleccionar un tipo de entidad
+                      Seleccione un tipo de entidad
                     </div>
                   </div>
                 </div>
@@ -317,11 +264,11 @@ const CrearEntidad = () => {
                       value={formData.codigominsalud}
                       onChange={handleChange}
                       required
-                      placeholder="Código Minsalud"
+                      placeholder="Código habilitación Minsalud"
                     />
                     <label>Código habilitación Minsalud</label>
                     <div className="invalid-feedback">
-                      Debe ingresar un código de habilitación
+                      Ingrese el código de habilitación
                     </div>
                   </div>
                 </div>
@@ -336,16 +283,14 @@ const CrearEntidad = () => {
                       onChange={handleChange}
                       required
                     >
-                      <option value="">Seleccionar...</option>
+                      <option value="">Seleccione...</option>
                       {regimenes.map(regimen => (
-                        <option key={regimen.id} value={regimen.id}>
-                          {regimen.descripcion}
-                        </option>
+                        <option key={regimen.id} value={regimen.id}>{regimen.nombre}</option>
                       ))}
                     </select>
                     <label>Régimen que administra</label>
                     <div className="invalid-feedback">
-                      Debe seleccionar un régimen
+                      Seleccione un régimen
                     </div>
                   </div>
                 </div>
@@ -370,7 +315,7 @@ const CrearEntidad = () => {
                     />
                     <label>Dirección</label>
                     <div className="invalid-feedback">
-                      Debe ingresar una dirección
+                      Ingrese la dirección
                     </div>
                   </div>
                 </div>
@@ -379,19 +324,17 @@ const CrearEntidad = () => {
                 <div className="form-group mb-3">
                   <div className="form-floating">
                     <input
-                      type="tel"
+                      type="text"
                       className="form-control"
                       name="telefono"
                       value={formData.telefono}
                       onChange={handleChange}
                       required
                       placeholder="Teléfono"
-                      pattern="[0-9\s\-\(\)\+]*"
-                      title="Solo se permiten números, espacios, guiones, paréntesis y el símbolo +"
                     />
                     <label>Teléfono</label>
                     <div className="invalid-feedback">
-                      Debe ingresar un número de teléfono válido (solo números, espacios, guiones, paréntesis y +)
+                      Ingrese el teléfono
                     </div>
                   </div>
                 </div>
@@ -400,18 +343,16 @@ const CrearEntidad = () => {
                 <div className="form-group mb-3">
                   <div className="form-floating">
                     <input
-                      type="url"
+                      type="text"
                       className="form-control"
                       name="sitioweb"
                       value={formData.sitioweb}
                       onChange={handleChange}
-                      placeholder="https://ejemplo.com"
-                      pattern="https?://.+"
-                      title="Debe ingresar una URL válida que comience con http:// o https://"
+                      placeholder="Sitio Web"
                     />
                     <label>Sitio Web</label>
                     <div className="invalid-feedback">
-                      Debe ingresar una URL válida (ej: https://ejemplo.com)
+                      Ingrese el sitio web
                     </div>
                   </div>
                 </div>
@@ -430,7 +371,7 @@ const CrearEntidad = () => {
                     />
                     <label>Correo electrónico</label>
                     <div className="invalid-feedback">
-                      Debe ingresar un correo electrónico válido
+                      Ingrese un correo electrónico válido
                     </div>
                   </div>
                 </div>

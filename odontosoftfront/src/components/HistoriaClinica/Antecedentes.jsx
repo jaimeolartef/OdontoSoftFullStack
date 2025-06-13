@@ -1,19 +1,24 @@
-import React, {useEffect, useState} from 'react';
-import axios from "axios";
-import config from "../../config";
+import React, { useEffect, useState } from 'react';
+import { apiGet } from '../apiService';
 
-const Antecedentes = ({formMedicalHistory, readOnly}) => {
-
+const Antecedentes = ({ formMedicalHistory, readOnly }) => {
   const usuario = sessionStorage.getItem('username');
+  const [antecedentesMedicos, setAntecedentesMedicos] = useState([]);
+
+  const mapAntecedentes = (data) => ({
+    id: data.id || '',
+    descripcion: data.descripcion || '',
+    odontologico: data.odontologico || false,
+    habilitado: data.habilitado || false,
+    seleccionado: data.seleccionado || ''
+  });
 
   useEffect(() => {
-    // Este useEffect se ejecutará después del primer useEffect
     const fetchHistoria = async () => {
       try {
-        const antecedentsResponse = await axios.get(`${config.baseURL}/precedenthistory/get`);
-        if (Array.isArray(antecedentsResponse.data)) {
-          const antecedentes = antecedentsResponse.data.map(mapAntecedentes);
-
+        const antecedentsResponse = await apiGet('/precedenthistory/get');
+        if (Array.isArray(antecedentsResponse)) {
+          const antecedentes = antecedentsResponse.map(mapAntecedentes);
           const antecedentesMed = antecedentes.filter(item => !item.odontologico);
           antecedentesMed.forEach(antecedente => {
             let existItem = formMedicalHistory.antecedentepacientes.findIndex(item => item.idantecedente == antecedente.id);
@@ -26,7 +31,6 @@ const Antecedentes = ({formMedicalHistory, readOnly}) => {
             } else {
               antecedente.seleccionado = formMedicalHistory.antecedentepacientes.find(item => item.idantecedente == antecedente.id)?.opciones || '';
             }
-
           });
           setAntecedentesMedicos(antecedentesMed);
         }
@@ -37,20 +41,10 @@ const Antecedentes = ({formMedicalHistory, readOnly}) => {
     fetchHistoria();
   }, [formMedicalHistory.enfermedadActual]);
 
-  const [antecedentesMedicos, setAntecedentesMedicos] = useState([]);
-
-  const mapAntecedentes = (data) => ({
-    id: data.id || '',
-    descripcion: data.descripcion || '',
-    odontologico: data.odontologico || false,
-    habilitado: data.habilitado || false,
-    seleccionado: data.seleccionado || ''
-  });
-
   const handleAntecedenteChange = (antecedente, value) => {
     setAntecedentesMedicos(prev => {
       return prev.map(item =>
-        item.id === antecedente.id ? {...item, seleccionado: value} : item
+        item.id === antecedente.id ? { ...item, seleccionado: value } : item
       );
     });
     let fechacreacion = new Date().toISOString();
@@ -85,11 +79,11 @@ const Antecedentes = ({formMedicalHistory, readOnly}) => {
                       value={option}
                       onChange={() => handleAntecedenteChange(antecedente, option)}
                       checked={antecedente.seleccionado === option}
-                      style={{width: '20px', height: '20px'}}
-                      disabled={readOnly}/>
+                      style={{ width: '20px', height: '20px' }}
+                      disabled={readOnly} />
                   </div>
                   <div>
-                    <label className="form-check-label" style={{marginLeft: '10px'}}>{option}</label>
+                    <label className="form-check-label" style={{ marginLeft: '10px' }}>{option}</label>
                   </div>
                 </div>
               ))}
@@ -98,7 +92,7 @@ const Antecedentes = ({formMedicalHistory, readOnly}) => {
         ))}
       </div>
     </div>
-      );
-      };
+  );
+};
 
-      export default Antecedentes;
+export default Antecedentes;

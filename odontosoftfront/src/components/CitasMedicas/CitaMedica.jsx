@@ -1,11 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import axios from "axios";
 import 'react-datepicker/dist/react-datepicker.css';
 import Logo from "../../resource/LogoNegro.png";
 import Calendario from './Calendario';
-import config from "../../config";
 import { useLocation, useNavigate } from "react-router-dom";
 import showMessage from "../../util/UtilMessage";
+import { apiGet } from '../apiService';
 
 const CitaMedica = () => {
   const [paciente, setPaciente] = useState('');
@@ -13,88 +12,62 @@ const CitaMedica = () => {
   const [selectedPaciente, setSelectedPaciente] = useState('');
   const navigate = useNavigate();
   const [odontologo, setOdontologo] = useState([
-    {
-      idMedico: 0,
-      nombre: ''
-    }
+    { idMedico: 0, nombre: '' }
   ]);
   const [pacientes, setPacientes] = useState([
-    {
-      idPaciente: 0,
-      nombre: ''
-    }
+    { idPaciente: 0, nombre: '' }
   ]);
   const [availability, setAvailability] = useState([]);
-  const [calendarKey, setCalendarKey] = useState(0); // Estado para controlar la clave del componente Calendario
+  const [calendarKey, setCalendarKey] = useState(0);
   const location = useLocation();
-  const patient = useMemo(() => {
-    return location.state?.patient || {};
-  }, [location.state]);
+  const patient = useMemo(() => location.state?.patient || {}, [location.state]);
   const Rol = sessionStorage.getItem('Rol');
 
   useEffect(() => {
     fetchOdontologos();
     fetchPacientes();
+    // eslint-disable-next-line
   }, []);
 
   const fetchOdontologos = async () => {
-    let token = sessionStorage.getItem('jsonwebtoken');
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     try {
-      const response = await axios.get(`${config.baseURL}/doctor/consultar`);
-      if (response.status === 200) {
-        setOdontologo(response.data);
-      }
+      const data = await apiGet('/doctor/consultar');
+      setOdontologo(data);
     } catch (error) {
-      console.error('Error fetching patient data:', error);
+      showMessage('error', error?.message || 'Error al obtener odontólogos');
     }
-  }
+  };
 
   const fetchPacientes = async () => {
-    if (Rol != 'Paciente') {
-      let token = sessionStorage.getItem('jsonwebtoken');
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    if (Rol !== 'Paciente') {
       try {
-        const response = await axios.get(`${config.baseURL}/pacientes/listar`);
-        if (response.status === 200) {
-          let index0 = pacientes.findIndex(paci => paci.idPaciente === 0);
-          if (index0 > -1) {
-            pacientes.splice(index0, 1);
-          }
-          response.data.map((paciente) => {
-            let index = pacientes.findIndex(paci => paci.idPaciente === paciente.id);
-            if (index === -1) {
-              pacientes.push({
-                idPaciente: paciente.id,
-                nombre: paciente.primernombre.trim() + ' ' + (paciente.segundonombre == null ? '': paciente.segundonombre.trim()) + ' ' + paciente.primerapellido.trim() + ' ' + (paciente.segundoapellido == null ? '': paciente.segundoapellido.trim())
-              });
-            }
-          });
-        }
+        const data = await apiGet('/pacientes/listar');
+        let newPacientes = data.map((paciente) => ({
+          idPaciente: paciente.id,
+          nombre: `${paciente.primernombre.trim()} ${paciente.segundonombre ? paciente.segundonombre.trim() : ''} ${paciente.primerapellido.trim()} ${paciente.segundoapellido ? paciente.segundoapellido.trim() : ''}`.trim()
+        }));
+        setPacientes(newPacientes);
       } catch (error) {
-        console.error('Error fetching patient data:', error);
+        showMessage('error', error?.message || 'Error al obtener pacientes');
       }
     } else {
-      let token = sessionStorage.getItem('jsonwebtoken');
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       try {
-        const response = await axios.get(`${config.baseURL}/pacientes/consultar/${sessionStorage.getItem('idPaciente')}`);
-        if (response.status === 200) {
-          setSelectedPaciente(response.data.id + ' - ' + (response.data.segundonombre == null ? '': response.data.segundonombre) + ' ' + response.data.primerapellido.trim() + ' ' + (response.data.segundoapellido == null ? '': response.data.segundoapellido.trim()));
-        }
+        const idPaciente = sessionStorage.getItem('idPaciente');
+        const data = await apiGet(`/pacientes/consultar/${idPaciente}`);
+        setSelectedPaciente(`${data.id} - ${data.segundonombre ? data.segundonombre : ''} ${data.primerapellido.trim()} ${data.segundoapellido ? data.segundoapellido.trim() : ''}`.trim());
       } catch (error) {
-        console.error('Error fetching patient data:', error);
+        showMessage('error', error?.message || 'Error al obtener paciente');
       }
     }
-  }
+  };
 
   const handleSearchChangeOdont = (event) => {
     setSelectedOdontologo(event.target.value);
-  }
+  };
 
   const handleSearchChangePac = (event) => {
     setSelectedPaciente(event.target.value);
-  }
+  };
 
   const handleOdontologoChange = async (event) => {
     const selectedValue = event.target.value;
@@ -104,24 +77,21 @@ const CitaMedica = () => {
     let year = new Date().getFullYear();
     const odontoSelected = odontologo.findIndex(odontologo => odontologo.idMedico == odontoSelec[0]);
     if (odontoSelected > -1) {
-      let token = sessionStorage.getItem('jsonwebtoken');
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       try {
-        const response = await axios.get(`${config.baseURL}/availability/doctor/${odontoSelec[0]}?month=${month}&year=${year}`);
-        if (response.status === 200) {
-          let availab = response.data;
-          if (availab.length === 0) {
-            showMessage('warning', 'La agenda no esta disponible para el mes seleccionado');
-          } else {
-            setAvailability(availab);
-            setCalendarKey(prevKey => prevKey + 1); // Cambiar la clave del componente Calendario
-          }
+        const availab = await apiGet(`/availability/doctor/${odontoSelec[0]}`, {
+          queryParams: { month, year }
+        });
+        if (availab.length === 0) {
+          showMessage('warning', 'La agenda no está disponible para el mes seleccionado');
+        } else {
+          setAvailability(availab);
+          setCalendarKey(prevKey => prevKey + 1);
         }
       } catch (error) {
-        console.error('Error fetching patient data:', error);
+        showMessage('error', error?.message || 'Error al obtener disponibilidad');
       }
     }
-  }
+  };
 
   const handlePacienteChange = (event) => {
     const selectedValue = event.target.value;
@@ -131,21 +101,21 @@ const CitaMedica = () => {
     if (paciSelected > -1) {
       setPaciente(pacientes[paciSelected].nombre);
     }
-  }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-  }
+  };
 
   const handleClearOdontologo = () => {
     setSelectedOdontologo('');
     setAvailability([]);
-    setCalendarKey(prevKey => prevKey + 1); // Cambiar la clave del componente Calendario
+    setCalendarKey(prevKey => prevKey + 1);
   };
 
   const handleClearPaciente = () => {
     setSelectedPaciente('');
-  }
+  };
 
   return (
     <div className="d-flex justify-content-center align-items-center">
@@ -183,7 +153,7 @@ const CitaMedica = () => {
                 </datalist>
               </div>
               <div className="espacio"/>
-              {Rol != 'Paciente' && (
+              {Rol !== 'Paciente' && (
                 <div className="form-group">
                   <label htmlFor="paciente">Paciente</label>
                   <div className="input-group">

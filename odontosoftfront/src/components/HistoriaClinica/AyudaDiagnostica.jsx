@@ -1,21 +1,19 @@
-import React, {useEffect, useState} from 'react';
-import axios from "axios";
-import config from "../../config";
+import React, { useEffect, useState } from 'react';
 import showMessage from "../../util/UtilMessage";
-import {Tooltip} from "react-tooltip";
+import { Tooltip } from "react-tooltip";
 import EliminarIcon from "../../resource/Eliminar.png";
 import EditIcon from '../../resource/EditIcon.png';
 import VerIcon from "../../resource/ver.png";
 import { mostrarArchivoModal } from '../../../src/components/HistoriaClinica/FileViewerModal';
+import { apiGet, apiPost } from '../apiService';
 
-const AyudaDiagnostica = ({formMedicalHistory, setFormMedicalHistory, readOnly}) => {
+const AyudaDiagnostica = ({ formMedicalHistory, setFormMedicalHistory, readOnly }) => {
   const [TipoAyudaDiagnostica, setTipoAyudaDiagnostica] = useState([{
     id: 0,
     codigo: '',
     descripcion: '',
     habilitado: true
   }]);
-
   const [ayudasDiagnostica, setAyudaDiagnostica] = useState(formMedicalHistory.ayudadiagnosticas);
   const [selectedAyudaDiagnostico, setSelectedAyudaDiagnostico] = useState('');
   const usuario = sessionStorage.getItem('username');
@@ -23,20 +21,18 @@ const AyudaDiagnostica = ({formMedicalHistory, setFormMedicalHistory, readOnly})
 
   useEffect(() => {
     const fetchTipoAyudaDiagnostico = async () => {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       try {
-        const response = await axios.get(`${config.baseURL}/tipoayudadiagnostico/consultar`);
-        if (response.status === 200) {
-          setTipoAyudaDiagnostica(response.data);
+        const response = await apiGet('/tipoayudadiagnostico/consultar', token);
+        if (Array.isArray(response)) {
+          setTipoAyudaDiagnostica(response);
         }
       } catch (error) {
         console.error('Error fetching patient data:', error);
       }
-    }
+    };
     fetchTipoAyudaDiagnostico();
-    console.log(formMedicalHistory)
+    // eslint-disable-next-line
   }, [formMedicalHistory]);
-
 
   const handleAyudaDiagnosticoChange = (event) => {
     const selectedValue = event.target.value;
@@ -56,17 +52,16 @@ const AyudaDiagnostica = ({formMedicalHistory, setFormMedicalHistory, readOnly})
           definitivo: false,
           habilitado: true,
         });
-        setAyudaDiagnostica([...formMedicalHistory.ayudadiagnosticas]); // Actualiza el estado
+        setAyudaDiagnostica([...formMedicalHistory.ayudadiagnosticas]);
       } else {
         showMessage('warning', 'El tipo diagnóstico ya existe en la lista.');
       }
     }
-    console.log('Diagnósticos:', formMedicalHistory);
   };
 
   const handleSearchChange = (event) => {
     setSelectedAyudaDiagnostico(event.target.value);
-  }
+  };
 
   const handleDelete = (index) => {
     const newAyudaDiagnostica = [...formMedicalHistory.ayudadiagnosticas];
@@ -78,50 +73,28 @@ const AyudaDiagnostica = ({formMedicalHistory, setFormMedicalHistory, readOnly})
   };
 
   const handleAgregar = (idtipoayudadiag) => {
-    // Validaciones existentes...
-
     const fileInput = document.createElement('input');
     fileInput.type = 'file';
     fileInput.accept = '.pdf,.jpg,.png';
     fileInput.onchange = async (e) => {
       const file = e.target.files[0];
       if (file) {
-        // Validación de tamaño...
-        if (file.size > 1 * 1024 * 1024) { // debe ser parametrizable y en spring boot tambien
+        if (file.size > 5 * 1024 * 1024) {
           showMessage('warning', 'El archivo es demasiado grande. El tamaño máximo permitido es de 5 MB.');
           return;
         }
-
         try {
-          // Crear FormData para enviar el archivo
           const formData = new FormData();
           formData.append('file', file);
           formData.append('idHistoriaClinica', formMedicalHistory.idHistoriaClinica);
           formData.append('idTipoAyudaDiag', idtipoayudadiag);
 
-          axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+          const response = await apiPost('/tipoayudadiagnostico/subirArchivo', formData, token, true);
 
-          // Enviar petición al servidor
-          const response = await axios.post(
-            `${config.baseURL}/tipoayudadiagnostico/subirArchivo`,
-            formData,
-            {
-              headers: {
-                'Content-Type': 'multipart/form-data'
-              }
-            }
-          );
-
-          if (response.status === 200) {
+          if (response && (response.status === 200 || response.status === 201)) {
             showMessage('success', 'Archivo subido correctamente');
-
-            // Capturar el ID del archivo subido si está disponible en la respuesta
-            const archivoId = response.data.id || response.data.archivoId;
-            console.log('Archivo ID:', response.data);
-
+            const archivoId = response.data?.id || response.data?.archivoId;
             formMedicalHistory.ayudadiagnosticas.forEach((ayudaDiagnostica) => {
-              console.log(ayudaDiagnostica.idtipoayudadiag);
-              console.log(idtipoayudadiag);
               if (ayudaDiagnostica.id === idtipoayudadiag) {
                 ayudaDiagnostica.idayudadiagnosticaarchivo = {
                   id: response.data.id,
@@ -132,7 +105,6 @@ const AyudaDiagnostica = ({formMedicalHistory, setFormMedicalHistory, readOnly})
                 };
               }
             });
-            console.log('Archivo cargado', formMedicalHistory);
           }
         } catch (error) {
           console.error('Error al subir el archivo:', error);
@@ -144,11 +116,9 @@ const AyudaDiagnostica = ({formMedicalHistory, setFormMedicalHistory, readOnly})
   };
 
   const handleVer = (idtipoayudadiag) => {
-    // Buscar la ayuda diagnóstica correspondiente
     const ayudaDiagnostica = formMedicalHistory.ayudadiagnosticas.find(
       item => item.id === idtipoayudadiag
     );
-
     visualizarArchivoDiagnostico(ayudaDiagnostica);
   };
 
@@ -157,10 +127,8 @@ const AyudaDiagnostica = ({formMedicalHistory, setFormMedicalHistory, readOnly})
       showMessage('warning', 'No hay archivo disponible para visualizar');
       return;
     }
-
     const archivoData = ayudaDiagnostica.idayudadiagnosticaarchivo;
     const { archivoContenido, archivoTipo, archivoNombre } = archivoData;
-
     mostrarArchivoModal(archivoContenido, archivoTipo, archivoNombre);
   };
 

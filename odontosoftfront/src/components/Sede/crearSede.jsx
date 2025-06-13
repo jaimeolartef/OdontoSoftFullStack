@@ -3,9 +3,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Logo from '../../resource/LogoNegro.png';
 import '../../App.css';
-import axios from "axios";
-import config from '../../config';
 import showMessage from "../../util/UtilMessage";
+import { apiPost } from '../apiService';
 
 const CrearSede = () => {
   const location = useLocation();
@@ -25,12 +24,6 @@ const CrearSede = () => {
     servicios: '',
     habilitado: true
   });
-
-  // Función para configurar el token de autorización
-  const setAuthToken = () => {
-    let token = sessionStorage.getItem('jsonwebtoken');
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-  };
 
   // Verificar que se haya pasado el ID de la entidad
   useEffect(() => {
@@ -59,7 +52,6 @@ const CrearSede = () => {
 
     try {
       setLoading(true);
-      setAuthToken();
 
       // Preparar datos para enviar
       const sedeData = {
@@ -75,26 +67,12 @@ const CrearSede = () => {
         habilitado: formData.habilitado
       };
 
-      console.log('Datos a enviar:', sedeData); // Para debug
+      const response = await apiPost('/sedeempresa/guardar', sedeData);
 
-      const response = await axios.post(`${config.baseURL}/sedeempresa/guardar`, sedeData, {
-        validateStatus: function (status) {
-          return status;
-        }
-      });
-
-      if (response.status === 201 || response.status === 200) {
-        if (response.data.success) {
-          showMessage('success', 'Sede creada correctamente');
-          navigate('/editarentidad', { state: { id: entidadId } });
-        } else {
-          showMessage('error', response.data.message || 'Error al crear la sede');
-        }
-      } else {
-        showMessage('error', response.data?.message || 'Error al crear la sede');
-      }
+      showMessage('success', 'Sede creada correctamente');
+      navigate('/editarentidad', { state: { id: entidadId } });
     } catch (error) {
-      showMessage('error', 'Error al guardar la sede: ' + error.message);
+      showMessage('error', error.message || 'Error al guardar la sede');
     } finally {
       setLoading(false);
     }

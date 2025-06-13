@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import axios from "axios";
-import config from "../../config";
 import showMessage from "../../util/UtilMessage";
 import EliminarIcon from "../../resource/Eliminar.png";
 import { Tooltip } from "react-tooltip";
+import { apiGet } from '../apiService';
 
 const Diagnosticos = ({ formMedicalHistory, setFormMedicalHistory, readOnly }) => {
     const [TipoDiagnostico, setTipoDiagnostico] = useState([{
@@ -15,20 +14,19 @@ const Diagnosticos = ({ formMedicalHistory, setFormMedicalHistory, readOnly }) =
 
     const [selectedDiagnostico, setSelectedDiagnostico] = useState('');
     const usuario = sessionStorage.getItem('username');
+    const token = sessionStorage.getItem('jsonwebtoken');
 
     useEffect(() => {
         const fetchTipoDiagnostico = async () => {
-            let token = sessionStorage.getItem('jsonwebtoken');
-            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
             try {
-                const response = await axios.get(`${config.baseURL}/tipodiagnostico/consultar`);
-                if (response.status === 200) {
-                    setTipoDiagnostico(response.data);
+                const response = await apiGet('/tipodiagnostico/consultar', token);
+                if (Array.isArray(response)) {
+                    setTipoDiagnostico(response);
                 }
             } catch (error) {
                 console.error('Error fetching patient data:', error);
             }
-        }
+        };
 
         fetchTipoDiagnostico();
     }, [formMedicalHistory]);
@@ -71,7 +69,7 @@ const Diagnosticos = ({ formMedicalHistory, setFormMedicalHistory, readOnly }) =
                 showMessage('warning', 'El diagnóstico ya existe en la lista.');
             }
         }
-        setSelectedDiagnostico(''); // Limpia el valor del input
+        setSelectedDiagnostico('');
     };
 
     const handleSearchChange = (event) => {
@@ -102,7 +100,7 @@ const Diagnosticos = ({ formMedicalHistory, setFormMedicalHistory, readOnly }) =
                     placeholder="Buscar diagnostico..."
                     value={selectedDiagnostico}
                     onBlur={handleSearchChange}
-                    onInput={handleDiagnosticoChange} // Ejecuta el método al seleccionar una opción
+                    onInput={handleDiagnosticoChange}
                   />
                   <datalist id="datalistOptions">
                       {TipoDiagnostico.map((tipo) => (

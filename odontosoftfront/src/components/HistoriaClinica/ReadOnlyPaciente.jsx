@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import '../HistoriaClinica/ReadOnlyPaciente.css';
 import '../../App.css';
-import axios from "axios";
-import config from "../../config";
+import { apiGet } from '../apiService';
 
 const ReadOnlyPaciente = ({ idPatient }) => {
   const [formData, setFormPatient] = useState({
@@ -53,9 +52,9 @@ const ReadOnlyPaciente = ({ idPatient }) => {
 
   useEffect(() => {
     if (idPatient) {
-      axios.get(`${config.baseURL}/pacientes/consultar/${idPatient}`)
+      apiGet(`/pacientes/consultar/${idPatient}`)
         .then(response => {
-          setFormPatient(mapPatientData(response.data));
+          setFormPatient(mapPatientData(response));
         })
         .catch(error => {
           console.error('Error fetching patient data:', error);
@@ -143,7 +142,7 @@ const ReadOnlyPaciente = ({ idPatient }) => {
         </div>
       </div>
     </div>
-      );
-      };
+  );
+};
 
-      export default ReadOnlyPaciente;
+export default ReadOnlyPaciente;

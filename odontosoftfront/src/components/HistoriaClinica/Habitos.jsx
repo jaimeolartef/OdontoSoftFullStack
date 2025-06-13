@@ -1,8 +1,7 @@
-import React, {useEffect, useState} from 'react';
-import config from "../../config";
-import axios from "axios";
+import React, { useEffect, useState } from 'react';
+import { apiGet } from '../apiService';
 
-const Habitos = ({formMedicalHistory, setFormMedicalHistory, readOnly}) => {
+const Habitos = ({ formMedicalHistory, setFormMedicalHistory, readOnly }) => {
   const [habitos, setHabitos] = useState([]);
   const usuario = sessionStorage.getItem('username');
 
@@ -17,9 +16,9 @@ const Habitos = ({formMedicalHistory, setFormMedicalHistory, readOnly}) => {
   useEffect(() => {
     const fetchHabitos = async () => {
       try {
-        const habitosResponse = await axios.get(`${config.baseURL}/habitshistory/getall`);
-        if (Array.isArray(habitosResponse.data)) {
-          const habitos = habitosResponse.data.map(mapHabito);
+        const habitosResponse = await apiGet('/habitshistory/getall');
+        if (Array.isArray(habitosResponse)) {
+          const habitos = habitosResponse.map(mapHabito);
           habitos.forEach(habito => {
             let existItem = formMedicalHistory.habitopacientes.findIndex(item => item.idhabito === habito.id);
             if (existItem === -1) {
@@ -46,11 +45,10 @@ const Habitos = ({formMedicalHistory, setFormMedicalHistory, readOnly}) => {
   const handleHabitosChange = (habito, value) => {
     setHabitos(prevH => {
       return prevH.map(itemH =>
-        itemH.id === habito.id ? {...itemH, seleccionado: value} : itemH
+        itemH.id === habito.id ? { ...itemH, seleccionado: value } : itemH
       );
     });
     let fechacreacion = new Date().toISOString();
-    console.log('Hábitos:', formMedicalHistory);
     formMedicalHistory.habitopacientes = formMedicalHistory.habitopacientes.map(item =>
       item.idhabito === habito.id ? {
         ...item,
@@ -82,11 +80,11 @@ const Habitos = ({formMedicalHistory, setFormMedicalHistory, readOnly}) => {
                       value={option}
                       onChange={() => handleHabitosChange(habito, option)}
                       checked={habito.seleccionado === option}
-                      style={{width: '20px', height: '20px'}}
+                      style={{ width: '20px', height: '20px' }}
                     />
                   </div>
                   <div>
-                    <label className="form-check-label" style={{marginLeft: '10px'}}>{option ? 'SI' : 'NO'}</label>
+                    <label className="form-check-label" style={{ marginLeft: '10px' }}>{option ? 'SI' : 'NO'}</label>
                   </div>
                 </div>
               ))}

@@ -1,12 +1,12 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import Logo from "../../resource/LogoNegro.png";
-import axios from "axios";
-import config from "../../config";
 import { useNavigate } from 'react-router-dom';
 import { createEvents } from 'ics';
 import { saveAs } from 'file-saver';
-const AgendaMedica = () => {
+import showMessage from "../../util/UtilMessage";
+import { apiGet } from '../apiService';
 
+const AgendaMedica = () => {
   const navigate = useNavigate();
   const [selectedDay, setSelectedDay] = useState(null);
   const [selectedOdontologo, setSelectedOdontologo] = useState('');
@@ -18,15 +18,14 @@ const AgendaMedica = () => {
   const [daysOfWeek, setDaysOfWeek] = useState([]);
   const [citaDia, setCitaDia] = useState([]);
   const monthFormated = (new Date().getMonth() + 1 < 10) ? '0' + (new Date().getMonth() + 1) : (new Date().getMonth() + 1);
-  // Add this state variable near your other state declarations
   const [showFromToday, setShowFromToday] = useState(false);
 
-  // Add a function to check if a date is today or in the future
   const isDateFromTodayOrLater = (year, month, day) => {
     const today = new Date();
     const checkDate = new Date(year, month - 1, day);
     return checkDate >= new Date(today.getFullYear(), today.getMonth(), today.getDate());
   };
+
   const [hours, setHours] = useState({
     horainicioam: '',
     horafinam: '',
@@ -43,13 +42,14 @@ const AgendaMedica = () => {
   useEffect(() => {
     fetchLoadCalendar();
     fetchOdontologo();
+    // eslint-disable-next-line
   }, []);
 
   const fetchLoadCalendar = () => {
     const firstDay = new Date(selectedYear, selectedMonth - 1, 1).getDay();
     const offset = firstDay === 0 ? 6 : firstDay - 1;
     const daysMonth = new Date(selectedYear, selectedMonth, 0).getDate();
-    const newDaysOfWeek = Array.from({length: daysMonth}, (_, index) => ({
+    const newDaysOfWeek = Array.from({ length: daysMonth }, (_, index) => ({
       id: index + 1,
       dayInMonth: index + 1,
       horainicioam: '',
@@ -64,97 +64,68 @@ const AgendaMedica = () => {
   };
 
   const fetchOdontologo = async () => {
-    let token = sessionStorage.getItem('jsonwebtoken');
     const usuario = sessionStorage.getItem('username');
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     try {
-      const response = await axios.get(`${config.baseURL}/doctor/consultar/documento/` + usuario);
-      if (response.status === 200) {
-        setOdontologo(response.data);
-        const odontoSelec = response.data.idMedico;
-        const year = selectedYear;
-
-        // Número de días en el mes seleccionado
-        const daysInMonth = new Date(year, monthFormated, 0).getDate();
-        console.log('dias en el mes', daysInMonth);
-        console.log('Odonto seleccionado ' + odontoSelec);
-
-        // Recorrer todos los días del mes
-        let allCitas = [];
-        for (let day = 1; day <= daysInMonth; day++) {
-          const dayFormated = (day < 10) ? '0' + day : '' + day;
-          const date = `${year}-${monthFormated}-${dayFormated}`;
-          try {
-            const appointmentResponse = await axios.get(`${config.baseURL}/appointment/doctor?idOdontologo=${odontoSelec}&fechaDia=${date}`);
-            if (appointmentResponse.status === 200) {
-              allCitas = [...allCitas, ...appointmentResponse.data];
-            }
-          } catch (error) {
-            console.error(`Error fetching appointments for day ${date}:`, error);
-          }
+      const response = await apiGet(`/doctor/consultar/documento/${usuario}`);
+      setOdontologo(response);
+      const odontoSelec = response.idMedico;
+      const year = selectedYear;
+      const daysInMonth = new Date(year, monthFormated, 0).getDate();
+      let allCitas = [];
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dayFormated = (day < 10) ? '0' + day : '' + day;
+        const date = `${year}-${monthFormated}-${dayFormated}`;
+        try {
+          const appointmentResponse = await apiGet(`/appointment/doctor`, {
+            queryParams: { idOdontologo: odontoSelec, fechaDia: date }
+          });
+          allCitas = [...allCitas, ...appointmentResponse];
+        } catch (error) {
+          showMessage('error', error?.message || `Error al obtener citas para el día ${date}`);
         }
-        setCitaDia(allCitas);
-        console.log('Citas del día', allCitas);
       }
+      setCitaDia(allCitas);
     } catch (error) {
-      console.error('Error fetching patient data:', error);
+      showMessage('error', error?.message || 'Error al obtener datos del odontólogo');
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  }
+  };
 
   const handleCitaClick = async (cita) => {
-    let token = sessionStorage.getItem('jsonwebtoken');
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     try {
-      const response = await axios.get(`${config.baseURL}/historiaClinica/consultar/paciente/` + cita.idpaciente);
-      if (response.status === 200) {
-        let paciente = await handlePatientClick(cita.idpaciente);
-        if (response.data.codigoValidacion === '404') {
-          handleMedicalRecordClick(paciente);
-        } else {
-          handleMedicalRecordClick(paciente);
-        }
-      }
+      await apiGet(`/historiaClinica/consultar/paciente/${cita.idpaciente}`);
+      let paciente = await handlePatientClick(cita.idpaciente);
+      handleMedicalRecordClick(paciente);
     } catch (error) {
-      console.error('Error fetching patient data:', error);
+      showMessage('error', error?.message || 'Error al consultar historia clínica');
     }
-  }
+  };
 
   const handlePatientClick = async (idpaciente) => {
-    let token = sessionStorage.getItem('jsonwebtoken');
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     try {
-      const response = await axios.get(`${config.baseURL}/pacientes/consultar/` + idpaciente);
-      if (response.status === 200) {
-        console.log('Consultar paciente' + response.data)
-        return response.data;
-      }
+      const response = await apiGet(`/pacientes/consultar/${idpaciente}`);
+      return response;
     } catch (error) {
-      console.error('Error fetching patient data:', error);
+      showMessage('error', error?.message || 'Error al consultar paciente');
     }
-  }
+  };
 
   const handleMedicalRecordClick = (paciente) => {
     navigate('/historiaPac', { state: { patient: paciente } });
   };
 
   const exportCalendar = () => {
-    // Verificar si hay citas para exportar
     if (citaDia.length === 0) {
       alert("No hay citas para exportar");
       return;
     }
-
-    // Convertir citas al formato ics
     const events = citaDia.map(cita => {
-      // Parsear fecha y hora
       const [year, month, day] = cita.fecha.split('-').map(Number);
       const [startHour, startMinute] = cita.horainicio.split(':').map(Number);
       const [endHour, endMinute] = cita.horafin.split(':').map(Number);
-
       return {
         title: `Cita: ${cita.nombrePaciente}`,
         description: `Cita médica con paciente ${cita.nombrePaciente}`,
@@ -164,16 +135,12 @@ const AgendaMedica = () => {
         organizer: { name: odontologo.nombre, email: 'contacto@odontosoft.com' }
       };
     });
-
-    // Generar archivo .ics
     createEvents(events, (error, value) => {
       if (error) {
         console.error("Error al generar el calendario:", error);
         alert("Error al generar el calendario");
         return;
       }
-
-      // Crear y descargar archivo
       const blob = new Blob([value], { type: 'text/calendar;charset=utf-8' });
       saveAs(blob, `agenda_medica_${selectedYear}_${selectedMonth}.ics`);
     });
@@ -181,9 +148,9 @@ const AgendaMedica = () => {
 
   return (
     <div className="d-flex justify-content-center align-items-center ">
-      <div className="card p-4" style={{width: '1500px'}}>
+      <div className="card p-4" style={{ width: '1500px' }}>
         <header className="text-center mb-4">
-          <img src={Logo} alt="Logo" className="mb-3" style={{maxWidth: '140px'}}/>
+          <img src={Logo} alt="Logo" className="mb-3" style={{ maxWidth: '140px' }} />
           <h1>Agenda Medica</h1>
         </header>
         <form onSubmit={handleSubmit}>
@@ -192,7 +159,7 @@ const AgendaMedica = () => {
             <div className="form-group">
               <div className="row">
                 <div className="col-md-12 mb-3">
-                  <h3>{new Date(selectedYear, selectedMonth - 1).toLocaleString('es', {month: 'long'}).charAt(0).toUpperCase() + new Date(selectedYear, selectedMonth - 1).toLocaleString('es', {month: 'long'}).slice(1)} {selectedYear}</h3>
+                  <h3>{new Date(selectedYear, selectedMonth - 1).toLocaleString('es', { month: 'long' }).charAt(0).toUpperCase() + new Date(selectedYear, selectedMonth - 1).toLocaleString('es', { month: 'long' }).slice(1)} {selectedYear}</h3>
                   <div className="form-check mb-3">
                     <input
                       className="form-check-input"
@@ -207,50 +174,48 @@ const AgendaMedica = () => {
                   </div>
                   <table className="table">
                     <thead>
-                    <tr>
-                      {['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].map((day, index) => (
-                        <th key={index}>{day}</th>
-                      ))}
-                    </tr>
+                      <tr>
+                        {['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].map((day, index) => (
+                          <th key={index}>{day}</th>
+                        ))}
+                      </tr>
                     </thead>
                     <tbody>
-                    {
-                      Array.from({length: totalCells / 7}, (_, weekIndex) => (
-                        <tr key={weekIndex}>
-                          {Array.from({length: 7}, (_, dayIndex) => {
-                            const dayNumber = weekIndex * 7 + dayIndex + 1 - offset;
-                            return (
-                              <td key={dayIndex} className="table-cell">
-                                {dayNumber > 0 && dayNumber <= dayLastMonth && (
-                                  <div>
-                                    {dayNumber}
-                                    {citaDia.map((cita, index) => {
-                                      const dayFormatted = dayNumber < 10 ? `0${dayNumber}` : `${dayNumber}`;
-                                      const formattedDate = `${selectedYear}-${monthFormated}-${dayFormatted}`;
-
-                                      // Check if we should show this appointment based on the checkbox selection
-                                      if (cita.fecha === formattedDate &&
+                      {
+                        Array.from({ length: totalCells / 7 }, (_, weekIndex) => (
+                          <tr key={weekIndex}>
+                            {Array.from({ length: 7 }, (_, dayIndex) => {
+                              const dayNumber = weekIndex * 7 + dayIndex + 1 - offset;
+                              return (
+                                <td key={dayIndex} className="table-cell">
+                                  {dayNumber > 0 && dayNumber <= dayLastMonth && (
+                                    <div>
+                                      {dayNumber}
+                                      {citaDia.map((cita, index) => {
+                                        const dayFormatted = dayNumber < 10 ? `0${dayNumber}` : `${dayNumber}`;
+                                        const formattedDate = `${selectedYear}-${monthFormated}-${dayFormatted}`;
+                                        if (cita.fecha === formattedDate &&
                                           (!showFromToday || isDateFromTodayOrLater(selectedYear, selectedMonth, dayNumber))) {
-                                        return (
-                                          <div
-                                            key={index}
-                                            className={index % 2 === 0 ? "blue-block" : "silver-block"}
-                                            style={{ marginBottom: '4px', cursor: 'pointer' }}
-                                            onClick={() => handleCitaClick(cita)}>
-                                            {cita.horainicio} - {cita.horafin}: {cita.nombrePaciente}
-                                          </div>
-                                        );
-                                      }
-                                      return null;
-                                    })}
-                                  </div>
-                                )}
-                              </td>
-                            );
-                          })}
-                        </tr>
-                      ))
-                    }
+                                          return (
+                                            <div
+                                              key={index}
+                                              className={index % 2 === 0 ? "blue-block" : "silver-block"}
+                                              style={{ marginBottom: '4px', cursor: 'pointer' }}
+                                              onClick={() => handleCitaClick(cita)}>
+                                              {cita.horainicio} - {cita.horafin}: {cita.nombrePaciente}
+                                            </div>
+                                          );
+                                        }
+                                        return null;
+                                      })}
+                                    </div>
+                                  )}
+                                </td>
+                              );
+                            })}
+                          </tr>
+                        ))
+                      }
                     </tbody>
                   </table>
                 </div>
@@ -271,6 +236,6 @@ const AgendaMedica = () => {
       </div>
     </div>
   );
-}
+};
 
 export default AgendaMedica;

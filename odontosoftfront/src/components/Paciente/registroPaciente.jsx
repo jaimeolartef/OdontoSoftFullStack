@@ -3,10 +3,10 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './registroPaciente.css';
 import '../../App.css';
 import Logo from '../../resource/LogoNegro.png';
-import axios from "axios";
-import config from '../../config';
 import showMessage from "../../util/UtilMessage";
 import {useNavigate} from "react-router-dom";
+import {apiGet, apiPost} from '../apiService';
+
 const RegistroPaciente = () => {
   const usuario = sessionStorage.getItem('username');
   const navigate = useNavigate();
@@ -75,95 +75,94 @@ const RegistroPaciente = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    let token = sessionStorage.getItem('jsonwebtoken');
 
-    const responseValidate = await axios.get(`${config.baseURL}/pacientes/consultar`, {
-      params: { documento: formData.documento },
-      validateStatus: function (status) {
-        return status;
+    // Validar documento único
+    try {
+      const pacientesPorDocumento = await apiGet('/pacientes/consultar', { queryParams: { documento: formData.documento } });
+      if (pacientesPorDocumento && pacientesPorDocumento.length > 0) {
+        showMessage('warning', 'Otro paciente ya se encuentra registrado con el número de documento ' + formData.documento);
+        return;
       }
-    });
-
-    if (responseValidate.status === 200 && responseValidate.data.length > 0) {
-      showMessage('warning', 'Otro paciente ya se encuentra registrado con el número de documento ' + formData.documento);
-      return;
+    } catch (error) {
+      // Si el error es 404, significa que no existe, se puede continuar
+      if (!error.message) {
+        showMessage('error', 'Error validando documento');
+        return;
+      }
     }
 
-    const responseValidateCorreo = await axios.get(`${config.baseURL}/pacientes/consultar`, {
-      params: { correo: formData.correo },
-      validateStatus: function (status) {
-        return status;
+    // Validar correo único
+    try {
+      const pacientesPorCorreo = await apiGet('/pacientes/consultar', { queryParams: { correo: formData.correo } });
+      if (pacientesPorCorreo && pacientesPorCorreo.length > 0) {
+        showMessage('warning', 'Otro paciente ya se encuentra registrado con correo electrónico ' + formData.correo);
+        return;
       }
-    });
-
-    if (responseValidateCorreo.status === 200 && responseValidateCorreo.data.length > 0) {
-      showMessage('warning', 'Otro paciente ya se encuentra registrado con correo electrónico ' + formData.correo);
-      return;
+    } catch (error) {
+      if (!error.message) {
+        showMessage('error', 'Error validando correo');
+        return;
+      }
     }
 
-    formData.idusuariocreacion = usuario;
-    formData.fechacreacion = new Date().toISOString();
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-    axios.post(`${config.baseURL}/pacientes/crear`, formData, {
-      validateStatus: function (status) {
-        return status;
+    // Registrar paciente
+    try {
+      const dataToSend = {
+        ...formData,
+        idusuariocreacion: usuario,
+        fechacreacion: new Date().toISOString()
+      };
+      const response = await apiPost('/pacientes/crear', dataToSend);
+
+      let nombreCompleto = formData.primernombre + ' ' +
+        (formData.segundonombre ? formData.segundonombre : '')
+        + ' ' + formData.primerapellido + ' ' +
+        (formData.segundoapellido ? formData.segundoapellido : '');
+
+      const usuarioNuevo = {
+        nombre: nombreCompleto,
+        correo: formData.correo,
+        clave: Math.random().toString(36).slice(-8),
+        habilitado: true,
+        codigo: formData.documento,
+        idRol: 2
+      };
+      await registrarUsuario(usuarioNuevo);
+
+      showMessage('success', 'Paciente registrado con éxito');
+      navigate('/inicio'); // Regresa a la página anterior
+    } catch (error) {
+      if (error.message) {
+        showMessage('error', error.message);
+      } else {
+        showMessage('error', 'Error al registrar paciente');
       }
-    })
-      .then(response => {
-        if (response.status === 201) {
-          let nombreCompleto = formData.primernombre + ' ' +
-            (formData.segundonombre ? formData.segundonombre : '')
-            + ' ' +formData.primerapellido + ' ' +
-            (formData.segundoapellido ? formData.segundoapellido : '');
-          const usuario = {
-            nombre: nombreCompleto,
-            correo: formData.correo,
-            clave: Math.random().toString(36).slice(-8),
-            habilitado: true,
-            codigo: formData.documento,
-            idRol: 2
-          };
-          registrarUsuario(usuario);
-          showMessage('success', 'Paciente registrado con éxito');
-          resetForm();
-        } else if (response.status === 400 && response.data.codigoValidacion === '400') {
-          showMessage('error', response.data.mensajeValidacion);
-        }
-      })
+    }
   };
 
-  const registrarUsuario = async (usuario) => {
-    let token = sessionStorage.getItem('jsonwebtoken');
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-
-    axios.post(`${config.baseURL}/user/signup`, usuario, {
-      validateStatus: function (status) {
-        return status;
+  const registrarUsuario = async (usuarioNuevo) => {
+    try {
+      await apiPost('/user/signup', usuarioNuevo);
+    } catch (error) {
+      if (error.message) {
+        showMessage('error', error.message);
+      } else {
+        showMessage('error', 'Error al registrar usuario');
       }
-    })
-      .then(response => {
-        if (response.status === 400 && response.data.codigoValidacion === '400') {
-          showMessage('error', response.data.mensajeValidacion);
-        }
-      })
+    }
   }
 
   useEffect(() => {
     // Example starter JavaScript for disabling form submissions if there are invalid fields
     (() => {
       'use strict'
-
-      // Fetch all the forms we want to apply custom Bootstrap validation styles to
       const forms = document.querySelectorAll('.needs-validation')
-
-      // Loop over them and prevent submission
       Array.from(forms).forEach(form => {
         form.addEventListener('submit', event => {
           if (!form.checkValidity()) {
             event.preventDefault()
             event.stopPropagation()
           }
-
           form.classList.add('was-validated')
         }, false)
       })

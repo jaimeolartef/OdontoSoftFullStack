@@ -3,11 +3,10 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './consultarPaciente.css';
 import Logo from '../../resource/LogoNegro.png';
 import '../../App.css';
-import axios from "axios";
-import config from "../../config";
 import PacienteTabla from "./pacienteTabla";
 import {useLocation, useNavigate} from "react-router-dom";
 import showMessage from "../../util/UtilMessage";
+import { apiGet } from '../apiService';
 
 const ConsultarPaciente = () => {
   const location = useLocation();
@@ -105,28 +104,11 @@ const ConsultarPaciente = () => {
 
   const fetchPacientes = async (formData) => {
     try {
-      let token = sessionStorage.getItem('jsonwebtoken');
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      const response = await axios.get(`${config.baseURL}/pacientes/consultar`, {
-        params: formData,
-        validateStatus: function (status) {
-          return status;
-        }
-      });
-
-      if (response.status === 200) {
-        setResponseData(response.data);
-      } else if (response.status === 400 && response.data.codigoValidacion === '400') {
-        showMessage('error', response.data.mensajeValidacion);
-      } else if (response.status === 403) {
-        showMessage('error', 'No autorizado');
-      } else if (response.status > 400) {
-        showMessage('error', 'Error en la solicitud');
-      }
+      const response = await apiGet('/pacientes/consultar', { queryParams: formData });
+      setResponseData(response);
     } catch (error) {
-      console.error('Error:', error);
-      if (error.response && error.response.status === 403) {
-        showMessage('error', 'No autorizado');
+      if (error.message) {
+        showMessage('error', error.message);
       } else {
         showMessage('error', 'Error en la solicitud');
       }

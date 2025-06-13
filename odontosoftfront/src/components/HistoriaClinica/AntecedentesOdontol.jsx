@@ -1,9 +1,7 @@
-import React, {useEffect, useState} from 'react';
-import axios from "axios";
-import config from "../../config";
+import React, { useEffect, useState } from 'react';
+import { apiGet } from '../apiService';
 
-const Antecedentes = ({formMedicalHistory, readOnly}) => {
-
+const Antecedentes = ({ formMedicalHistory, readOnly }) => {
   const [antecedentesOdont, setAntecedentesOdont] = useState([]);
   const usuario = sessionStorage.getItem('username');
 
@@ -16,12 +14,11 @@ const Antecedentes = ({formMedicalHistory, readOnly}) => {
   });
 
   useEffect(() => {
-    // Este useEffect se ejecutará después del primer useEffect
     const fetchHistoria = async () => {
       try {
-        const antecedentsResponse = await axios.get(`${config.baseURL}/precedenthistory/get`);
-        if (Array.isArray(antecedentsResponse.data)) {
-          const antecedentes = antecedentsResponse.data.map(mapAntecedenteOdont);
+        const antecedentsResponse = await apiGet('/precedenthistory/get');
+        if (Array.isArray(antecedentsResponse)) {
+          const antecedentes = antecedentsResponse.map(mapAntecedenteOdont);
           const antecedentesOdont = antecedentes.filter(item => item.odontologico);
           antecedentesOdont.forEach(antecedente => {
             let existItem = formMedicalHistory.antecedentepacientes.findIndex(item => item.idantecedente == antecedente.id);
@@ -44,17 +41,10 @@ const Antecedentes = ({formMedicalHistory, readOnly}) => {
     fetchHistoria();
   }, [formMedicalHistory.enfermedadActual]);
 
-  /**
-   * Handles the change event for an odontological antecedent.
-   * Updates the `seleccionado` property of the matching antecedent in the `antecedentesOdont` state.
-   *
-   * @param {Object} antecedenteOdont - The odontological antecedent object.
-   * @param {string} value - The new value to set for the `seleccionado` property.
-   */
   const handleAntecedenteOdontChange = (antecedenteOdont, value) => {
     setAntecedentesOdont(prevO => {
       return prevO.map(itemO =>
-        itemO.id === antecedenteOdont.id ? {...itemO, seleccionado: value} : itemO
+        itemO.id === antecedenteOdont.id ? { ...itemO, seleccionado: value } : itemO
       );
     });
     let fechacreacion = new Date().toISOString();
@@ -83,16 +73,18 @@ const Antecedentes = ({formMedicalHistory, readOnly}) => {
               {['SI', 'NO'].map(option => (
                 <div key={option} className="form-check form-check-inline">
                   <div>
-                    <input disabled={readOnly}
+                    <input
+                      disabled={readOnly}
                       className="form-check-input"
                       type="radio"
                       value={option}
                       onChange={() => handleAntecedenteOdontChange(antecedente, option)}
                       checked={antecedente.seleccionado === option}
-                      style={{width: '20px', height: '20px'}}/>
+                      style={{ width: '20px', height: '20px' }}
+                    />
                   </div>
                   <div>
-                    <label className="form-check-label" style={{marginLeft: '10px'}}>{option}</label>
+                    <label className="form-check-label" style={{ marginLeft: '10px' }}>{option}</label>
                   </div>
                 </div>
               ))}
@@ -101,7 +93,7 @@ const Antecedentes = ({formMedicalHistory, readOnly}) => {
         ))}
       </div>
     </div>
-      );
-      };
+  );
+};
 
-      export default Antecedentes;
+export default Antecedentes;

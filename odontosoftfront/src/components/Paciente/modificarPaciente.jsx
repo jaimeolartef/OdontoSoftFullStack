@@ -4,9 +4,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './modificarPaciente.css';
 import '../../App.css';
 import Logo from '../../resource/LogoNegro.png';
-import axios from "axios";
-import config from '../../config';
 import showMessage from "../../util/UtilMessage";
+import { apiGet, apiPut } from '../apiService';
 
 const ModificarPaciente = () => {
   const location = useLocation();
@@ -45,9 +44,8 @@ const ModificarPaciente = () => {
 
   useEffect(() => {
     if (id) {
-      axios.get(`${config.baseURL}/pacientes/consultar/${id}`)
-        .then(response => {
-          const data = response.data;
+      apiGet(`/pacientes/consultar/${id}`)
+        .then(data => {
           setFormData({
             id: data.id || '',
             idtipodocumento: data.idtipodocumento || '',
@@ -68,7 +66,7 @@ const ModificarPaciente = () => {
             nombreacompanante: data.nombreacompanante || '',
             telefonoacompanante: data.telefonoacompanante || '',
             parentescoacompanante: data.parentescoacompanante || '',
-            habilitado: data.habilitado === 'true' || false
+            habilitado: data.habilitado === 'true' || data.habilitado === true
           });
         })
         .catch(error => {
@@ -85,46 +83,30 @@ const ModificarPaciente = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     formData.idusuariocreacion = usuario;
     formData.fechacreacion = new Date().toISOString();
-    e.preventDefault();
-    let token = sessionStorage.getItem('jsonwebtoken');
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-    axios.put(`${config.baseURL}/pacientes/modificar`, formData, {
-      validateStatus: function (status) {
-        return status;
-      }
-    })
-      .then(response => {
-        if (response.status === 200) {
-          showMessage('success', 'Paciente modificado con éxito');
-          navigate('/consultarPac', { state: { redireccionadoModificar: true } });
-        } else {
-          showMessage('error', 'Error al modificar el paciente');
-        }
-      })
-      .catch(error => {
-        showMessage('error', 'Error al modificar el paciente');
-      });
+    try {
+      await apiPut('/pacientes/modificar', formData);
+      showMessage('success', 'Paciente modificado con éxito');
+      navigate('/consultarPac', { state: { redireccionadoModificar: true } });
+    } catch (error) {
+      showMessage('error', 'Error al modificar el paciente');
+    }
   };
 
   useEffect(() => {
     // Example starter JavaScript for disabling form submissions if there are invalid fields
     (() => {
       'use strict'
-
-      // Fetch all the forms we want to apply custom Bootstrap validation styles to
       const forms = document.querySelectorAll('.needs-validation')
-
-      // Loop over them and prevent submission
       Array.from(forms).forEach(form => {
         form.addEventListener('submit', event => {
           if (!form.checkValidity()) {
             event.preventDefault()
             event.stopPropagation()
           }
-
           form.classList.add('was-validated')
         }, false)
       })

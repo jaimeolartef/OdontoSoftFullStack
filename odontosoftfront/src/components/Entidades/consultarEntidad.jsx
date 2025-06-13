@@ -3,11 +3,10 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Logo from '../../resource/LogoNegro.png';
 import '../../App.css';
 import './entidadTabla.css';
-import axios from "axios";
-import config from "../../config";
 import { useNavigate } from "react-router-dom";
 import showMessage from "../../util/UtilMessage";
 import EntidadTabla from "./entidadTabla";
+import { apiGet } from '../apiService';
 
 const ConsultarEntidad = () => {
   const navigate = useNavigate();
@@ -17,7 +16,6 @@ const ConsultarEntidad = () => {
   });
 
   const rol = sessionStorage.getItem('Rol');
-
   const [entidades, setEntidades] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -37,45 +35,30 @@ const ConsultarEntidad = () => {
   const fetchEntidades = async (filters = {}) => {
     try {
       setLoading(true);
-      let token = sessionStorage.getItem('jsonwebtoken');
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-
       // Solo incluimos parámetros si tienen valor
       const params = {};
       if (filters.numerodocumento) params.numerodocumento = filters.numerodocumento;
       if (filters.nombre) params.nombre = filters.nombre;
 
-      const response = await axios.get(`${config.baseURL}/eps/consultar`, {
-        params: params,
-        validateStatus: function (status) {
-          return status;
-        }
-      });
+      const response = await apiGet('/eps/consultar', { queryParams: params });
 
-      if (response.status === 201 || response.status === 200) {
-        setEntidades(response.data);
-        if (response.data.length === 0) {
+      if (Array.isArray(response)) {
+        setEntidades(response);
+        if (response.length === 0) {
           showMessage('info', 'No se encontraron entidades con los criterios de búsqueda');
         }
-      } else if (response.status === 404) {
-        setEntidades([]);
-        showMessage('info', 'No se encontraron entidades con los criterios de búsqueda');
-      } else if (response.status === 400) {
-        showMessage('error', response.data.mensajeValidacion || 'Error en los datos');
-      } else if (response.status === 403) {
-        showMessage('error', 'No autorizado');
+      } else if (response?.mensajeValidacion) {
+        showMessage('error', response.mensajeValidacion);
       } else {
         showMessage('error', 'Error en la solicitud');
       }
     } catch (error) {
-      console.error('Error:', error);
-      showMessage('error', 'Error al consultar entidades');
+      showMessage('error', error?.message || 'Error al consultar entidades');
       setEntidades([]);
     } finally {
       setLoading(false);
     }
   };
-
 
   return (
     <div className="d-flex justify-content-center align-items-center">
