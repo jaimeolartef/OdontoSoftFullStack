@@ -17,7 +17,7 @@ import showMessage from "../../util/UtilMessage";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {apiGet, apiPost} from "../apiService";
 
-const MedicalRecord = () => {
+const HistorialCitaMedica = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -25,7 +25,15 @@ const MedicalRecord = () => {
     return location.state?.patient || {};
   }, [location.state]);
 
-  let readOnly = useMemo(() => {
+  // Modificación: Verificar si el acceso viene desde HistoriaClinica
+  // Si viene de HistoriaClinica o si readOnly está establecido, siempre será true
+  const readOnly = useMemo(() => {
+    // Verificamos si el paciente tiene idHistoriaClinica, lo que indica
+    // que viene de HistoriaClinica.jsx
+    if (location.state?.patient?.idHistoriaClinica) {
+      return true;
+    }
+    // De lo contrario, respetamos el valor de readOnly que se pasa
     return location.state?.readOnly || false;
   }, [location.state]);
 
@@ -69,32 +77,32 @@ const MedicalRecord = () => {
 
     try {
       const response = await apiPost('/historiaClinica/crear', formMedicalHistory);
-      showMessage('success', 'La historia clínica se guardó con éxito');
+      showMessage('success', 'La cita médica se guardó con éxito');
       console.log("Datos actualizados:", response);
 
-      // Obtener el ID de la historia clínica del response si es nueva
+      // Obtener el ID de la Cita Médica del response si es nueva
       const idHistoriaClinica = formMedicalHistory.idHistoriaClinica || response.id;
 
-      // Recargar la historia clínica con los datos actualizados
+      // Recargar la Cita Médica con los datos actualizados
       if (idHistoriaClinica) {
         LoadMedicalRecord(idHistoriaClinica);
-        console.log("Recargando historia clínica con ID:", idHistoriaClinica);
+        console.log("Recargando cita médica con ID:", idHistoriaClinica);
       }
     } catch (error) {
-      showMessage('error', 'Error al guardar la historia clínica');
+      showMessage('error', 'Error al guardar la cita médica');
     }
   }
 
-  // Función para mapear los datos de la historia clínica
+  // Función para mapear los datos de la Cita Médica
   const LoadMedicalRecord = async (idHistoriaClinica) => {
     try {
       const response = await apiGet(`/historiaClinica/consultar/${idHistoriaClinica}`);
-      console.log("Historia clínica recargada:", response);
+      console.log("Cita médica recargada:", response);
 
       // Actualizar el estado con los datos obtenidos
       setFormMedicalHistory(mapMedicalHistory(response));
     } catch (error) {
-      console.error('Error al recargar la historia clínica:', error);
+      console.error('Error al recargar la cita médica:', error);
       showMessage('error', 'Error al recargar los datos');
     }
   };
@@ -138,7 +146,7 @@ const MedicalRecord = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (formPatient.idPaciente && formPatient.idHistoriaClinica) {
+      if (formPatient.idPaciente && formPatient.idHistoriaClinica && readOnly) {
         try {
           const response = await apiGet(`/historiaClinica/consultar/${patient.idHistoriaClinica}`);
           console.log("Historia clínica inicia web:", response);
@@ -171,7 +179,7 @@ const MedicalRecord = () => {
       <div className="card p-4" style={{width: '1500px'}}>
         <header className="text-center mb-4">
           <img src={Logo} alt="Logo" className="mb-3" style={{maxWidth: '140px'}}/>
-          <h1>Historia Clínica Odontológica</h1>
+          <h1>Cita Médica Odontológica</h1>
         </header>
         <form onSubmit={handleSubmit} className="needs-validation" noValidate>
           <ReadOnlyPaciente idPatient={formPatient.idPaciente}/>
@@ -188,7 +196,7 @@ const MedicalRecord = () => {
                  style={{width: '100%', height: '100%'}}
                  onClick={(e) => {
                    if (!formMedicalHistory.idHistoriaClinica) {
-                     showMessage('warning', 'Debe guardar la historia clínica antes de ver el odontograma');
+                     showMessage('warning', 'Debe guardar la cita médica antes de ver el odontograma');
                      return;
                    }
                    e.stopPropagation();
@@ -264,4 +272,4 @@ const MedicalRecord = () => {
   );
 };
 
-export default MedicalRecord;
+export default HistorialCitaMedica;

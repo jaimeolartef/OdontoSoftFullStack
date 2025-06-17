@@ -1,15 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import Logo from "../../resource/LogoNegro.png";
-import { useNavigate } from 'react-router-dom';
-import { createEvents } from 'ics';
-import { saveAs } from 'file-saver';
+import {useNavigate} from 'react-router-dom';
+import {createEvents} from 'ics';
+import {saveAs} from 'file-saver';
 import showMessage from "../../util/UtilMessage";
-import { apiGet } from '../apiService';
+import {apiGet} from '../apiService';
 
 const AgendaMedica = () => {
   const navigate = useNavigate();
-  const [selectedDay, setSelectedDay] = useState(null);
-  const [selectedOdontologo, setSelectedOdontologo] = useState('');
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   let [totalCells, setTotalCells] = useState(0);
@@ -19,6 +17,8 @@ const AgendaMedica = () => {
   const [citaDia, setCitaDia] = useState([]);
   const monthFormated = (new Date().getMonth() + 1 < 10) ? '0' + (new Date().getMonth() + 1) : (new Date().getMonth() + 1);
   const [showFromToday, setShowFromToday] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+  const [selectedCita, setSelectedCita] = useState(null);
 
   const isDateFromTodayOrLater = (year, month, day) => {
     const today = new Date();
@@ -42,7 +42,6 @@ const AgendaMedica = () => {
   useEffect(() => {
     fetchLoadCalendar();
     fetchOdontologo();
-    // eslint-disable-next-line
   }, []);
 
   const fetchLoadCalendar = () => {
@@ -96,7 +95,6 @@ const AgendaMedica = () => {
 
   const handleCitaClick = async (cita) => {
     try {
-      await apiGet(`/historiaClinica/consultar/paciente/${cita.idpaciente}`);
       let paciente = await handlePatientClick(cita.idpaciente);
       handleMedicalRecordClick(paciente);
     } catch (error) {
@@ -106,15 +104,43 @@ const AgendaMedica = () => {
 
   const handlePatientClick = async (idpaciente) => {
     try {
-      const response = await apiGet(`/pacientes/consultar/${idpaciente}`);
-      return response;
+      return await apiGet(`/pacientes/consultar/${idpaciente}`);
     } catch (error) {
       showMessage('error', error?.message || 'Error al consultar paciente');
     }
   };
 
   const handleMedicalRecordClick = (paciente) => {
-    navigate('/historiaPac', { state: { patient: paciente } });
+    navigate('/historialCita', { state: { patient: paciente, readOnly: false } });
+  };
+
+  const handleHistoriaClinicaClick = async (cita) => {
+    try {
+      const paciente = await handlePatientClick(cita.idpaciente);
+      navigate('/historiaClinica', { state: { patient: paciente} });
+    } catch (error) {
+      showMessage('error', error?.message || 'Error al consultar paciente');
+    }
+  };
+
+  const handleCitaBlockClick = (cita) => {
+    setSelectedCita(cita);
+    setShowPopup(true);
+  };
+
+  const handlePopupClose = () => {
+    setShowPopup(false);
+    setSelectedCita(null);
+  };
+
+  const handleIniciarCita = () => {
+    handleCitaClick(selectedCita);
+    handlePopupClose();
+  };
+
+  const handleHistoriaClinica = () => {
+    handleHistoriaClinicaClick(selectedCita);
+    handlePopupClose();
   };
 
   const exportCalendar = () => {
@@ -174,48 +200,48 @@ const AgendaMedica = () => {
                   </div>
                   <table className="table">
                     <thead>
-                      <tr>
-                        {['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].map((day, index) => (
-                          <th key={index}>{day}</th>
-                        ))}
-                      </tr>
+                    <tr>
+                      {['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'].map((day, index) => (
+                        <th key={index}>{day}</th>
+                      ))}
+                    </tr>
                     </thead>
                     <tbody>
-                      {
-                        Array.from({ length: totalCells / 7 }, (_, weekIndex) => (
-                          <tr key={weekIndex}>
-                            {Array.from({ length: 7 }, (_, dayIndex) => {
-                              const dayNumber = weekIndex * 7 + dayIndex + 1 - offset;
-                              return (
-                                <td key={dayIndex} className="table-cell">
-                                  {dayNumber > 0 && dayNumber <= dayLastMonth && (
-                                    <div>
-                                      {dayNumber}
-                                      {citaDia.map((cita, index) => {
-                                        const dayFormatted = dayNumber < 10 ? `0${dayNumber}` : `${dayNumber}`;
-                                        const formattedDate = `${selectedYear}-${monthFormated}-${dayFormatted}`;
-                                        if (cita.fecha === formattedDate &&
-                                          (!showFromToday || isDateFromTodayOrLater(selectedYear, selectedMonth, dayNumber))) {
-                                          return (
-                                            <div
-                                              key={index}
-                                              className={index % 2 === 0 ? "blue-block" : "silver-block"}
-                                              style={{ marginBottom: '4px', cursor: 'pointer' }}
-                                              onClick={() => handleCitaClick(cita)}>
-                                              {cita.horainicio} - {cita.horafin}: {cita.nombrePaciente}
-                                            </div>
-                                          );
-                                        }
-                                        return null;
-                                      })}
-                                    </div>
-                                  )}
-                                </td>
-                              );
-                            })}
-                          </tr>
-                        ))
-                      }
+                    {
+                      Array.from({ length: totalCells / 7 }, (_, weekIndex) => (
+                        <tr key={weekIndex}>
+                          {Array.from({ length: 7 }, (_, dayIndex) => {
+                            const dayNumber = weekIndex * 7 + dayIndex + 1 - offset;
+                            return (
+                              <td key={dayIndex} className="table-cell">
+                                {dayNumber > 0 && dayNumber <= dayLastMonth && (
+                                  <div>
+                                    {dayNumber}
+                                    {citaDia.map((cita, index) => {
+                                      const dayFormatted = dayNumber < 10 ? `0${dayNumber}` : `${dayNumber}`;
+                                      const formattedDate = `${selectedYear}-${monthFormated}-${dayFormatted}`;
+                                      if (cita.fecha === formattedDate &&
+                                        (!showFromToday || isDateFromTodayOrLater(selectedYear, selectedMonth, dayNumber))) {
+                                        return (
+                                          <div
+                                            key={index}
+                                            className={index % 2 === 0 ? "blue-block" : "silver-block"}
+                                            style={{ marginBottom: '4px', cursor: 'pointer' }}
+                                            onClick={() => handleCitaBlockClick(cita)}>
+                                            {cita.horainicio} - {cita.horafin}: {cita.nombrePaciente}
+                                          </div>
+                                        );
+                                      }
+                                      return null;
+                                    })}
+                                  </div>
+                                )}
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      ))
+                    }
                     </tbody>
                   </table>
                 </div>
@@ -234,6 +260,32 @@ const AgendaMedica = () => {
           </div>
         </form>
       </div>
+
+      {showPopup && (
+        <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Opciones de Cita</h5>
+                <button type="button" className="btn-close" onClick={handlePopupClose}></button>
+              </div>
+              <div className="modal-body">
+                <p><strong>Paciente:</strong> {selectedCita?.nombrePaciente}</p>
+                <p><strong>Horario:</strong> {selectedCita?.horainicio} - {selectedCita?.horafin}</p>
+                <p><strong>Fecha:</strong> {selectedCita?.fecha}</p>
+                <div className="d-grid gap-2">
+                  <button className="btn btn-primary" onClick={handleIniciarCita}>
+                    Iniciar Cita
+                  </button>
+                  <button className="btn btn-secondary" onClick={handleHistoriaClinica}>
+                    Historia Clínica
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -720,39 +720,35 @@ alter table public.odontograma
 
 
 INSERT INTO public.rol (id, descripcion, habilitado)
-VALUES (DEFAULT, 'Administrador'::varchar(200), true::boolean);
+VALUES (1, 'Administrador'::varchar(200), true::boolean);
 INSERT INTO public.rol (id, descripcion, habilitado)
-VALUES (DEFAULT, 'Paciente'::varchar(200), true::boolean);
+VALUES (2, 'Paciente'::varchar(200), true::boolean);
 insert into public.rol (id, descripcion, habilitado)
-values (DEFAULT, 'Medico', true);
+values (3, 'Medico', true);
 insert into public.rol (id, descripcion, habilitado)
-values (DEFAULT, 'Asistente', true);
+values (4, 'Asistente', true);
 
 
 INSERT INTO public.usuario (id, nombre, clave, id_rol, habilitado, codigo)
 VALUES (DEFAULT, 'admin'::varchar(50), 'daaad6e5604e8e17bd9f108d91e26afe6281dac8fda0091040a7a6d7bd9b43b5'::text, 1::integer, true::boolean, 'admin'::varchar(20));
 insert into public.usuario (id, nombre, clave, id_rol, habilitado, codigo) values (2, 'Juan Perez', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', 3, true, '12345678');
 
-INSERT INTO public.menu (descripcion, habilitado, id_menu_padre, url)
-values  ( 'Pacientes', true, null, null),
-        ( 'Agenda', true, null, null),
-        ( 'Configuración', true, null, null),
-        ( 'Registrar paciente', true, 1, '/registroPac'),
-        ( 'Asignación de citas', true, 2, '/asigCita'),
-        ( 'Mi calendario', true, 2, '/calendario'),
-        ( 'Roles', true, 3, '/role'),
-        ( 'Usuarios', true, 3, '/usuario'),
-        ( 'Consultar paciente', true, 1, '/consultarPac'),
-        ( 'Historia clínica', true, 1, null),
-        ( 'Cargue calendario', true, 3, '/carguecalendario'),
-        ( 'Cargue calendario masivo', true, 3, '/carguecalendariomasivo'),
-        ( 'Agenda medica', true, 2, '/agendaMedica'),
-        ( 'Consultar entidad prestadora de salud', true, 3, '/entidad'),
-        ('Crear entidad prestadora de salud', true, 3, '/crearentidad');
-
-
-
-
+INSERT INTO public.menu (id,descripcion, habilitado, id_menu_padre, url)
+values  (1, 'Pacientes', true, null, null),
+        (2, 'Agenda', true, null, null),
+        (3, 'Configuración', true, null, null),
+        (4, 'Registrar paciente', true, 1, '/registroPac'),
+        (5, 'Asignación de citas', true, 2, '/asigCita'),
+        (6, 'Mi calendario', true, 2, '/calendario'),
+        (7, 'Roles', true, 3, '/role'),
+        (8, 'Usuarios', true, 3, '/usuario'),
+        (9, 'Consultar paciente', true, 1, '/consultarPac'),
+        (10, 'Historia clínica', true, 1, null),
+        (11, 'Cargue calendario', true, 3, '/carguecalendario'),
+        (12, 'Cargue calendario masivo', true, 3, '/carguecalendariomasivo'),
+        (13, 'Agenda medica', true, 2, '/agendaMedica'),
+        (14, 'Consultar entidad prestadora de salud', true, 3, '/entidad'),
+        (15,'Crear entidad prestadora de salud', true, 3, '/crearentidad');
 
 INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (1, 1, 1, true, false, false, false, false);
 INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (2, 1, 2, true, false, false, false, false);
@@ -781,8 +777,8 @@ INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consult
 INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (26, 3, 14, true, true, true, true, true);
 INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (27, 1, 14, true, true, true, true, true);
 INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (28, 3, 2, true, true, true, true, true);
-insert into public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) values (29, 1, 16, true, true, true, true, true);
---INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (29, 1, 15, true, true, true, true, true);
+insert into public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) values (29, 1, 15, true, true, true, true, true);
+INSERT INTO public.permiso_menu (id, id_rol, id_menu, habilitado, crear, consultar, eliminar, editar) VALUES (30, 3, 13, true, true, true, true, true);
 
 INSERT INTO public.tipodocumento(id, codigo, nombre)
 VALUES (1, 'C.C.', 'Cédula de Ciudadanía');
@@ -794,8 +790,6 @@ INSERT INTO public.tipodocumento (id, codigo, nombre)
 VALUES (4, 'R.C.', 'Registro Civil');
 INSERT INTO public.tipodocumento (id, codigo, nombre)
 VALUES (5, 'P.S', 'Pasaporte');
-
-
 
 INSERT INTO public.diente (id, dientenumero, descripcion)
 VALUES

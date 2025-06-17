@@ -60,55 +60,67 @@ const SignosVitales = ({ formMedicalHistory, setFormMedicalHistory, readOnly }) 
         <div>
           <label>Peso (Kg):</label>
           <input disabled={readOnly}
-            type="text"
-            name="peso"
-            value={formMedicalHistory.signovitals[0]?.peso || ''}
-            onChange={handleChange}
+                 type="text"
+                 name="peso"
+                 value={formMedicalHistory.signovitals[0]?.peso || ''}
+                 onChange={handleChange}
+                 pattern="^\d*\.?\d*$"
+                 inputMode="decimal"
           />
         </div>
         <div>
           <label>Talla (m):</label>
           <input disabled={readOnly}
-            type="text"
-            name="talla"
-            value={formMedicalHistory.signovitals[0]?.talla || ''}
-            onChange={handleChange}
+                 type="text"
+                 name="talla"
+                 value={formMedicalHistory.signovitals[0]?.talla || ''}
+                 onChange={handleChange}
+                 pattern="^\d*\.?\d*$"
+                 inputMode="decimal"
           />
         </div>
         <div>
           <label>Pulso (Latidos por minuto):</label>
           <input disabled={readOnly}
-            type="text"
-            name="pulso"
-            value={formMedicalHistory.signovitals[0]?.pulso || ''}
-            onChange={handleChange}
+                 type="text"
+                 name="pulso"
+                 value={formMedicalHistory.signovitals[0]?.pulso || ''}
+                 onChange={handleChange}
+                 pattern="^\d*\.?\d*$"
+                 inputMode="decimal"
           />
         </div>
         <div>
           <label>Temperatura (°C):</label>
           <input disabled={readOnly}
-            type="text"
-            name="temperatura"
-            value={formMedicalHistory.signovitals[0]?.temperatura || ''}
-            onChange={handleChange}
+                 type="text"
+                 name="temperatura"
+                 value={formMedicalHistory.signovitals[0]?.temperatura || ''}
+                 onChange={handleChange}
+                 pattern="^\d*\.?\d*$"
+                 inputMode="decimal"
           />
         </div>
         <div>
           <label>Presión Arterial (mmHg):</label>
           <input disabled={readOnly}
-            type="text"
-            name="presionarterial"
-            value={formMedicalHistory.signovitals[0]?.presionarterial || ''}
-            onChange={handleChange}
+                 type="text"
+                 name="presionarterial"
+                 value={formMedicalHistory.signovitals[0]?.presionarterial || ''}
+                 onChange={handleChange}
+                 pattern="^\d*\.?\d*$"
+                 inputMode="decimal"
           />
         </div>
         <div>
           <label>Frecuencia Respiratoria (rpm):</label>
           <input disabled={readOnly}
-            type="text"
-            name="frecuenciarespiratoria"
-            value={formMedicalHistory.signovitals[0]?.frecuenciarespiratoria || ''}
-            onChange={handleChange}
+                 type="text"
+                 name="frecuenciarespiratoria"
+                 value={formMedicalHistory.signovitals[0]?.frecuenciarespiratoria || ''}
+                 onChange={handleChange}
+                 pattern="^\d*\.?\d*$"
+                 inputMode="decimal"
           />
         </div>
       </div>

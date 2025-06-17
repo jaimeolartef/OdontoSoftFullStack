@@ -1,310 +1,375 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import './Calendario.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Logo from '../../resource/LogoNegro.png';
-import '../../App.css';
+import React, { useEffect, useState } from 'react';
 import showMessage from "../../util/UtilMessage";
-import { apiGet, apiPost } from '../apiService';
+import { Modal } from 'react-bootstrap';
+import { apiGet, apiPost, apiPut } from '../apiService';
 
-const EditarSede = () => {
-  const location = useLocation();
-  const { id, entidadId } = location.state || {};
-  const navigate = useNavigate();
+const Calendar = ({ availability, patient, Rol }) => {
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedDay, setSelectedDay] = useState(null);
+  const [selectedMonth, setSelectedMonth] = useState(null);
+  const [selectedYear, setSelectedYear] = useState(null);
+  const currentMonth = currentDate.getMonth();
+  const currentYear = currentDate.getFullYear();
+  const [availableHours, setAvailableHours] = useState([]);
+  const firstDayOfMonth = (new Date(currentYear, currentMonth, 1).getDay() + 6) % 7;
+  const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+  const days = Array.from({ length: lastDayOfMonth }, (_, i) => i + 1);
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
+  const [cancelReason, setCancelReason] = useState('');
+  const [selectedCita, setSelectedCita] = useState(null);
+  const [citasMedicas, setCitasMedicas] = useState([]);
+  const duracionCita = sessionStorage.getItem('DURACION_CITA');
 
-  const [loading, setLoading] = useState(false);
-  const [loadingData, setLoadingData] = useState(true);
+  const monthNames = [
+    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+  ];
 
-  // Estado para los datos del formulario
-  const [formData, setFormData] = useState({
-    id: '',
-    nombre: '',
-    direccion: '',
-    telefono: '',
-    correo: '',
-    horarioAtencion: '',
-    servicios: '',
-    habilitado: true,
-    idEntidadPrestadoraSalud: ''
-  });
+  const dayNames = ['Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa', 'Do'];
 
-  // Cargar datos de la sede
-  useEffect(() => {
-    const fetchSede = async () => {
-      if (!id) {
-        showMessage('error', 'No se ha especificado la sede');
-        navigate('/entidad');
-        return;
-      }
-
-      try {
-        setLoadingData(true);
-
-        const sedeData = await apiGet(`/sedeempresa/consultar/${id}`);
-        setFormData({
-          id: sedeData.id,
-          nombre: sedeData.nombre || '',
-          direccion: sedeData.direccion || '',
-          telefono: sedeData.telefono || '',
-          correo: sedeData.correo || '',
-          horarioAtencion: sedeData.canalesAtencion || '',
-          servicios: sedeData.serviciosPrestados || '',
-          habilitado: sedeData.habilitado,
-          idEntidadPrestadoraSalud: sedeData.idEntidadPrestadoraSalud
-        });
-      } catch (error) {
-        showMessage('error', 'Error al obtener datos de la sede');
-        navigate('/editarentidad', { state: { id: entidadId } });
-      } finally {
-        setLoadingData(false);
-      }
-    };
-
-    fetchSede();
-  }, [id, entidadId, navigate]);
-
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === 'checkbox' ? checked : value,
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!e.target.checkValidity()) {
-      e.stopPropagation();
-      e.target.classList.add('was-validated');
+  const toggleDaySelection = async (day, month, year) => {
+    if (availability.length === 0) {
+      showMessage('warning', 'Debe seleccionar un odontólogo para ver su disponibilidad');
       return;
     }
 
+    if (availability[0].mes !== month || availability[0].anio !== year) {
+      showMessage('warning', 'La disponibilidad del odontólogo no corresponde al mes seleccionado');
+      return;
+    }
+
+    if (day < new Date().getDate() && month <= new Date().getMonth() && year <= new Date().getFullYear()) {
+      showMessage('warning', 'Debe seleccionar un día igual o posterior al día actual');
+      return;
+    }
+
+    setSelectedDay(day);
+    setSelectedMonth(month);
+    setSelectedYear(year);
+
+    let hourFinal = '';
+    const availableHours = availability
+      .filter(item => item.dia === day)
+      .map(item => {
+        let startAm = 0;
+        let endAm = 0;
+        let startPm = 0;
+        let endPm = 0;
+
+        if (item.horaInicioam !== null && item.horaInicioam.length > 0) {
+          startAm = parseHour(item.horaInicioam);
+        }
+        if (item.horaFinam !== null && item.horaFinam.length > 0) {
+          endAm = parseHour(item.horaFinam);
+        }
+        if (item.horaIniciopm !== null && item.horaIniciopm.length > 0) {
+          startPm = parseHour(item.horaIniciopm);
+        }
+        if (item.horaFinpm !== null && item.horaFinpm.length > 0) {
+          endPm = parseHour(item.horaFinpm);
+        }
+
+        return [
+          ...Array.from({ length: (endAm - startAm) * 2 }, (_, i) => `${String(startAm + Math.floor(i / 2)).padStart(2, '0')}:${i % 2 === 0 ? '00' : '30'}`),
+          ...Array.from({ length: (endPm - startPm) * 2 }, (_, i) => `${String(startPm + Math.floor(i / 2)).padStart(2, '0')}:${i % 2 === 0 ? '00' : '30'}`)
+        ];
+      })
+      .flat();
+
+    if (new Date().getHours() > hourFinal && day === new Date().getDate() && month === new Date().getMonth() && year === new Date().getFullYear()) {
+      showMessage('warning', 'El día de hoy ya no puede agendar citas');
+      setAvailableHours([]);
+      return;
+    }
+
+    let listCita = await fetchCitas(day, month, year);
+
+    listCita.forEach(citaMedica => {
+      let fechaCita = citaMedica.fecha.split('-');
+      let fecha = new Date(fechaCita[0], fechaCita[1], fechaCita[2]);
+      if (fecha.getDate() === day && fecha.getMonth() === month && fecha.getFullYear() === year) {
+        availableHours.forEach((hour, index) => {
+          if (hour === citaMedica.horainicio) {
+            availableHours[index] = `${hour} - ${citaMedica.nombrePaciente} - ${citaMedica.id} - ${citaMedica.idpaciente}`;
+          }
+        });
+      }
+    });
+
+    setAvailableHours(availableHours);
+  };
+
+  function parseHour(timeString) {
+    return parseInt(timeString.split(':')[0], 10);
+  }
+
+  const fetchCitas = async (day, month, year) => {
+    let odontoSelec = odontologoSelect();
+    let monthFormated = (month) < 10 ? '0' + (month) : month;
+    let dayFormated = (day < 10 ? '0' + day : day);
     try {
-      setLoading(true);
-
-      // Preparar datos para enviar
-      const sedeData = {
-        id: formData.id,
-        nombre: formData.nombre,
-        direccion: formData.direccion,
-        telefono: formData.telefono,
-        correo: formData.correo,
-        canalesAtencion: formData.horarioAtencion,
-        idEntidadPrestadoraSalud: formData.idEntidadPrestadoraSalud,
-        serviciosPrestados: formData.servicios,
-        habilitado: formData.habilitado
-      };
-
-      await apiPost('/sedeempresa/guardar', sedeData);
-
-      showMessage('success', 'Sede actualizada correctamente');
-      navigate('/editarentidad', { state: { id: formData.idEntidadPrestadoraSalud } });
+      const response = await apiGet(`/appointment/doctor`, {
+        queryParams: {
+          idOdontologo: odontoSelec,
+          fechaDia: `${year}-${monthFormated}-${dayFormated}`
+        }
+      });
+      setCitasMedicas(response);
+      return response;
     } catch (error) {
-      showMessage('error', error.message || 'Error al actualizar la sede');
-    } finally {
-      setLoading(false);
+      console.error('Error fetching citas:', error);
+      return [];
     }
   };
 
-  const handleCancel = () => {
-    navigate('/editarentidad', { state: { id: formData.idEntidadPrestadoraSalud || entidadId } });
+  const goToNextMonth = () => {
+    setCurrentDate(new Date(currentYear, currentMonth + 1, 1));
+    setAvailableHours([]);
   };
 
-  if (loadingData) {
-    return (
-      <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
-        <div className="text-center">
-          <div className="spinner-border text-primary mb-3" role="status">
-            <span className="visually-hidden">Cargando...</span>
-          </div>
-          <p>Cargando datos de la sede...</p>
-        </div>
-      </div>
-    );
+  const goToCurrentMonth = () => {
+    setCurrentDate(new Date());
+    setAvailableHours([]);
+  };
+
+  const selectionInitToday = (day, month, year) => {
+    setSelectedDay(day);
+    setSelectedMonth(month);
+    setSelectedYear(year);
+  };
+
+  const handleButtonClick = (time, label, cita) => {
+    if (cita) {
+      handleCancelClick(cita);
+    } else {
+      handleAgendarCita(time);
+    }
+  };
+
+  const handleCancelClick = (cita) => {
+    setSelectedCita(cita);
+    setShowCancelDialog(true);
+  };
+
+  const handleAgendarCita = async (time) => {
+    let odontoSelec = odontologoSelect();
+    let idpaciente = pacienteSelect();
+    let hourFinal = addMinutesToTime(time, duracionCita);
+
+    if (odontoSelec != null && odontoSelec.length <= 0) {
+      showMessage('warning', 'Debe seleccionar un odontólogo para agendar la cita');
+      return;
+    }
+
+    if (idpaciente != null && idpaciente.length <= 0) {
+      showMessage('warning', 'Debe seleccionar un paciente para agendar la cita');
+      return;
+    }
+
+    let day = selectedDay < 10 ? '0' + selectedDay : selectedDay;
+    let month = selectedMonth < 10 ? '0' + (selectedMonth) : selectedMonth;
+    let fechaFormateada = `${selectedYear}-${month}-${day}`;
+    let citaMedica = {
+      idMedico: odontoSelec[0],
+      id: null,
+      idpaciente: idpaciente,
+      fecha: fechaFormateada,
+      fechaNotificacion: calculateDateNotif(fechaFormateada),
+      horainicio: time,
+      horafin: hourFinal,
+      habilitado: true
+    };
+
+    try {
+      await apiPost(`/appointment/create`, citaMedica);
+      showMessage('success', 'La cita fue agendada con éxito');
+      fetchCitas(selectedDay, selectedMonth, selectedYear);
+      toggleDaySelection(selectedDay, selectedMonth, selectedYear);
+    } catch (error) {
+      console.error('Error agendando cita:', error);
+    }
   }
 
+  function addMinutesToTime(time, minutesToAdd) {
+    const [hours, minutes] = time.split(':').map(Number);
+    const date = new Date();
+    date.setHours(hours);
+    date.setMinutes(minutes);
+    date.setSeconds(0);
+    const newDate = new Date(date);
+    newDate.setMinutes(date.getMinutes() + parseInt(minutesToAdd));
+    const newHours = String(newDate.getHours()).padStart(2, '0');
+    const newMinutes = String(newDate.getMinutes()).padStart(2, '0');
+    return `${newHours}:${newMinutes}`;
+  }
+
+  const calculateDateNotif = (fecha) => {
+    let fechaNotif = new Date(fecha);
+    fechaNotif.setDate(fechaNotif.getDate() - 1);
+    return fechaNotif.toISOString();
+  }
+
+  const handleCancelConfirm = () => {
+    if (!cancelReason.trim() || /^[^a-zA-Z0-9]+$/.test(cancelReason)) {
+      showMessage('warning', 'Debe ingresar un motivo de cancelación válido');
+      setShowCancelDialog(true);
+      return;
+    }
+
+    if (selectedCita) {
+      let citaCancelada = citasMedicas.find(citaMedica => citaMedica.id == selectedCita);
+      citaCancelada.habilitado = false;
+      citaCancelada.motivoCancelacion = cancelReason;
+      fetchCitaCancelada(citaCancelada).then(r => {});
+    }
+    setShowCancelDialog(false);
+    setCancelReason('');
+  };
+
+  const fetchCitaCancelada = async (citaCancelada) => {
+    try {
+      await apiPut(`/appointment/update`, citaCancelada);
+      showMessage('success', 'La cita se canceló con éxito');
+      fetchCitas(selectedDay, selectedMonth, selectedYear);
+      toggleDaySelection(selectedDay, selectedMonth, selectedYear);
+    } catch (error) {
+      console.error('Error cancelando cita:', error);
+    }
+  }
+
+  const odontologoSelect = () => {
+    const odontologoInput = document.getElementById('dataListOdonto');
+    const odontologoValue = odontologoInput.value;
+
+    if (!odontologoValue.length > 0) {
+      showMessage('warning', 'Debe seleccionar un odontólogo');
+      return null;
+    }
+
+    return odontologoValue.split('-')[0];
+  }
+
+  const pacienteSelect = () => {
+    return patient.split(' - ')[0];
+  }
+
+  const handleCancelClose = () => {
+    setShowCancelDialog(false);
+    setCancelReason('');
+  };
+
+  useEffect(() => {
+    selectionInitToday(new Date().getDate(), new Date().getMonth(), new Date().getFullYear());
+  }, []);
+
   return (
-    <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh', padding: '20px' }}>
-      <div className="card p-4" style={{ width: '800px' }}>
-        <header className="text-center mb-4">
-          <img src={Logo} alt="Logo" className="mb-3" style={{ maxWidth: '140px' }} />
-          <h1>Editar Sede</h1>
-        </header>
-
-        <form onSubmit={handleSubmit} className="needs-validation" noValidate>
-          <section className="mb-4">
-            <h3>Información General</h3>
-            <div className="mb-3">
-              <div className="form-check form-switch">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  role="switch"
-                  id="switchHabilitado"
-                  name="habilitado"
-                  checked={formData.habilitado}
-                  onChange={handleChange}
-                />
-                <label
-                  className="form-check-label"
-                  htmlFor="switchHabilitado"
-                  style={{
-                    color: formData.habilitado ? "green" : "red",
-                    fontWeight: 'bold'
-                  }}
-                >
-                  {formData.habilitado ? 'Habilitado' : 'Inhabilitado'}
-                </label>
-              </div>
-            </div>
-            <div className="row g-3">
-              <div className="col-md-12">
-                <div className="form-group mb-3">
-                  <div className="form-floating">
-                    <input
-                      type="text"
-                      className="form-control"
-                      name="nombre"
-                      value={formData.nombre}
-                      onChange={handleChange}
-                      required
-                      placeholder="Nombre de la sede"
-                    />
-                    <label>Nombre de la sede</label>
-                    <div className="invalid-feedback">
-                      Debe ingresar un nombre para la sede
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="col-md-12">
-                <div className="form-group mb-3">
-                  <div className="form-floating">
-                    <input
-                      type="text"
-                      className="form-control"
-                      name="telefono"
-                      value={formData.telefono}
-                      onChange={handleChange}
-                      required
-                      placeholder="Teléfono"
-                    />
-                    <label>Teléfono</label>
-                    <div className="invalid-feedback">
-                      Debe ingresar un número de teléfono
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section className="mb-4">
-            <h3>Información de Contacto y Servicios</h3>
-            <div className="row g-3">
-              <div className="col-md-12">
-                <div className="form-group mb-3">
-                  <div className="form-floating">
-                    <input
-                      type="text"
-                      className="form-control"
-                      name="direccion"
-                      value={formData.direccion}
-                      onChange={handleChange}
-                      required
-                      placeholder="Dirección"
-                    />
-                    <label>Dirección</label>
-                    <div className="invalid-feedback">
-                      Debe ingresar una dirección
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="col-md-12">
-                <div className="form-group mb-3">
-                  <div className="form-floating">
-                    <input
-                      type="email"
-                      className="form-control"
-                      name="correo"
-                      value={formData.correo}
-                      onChange={handleChange}
-                      required
-                      placeholder="Correo electrónico"
-                    />
-                    <label>Correo electrónico</label>
-                    <div className="invalid-feedback">
-                      Debe ingresar un correo electrónico válido
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="col-md-12">
-                <div className="form-group mb-3">
-                  <div className="form-floating">
-                    <textarea
-                      className="form-control"
-                      name="horarioAtencion"
-                      value={formData.horarioAtencion}
-                      onChange={handleChange}
-                      required
-                      placeholder="Canales de atención"
-                      style={{ height: '100px' }}
-                    ></textarea>
-                    <label>Canales de atención</label>
-                    <div className="invalid-feedback">
-                      Debe ingresar los canales de atención
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="col-md-12">
-                <div className="form-group mb-3">
-                  <div className="form-floating">
-                    <textarea
-                      className="form-control"
-                      name="servicios"
-                      value={formData.servicios}
-                      onChange={handleChange}
-                      required
-                      placeholder="Servicios que ofrece la sede"
-                      style={{ height: '100px' }}
-                    ></textarea>
-                    <label>Servicios</label>
-                    <div className="invalid-feedback">
-                      Debe ingresar los servicios que ofrece la sede
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <div className="d-flex justify-content-center">
-            <button type="submit" className="btn btn-primary me-3" disabled={loading}>
-              {loading ? (
-                <>
-                  <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                  Actualizando...
-                </>
-              ) : (
-                'Actualizar'
-              )}
-            </button>
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={handleCancel}
-              disabled={loading}
-            >
-              Cancelar
-            </button>
+    <div className="row g-3">
+      <div className="col">
+        <div className="row">
+          <div className="col">
+            <button className="button btn btn-sm" onClick={goToCurrentMonth}>Mes Actual</button>
           </div>
-        </form>
+          <div className="col">
+            <p className="fw-bolder">
+              {monthNames[currentMonth]} {currentYear}
+            </p>
+          </div>
+          <div className="col">
+            <button className="button btn btn-sm" onClick={goToNextMonth}>Siguiente Mes</button>
+          </div>
+        </div>
+        <div className="weekdays">
+          {dayNames.map((dayName, index) => (
+            <div className="weekday" key={index}>
+              {dayName}
+            </div>
+          ))}
+        </div>
+        <div className="days">
+          {Array.from({ length: firstDayOfMonth }, (_, i) => (
+            <div className="day empty" key={`empty-${i}`}></div>
+          ))}
+          {days.map(day => {
+            const isSelected = day === selectedDay && currentMonth === selectedMonth && currentYear === selectedYear;
+            return (
+              <div
+                className={`day ${isSelected  ? 'selected-day' : ''}`}
+                key={day}
+                onClick={() => toggleDaySelection(day, currentMonth + 1, currentYear)}>
+                {day}
+              </div>
+            );
+          })}
+        </div>
       </div>
+      <div className="col">
+        {selectedDay && (
+          <div className="dialog">
+            <div className="dialog-content">
+              <h3>Horas del día {selectedDay}</h3>
+              <table className="table">
+                <tbody>
+                {availableHours.length === 0 ? (
+                  <tr>
+                    <td>No hay horas disponibles</td>
+                  </tr>
+                ) : (
+                  availableHours.map((hour, idx) => {
+                    const partes = hour.split(' - ');
+                    const esCita = partes.length > 1;
+                    return (
+                      <tr key={idx}>
+                        <td>
+                          <button
+                            className={`btn ${esCita ? 'btn-outline-danger' : 'btn-outline-primary'} btn-sm`}
+                            onClick={() => handleButtonClick(partes[0], hour, esCita ? partes[2] : null)}
+                          >
+                            {esCita ? `Cancelar: ${partes[0]} (${partes[1]})` : `Agendar: ${partes[0]}`}
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+      </div>
+      <Modal show={showCancelDialog} onHide={handleCancelClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Cancelar cita odontológica</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="form-group">
+            <label>Razón de la cancelación</label>
+            <textarea
+              className="form-control"
+              value={cancelReason}
+              onChange={(e) => setCancelReason(e.target.value)}
+              required/>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <div className="row g-3 align-items-center">
+            <div className="col-auto">
+              <button type="button" className="btn btn-secondary" style={{ width: '90px' }} onClick={handleCancelClose}>
+                Cancelar
+              </button>
+            </div>
+            <div className="col-auto">
+              <button type="button" className="btn btn-primary" style={{ width: '90px' }} onClick={handleCancelConfirm}>
+                Aceptar
+              </button>
+            </div>
+          </div>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };
 
-export default EditarSede;
+export default Calendar;

@@ -7,6 +7,8 @@ import org.enterprise.odontosoft.view.dto.response.HistoriaClinicaResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/historiaClinica")
 @CrossOrigin(originPatterns = "http://localhost:*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT})
@@ -31,8 +33,8 @@ public class MedicalHistoryView {
     }
 
     @GetMapping("/consultar/paciente/{idPaciente}")
-    public ResponseEntity<ApiResponse<HistoriaClinicaResponse>> getMedicalHistory(@PathVariable Integer idPaciente) {
-        HistoriaClinicaResponse response = medicalHistoryController.getMedicalHistoryByIdPaciente(idPaciente);
+    public ResponseEntity<ApiResponse<List<HistoriaClinicaResponse>>> getMedicalHistory(@PathVariable Integer idPaciente) {
+        List<HistoriaClinicaResponse> response = medicalHistoryController.getMedicalHistoryByIdPaciente(idPaciente);
         return ResponseEntity.ok(ApiResponse.success(response, "Historia clínica del paciente obtenida correctamente"));
     }
 

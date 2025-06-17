@@ -15,7 +15,7 @@ import reducer from "./store/reducer";
 import requireAuth from "./util/requireAuth";
 import ConsultarPac from "./components/Paciente/consultarPaciente";
 import ModificarPac from "./components/Paciente/modificarPaciente";
-import HistoriaPac from "../src/components/HistoriaClinica/MedicalRecord";
+import HistorialCita from "./components/HistoriaClinica/HistorialCitaMedica";
 import Odontograma from "./components/HistoriaClinica/Odontograma/Odontograma";
 import CitaMedica from "./components/CitasMedicas/CitaMedica";
 import RestaurarContrasenia from "./components/RestaurarContrasenia";
@@ -28,6 +28,7 @@ import CrearEntidad from "./components/Entidades/creaEntidad";
 import EditarEntidad from "./components/Entidades/editarEntidad";
 import CrearSede from "./components/Sede/crearSede";
 import EditarSede from "./components/Sede/editarSede";
+import HistoriaClinica from "./components/HistoriaClinica/HistoriaClinica";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -55,9 +56,9 @@ root.render(
             <Route exact path = "/registroPac" Component = {requireAuth(RegistroPac)} />
             <Route exact path = "/consultarPac" Component = {requireAuth(ConsultarPac)} />
             <Route exact path = "/modificarPac" Component = {requireAuth(ModificarPac)} />
-            <Route exact path = "/historiaPac" Component = {requireAuth(HistoriaPac)} />
+            <Route exact path = "/historialCita" Component = {requireAuth(HistorialCita)} />
             <Route exact path = "/odontograma" Component = {requireAuth(Odontograma)} />
-            <Route exact path = "/citaMedica" Component = {requireAuth(CitaMedica)} />
+            <Route exact path = "/asigCita" Component = {requireAuth(CitaMedica)} />
             <Route exact path = "/restaurarcontrasenia" Component = {requireAuth(RestaurarContrasenia)} />
             <Route exact path = "/recordarClave" Component = {RecordarClave} />
             <Route exact path = "/cargueCalendario" Component = {requireAuth(CargueCalendario)} />
@@ -69,6 +70,7 @@ root.render(
             <Route exact path = "/verentidad" Component = {requireAuth(VerEntidad)} />
             <Route exact path = "/crearSede" Component = {requireAuth(CrearSede)} />
             <Route exact path = "/editarSede" Component = {requireAuth(EditarSede)} />
+            <Route exact path = "/historiaClinica" Component = {requireAuth(HistoriaClinica)} />
           </Routes>
         </NavBar>
       </Provider>

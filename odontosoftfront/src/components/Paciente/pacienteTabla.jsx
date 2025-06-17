@@ -29,11 +29,11 @@ const PacienteTabla = ({ data, formData, permisosPaciente, permisosHistoria }) =
 
   const handleMedicalRecordClick = (paciente) => {
     console.log(paciente)
-    navigate('/historiaPac', { state: { patient: paciente } });
+    navigate('/historialCita', { state: { patient: paciente } });
   };
 
   const handleMedicalRecordReadClick = (paciente) => {
-    navigate('/historiaPac', { state: { patient: paciente, readOnly: true } });
+    navigate('/historialCita', { state: { patient: paciente, readOnly: true } });
   }
 
   return (

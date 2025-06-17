@@ -1,6 +1,7 @@
 package org.enterprise.odontosoft.controller;
 
 import io.micrometer.common.util.StringUtils;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
 import org.enterprise.odontosoft.controller.mapper.*;
@@ -14,6 +15,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @AllArgsConstructor
@@ -201,14 +204,18 @@ public class MedicalHistoryControllerControllerImpl implements MedicalHistoryCon
     }
 
     @Override
-    public HistoriaClinicaResponse getMedicalHistoryByIdPaciente(Integer idPaciente) {
+    public List<HistoriaClinicaResponse> getMedicalHistoryByIdPaciente(Integer idPaciente) {
         try {
-            HistoriaClinica historiaClinica = medicalHistoryService.getMedicalHistoryByIdPatient(idPaciente).isEmpty() ? null : medicalHistoryService.getMedicalHistoryByIdPatient(idPaciente).get(0);
+            List<HistoriaClinica> historiaClinica = medicalHistoryService.getMedicalHistoryByIdPatient(idPaciente).isEmpty() ? null : medicalHistoryService.getMedicalHistoryByIdPatient(idPaciente);
+            List<HistoriaClinicaResponse> medicalHistoryResponses = new ArrayList<>();
             if (historiaClinica == null) {
-                return new HistoriaClinicaResponse(String.valueOf(HttpStatus.NOT_FOUND.value()), "No se encontró la historia clínica");
+                throw new jakarta.persistence.EntityNotFoundException("No se encontró la historia clínica");
             }
-            historiaClinica.setSignovitals(signoVitalDao.findByIdhistoriaclinica(historiaClinica.getId()));
-            return MedicalHistoryMapper.toDto(historiaClinica);
+            for (HistoriaClinica hc : historiaClinica) {
+                hc.setSignovitals(signoVitalDao.findByIdhistoriaclinica(hc.getId()));
+                medicalHistoryResponses.add(MedicalHistoryMapper.toDto(hc));
+            }
+            return medicalHistoryResponses;
         } catch (Exception e) {
             logger.error("Error getting medical history.", e);
             throw e;
