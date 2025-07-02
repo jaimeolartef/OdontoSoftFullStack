@@ -12,6 +12,7 @@ import ExamenEstomatologico from "./ExamenEstomatologico";
 import Diagnosticos from "./Diagnosticos";
 import Diente from "../../resource/diente.png";
 import AyudasDiagnostico from "./AyudaDiagnostica";
+import FormulaMedica from "./FormulaMedica";
 import {Tooltip} from "react-tooltip";
 import showMessage from "../../util/UtilMessage";
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -41,6 +42,8 @@ const HistorialCitaMedica = () => {
     idHistoriaClinica: '',
     idPaciente: ''
   });
+
+  const [showFormulaMedicaModal, setShowFormulaMedicaModal] = useState(false);
 
   const [formMedicalHistory, setFormMedicalHistory] = useState({
     idHistoriaClinica: '',
@@ -166,6 +169,14 @@ const HistorialCitaMedica = () => {
     navigate('/odontograma', { state: { idHistoriaClinica: idHistoriaClinica, readOnly } });
   };
 
+  const handleFormulaMedicaClick = () => {
+    if (!formMedicalHistory.idHistoriaClinica) {
+      showMessage('warning', 'Debe guardar la cita médica antes de ver la fórmula médica');
+      return;
+    }
+    setShowFormulaMedicaModal(true);
+  };
+
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormMedicalHistory(prev => ({
@@ -184,6 +195,8 @@ const HistorialCitaMedica = () => {
         <form onSubmit={handleSubmit} className="needs-validation" noValidate>
           <ReadOnlyPaciente idPatient={formPatient.idPaciente}/>
           <div className="espacio"/>
+
+          {/* Iconos flotantes */}
           <div style={{
             position: 'fixed',
             left: '90vw',
@@ -193,7 +206,7 @@ const HistorialCitaMedica = () => {
             zIndex: 1000,
           }}>
             <img src={Diente} alt="Odontograma"
-                 style={{width: '100%', height: '100%'}}
+                 style={{width: '50px', height: '50px', marginBottom: '10px'}}
                  onClick={(e) => {
                    if (!formMedicalHistory.idHistoriaClinica) {
                      showMessage('warning', 'Debe guardar la cita médica antes de ver el odontograma');
@@ -204,6 +217,36 @@ const HistorialCitaMedica = () => {
                  }}
                  data-tooltip-id="tooltip" data-tooltip-content="Ver Odontograma"/>
           </div>
+
+          <div style={{
+            position: 'fixed',
+            left: '90vw',
+            top: '55%',
+            transform: 'translateY(-50%)',
+            cursor: 'pointer',
+            zIndex: 1000,
+          }}>
+            <div
+              style={{
+                width: '50px',
+                height: '50px',
+                backgroundColor: '#007bff',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'white',
+                fontSize: '24px',
+                fontWeight: 'bold',
+                border: '2px solid #0056b3'
+              }}
+              onClick={handleFormulaMedicaClick}
+              data-tooltip-id="tooltip" data-tooltip-content="Fórmula Médica"
+            >
+              Rx
+            </div>
+          </div>
+
           <Tooltip id="tooltip"/>
           <div className="espacio"/>
           <TextArea label="Motivo consulta"
@@ -268,6 +311,31 @@ const HistorialCitaMedica = () => {
           </div>
         </form>
       </div>
+
+      {showFormulaMedicaModal && (
+        <div className="modal fade show" style={{display: 'block', backgroundColor: 'rgba(0,0,0,0.5)'}} tabIndex="-1">
+          <div className="modal-dialog modal-xl">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Fórmula Médica</h5>
+                <button type="button" className="btn-close" onClick={() => setShowFormulaMedicaModal(false)}></button>
+              </div>
+              <div className="modal-body">
+                <FormulaMedica
+                  pacienteId={formPatient.idPaciente}
+                  medicoId={1} // Aquí deberías obtener el ID del médico de la sesión
+                  readOnly={readOnly}
+                />
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={() => setShowFormulaMedicaModal(false)}>
+                  Cerrar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

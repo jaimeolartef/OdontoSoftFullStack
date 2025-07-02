@@ -998,3 +998,109 @@ INSERT INTO public.regimen (descripcion, habilitado) VALUES ('Contributivo', tru
 INSERT INTO public.regimen (descripcion, habilitado) VALUES ('Subsidiado', true);
 INSERT INTO public.regimen (descripcion, habilitado) VALUES ('Especial', true);
 INSERT INTO public.regimen (descripcion, habilitado) VALUES ('Excepción', true);
+
+
+CREATE TABLE estadomedicamento (
+                                   id SERIAL PRIMARY KEY,
+                                   nombre VARCHAR(50) NOT NULL,
+                                   descripcion VARCHAR(200),
+                                   habilitado BOOLEAN DEFAULT TRUE NOT NULL
+);
+
+INSERT INTO estadomedicamento (nombre, descripcion) VALUES
+                                                        ('ACTIVO', 'Medicamento disponible para formulación'),
+                                                        ('INACTIVO', 'Medicamento no disponible temporalmente'),
+                                                        ('DESCONTINUADO', 'Medicamento retirado del mercado'),
+                                                        ('AGOTADO', 'Medicamento sin stock disponible');
+
+CREATE TABLE medicamento (
+                             id SERIAL PRIMARY KEY,
+                             codigo VARCHAR(50) UNIQUE NOT NULL,
+                             nombre VARCHAR(300) NOT NULL,
+                             principioactivo VARCHAR(200) NOT NULL,
+                             concentracion VARCHAR(100),
+                             formafarmaceutica VARCHAR(100) NOT NULL,
+                             viaadministracion VARCHAR(50) NOT NULL,
+                             laboratorio VARCHAR(200),
+                             registroinvima VARCHAR(50),
+                             preciounitario DECIMAL(10,2),
+                             unidadmedida VARCHAR(20),
+                             requierereceta BOOLEAN DEFAULT TRUE NOT NULL,
+                             contraindicaciones TEXT,
+                             efectos_secundarios TEXT,
+                             habilitado BOOLEAN DEFAULT TRUE NOT NULL
+);
+
+CREATE TABLE formulamedica (
+                               id SERIAL PRIMARY KEY,
+                               numeroformula VARCHAR(50) UNIQUE NOT NULL,
+                               fechaformulacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+                               pacienteid INTEGER NOT NULL REFERENCES paciente(id),
+                               medicoid INTEGER NOT NULL REFERENCES medico(idmedico),
+                               diagnosticoprincipal VARCHAR(500) NOT NULL,
+                               diagnosticossecundarios TEXT,
+                               dosis VARCHAR(200) NOT NULL,
+                               frecuencia VARCHAR(100) NOT NULL,
+                               duraciontratamiento VARCHAR(100) NOT NULL,
+                               cantidadtotal VARCHAR(50) NOT NULL,
+                               instruccionesespeciales TEXT,
+                               observaciones TEXT,
+                               fechavencimiento DATE,
+                               estadomedicamentoid INTEGER NOT NULL REFERENCES estadomedicamento(id),
+                               medicamentoid INTEGER NOT NULL REFERENCES medicamento(id),
+                               entidadprestadoraid INTEGER REFERENCES entidadprestadorasalud(id),
+                               idusuariocreacion INTEGER NOT NULL,
+                               fechacreacion DATE DEFAULT CURRENT_DATE NOT NULL,
+                               idusuariomodificacion INTEGER,
+                               fechamodificacion DATE,
+                               habilitado BOOLEAN DEFAULT TRUE NOT NULL
+);
+
+CREATE INDEX idx_formulacion_paciente_id ON formulamedica(pacienteid);
+CREATE INDEX idx_formulacion_medico_id ON formulamedica(medicoid);
+CREATE INDEX idx_formulacion_fecha ON formulamedica(fechaformulacion);
+CREATE INDEX idx_formulacion_numero ON formulamedica(numeroformula);
+CREATE INDEX idx_medicamento_codigo ON medicamento(codigo);
+CREATE INDEX idx_medicamento_nombre ON medicamento(nombre);
+CREATE INDEX idx_formulacion_medicamento_id ON formulamedica(medicamentoid);
+CREATE INDEX idx_formulacion_entidad_prestadora ON formulamedica(entidadprestadoraid);
+
+ALTER TABLE estadomedicamento OWNER TO postgres;
+ALTER TABLE medicamento OWNER TO postgres;
+ALTER TABLE formulamedica OWNER TO postgres;
+
+
+INSERT INTO medicamento (codigo, nombre, principioactivo, concentracion, formafarmaceutica, viaadministracion,
+                         laboratorio, registroinvima, preciounitario, unidadmedida, requierereceta, contraindicaciones,
+                         efectos_secundarios, habilitado)
+VALUES ('MED001', 'Acetaminofén', 'Paracetamol', '500mg', 'Tableta', 'Oral', 'Laboratorios Bayer', 'INVIMA-2023-001',
+        1200.00, 'Tableta', true, 'Hipersensibilidad al principio activo, insuficiencia hepática severa',
+        'Náuseas, vómito, erupciones cutáneas, hepatotoxicidad en dosis altas', true),
+       ('MED002', 'Ibuprofeno', 'Ibuprofeno', '400mg', 'Tableta', 'Oral', 'Laboratorios Genfar', 'INVIMA-2023-002',
+        800.00, 'Tableta', false, 'Úlcera péptica activa, insuficiencia renal severa, embarazo tercer trimestre',
+        'Dolor abdominal, náuseas, mareos, retención de líquidos', true),
+       ('MED003', 'Amoxicilina', 'Amoxicilina', '500mg', 'Cápsula', 'Oral', 'Laboratorios Mk', 'INVIMA-2023-003',
+        2500.00, 'Cápsula', true, 'Alergia a penicilinas, mononucleosis infecciosa',
+        'Diarrea, náuseas, erupciones cutáneas, candidiasis', true),
+       ('MED004', 'Omeprazol', 'Omeprazol', '20mg', 'Cápsula', 'Oral', 'Laboratorios Tecnoquímicas', 'INVIMA-2023-004',
+        1800.00, 'Cápsula', true, 'Hipersensibilidad al principio activo',
+        'Cefalea, diarrea, dolor abdominal, flatulencia', true),
+       ('MED005', 'Loratadina', 'Loratadina', '10mg', 'Tableta', 'Oral', 'Laboratorios La Santé', 'INVIMA-2023-005',
+        600.00, 'Tableta', false, 'Hipersensibilidad al principio activo',
+        'Somnolencia, cefalea, fatiga, sequedad de boca', true),
+       ('MED006', 'Diclofenaco', 'Diclofenaco sódico', '50mg', 'Tableta', 'Oral', 'Laboratorios Chalver',
+        'INVIMA-2023-006', 900.00, 'Tableta', true,
+        'Úlcera péptica, insuficiencia cardíaca severa, embarazo tercer trimestre',
+        'Dolor epigástrico, náuseas, mareos, edema', true),
+       ('MED007', 'Salbutamol', 'Salbutamol', '100mcg/dosis', 'Inhalador', 'Inhalatoria', 'Laboratorios GSK',
+        'INVIMA-2023-007', 15000.00, 'Inhalador', true, 'Hipersensibilidad al principio activo, taquicardia severa',
+        'Temblor, palpitaciones, cefalea, calambres musculares', true),
+       ('MED008', 'Metformina', 'Metformina clorhidrato', '850mg', 'Tableta', 'Oral', 'Laboratorios Laproff',
+        'INVIMA-2023-008', 1500.00, 'Tableta', true, 'Insuficiencia renal, acidosis metabólica, insuficiencia hepática',
+        'Diarrea, náuseas, dolor abdominal, sabor metálico', true),
+       ('MED009', 'Lidocaína', 'Lidocaína clorhidrato', '2%', 'Solución inyectable', 'Infiltración local',
+        'Laboratorios Pharma', 'INVIMA-2023-009', 3500.00, 'Ampolla', true,
+        'Alergia a anestésicos locales, bloqueo cardíaco', 'Reacciones alérgicas, hipotensión, bradicardia', true),
+       ('MED010', 'Clindamicina', 'Clindamicina', '300mg', 'Cápsula', 'Oral', 'Laboratorios Procaps', 'INVIMA-2023-010',
+        4200.00, 'Cápsula', true, 'Hipersensibilidad a lincomicinas, colitis pseudomembranosa previa',
+        'Diarrea, colitis pseudomembranosa, náuseas, erupciones cutáneas', true);
