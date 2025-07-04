@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import showMessage from "../../util/UtilMessage";
 import { Tooltip } from "react-tooltip";
-import EliminarIcon from "../../resource/Eliminar.png";
 import EditIcon from '../../resource/EditIcon.png';
 import VerIcon from "../../resource/ver.png";
 import { apiGet, apiPost, apiPut } from '../apiService';
