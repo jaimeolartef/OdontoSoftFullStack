@@ -28,6 +28,11 @@ public class EstadoMedicamentoServiceImpl implements EstadoMedicamentoService {
 	}
 
 	@Override
+	public Optional<EstadoMedicamento> findByNombre(String nombre) {
+		return estadoMedicamentoDao.findByNombre(nombre);
+	}
+
+	@Override
 	public EstadoMedicamento save(EstadoMedicamento estadoMedicamento) {
 		return estadoMedicamentoDao.save(estadoMedicamento);
 	}

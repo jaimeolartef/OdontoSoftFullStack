@@ -2,7 +2,9 @@ package org.enterprise.odontosoft.controller;
 
 import lombok.AllArgsConstructor;
 import org.enterprise.odontosoft.controller.mapper.FormulaMedicaMapper;
+import org.enterprise.odontosoft.model.entity.EstadoMedicamento;
 import org.enterprise.odontosoft.model.entity.FormulaMedica;
+import org.enterprise.odontosoft.model.service.EstadoMedicamentoService;
 import org.enterprise.odontosoft.model.service.FormulaMedicaService;
 import org.enterprise.odontosoft.view.dto.request.FormulaMedicaRequest;
 import org.enterprise.odontosoft.view.dto.response.FormulaMedicaResponse;
@@ -17,9 +19,10 @@ import java.util.Optional;
 @Controller
 public class FormulaMedicaControllerImpl implements FormulaMedicaController {
 
-	private static final Logger logger = (Logger) LoggerFactory.getLogger(FormulaMedicaControllerImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(FormulaMedicaControllerImpl.class);
 
 	private final FormulaMedicaService formulaMedicaService;
+	private final EstadoMedicamentoService estadoMedicamentoService;
 
 	@Override
 	public List<FormulaMedicaResponse> getAllFormulasMedicas() {
@@ -54,6 +57,8 @@ public class FormulaMedicaControllerImpl implements FormulaMedicaController {
 	@Override
 	public FormulaMedicaResponse saveFormulaMedica(FormulaMedicaRequest formulaMedicaRequest) {
 		try {
+			Optional<EstadoMedicamento> estadoMedicamento = estadoMedicamentoService.findByNombre(formulaMedicaRequest.getEstadoMedicamento());
+			formulaMedicaRequest.setEstadoMedicamentoId(estadoMedicamento.map(EstadoMedicamento::getId).orElse(null));
 			FormulaMedica savedFormula = formulaMedicaService.save(FormulaMedicaMapper.toEntity(formulaMedicaRequest));
 			return FormulaMedicaMapper.toResponse(savedFormula);
 		} catch (Exception e) {

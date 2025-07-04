@@ -1037,8 +1037,6 @@ CREATE TABLE formulamedica (
                                fechaformulacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
                                pacienteid INTEGER NOT NULL REFERENCES paciente(id),
                                medicoid INTEGER NOT NULL REFERENCES medico(idmedico),
-                               diagnosticoprincipal VARCHAR(500) NOT NULL,
-                               diagnosticossecundarios TEXT,
                                dosis VARCHAR(200) NOT NULL,
                                frecuencia VARCHAR(100) NOT NULL,
                                duraciontratamiento VARCHAR(100) NOT NULL,

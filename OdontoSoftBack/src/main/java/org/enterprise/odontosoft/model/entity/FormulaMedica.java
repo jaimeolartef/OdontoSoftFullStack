@@ -30,12 +30,6 @@ public class FormulaMedica {
 	@Column(name = "medicoid", nullable = false)
 	private Long medicoId;
 
-	@Column(name = "diagnosticoprincipal", nullable = false, length = 500)
-	private String diagnosticoPrincipal;
-
-	@Column(name = "diagnosticossecundarios", columnDefinition = "TEXT")
-	private String diagnosticosSecundarios;
-
 	@Column(name = "dosis", nullable = false, length = 200)
 	private String dosis;
 

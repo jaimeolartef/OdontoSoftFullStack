@@ -5,6 +5,7 @@ import EliminarIcon from "../../resource/Eliminar.png";
 import EditIcon from '../../resource/EditIcon.png';
 import VerIcon from "../../resource/ver.png";
 import { apiGet, apiPost, apiPut } from '../apiService';
+// TODO: Falta la relacion entre la formula médica y la historial cita médica
 
 const FormulaMedica = ({ pacienteId, medicoId, readOnly }) => {
   const [estadosMedicamento, setEstadosMedicamento] = useState([]);
@@ -15,7 +16,6 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly }) => {
     numeroFormula: '',
     pacienteId: pacienteId,
     medicoId: medicoId,
-    diagnosticoPrincipal: '',
     diagnosticosSecundarios: '',
     dosis: '',
     frecuencia: '',
@@ -23,7 +23,6 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly }) => {
     cantidadTotal: '',
     instruccionesEspeciales: '',
     observaciones: '',
-    fechaVencimiento: '',
     estadoMedicamentoId: '',
     medicamentoId: '',
     entidadPrestadoraId: '',
@@ -32,6 +31,23 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly }) => {
   const [editingIndex, setEditingIndex] = useState(-1);
   const usuario = sessionStorage.getItem('username');
   const token = sessionStorage.getItem('jsonwebtoken');
+
+  // Función para calcular la cantidad total
+  const calcularCantidadTotal = (frecuencia, duracion) => {
+    if (!frecuencia || !duracion) return '';
+
+    // Extraer números de frecuencia (ej: "3 veces al día" -> 3)
+    const frecuenciaNum = parseInt(frecuencia.match(/\d+/)?.[0] || '0');
+
+    // Extraer números de duración (ej: "7 días" -> 7)
+    const duracionNum = parseInt(duracion.match(/\d+/)?.[0] || '0');
+
+    if (frecuenciaNum > 0 && duracionNum > 0) {
+      return (frecuenciaNum * duracionNum).toString();
+    }
+
+    return '';
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -84,10 +100,20 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly }) => {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setFormulaData(prev => ({
-      ...prev,
+
+    const updatedData = {
+      ...formulaData,
       [name]: value
-    }));
+    };
+
+    // Calcular cantidad total automáticamente cuando cambie frecuencia o duración
+    if (name === 'frecuencia' || name === 'duracionTratamiento') {
+      const nuevaFrecuencia = name === 'frecuencia' ? value : formulaData.frecuencia;
+      const nuevaDuracion = name === 'duracionTratamiento' ? value : formulaData.duracionTratamiento;
+      updatedData.cantidadTotal = calcularCantidadTotal(nuevaFrecuencia, nuevaDuracion);
+    }
+
+    setFormulaData(updatedData);
   };
 
   const generateNumeroFormula = () => {
@@ -99,8 +125,8 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!formulaData.medicamentoId || !formulaData.diagnosticoPrincipal ||
-      !formulaData.dosis || !formulaData.frecuencia || !formulaData.duracionTratamiento) {
+    if (!formulaData.medicamentoId || !formulaData.dosis ||
+      !formulaData.frecuencia || !formulaData.duracionTratamiento) {
       showMessage('warning', 'Por favor complete todos los campos obligatorios');
       return;
     }
@@ -108,10 +134,13 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly }) => {
     try {
       const formulaToSend = {
         ...formulaData,
+        fechaFormulacion: new Date().toISOString(),
+        estadoMedicamento: "ACTIVO",
         numeroFormula: formulaData.numeroFormula || generateNumeroFormula(),
-        idusuariocreacion: usuario,
-        fechacreacion: new Date().toISOString().split('T')[0]
+        idUsuarioCreacion: usuario,
+        fechaCreacion: new Date().toISOString().split('T')[0]
       };
+      console.log(formulaToSend);
 
       let response;
       if (editingIndex >= 0) {
@@ -122,14 +151,14 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly }) => {
         response = await apiPost('/formulas-medicas/crear', formulaToSend, token);
       }
 
-      if (response && response.data) {
+      if (response) {
         if (editingIndex >= 0) {
           const updatedFormulas = [...formulasMedicas];
-          updatedFormulas[editingIndex] = response.data;
+          updatedFormulas[editingIndex] = response;
           setFormulasMedicas(updatedFormulas);
           showMessage('success', 'Fórmula médica actualizada correctamente');
         } else {
-          setFormulasMedicas(prev => [...prev, response.data]);
+          setFormulasMedicas(prev => [...prev, response]);
           showMessage('success', 'Fórmula médica creada correctamente');
         }
 
@@ -146,7 +175,6 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly }) => {
       numeroFormula: '',
       pacienteId: pacienteId,
       medicoId: medicoId,
-      diagnosticoPrincipal: '',
       diagnosticosSecundarios: '',
       dosis: '',
       frecuencia: '',
@@ -154,7 +182,6 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly }) => {
       cantidadTotal: '',
       instruccionesEspeciales: '',
       observaciones: '',
-      fechaVencimiento: '',
       estadoMedicamentoId: '',
       medicamentoId: '',
       entidadPrestadoraId: '',
@@ -191,7 +218,7 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly }) => {
         {!readOnly && (
           <form onSubmit={handleSubmit}>
             <div className="row">
-              <div className="col-md-6">
+              <div className="col-md-12">
                 <div className="form-group">
                   <label htmlFor="medicamento">Medicamento *</label>
                   <input
@@ -210,20 +237,6 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly }) => {
                   </datalist>
                 </div>
               </div>
-              <div className="col-md-6">
-                <div className="form-group">
-                  <label htmlFor="diagnosticoPrincipal">Diagnóstico Principal *</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="diagnosticoPrincipal"
-                    name="diagnosticoPrincipal"
-                    value={formulaData.diagnosticoPrincipal}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-              </div>
             </div>
 
             <div className="row">
@@ -235,6 +248,7 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly }) => {
                     className="form-control"
                     id="dosis"
                     name="dosis"
+                    placeholder="Ej: 500mg, 1 tableta"
                     value={formulaData.dosis}
                     onChange={handleInputChange}
                     required
@@ -243,12 +257,13 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly }) => {
               </div>
               <div className="col-md-4">
                 <div className="form-group">
-                  <label htmlFor="frecuencia">Frecuencia *</label>
+                  <label htmlFor="frecuencia">Frecuencia * (veces por día)</label>
                   <input
                     type="text"
                     className="form-control"
                     id="frecuencia"
                     name="frecuencia"
+                    placeholder="Ej: 3 veces al día, cada 8 horas"
                     value={formulaData.frecuencia}
                     onChange={handleInputChange}
                     required
@@ -263,6 +278,7 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly }) => {
                     className="form-control"
                     id="duracionTratamiento"
                     name="duracionTratamiento"
+                    placeholder="Ej: 7 días, 2 semanas"
                     value={formulaData.duracionTratamiento}
                     onChange={handleInputChange}
                     required
@@ -274,26 +290,31 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly }) => {
             <div className="row">
               <div className="col-md-6">
                 <div className="form-group">
-                  <label htmlFor="cantidadTotal">Cantidad Total</label>
+                  <label htmlFor="cantidadTotal">Cantidad Total (calculada automáticamente)</label>
                   <input
                     type="text"
                     className="form-control"
                     id="cantidadTotal"
                     name="cantidadTotal"
                     value={formulaData.cantidadTotal}
-                    onChange={handleInputChange}
+                    readOnly
+                    style={{backgroundColor: '#f8f9fa'}}
                   />
+                  <small className="form-text text-muted">
+                    Se calcula automáticamente basado en frecuencia y duración
+                  </small>
                 </div>
               </div>
               <div className="col-md-6">
                 <div className="form-group">
-                  <label htmlFor="fechaVencimiento">Fecha Vencimiento</label>
+                  <label htmlFor="diagnosticosSecundarios">Diagnósticos Secundarios</label>
                   <input
-                    type="date"
+                    type="text"
                     className="form-control"
-                    id="fechaVencimiento"
-                    name="fechaVencimiento"
-                    value={formulaData.fechaVencimiento}
+                    id="diagnosticosSecundarios"
+                    name="diagnosticosSecundarios"
+                    placeholder="Diagnósticos adicionales (opcional)"
+                    value={formulaData.diagnosticosSecundarios}
                     onChange={handleInputChange}
                   />
                 </div>
@@ -309,6 +330,7 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly }) => {
                     id="instruccionesEspeciales"
                     name="instruccionesEspeciales"
                     rows="3"
+                    placeholder="Ej: Tomar con alimentos, evitar alcohol, etc."
                     value={formulaData.instruccionesEspeciales}
                     onChange={handleInputChange}
                   />
@@ -337,10 +359,10 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly }) => {
             <tr>
               <th>Número Fórmula</th>
               <th>Medicamento</th>
-              <th>Diagnóstico</th>
               <th>Dosis</th>
               <th>Frecuencia</th>
               <th>Duración</th>
+              <th>Cantidad Total</th>
               <th>Acciones</th>
             </tr>
             </thead>
@@ -354,10 +376,10 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly }) => {
                 <tr key={index}>
                   <td>{formula.numeroFormula}</td>
                   <td>{formula.medicamento?.nombre || 'N/A'}</td>
-                  <td>{formula.diagnosticoPrincipal}</td>
                   <td>{formula.dosis}</td>
                   <td>{formula.frecuencia}</td>
                   <td>{formula.duracionTratamiento}</td>
+                  <td>{formula.cantidadTotal}</td>
                   <td>
                     <img src={VerIcon} alt="Ver Fórmula"
                          style={{marginRight: '5px', width: '35px', height: '35px', cursor: 'pointer'}}

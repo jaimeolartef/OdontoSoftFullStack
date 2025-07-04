@@ -3,6 +3,7 @@ package org.enterprise.odontosoft.controller.mapper;
 
 import org.enterprise.odontosoft.model.entity.EstadoMedicamento;
 import org.enterprise.odontosoft.model.entity.FormulaMedica;
+import org.enterprise.odontosoft.model.entity.Medicamento;
 import org.enterprise.odontosoft.view.dto.request.FormulaMedicaRequest;
 import org.enterprise.odontosoft.view.dto.response.EstadoMedicamentoResponse;
 import org.enterprise.odontosoft.view.dto.response.FormulaMedicaResponse;
@@ -24,8 +25,6 @@ public class FormulaMedicaMapper {
 			.fechaFormulacion(formulaMedica.getFechaFormulacion())
 			.pacienteId(formulaMedica.getPacienteId())
 			.medicoId(formulaMedica.getMedicoId())
-			.diagnosticoPrincipal(formulaMedica.getDiagnosticoPrincipal())
-			.diagnosticosSecundarios(formulaMedica.getDiagnosticosSecundarios())
 			.dosis(formulaMedica.getDosis())
 			.frecuencia(formulaMedica.getFrecuencia())
 			.duracionTratamiento(formulaMedica.getDuracionTratamiento())
@@ -57,8 +56,6 @@ public class FormulaMedicaMapper {
 		formulaMedica.setFechaFormulacion(formulaMedicaRequest.getFechaFormulacion());
 		formulaMedica.setPacienteId(formulaMedicaRequest.getPacienteId());
 		formulaMedica.setMedicoId(formulaMedicaRequest.getMedicoId());
-		formulaMedica.setDiagnosticoPrincipal(formulaMedicaRequest.getDiagnosticoPrincipal());
-		formulaMedica.setDiagnosticosSecundarios(formulaMedicaRequest.getDiagnosticosSecundarios());
 		formulaMedica.setDosis(formulaMedicaRequest.getDosis());
 		formulaMedica.setFrecuencia(formulaMedicaRequest.getFrecuencia());
 		formulaMedica.setDuracionTratamiento(formulaMedicaRequest.getDuracionTratamiento());
@@ -66,6 +63,7 @@ public class FormulaMedicaMapper {
 		formulaMedica.setInstruccionesEspeciales(formulaMedicaRequest.getInstruccionesEspeciales());
 		formulaMedica.setObservaciones(formulaMedicaRequest.getObservaciones());
 		formulaMedica.setFechaVencimiento(formulaMedicaRequest.getFechaVencimiento());
+		formulaMedica.setMedicamento(Medicamento.builder().id(formulaMedicaRequest.getMedicamentoId()).build());
 		formulaMedica.setEstadoMedicamento(EstadoMedicamento.builder().id(formulaMedicaRequest.getEstadoMedicamentoId()).build());
 		formulaMedica.setEntidadPrestadoraId(formulaMedicaRequest.getEntidadPrestadoraId());
 		formulaMedica.setIdUsuarioCreacion(formulaMedicaRequest.getIdUsuarioCreacion());

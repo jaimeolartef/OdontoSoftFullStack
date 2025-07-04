@@ -18,8 +18,6 @@ public class FormulaMedicaRequest {
 	private LocalDateTime fechaFormulacion;
 	private Long pacienteId;
 	private Long medicoId;
-	private String diagnosticoPrincipal;
-	private String diagnosticosSecundarios;
 	private String dosis;
 	private String frecuencia;
 	private String duracionTratamiento;
@@ -28,6 +26,7 @@ public class FormulaMedicaRequest {
 	private String observaciones;
 	private LocalDate fechaVencimiento;
 	private Long estadoMedicamentoId;
+	private String estadoMedicamento;
 	private Long medicamentoId;
 	private Long entidadPrestadoraId;
 	private Long idUsuarioCreacion;

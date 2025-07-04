@@ -8,6 +8,7 @@ import java.util.Optional;
 public interface EstadoMedicamentoService {
 	List<EstadoMedicamento> findAll();
 	Optional<EstadoMedicamento> findById(Long id);
+	Optional<EstadoMedicamento> findByNombre(String nombre);
 	EstadoMedicamento save(EstadoMedicamento estadoMedicamento);
 	void deleteById(Long id);
 }
