@@ -36,4 +36,5 @@ public class FormulaMedicaResponse {
 	private Long idUsuarioModificacion;
 	private LocalDate fechaModificacion;
 	private Boolean habilitado;
+	private HistoriaClinicaResponse historiaClinica;
 }

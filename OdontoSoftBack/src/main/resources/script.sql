@@ -1102,3 +1102,7 @@ VALUES ('MED001', 'Acetaminofén', 'Paracetamol', '500mg', 'Tableta', 'Oral', 'L
        ('MED010', 'Clindamicina', 'Clindamicina', '300mg', 'Cápsula', 'Oral', 'Laboratorios Procaps', 'INVIMA-2023-010',
         4200.00, 'Cápsula', true, 'Hipersensibilidad a lincomicinas, colitis pseudomembranosa previa',
         'Diarrea, colitis pseudomembranosa, náuseas, erupciones cutáneas', true);
+
+
+alter table formulamedica add idhistoriaclinica integer;
+alter table formulamedica add foreign key (idhistoriaclinica) references public.historiaclinica(id);

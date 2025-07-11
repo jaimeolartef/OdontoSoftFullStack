@@ -1,6 +1,7 @@
 package org.enterprise.odontosoft.model.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -76,4 +77,9 @@ public class FormulaMedica {
 
 	@Column(name = "habilitado", nullable = false)
 	private Boolean habilitado = true;
+
+	@NotNull
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "idhistoriaclinica", nullable = false)
+	private HistoriaClinica idhistoriaclinica;
 }

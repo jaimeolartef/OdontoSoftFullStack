@@ -325,6 +325,7 @@ const HistorialCitaMedica = () => {
                   pacienteId={formPatient.idPaciente}
                   medicoId={1} // Aquí deberías obtener el ID del médico de la sesión
                   readOnly={readOnly}
+                  idhistoriaclinica={formMedicalHistory.idHistoriaClinica}
                 />
               </div>
               <div className="modal-footer">

@@ -4,9 +4,8 @@ import { Tooltip } from "react-tooltip";
 import EditIcon from '../../resource/EditIcon.png';
 import VerIcon from "../../resource/ver.png";
 import { apiGet, apiPost, apiPut } from '../apiService';
-// TODO: Falta la relacion entre la formula médica y la historial cita médica
 
-const FormulaMedica = ({ pacienteId, medicoId, readOnly }) => {
+const FormulaMedica = ({ pacienteId, medicoId, readOnly, idhistoriaclinica }) => {
   const [estadosMedicamento, setEstadosMedicamento] = useState([]);
   const [medicamentos, setMedicamentos] = useState([]);
   const [formulasMedicas, setFormulasMedicas] = useState([]);
@@ -136,6 +135,7 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly }) => {
         fechaFormulacion: new Date().toISOString(),
         estadoMedicamento: "ACTIVO",
         numeroFormula: formulaData.numeroFormula || generateNumeroFormula(),
+        idhistoriaclinica: idhistoriaclinica,
         idUsuarioCreacion: usuario,
         fechaCreacion: new Date().toISOString().split('T')[0]
       };

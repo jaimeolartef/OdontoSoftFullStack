@@ -3,10 +3,12 @@ package org.enterprise.odontosoft.controller.mapper;
 
 import org.enterprise.odontosoft.model.entity.EstadoMedicamento;
 import org.enterprise.odontosoft.model.entity.FormulaMedica;
+import org.enterprise.odontosoft.model.entity.HistoriaClinica;
 import org.enterprise.odontosoft.model.entity.Medicamento;
 import org.enterprise.odontosoft.view.dto.request.FormulaMedicaRequest;
 import org.enterprise.odontosoft.view.dto.response.EstadoMedicamentoResponse;
 import org.enterprise.odontosoft.view.dto.response.FormulaMedicaResponse;
+import org.enterprise.odontosoft.view.dto.response.HistoriaClinicaResponse;
 
 public class FormulaMedicaMapper {
 
@@ -43,6 +45,10 @@ public class FormulaMedicaMapper {
 			.idUsuarioModificacion(formulaMedica.getIdUsuarioModificacion())
 			.fechaModificacion(formulaMedica.getFechaModificacion())
 			.habilitado(formulaMedica.getHabilitado())
+			.historiaClinica(HistoriaClinicaResponse.builder()
+				.id(formulaMedica.getIdhistoriaclinica() != null ? formulaMedica.getIdhistoriaclinica().getId() : null)
+				.build()
+			)
 			.build();
 	}
 
@@ -71,6 +77,7 @@ public class FormulaMedicaMapper {
 		formulaMedica.setIdUsuarioModificacion(formulaMedicaRequest.getIdUsuarioModificacion());
 		formulaMedica.setFechaModificacion(formulaMedicaRequest.getFechaModificacion());
 		formulaMedica.setHabilitado(formulaMedicaRequest.getHabilitado());
+		formulaMedica.setIdhistoriaclinica(HistoriaClinica.builder().id(formulaMedicaRequest.getIdhistoriaclinica()).build());
 
 		return formulaMedica;
 	}

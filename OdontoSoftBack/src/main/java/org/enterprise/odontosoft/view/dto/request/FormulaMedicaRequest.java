@@ -34,4 +34,5 @@ public class FormulaMedicaRequest {
 	private Long idUsuarioModificacion;
 	private LocalDate fechaModificacion;
 	private Boolean habilitado;
+	private Integer idhistoriaclinica;
 }
