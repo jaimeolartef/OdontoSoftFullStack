@@ -3,13 +3,16 @@ import showMessage from "../../util/UtilMessage";
 import { Tooltip } from "react-tooltip";
 import EditIcon from '../../resource/EditIcon.png';
 import VerIcon from "../../resource/ver.png";
+import EliminarIcon from "../../resource/Eliminar.png";
 import { apiGet, apiPost, apiPut } from '../apiService';
 
 const FormulaMedica = ({ pacienteId, medicoId, readOnly, idhistoriaclinica }) => {
   const [estadosMedicamento, setEstadosMedicamento] = useState([]);
   const [medicamentos, setMedicamentos] = useState([]);
-  const [formulasMedicas, setFormulasMedicas] = useState([]);
+  const [formulasMedicasGuardadas, setFormulasMedicasGuardadas] = useState([]);
+  const [formulasMedicasLocales, setFormulasMedicasLocales] = useState([]);
   const [selectedMedicamento, setSelectedMedicamento] = useState('');
+  const [isGuardando, setIsGuardando] = useState(false);
   const [formulaData, setFormulaData] = useState({
     numeroFormula: '',
     pacienteId: pacienteId,
@@ -62,10 +65,10 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly, idhistoriaclinica }) =>
           setMedicamentos(medicamentosResponse);
         }
 
-        // Obtener fórmulas médicas existentes
+        // Obtener fórmulas médicas existentes guardadas
         const formulasResponse = await apiGet('/formulas-medicas/listar', token);
         if (formulasResponse) {
-          setFormulasMedicas(formulasResponse.filter(formula =>
+          setFormulasMedicasGuardadas(formulasResponse.filter(formula =>
             formula.pacienteId === pacienteId && formula.medicoId === medicoId
           ));
         }
@@ -90,7 +93,8 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly, idhistoriaclinica }) =>
       if (medicamentoSeleccionado) {
         setFormulaData(prev => ({
           ...prev,
-          medicamentoId: medicamentoSeleccionado.id
+          medicamentoId: medicamentoSeleccionado.id,
+          medicamentoInfo: medicamentoSeleccionado
         }));
       }
     }
@@ -120,7 +124,7 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly, idhistoriaclinica }) =>
     return `FM-${timestamp}-${random}`;
   };
 
-  const handleSubmit = async (event) => {
+  const handleAgregarMedicamento = (event) => {
     event.preventDefault();
 
     if (!formulaData.medicamentoId || !formulaData.dosis ||
@@ -129,43 +133,81 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly, idhistoriaclinica }) =>
       return;
     }
 
-    try {
-      const formulaToSend = {
-        ...formulaData,
-        fechaFormulacion: new Date().toISOString(),
-        estadoMedicamento: "ACTIVO",
-        numeroFormula: formulaData.numeroFormula || generateNumeroFormula(),
-        idhistoriaclinica: idhistoriaclinica,
-        idUsuarioCreacion: usuario,
-        fechaCreacion: new Date().toISOString().split('T')[0]
-      };
-      console.log(formulaToSend);
-
-      let response;
-      if (editingIndex >= 0) {
-        // Actualizar fórmula existente
-        response = await apiPut('/formulas-medicas/modificar', formulaToSend, token);
-      } else {
-        // Crear nueva fórmula
-        response = await apiPost('/formulas-medicas/crear', formulaToSend, token);
+    // Verificar si el medicamento ya está en la lista (solo para nuevos, no para ediciones)
+    if (editingIndex < 0) {
+      const medicamentoExistente = formulasMedicasLocales.find(
+        formula => formula.medicamentoId === formulaData.medicamentoId
+      );
+      if (medicamentoExistente) {
+        showMessage('warning', 'Este medicamento ya está en la lista. Puede editarlo si necesita cambiar la dosificación.');
+        return;
       }
+    }
 
-      if (response) {
-        if (editingIndex >= 0) {
-          const updatedFormulas = [...formulasMedicas];
-          updatedFormulas[editingIndex] = response;
-          setFormulasMedicas(updatedFormulas);
-          showMessage('success', 'Fórmula médica actualizada correctamente');
-        } else {
-          setFormulasMedicas(prev => [...prev, response]);
-          showMessage('success', 'Fórmula médica creada correctamente');
+    const nuevoMedicamento = {
+      ...formulaData,
+      fechaFormulacion: new Date().toISOString(),
+      estadoMedicamento: "ACTIVO",
+      idhistoriaclinica: idhistoriaclinica,
+      idUsuarioCreacion: usuario,
+      fechaCreacion: new Date().toISOString().split('T')[0]
+    };
+    console.log(selectedMedicamento);
+    // Agregar nuevo medicamento a la lista local
+    setFormulasMedicasLocales(prev => [...prev, nuevoMedicamento]);
+    console.log("formulas locales ", formulasMedicasLocales);
+
+    resetForm();
+  };
+
+  const handleGuardarTodas = async () => {
+    if (formulasMedicasLocales.length === 0) {
+      showMessage('warning', 'No hay medicamentos en la lista para guardar');
+      return;
+    }
+
+    setIsGuardando(true);
+
+    try {
+      const numeroFormula = generateNumeroFormula();
+      // Crear un objeto fórmula médica que contenga todos los medicamentos
+      for (const medicamento of formulasMedicasLocales) {
+        const idx = formulasMedicasLocales.indexOf(medicamento);
+        // Guardar la fórmula completa con todos los medicamentos
+        medicamento.numeroFormula = numeroFormula;
+        const respuesta = await apiPost('/formulas-medicas/crear', medicamento, token);
+
+        if (respuesta) {
+          // Actualizar la lista de fórmulas guardadas
+          setFormulasMedicasGuardadas(prev => [...prev, respuesta]);
         }
 
-        resetForm();
+        // Aquí puedes acceder a cada medicamento y su índice
+        console.log(`Medicamento ${idx}:`, medicamento);
       }
+
+      // Limpiar la lista local
+      showMessage('success', `Fórmula médica guardada exitosamente con ${formulasMedicasLocales.length} medicamento(s)`);
+      setFormulasMedicasLocales([]);
+
     } catch (error) {
       console.error('Error saving formula:', error);
       showMessage('error', 'Error al guardar la fórmula médica');
+    } finally {
+      setIsGuardando(false);
+    }
+  };
+
+  const handleLimpiarLista = () => {
+    if (formulasMedicasLocales.length === 0) {
+      showMessage('info', 'No hay medicamentos en la lista para limpiar');
+      return;
+    }
+
+    if (window.confirm('¿Está seguro que desea limpiar todos los medicamentos de la lista?')) {
+      setFormulasMedicasLocales([]);
+      resetForm();
+      showMessage('info', 'Lista de medicamentos limpiada');
     }
   };
 
@@ -190,8 +232,8 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly, idhistoriaclinica }) =>
     setEditingIndex(-1);
   };
 
-  const handleEdit = (index) => {
-    const formula = formulasMedicas[index];
+  const handleEditLocal = (index) => {
+    const formula = formulasMedicasLocales[index];
     setFormulaData(formula);
 
     const medicamento = medicamentos.find(med => med.id === formula.medicamentoId);
@@ -202,206 +244,325 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly, idhistoriaclinica }) =>
     setEditingIndex(index);
   };
 
-  const handleView = (index) => {
-    const formula = formulasMedicas[index];
+  const handleDeleteLocal = (index) => {
+    if (window.confirm('¿Está seguro que desea eliminar este medicamento de la lista?')) {
+      const updatedFormulas = formulasMedicasLocales.filter((_, i) => i !== index);
+      setFormulasMedicasLocales(updatedFormulas);
+
+      // Si estamos editando el medicamento que se va a eliminar, resetear el formulario
+      if (editingIndex === index) {
+        resetForm();
+      } else if (editingIndex > index) {
+        // Ajustar el índice de edición si es necesario
+        setEditingIndex(editingIndex - 1);
+      }
+
+      showMessage('success', 'Medicamento eliminado de la lista');
+    }
+  };
+
+  const handleView = (formula) => {
     // Implementar lógica para visualizar la fórmula en modo solo lectura
     console.log('Ver fórmula:', formula);
   };
 
   return (
-    <div className="card">
-      <div className="card-header">
-        <h2>Fórmula Médica</h2>
-      </div>
-      <div className="card-body">
-        {!readOnly && (
-          <form onSubmit={handleSubmit}>
-            <div className="row">
-              <div className="col-md-12">
-                <div className="form-group">
-                  <label htmlFor="medicamento">Medicamento *</label>
-                  <input
-                    className="form-control"
-                    list="medicamentoOptions"
-                    id="medicamentoList"
-                    placeholder="Buscar medicamento..."
-                    value={selectedMedicamento}
-                    onChange={handleMedicamentoChange}
-                    required
-                  />
-                  <datalist id="medicamentoOptions">
-                    {medicamentos.map((medicamento) => (
-                      <option key={medicamento.id} value={`${medicamento.codigo} - ${medicamento.nombre}`}/>
-                    ))}
-                  </datalist>
+    <>
+      <div className="card">
+        <div className="card-header">
+          <h2>Fórmula Médica</h2>
+        </div>
+        <div className="card-body">
+          {!readOnly && (
+            <form onSubmit={handleAgregarMedicamento}>
+              <div className="row">
+                <div className="col-md-12">
+                  <div className="form-group">
+                    <label htmlFor="medicamento">Medicamento *</label>
+                    <input
+                      className="form-control"
+                      list="medicamentoOptions"
+                      id="medicamentoList"
+                      placeholder="Buscar medicamento..."
+                      value={selectedMedicamento}
+                      onChange={handleMedicamentoChange}
+                      required
+                    />
+                    <datalist id="medicamentoOptions">
+                      {medicamentos.map((medicamento) => (
+                        <option key={medicamento.id} value={`${medicamento.codigo} - ${medicamento.nombre}`}/>
+                      ))}
+                    </datalist>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className="row">
-              <div className="col-md-4">
-                <div className="form-group">
-                  <label htmlFor="dosis">Dosis *</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="dosis"
-                    name="dosis"
-                    placeholder="Ej: 500mg, 1 tableta"
-                    value={formulaData.dosis}
-                    onChange={handleInputChange}
-                    required
-                  />
+              <div className="row">
+                <div className="col-md-4">
+                  <div className="form-group">
+                    <label htmlFor="dosis">Dosis *</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="dosis"
+                      name="dosis"
+                      placeholder="Ej: 500mg, 1 tableta"
+                      value={formulaData.dosis}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="col-md-4">
+                  <div className="form-group">
+                    <label htmlFor="frecuencia">Frecuencia * (veces por día)</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="frecuencia"
+                      name="frecuencia"
+                      placeholder="Ej: 3 veces al día, cada 8 horas"
+                      value={formulaData.frecuencia}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="col-md-4">
+                  <div className="form-group">
+                    <label htmlFor="duracionTratamiento">Duración Tratamiento *</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="duracionTratamiento"
+                      name="duracionTratamiento"
+                      placeholder="Ej: 7 días, 2 semanas"
+                      value={formulaData.duracionTratamiento}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
                 </div>
               </div>
-              <div className="col-md-4">
-                <div className="form-group">
-                  <label htmlFor="frecuencia">Frecuencia * (veces por día)</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="frecuencia"
-                    name="frecuencia"
-                    placeholder="Ej: 3 veces al día, cada 8 horas"
-                    value={formulaData.frecuencia}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-              </div>
-              <div className="col-md-4">
-                <div className="form-group">
-                  <label htmlFor="duracionTratamiento">Duración Tratamiento *</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="duracionTratamiento"
-                    name="duracionTratamiento"
-                    placeholder="Ej: 7 días, 2 semanas"
-                    value={formulaData.duracionTratamiento}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-              </div>
-            </div>
 
-            <div className="row">
-              <div className="col-md-6">
-                <div className="form-group">
-                  <label htmlFor="cantidadTotal">Cantidad Total (calculada automáticamente)</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="cantidadTotal"
-                    name="cantidadTotal"
-                    value={formulaData.cantidadTotal}
-                    readOnly
-                    style={{backgroundColor: '#f8f9fa'}}
-                  />
-                  <small className="form-text text-muted">
-                    Se calcula automáticamente basado en frecuencia y duración
-                  </small>
+              <div className="row">
+                <div className="col-md-6">
+                  <div className="form-group">
+                    <label htmlFor="cantidadTotal">Cantidad Total (calculada automáticamente)</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="cantidadTotal"
+                      name="cantidadTotal"
+                      value={formulaData.cantidadTotal}
+                      readOnly
+                    />
+                    <small className="form-text text-muted">
+                      Se calcula automáticamente basado en frecuencia y duración
+                    </small>
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  <div className="form-group">
+                    <label htmlFor="diagnosticosSecundarios">Diagnósticos Secundarios</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="diagnosticosSecundarios"
+                      name="diagnosticosSecundarios"
+                      placeholder="Diagnósticos adicionales (opcional)"
+                      value={formulaData.diagnosticosSecundarios}
+                      onChange={handleInputChange}
+                    />
+                  </div>
                 </div>
               </div>
-              <div className="col-md-6">
-                <div className="form-group">
-                  <label htmlFor="diagnosticosSecundarios">Diagnósticos Secundarios</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="diagnosticosSecundarios"
-                    name="diagnosticosSecundarios"
-                    placeholder="Diagnósticos adicionales (opcional)"
-                    value={formulaData.diagnosticosSecundarios}
-                    onChange={handleInputChange}
-                  />
-                </div>
-              </div>
-            </div>
 
-            <div className="row">
-              <div className="col-md-12">
-                <div className="form-group">
-                  <label htmlFor="instruccionesEspeciales">Instrucciones Especiales</label>
-                  <textarea
-                    className="form-control"
-                    id="instruccionesEspeciales"
-                    name="instruccionesEspeciales"
-                    rows="3"
-                    placeholder="Ej: Tomar con alimentos, evitar alcohol, etc."
-                    value={formulaData.instruccionesEspeciales}
-                    onChange={handleInputChange}
-                  />
+              <div className="row">
+                <div className="col-md-12">
+                  <div className="form-group">
+                    <label htmlFor="instruccionesEspeciales">Instrucciones Especiales</label>
+                    <textarea
+                      className="form-control"
+                      id="instruccionesEspeciales"
+                      name="instruccionesEspeciales"
+                      rows="3"
+                      placeholder="Ej: Tomar con alimentos, evitar alcohol, etc."
+                      value={formulaData.instruccionesEspeciales}
+                      onChange={handleInputChange}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className="form-group">
-              <button type="submit" className="btn btn-primary">
-                {editingIndex >= 0 ? 'Actualizar' : 'Agregar'} Fórmula
-              </button>
-              {editingIndex >= 0 && (
-                <button type="button" className="btn btn-secondary ml-2" onClick={resetForm}>
-                  Cancelar
+              <div className="espacio"/>
+              <div className="form-group">
+                <button type="submit" className="btn btn-primary">
+                  {editingIndex >= 0 ? 'Actualizar' : 'Agregar'} Medicamento
                 </button>
-              )}
-            </div>
-          </form>
-        )}
+                {editingIndex >= 0 && (
+                  <button type="button" className="btn btn-secondary ml-2" onClick={resetForm}>
+                    Cancelar
+                  </button>
+                )}
+              </div>
+            </form>
+          )}
+        </div>
+      </div>
 
-        <div className="espacio"/>
-
-        <div className="form-group">
-          <table className="table">
-            <thead>
-            <tr>
-              <th>Número Fórmula</th>
-              <th>Medicamento</th>
-              <th>Dosis</th>
-              <th>Frecuencia</th>
-              <th>Duración</th>
-              <th>Cantidad Total</th>
-              <th>Acciones</th>
-            </tr>
-            </thead>
-            <tbody>
-            {formulasMedicas.length === 0 ? (
+      {/* Lista de medicamentos agregados localmente */}
+      <div className="espacio"/>
+      <div className="card">
+        <div className="card-header">
+          <h2>Medicamentos en la Fórmula ({formulasMedicasLocales.length})</h2>
+          {!readOnly && (
+            <button
+              className="btn btn-outline-primary ml-2"
+              onClick={handleLimpiarLista}
+              title="Limpiar toda la lista">
+              Limpiar Lista
+            </button>
+          )}
+        </div>
+        <div className="card-body">
+          <div className="table-responsive">
+            <table className="table table-sm table-hover">
+              <thead>
               <tr>
-                <td colSpan="7"><p>No hay fórmulas médicas disponibles.</p></td>
+                <th>Medicamento</th>
+                <th>Dosis</th>
+                <th>Frecuencia</th>
+                <th>Duración</th>
+                <th>Cantidad</th>
+                <th>Instrucciones</th>
+                <th>Acciones</th>
               </tr>
-            ) : (
-              formulasMedicas.map((formula, index) => (
-                <tr key={index}>
-                  <td>{formula.numeroFormula}</td>
-                  <td>{formula.medicamento?.nombre || 'N/A'}</td>
+              </thead>
+              <tbody>
+              {formulasMedicasLocales.map((formula, index) => (
+                <tr key={formula.tempId} className={editingIndex === index ? 'table-warning' : ''}>
+                  <td>
+                    <strong>{formula.medicamentoInfo.nombre || 'N/A'}</strong>
+                    <br/>
+                    <small className="text-muted">{formula.medicamentoInfo.codigo}</small>
+                  </td>
                   <td>{formula.dosis}</td>
                   <td>{formula.frecuencia}</td>
                   <td>{formula.duracionTratamiento}</td>
-                  <td>{formula.cantidadTotal}</td>
+                  <td><span>{formula.cantidadTotal}</span></td>
                   <td>
-                    <img src={VerIcon} alt="Ver Fórmula"
-                         style={{marginRight: '5px', width: '35px', height: '35px', cursor: 'pointer'}}
-                         onClick={() => handleView(index)}
-                         data-tooltip-id="viewTooltip" data-tooltip-content="Ver"/>
+                    <small>{formula.instruccionesEspeciales || 'No especificadas'}</small>
+                  </td>
+                  <td>
                     {!readOnly && (
-                      <img src={EditIcon} alt="Editar Fórmula"
-                           style={{marginRight: '5px', width: '35px', height: '35px', cursor: 'pointer'}}
-                           onClick={() => handleEdit(index)}
-                           data-tooltip-id="editTooltip" data-tooltip-content="Editar"/>
+                      <div className="btn-group" role="group">
+                        <img src={EditIcon} alt="Editar"
+                             className="btn-icon"
+                             style={{marginRight: '5px', width: '25px', height: '25px', cursor: 'pointer'}}
+                             onClick={() => handleEditLocal(index)}
+                             data-tooltip-id="editLocalTooltip" data-tooltip-content="Editar medicamento"/>
+                        <img src={EliminarIcon} alt="Eliminar"
+                             className="btn-icon"
+                             style={{width: '25px', height: '25px', cursor: 'pointer'}}
+                             onClick={() => handleDeleteLocal(index)}
+                             data-tooltip-id="deleteLocalTooltip" data-tooltip-content="Eliminar medicamento"/>
+                      </div>
                     )}
-                    <Tooltip id="viewTooltip"/>
-                    <Tooltip id="editTooltip"/>
-                    <Tooltip id="deleteTooltip"/>
                   </td>
                 </tr>
-              ))
-            )}
-            </tbody>
-          </table>
+              ))}
+              </tbody>
+            </table>
+          </div>
+
+          {!readOnly && (
+            <div className="text-center mt-3">
+              <button
+                className="btn btn-success btn-lg"
+                onClick={handleGuardarTodas}
+                disabled={isGuardando}
+              >
+                {isGuardando ? (
+                  <>
+                    <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>
+                    Guardando...
+                  </>
+                ) : (
+                  <>
+                    <i className="fas fa-save mr-2"></i>
+                    Guardar Fórmula Médica
+                    ({formulasMedicasLocales.length} medicamento{formulasMedicasLocales.length !== 1 ? 's' : ''})
+                  </>
+                )}
+              </button>
+            </div>
+          )}
         </div>
       </div>
-    </div>
+
+      <div className="espacio"/>
+
+      {/* Lista de medicamentos ya guardados */}
+      <div className="card">
+        <div className="card-header">
+          <h2>Fórmulas Médicas Guardadas</h2>
+        </div>
+        <div className="card-body">
+          <div className="table-responsive">
+            <table className="table table-striped">
+              <thead>
+              <tr>
+                <th>Número Fórmula</th>
+                <th>Medicamento</th>
+                <th>Dosis</th>
+                <th>Frecuencia</th>
+                <th>Duración</th>
+                <th>Cantidad Total</th>
+                <th>Acciones</th>
+              </tr>
+              </thead>
+              <tbody>
+              {formulasMedicasGuardadas.length === 0 ? (
+                <tr>
+                  <td colSpan="7" className="text-center text-muted">
+                    <em>No hay fórmulas médicas guardadas para este paciente.</em>
+                  </td>
+                </tr>
+              ) : (
+                formulasMedicasGuardadas.map((formula, index) => (
+                  <tr key={index}>
+                    <td>
+                      <strong>{formula.numeroFormula}</strong>
+                      <br/>
+                      <small className="text-muted">
+                        {formula.fechaCreacion ? new Date(formula.fechaCreacion).toLocaleDateString() : 'N/A'}
+                      </small>
+                    </td>
+                    <td>{formula.medicamento?.nombre || 'N/A'}</td>
+                    <td>{formula.dosis}</td>
+                    <td>{formula.frecuencia}</td>
+                    <td>{formula.duracionTratamiento}</td>
+                    <td><span>{formula.cantidadTotal}</span></td>
+                    <td>
+                      <img src={VerIcon} alt="Ver Fórmula"
+                           style={{width: '30px', height: '30px', cursor: 'pointer'}}
+                           onClick={() => handleView(formula)}
+                           data-tooltip-id="viewTooltip" data-tooltip-content="Ver detalles de la fórmula"/>
+                    </td>
+                  </tr>
+                ))
+              )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <Tooltip id="viewTooltip"/>
+      <Tooltip id="editLocalTooltip"/>
+      <Tooltip id="deleteLocalTooltip"/>
+    </>
   );
 };
 
