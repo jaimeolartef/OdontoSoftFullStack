@@ -7,6 +7,7 @@ import java.util.Optional;
 
 public interface FormulaMedicaService {
 	List<FormulaMedica> findAll();
+	List<FormulaMedica> findByHistoriaClinicaId(Integer idHistoriaClinica);
 	Optional<FormulaMedica> findById(Long id);
 	FormulaMedica save(FormulaMedica formulaMedica);
 	void deleteById(Long id);

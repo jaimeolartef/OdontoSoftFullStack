@@ -22,6 +22,11 @@ public class FormulaMedicaServiceImpl implements FormulaMedicaService {
 	}
 
 	@Override
+	public List<FormulaMedica> findByHistoriaClinicaId(Integer idHistoriaClinica) {
+		return formulaMedicaDao.findByHistoriaClinicaId(idHistoriaClinica);
+	}
+
+	@Override
 	public Optional<FormulaMedica> findById(Long id) {
 		return formulaMedicaDao.findById(id);
 	}

@@ -41,6 +41,22 @@ public class FormulaMedicaControllerImpl implements FormulaMedicaController {
 	}
 
 	@Override
+	public List<FormulaMedicaResponse> getFormulasByHistoriaClinica(Integer idHistoriaClinica) {
+		try {
+			List<FormulaMedica> formulas = formulaMedicaService.findByHistoriaClinicaId(idHistoriaClinica);
+			if (formulas.isEmpty()) {
+				throw new jakarta.persistence.EntityNotFoundException("No se encontraron fórmulas médicas para la historia clínica con id: " + idHistoriaClinica);
+			}
+			return formulas.stream()
+				.map(FormulaMedicaMapper::toResponse)
+				.toList();
+		} catch (Exception e) {
+			logger.error("Error al obtener las fórmulas médicas por historia clínica con id: " + idHistoriaClinica, e);
+			return List.of();
+		}
+	}
+
+	@Override
 	public FormulaMedicaResponse getFormulaMedicaById(Long id) {
 		try {
 			Optional<FormulaMedica> formula = formulaMedicaService.findById(id);

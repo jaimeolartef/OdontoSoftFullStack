@@ -32,6 +32,8 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly, idhistoriaclinica }) =>
   const [editingIndex, setEditingIndex] = useState(-1);
   const usuario = sessionStorage.getItem('username');
   const token = sessionStorage.getItem('jsonwebtoken');
+  const [showModal, setShowModal] = useState(false);
+  const [modalFormula, setModalFormula] = useState(null);
 
   // Función para calcular la cantidad total
   const calcularCantidadTotal = (frecuencia, duracion) => {
@@ -66,11 +68,9 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly, idhistoriaclinica }) =>
         }
 
         // Obtener fórmulas médicas existentes guardadas
-        const formulasResponse = await apiGet('/formulas-medicas/listar', token);
+        const formulasResponse = await apiGet('/formulas-medicas/listar/' + idhistoriaclinica, token);
         if (formulasResponse) {
-          setFormulasMedicasGuardadas(formulasResponse.filter(formula =>
-            formula.pacienteId === pacienteId && formula.medicoId === medicoId
-          ));
+          setFormulasMedicasGuardadas(formulasResponse);
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -127,68 +127,102 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly, idhistoriaclinica }) =>
   const handleAgregarMedicamento = (event) => {
     event.preventDefault();
 
+    // Validar campos obligatorios
     if (!formulaData.medicamentoId || !formulaData.dosis ||
-      !formulaData.frecuencia || !formulaData.duracionTratamiento) {
+        !formulaData.frecuencia || !formulaData.duracionTratamiento) {
       showMessage('warning', 'Por favor complete todos los campos obligatorios');
       return;
     }
 
-    // Verificar si el medicamento ya está en la lista (solo para nuevos, no para ediciones)
+    // Modo nuevo: verificar si el medicamento ya existe
     if (editingIndex < 0) {
-      const medicamentoExistente = formulasMedicasLocales.find(
+      const existeMedicamento = formulasMedicasLocales.some(
         formula => formula.medicamentoId === formulaData.medicamentoId
       );
-      if (medicamentoExistente) {
+
+      if (existeMedicamento) {
         showMessage('warning', 'Este medicamento ya está en la lista. Puede editarlo si necesita cambiar la dosificación.');
         return;
       }
-    }
 
-    const nuevoMedicamento = {
-      ...formulaData,
-      fechaFormulacion: new Date().toISOString(),
-      estadoMedicamento: "ACTIVO",
-      idhistoriaclinica: idhistoriaclinica,
-      idUsuarioCreacion: usuario,
-      fechaCreacion: new Date().toISOString().split('T')[0]
-    };
-    console.log(selectedMedicamento);
-    // Agregar nuevo medicamento a la lista local
-    setFormulasMedicasLocales(prev => [...prev, nuevoMedicamento]);
-    console.log("formulas locales ", formulasMedicasLocales);
+      // Crear nuevo medicamento
+      const nuevoMedicamento = {
+        ...formulaData,
+        fechaFormulacion: new Date().toISOString(),
+        estadoMedicamento: "ACTIVO",
+        idhistoriaclinica: idhistoriaclinica,
+        idUsuarioCreacion: usuario,
+        fechaCreacion: new Date().toISOString().split('T')[0]
+      };
+
+      // Agregar a la lista
+      setFormulasMedicasLocales(prev => [...prev, nuevoMedicamento]);
+    }
+    // Modo edición: actualizar medicamento existente
+    else {
+      const formulasActualizadas = [...formulasMedicasLocales];
+      formulasActualizadas[editingIndex] = {
+        ...formulaData,
+        fechaFormulacion: new Date().toISOString()
+      };
+
+      setFormulasMedicasLocales(formulasActualizadas);
+    }
 
     resetForm();
   };
 
-  const handleGuardarTodas = async () => {
+    const handleGuardarTodas = async () => {
     if (formulasMedicasLocales.length === 0) {
       showMessage('warning', 'No hay medicamentos en la lista para guardar');
       return;
     }
 
+    let isMedicamentoRepetido = false;
+    let nombresMedicamentos = '';
+
+    formulasMedicasLocales.forEach(medicamento => {
+      // Verificar medicamentos repetidos antes de guardar
+      const medicamentosRepetidos = formulasMedicasLocales.filter(medicamento => {
+        return formulasMedicasGuardadas.some(guardado =>
+          guardado.medicamento.id === medicamento.medicamentoInfo.id
+        );
+      });
+
+      if (medicamentosRepetidos.length > 0) {
+        isMedicamentoRepetido = true;
+        nombresMedicamentos = medicamentosRepetidos.map(med => med.medicamentoInfo?.nombre).join(', ');
+      }
+    });
+
+
     setIsGuardando(true);
 
     try {
-      const numeroFormula = generateNumeroFormula();
-      // Crear un objeto fórmula médica que contenga todos los medicamentos
-      for (const medicamento of formulasMedicasLocales) {
-        const idx = formulasMedicasLocales.indexOf(medicamento);
-        // Guardar la fórmula completa con todos los medicamentos
-        medicamento.numeroFormula = numeroFormula;
-        const respuesta = await apiPost('/formulas-medicas/crear', medicamento, token);
+      if (isMedicamentoRepetido) {
+        showMessage('warning', `Los siguientes medicamentos ya están guardados: ${nombresMedicamentos}`);
+      } else {
+        const numeroFormula = generateNumeroFormula();
+        // Crear un objeto fórmula médica que contenga todos los medicamentos
+        for (const medicamento of formulasMedicasLocales) {
+          const idx = formulasMedicasLocales.indexOf(medicamento);
+          // Guardar la fórmula completa con todos los medicamentos
+          medicamento.numeroFormula = numeroFormula;
+          const respuesta = await apiPost('/formulas-medicas/crear', medicamento, token);
 
-        if (respuesta) {
-          // Actualizar la lista de fórmulas guardadas
-          setFormulasMedicasGuardadas(prev => [...prev, respuesta]);
+          if (respuesta) {
+            // Actualizar la lista de fórmulas guardadas
+            setFormulasMedicasGuardadas(prev => [...prev, respuesta]);
+          }
+
+          // Aquí puedes acceder a cada medicamento y su índice
+          console.log(`Medicamento ${idx}:`, medicamento);
         }
 
-        // Aquí puedes acceder a cada medicamento y su índice
-        console.log(`Medicamento ${idx}:`, medicamento);
+        // Limpiar la lista local
+        showMessage('success', `Fórmula médica guardada exitosamente con ${formulasMedicasLocales.length} medicamento(s)`);
+        setFormulasMedicasLocales([]);
       }
-
-      // Limpiar la lista local
-      showMessage('success', `Fórmula médica guardada exitosamente con ${formulasMedicasLocales.length} medicamento(s)`);
-      setFormulasMedicasLocales([]);
 
     } catch (error) {
       console.error('Error saving formula:', error);
@@ -262,8 +296,9 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly, idhistoriaclinica }) =>
   };
 
   const handleView = (formula) => {
-    // Implementar lógica para visualizar la fórmula en modo solo lectura
-    console.log('Ver fórmula:', formula);
+
+      setModalFormula(formula);
+      setShowModal(true);
   };
 
   return (
@@ -287,6 +322,7 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly, idhistoriaclinica }) =>
                       value={selectedMedicamento}
                       onChange={handleMedicamentoChange}
                       required
+                      readOnly={editingIndex > 0}
                     />
                     <datalist id="medicamentoOptions">
                       {medicamentos.map((medicamento) => (
@@ -443,7 +479,7 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly, idhistoriaclinica }) =>
               {formulasMedicasLocales.map((formula, index) => (
                 <tr key={formula.tempId} className={editingIndex === index ? 'table-warning' : ''}>
                   <td>
-                    <strong>{formula.medicamentoInfo.nombre || 'N/A'}</strong>
+                    <strong>{formula.medicamentoInfo?.nombre || 'N/A'}</strong>
                     <br/>
                     <small className="text-muted">{formula.medicamentoInfo.codigo}</small>
                   </td>
@@ -558,6 +594,35 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly, idhistoriaclinica }) =>
           </div>
         </div>
       </div>
+
+      {showModal && modalFormula && (
+        <div className="modal fade show" style={{display: 'block'}} tabIndex="-1" role="dialog">
+          <div className="modal-dialog" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Fórmula Médica</h5>
+              </div>
+              <div className="modal-body">
+                <p><strong>Número:</strong> {modalFormula.numeroFormula || 'N/A'}</p>
+                <p>
+                  <strong>Medicamento:</strong> {modalFormula.medicamento?.nombre || modalFormula.medicamentoInfo?.nombre || 'N/A'}
+                </p>
+                <p><strong>Dosis:</strong> {modalFormula.dosis}</p>
+                <p><strong>Frecuencia:</strong> {modalFormula.frecuencia}</p>
+                <p><strong>Duración:</strong> {modalFormula.duracionTratamiento}</p>
+                <p><strong>Cantidad Total:</strong> {modalFormula.cantidadTotal}</p>
+                <p><strong>Instrucciones:</strong> {modalFormula.instruccionesEspeciales || 'No especificadas'}</p>
+                <p><strong>Observaciones:</strong> {modalFormula.observaciones || 'N/A'}</p>
+              </div>
+              <div className="modal-footer d-flex justify-content-center">
+                <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>
+                  Cerrar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <Tooltip id="viewTooltip"/>
       <Tooltip id="editLocalTooltip"/>

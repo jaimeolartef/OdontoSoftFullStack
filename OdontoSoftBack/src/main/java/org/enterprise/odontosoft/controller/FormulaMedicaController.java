@@ -10,6 +10,9 @@ public interface FormulaMedicaController {
 	// Obtener todas las fórmulas médicas
 	List<FormulaMedicaResponse> getAllFormulasMedicas();
 
+	// Obtener fórmulas médicas por ID de historia clínica
+	List<FormulaMedicaResponse> getFormulasByHistoriaClinica(Integer idHistoriaClinica);
+
 	// Obtener una fórmula médica por ID
 	FormulaMedicaResponse getFormulaMedicaById(Long id);
 

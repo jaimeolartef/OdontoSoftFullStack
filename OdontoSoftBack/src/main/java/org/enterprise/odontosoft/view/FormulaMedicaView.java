@@ -44,6 +44,12 @@ public class FormulaMedicaView {
 		return ResponseEntity.ok(ApiResponse.success(response, "Fórmulas médicas listadas correctamente"));
 	}
 
+	@GetMapping("/listar/{idHistoriaClinica}")
+	public ResponseEntity<ApiResponse<List<FormulaMedicaResponse>>> getFormulasByHistoriaClinica(@PathVariable Integer idHistoriaClinica) {
+		List<FormulaMedicaResponse> response = formulaMedicaController.getFormulasByHistoriaClinica(idHistoriaClinica);
+		return ResponseEntity.ok(ApiResponse.success(response, "Fórmulas médicas por historia clínica listadas correctamente"));
+	}
+
 	@DeleteMapping("/eliminar/{id}")
 	public ResponseEntity<ApiResponse<Void>> deleteFormulaMedica(@PathVariable Long id) {
 		formulaMedicaController.deleteFormulaMedica(id);
