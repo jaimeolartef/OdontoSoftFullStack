@@ -1,18 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import showMessage from "../../util/UtilMessage";
-import { Tooltip } from "react-tooltip";
+import {Tooltip} from "react-tooltip";
 import EditIcon from '../../resource/EditIcon.png';
 import VerIcon from "../../resource/ver.png";
+import {apiGet, apiPost} from '../apiService';
+import jsPDF from 'jspdf';
 import EliminarIcon from "../../resource/Eliminar.png";
-import { apiGet, apiPost, apiPut } from '../apiService';
 
-const FormulaMedica = ({ pacienteId, medicoId, readOnly, idhistoriaclinica }) => {
+
+const FormulaMedica = ({pacienteId, medicoId, readOnly, idhistoriaclinica}) => {
   const [estadosMedicamento, setEstadosMedicamento] = useState([]);
   const [medicamentos, setMedicamentos] = useState([]);
   const [formulasMedicasGuardadas, setFormulasMedicasGuardadas] = useState([]);
   const [formulasMedicasLocales, setFormulasMedicasLocales] = useState([]);
   const [selectedMedicamento, setSelectedMedicamento] = useState('');
   const [isGuardando, setIsGuardando] = useState(false);
+  const [pacienteInfo, setPacienteInfo] = useState({});
+  const [medicoInfo, setMedicoInfo] = useState({});
   const [formulaData, setFormulaData] = useState({
     numeroFormula: '',
     pacienteId: pacienteId,
@@ -52,6 +56,96 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly, idhistoriaclinica }) =>
     return '';
   };
 
+  // Función para generar reporte PDF
+  const generatePDFReport = (numeroFormula, medicamentosLista, paciente, medico) => {
+    const doc = new jsPDF();
+
+    // Configuración de fuentes
+    doc.setFont('helvetica');
+
+    // Encabezado
+    doc.setFontSize(20);
+    doc.setTextColor(40, 40, 40);
+    doc.text('FÓRMULA MÉDICA', 105, 20, {align: 'center'});
+
+    // Línea separadora
+    doc.setLineWidth(0.5);
+    doc.line(20, 25, 190, 25);
+
+    // Información del paciente y médico
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+
+    // Información del paciente
+    doc.setFont('helvetica', 'bold');
+    doc.text('INFORMACIÓN DEL PACIENTE:', 20, 35);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Nombre: ${paciente.primernombre || ''} ${paciente.primerapellido || ''}`, 20, 45);
+    doc.text(`Documento: ${paciente.documento || 'N/A'}`, 20, 52);
+    doc.text(`Teléfono: ${paciente.telefono || 'N/A'}`, 20, 59);
+
+    // Información del médico
+    doc.setFont('helvetica', 'bold');
+    doc.text('INFORMACIÓN DEL MÉDICO:', 20, 72);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Médico: ${medico.nombre || 'N/A'}`, 20, 82);
+    doc.text(`Especialidad: ${medico.especialidad || 'N/A'}`, 20, 89);
+    doc.text(`Matrícula: ${medico.matricula || 'N/A'}`, 20, 96);
+
+    // Información de la fórmula
+    doc.setFont('helvetica', 'bold');
+    doc.text('INFORMACIÓN DE LA FÓRMULA:', 20, 109);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Número de Fórmula: ${numeroFormula}`, 20, 119);
+    doc.text(`Fecha: ${new Date().toLocaleDateString('es-ES')}`, 20, 126);
+
+    // Tabla de medicamentos
+    const tableData = medicamentosLista.map((med, index) => [
+      index + 1,
+      med.medicamentoInfo?.nombre || 'N/A',
+      med.dosis,
+      med.frecuencia,
+      med.duracionTratamiento,
+      med.cantidadTotal,
+      med.instruccionesEspeciales || 'N/A'
+    ]);
+
+    doc.autoTable({
+      startY: 135,
+      head: [['#', 'Medicamento', 'Dosis', 'Frecuencia', 'Duración', 'Cantidad', 'Instrucciones']],
+      body: tableData,
+      styles: {
+        fontSize: 9,
+        cellPadding: 3,
+      },
+      headStyles: {
+        fillColor: [41, 128, 185],
+        textColor: 255,
+        fontStyle: 'bold'
+      },
+      alternateRowStyles: {
+        fillColor: [245, 245, 245]
+      },
+      margin: {left: 20, right: 20},
+    });
+
+    // Pie de página
+    const finalY = doc.lastAutoTable.finalY || 135;
+    doc.setFontSize(10);
+    doc.setTextColor(100, 100, 100);
+    doc.text('________________________________', 20, finalY + 30);
+    doc.text('Firma del Médico', 20, finalY + 40);
+    doc.text(`Dr. ${medico.nombre || 'N/A'}`, 20, finalY + 47);
+    doc.text(`Matrícula: ${medico.matricula || 'N/A'}`, 20, finalY + 54);
+
+    // Fecha y hora de generación
+    doc.text(`Generado el: ${new Date().toLocaleDateString('es-ES')} a las ${new Date().toLocaleTimeString('es-ES')}`, 20, finalY + 65);
+
+    // Abrir el PDF en una nueva pestaña
+    const pdfBlob = doc.output('bloburl');
+    window.open(pdfBlob, '_blank');
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -67,10 +161,22 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly, idhistoriaclinica }) =>
           setMedicamentos(medicamentosResponse);
         }
 
+        // Obtener información del paciente
+        const pacienteResponse = await apiGet(`/pacientes/consultar/${pacienteId}`, token);
+        if (pacienteResponse) {
+          setPacienteInfo(pacienteResponse);
+        }
+
+        // Obtener información del médico
+        const medicoResponse = await apiGet(`/doctor/consultar/${medicoId}`, token);
+        if (medicoResponse) {
+          setMedicoInfo(medicoResponse);
+        }
+
         // Obtener fórmulas médicas existentes guardadas
         const formulasResponse = await apiGet('/formulas-medicas/listar/' + idhistoriaclinica, token);
         if (formulasResponse) {
-          setFormulasMedicasGuardadas(formulasResponse);
+          setFormulasMedicasGuardadas(formulasResponse.map((formula, index) => ({...formula, index})));
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -101,7 +207,7 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly, idhistoriaclinica }) =>
   };
 
   const handleInputChange = (event) => {
-    const { name, value } = event.target;
+    const {name, value} = event.target;
 
     const updatedData = {
       ...formulaData,
@@ -129,7 +235,7 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly, idhistoriaclinica }) =>
 
     // Validar campos obligatorios
     if (!formulaData.medicamentoId || !formulaData.dosis ||
-        !formulaData.frecuencia || !formulaData.duracionTratamiento) {
+      !formulaData.frecuencia || !formulaData.duracionTratamiento) {
       showMessage('warning', 'Por favor complete todos los campos obligatorios');
       return;
     }
@@ -156,7 +262,7 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly, idhistoriaclinica }) =>
       };
 
       // Agregar a la lista
-      setFormulasMedicasLocales(prev => [...prev, nuevoMedicamento]);
+      setFormulasMedicasLocales(prev => [...prev, { ...nuevoMedicamento, index: prev.length }]);
     }
     // Modo edición: actualizar medicamento existente
     else {
@@ -166,13 +272,13 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly, idhistoriaclinica }) =>
         fechaFormulacion: new Date().toISOString()
       };
 
-      setFormulasMedicasLocales(formulasActualizadas);
+      setFormulasMedicasLocales(formulasActualizadas.map((formula, i) => ({ ...formula, index: i })));
     }
 
     resetForm();
   };
 
-    const handleGuardarTodas = async () => {
+  const handleGuardarTodas = async () => {
     if (formulasMedicasLocales.length === 0) {
       showMessage('warning', 'No hay medicamentos en la lista para guardar');
       return;
@@ -195,7 +301,6 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly, idhistoriaclinica }) =>
       }
     });
 
-
     setIsGuardando(true);
 
     try {
@@ -203,6 +308,7 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly, idhistoriaclinica }) =>
         showMessage('warning', `Los siguientes medicamentos ya están guardados: ${nombresMedicamentos}`);
       } else {
         const numeroFormula = generateNumeroFormula();
+
         // Crear un objeto fórmula médica que contenga todos los medicamentos
         for (const medicamento of formulasMedicasLocales) {
           const idx = formulasMedicasLocales.indexOf(medicamento);
@@ -212,15 +318,18 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly, idhistoriaclinica }) =>
 
           if (respuesta) {
             // Actualizar la lista de fórmulas guardadas
-            setFormulasMedicasGuardadas(prev => [...prev, respuesta]);
+            setFormulasMedicasGuardadas(prev => [...prev, {...respuesta, index: prev.length}]);
           }
 
           // Aquí puedes acceder a cada medicamento y su índice
           console.log(`Medicamento ${idx}:`, medicamento);
         }
 
+        // Generar el reporte PDF
+        generatePDFReport(numeroFormula, formulasMedicasLocales, pacienteInfo, medicoInfo);
+
         // Limpiar la lista local
-        showMessage('success', `Fórmula médica guardada exitosamente con ${formulasMedicasLocales.length} medicamento(s)`);
+        showMessage('success', `Fórmula médica guardada exitosamente con ${formulasMedicasLocales.length} medicamento(s). Se ha generado el reporte PDF.`);
         setFormulasMedicasLocales([]);
       }
 
@@ -230,6 +339,13 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly, idhistoriaclinica }) =>
     } finally {
       setIsGuardando(false);
     }
+  };
+
+  const handleGenerarReporte = (formula) => {
+    // Generar reporte para una fórmula específica ya guardada
+    const medicamentosFormula = [formula]; // Convertir a array para reutilizar la función
+    generatePDFReport(formula.numeroFormula, medicamentosFormula, pacienteInfo, medicoInfo);
+    showMessage('success', 'Reporte PDF generado correctamente');
   };
 
   const handleLimpiarLista = () => {
@@ -296,9 +412,8 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly, idhistoriaclinica }) =>
   };
 
   const handleView = (formula) => {
-
-      setModalFormula(formula);
-      setShowModal(true);
+    setModalFormula(formula);
+    setShowModal(true);
   };
 
   return (
@@ -382,7 +497,7 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly, idhistoriaclinica }) =>
               </div>
 
               <div className="row">
-                <div className="col-md-6">
+                <div className="col-md-4">
                   <div className="form-group">
                     <label htmlFor="cantidadTotal">Cantidad Total (calculada automáticamente)</label>
                     <input
@@ -398,22 +513,9 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly, idhistoriaclinica }) =>
                     </small>
                   </div>
                 </div>
-                <div className="col-md-6">
-                  <div className="form-group">
-                    <label htmlFor="diagnosticosSecundarios">Diagnósticos Secundarios</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="diagnosticosSecundarios"
-                      name="diagnosticosSecundarios"
-                      placeholder="Diagnósticos adicionales (opcional)"
-                      value={formulaData.diagnosticosSecundarios}
-                      onChange={handleInputChange}
-                    />
-                  </div>
-                </div>
               </div>
 
+              <div className="espacio"></div>
               <div className="row">
                 <div className="col-md-12">
                   <div className="form-group">
@@ -432,12 +534,12 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly, idhistoriaclinica }) =>
               </div>
 
               <div className="espacio"/>
-              <div className="form-group">
-                <button type="submit" className="btn btn-primary">
+              <div className="d-flex justify-content-center mt-3">
+                <button type="submit" className="btn btn-primary mx-2">
                   {editingIndex >= 0 ? 'Actualizar' : 'Agregar'} Medicamento
                 </button>
                 {editingIndex >= 0 && (
-                  <button type="button" className="btn btn-secondary ml-2" onClick={resetForm}>
+                  <button type="button" className="btn btn-secondary mx-2" onClick={resetForm}>
                     Cancelar
                   </button>
                 )}
@@ -450,15 +552,13 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly, idhistoriaclinica }) =>
       {/* Lista de medicamentos agregados localmente */}
       <div className="espacio"/>
       <div className="card">
-        <div className="card-header">
-          <h2>Medicamentos en la Fórmula ({formulasMedicasLocales.length})</h2>
+        <div className="card-header d-flex justify-content-between align-items-center">
+          <h2 className="mb-0">Medicamentos en la Fórmula ({formulasMedicasLocales.length})</h2>
           {!readOnly && (
-            <button
-              className="btn btn-outline-primary ml-2"
-              onClick={handleLimpiarLista}
-              title="Limpiar toda la lista">
-              Limpiar Lista
-            </button>
+            <img src={EliminarIcon} alt="Limpiar toda la lista"
+                 style={{marginRight: '5px', width: '35px', height: '35px', cursor: 'pointer'}}
+                 onClick={handleLimpiarLista}
+                 data-tooltip-id="editTooltip" data-tooltip-content="Eliminar"/>
           )}
         </div>
         <div className="card-body">
@@ -527,7 +627,7 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly, idhistoriaclinica }) =>
                 ) : (
                   <>
                     <i className="fas fa-save mr-2"></i>
-                    Guardar Fórmula Médica
+                    Guardar y Generar Reporte
                     ({formulasMedicasLocales.length} medicamento{formulasMedicasLocales.length !== 1 ? 's' : ''})
                   </>
                 )}
@@ -582,9 +682,16 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly, idhistoriaclinica }) =>
                     <td><span>{formula.cantidadTotal}</span></td>
                     <td>
                       <img src={VerIcon} alt="Ver Fórmula"
-                           style={{width: '30px', height: '30px', cursor: 'pointer'}}
+                           style={{width: '30px', height: '30px', cursor: 'pointer', marginRight: '5px'}}
                            onClick={() => handleView(formula)}
                            data-tooltip-id="viewTooltip" data-tooltip-content="Ver detalles de la fórmula"/>
+                      <button
+                        className="btn btn-sm btn-outline-primary"
+                        onClick={() => handleGenerarReporte(formula)}
+                        title="Generar reporte PDF"
+                      >
+                        📄 PDF
+                      </button>
                     </td>
                   </tr>
                 ))
@@ -615,9 +722,24 @@ const FormulaMedica = ({ pacienteId, medicoId, readOnly, idhistoriaclinica }) =>
                 <p><strong>Observaciones:</strong> {modalFormula.observaciones || 'N/A'}</p>
               </div>
               <div className="modal-footer d-flex justify-content-center">
-                <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>
-                  Cerrar
-                </button>
+                <div className="d-flex justify-content-center w-100">
+                  <button
+                    type="button"
+                    className="btn btn-primary mx-2"
+                    onClick={() => handleGenerarReporte(modalFormula)}
+                    style={{minWidth: '140px'}}
+                  >
+                    📄 Generar PDF
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-secondary mx-2"
+                    onClick={() => setShowModal(false)}
+                    style={{minWidth: '140px'}}
+                  >
+                    Cerrar
+                  </button>
+                </div>
               </div>
             </div>
           </div>

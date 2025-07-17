@@ -16,6 +16,8 @@
     "file-saver": "^2.0.5",
     "ics": "^3.1.0",
     "js-base64": "^3.7.7",
+    "jspdf": "^2.5.2",
+    "jspdf-autotable": "^3.8.4",
     "list": "^2.0.19",
     "moment": "^2.30.1",
     "papaparse": "^5.5.2",

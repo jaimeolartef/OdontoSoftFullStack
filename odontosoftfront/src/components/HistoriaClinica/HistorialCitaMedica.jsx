@@ -328,7 +328,7 @@ const HistorialCitaMedica = () => {
                   idhistoriaclinica={formMedicalHistory.idHistoriaClinica}
                 />
               </div>
-              <div className="modal-footer">
+              <div className="modal-footer justify-content-center">
                 <button type="button" className="btn btn-secondary" onClick={() => setShowFormulaMedicaModal(false)}>
                   Cerrar
                 </button>
