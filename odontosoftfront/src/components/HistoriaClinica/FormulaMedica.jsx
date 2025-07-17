@@ -5,6 +5,7 @@ import EditIcon from '../../resource/EditIcon.png';
 import VerIcon from "../../resource/ver.png";
 import {apiGet, apiPost} from '../apiService';
 import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 import EliminarIcon from "../../resource/Eliminar.png";
 
 
