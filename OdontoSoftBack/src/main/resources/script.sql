@@ -1106,3 +1106,58 @@ VALUES ('MED001', 'Acetaminofén', 'Paracetamol', '500mg', 'Tableta', 'Oral', 'L
 
 alter table formulamedica add idhistoriaclinica integer;
 alter table formulamedica add foreign key (idhistoriaclinica) references public.historiaclinica(id);
+
+create table lista
+(
+    id          SERIAL PRIMARY KEY,
+    codigo      varchar(10),
+    descripcion varchar,
+    habilitado  bool DEFAULT false NOT NULL
+);
+
+create table listadetalle
+(
+    id          SERIAL PRIMARY KEY,
+    idlista     int not null,
+    codigo      varchar(10),
+    descripcion varchar,
+    habilitado  bool DEFAULT false NOT NULL,
+    foreign key (idlista) references lista (id)
+);
+
+-- Insertar las categorías principales en la tabla lista
+INSERT INTO lista (codigo, descripcion, habilitado) VALUES
+('VDIA', 'Veces al día', true),
+('HORA', 'Cada horas', true),
+('PERS', 'Personalizada', true);
+
+-- Insertar los detalles para "Veces al día" (VDIA)
+INSERT INTO listadetalle (idlista, codigo, descripcion, habilitado) VALUES
+((SELECT id FROM lista WHERE codigo = 'VDIA'), 'VD1', '1 vez al día', true),
+((SELECT id FROM lista WHERE codigo = 'VDIA'), 'VD2', '2 veces al día', true),
+((SELECT id FROM lista WHERE codigo = 'VDIA'), 'VD3', '3 veces al día', true),
+((SELECT id FROM lista WHERE codigo = 'VDIA'), 'VD4', '4 veces al día', true),
+((SELECT id FROM lista WHERE codigo = 'VDIA'), 'VD5', '5 veces al día', true),
+((SELECT id FROM lista WHERE codigo = 'VDIA'), 'VD6', '6 veces al día', true);
+
+-- Insertar los detalles para "Cada horas" (HORA)
+INSERT INTO listadetalle (idlista, codigo, descripcion, habilitado) VALUES
+((SELECT id FROM lista WHERE codigo = 'HORA'), 'H4', 'Cada 4 horas', true),
+((SELECT id FROM lista WHERE codigo = 'HORA'), 'H6', 'Cada 6 horas', true),
+((SELECT id FROM lista WHERE codigo = 'HORA'), 'H8', 'Cada 8 horas', true),
+((SELECT id FROM lista WHERE codigo = 'HORA'), 'H12', 'Cada 12 horas', true),
+((SELECT id FROM lista WHERE codigo = 'HORA'), 'H24', 'Cada 24 horas', true);
+
+-- Insertar los detalles para "Personalizada" (PERS)
+INSERT INTO listadetalle (idlista, codigo, descripcion, habilitado) VALUES
+((SELECT id FROM lista WHERE codigo = 'PERS'), 'P1', 'Antes de cada comida', true),
+((SELECT id FROM lista WHERE codigo = 'PERS'), 'P2', 'Después de cada comida', true),
+((SELECT id FROM lista WHERE codigo = 'PERS'), 'P3', 'Con el desayuno', true),
+((SELECT id FROM lista WHERE codigo = 'PERS'), 'P4', 'Con el almuerzo', true),
+((SELECT id FROM lista WHERE codigo = 'PERS'), 'P5', 'Con la cena', true),
+((SELECT id FROM lista WHERE codigo = 'PERS'), 'P6', 'Al acostarse', true),
+((SELECT id FROM lista WHERE codigo = 'PERS'), 'P7', 'Al levantarse', true),
+((SELECT id FROM lista WHERE codigo = 'PERS'), 'P8', 'Cuando sea necesario (PRN)', true),
+((SELECT id FROM lista WHERE codigo = 'PERS'), 'P9', 'Una vez por semana', true);
+
+
